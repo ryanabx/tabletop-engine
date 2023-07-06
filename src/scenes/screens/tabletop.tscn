@@ -28,6 +28,7 @@ scale = Vector2(1.25437, 1.65981)
 
 [node name="BoardBG" type="Sprite2D" parent="GameBoard"]
 z_index = -500
-scale = Vector2(0.291556, 0.291556)
+position = Vector2(8.10623e-05, 1.71661e-05)
+scale = Vector2(0.300752, 0.254237)
 texture = ExtResource("1_488j0")
 metadata/_edit_lock_ = true
