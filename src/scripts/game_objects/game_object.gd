@@ -6,21 +6,20 @@ var mouse_offset_vect: Vector2 = Vector2.ZERO
 
 var parent = null
 
-@onready var sprite = $Sprite
 @onready var collision_box = $CollisionArea/CollisionBox
 
-func _ready():
+func _ready() -> void:
 	if self.get_parent():
 		parent = self.get_parent()
 	collision_box.shape.size = get_rect().size # Set collision box to match the sprite
 
-func _on_collision_area_mouse_entered():
+func _on_collision_area_mouse_entered() -> void:
 	_grab_selection_lock()
 
-func _on_collision_area_mouse_exited():
+func _on_collision_area_mouse_exited() -> void:
 	_release_selection_lock()
 
-func _on_collision_area_input_event(viewport, event, shape_idx):
+func _on_collision_area_input_event(_viewport, event, _shape_idx) -> void:
 	if event is InputEventMouseButton and _has_selection_lock():
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			grabbable = event.pressed
@@ -30,7 +29,7 @@ func _on_collision_area_input_event(viewport, event, shape_idx):
 		elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 			_reset_selection_lock()
 
-func _process(delta):
+func _process(delta: float) -> void:
 	z_index = -get_index()
 	if grabbable and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		global_position = get_global_mouse_position() + mouse_offset_vect
