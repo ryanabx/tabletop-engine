@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://bd0t8uq0xv6wr"]
+
+[ext_resource type="PackedScene" uid="uid://djm14ahg7tlq6" path="res://src/scenes/game_objects/game_object.tscn" id="1_sr361"]
+
+[node name="Tabletop" type="Node"]
+
+[node name="GameBoard" type="Node2D" parent="."]
+
+[node name="GameObject" parent="GameBoard" instance=ExtResource("1_sr361")]
+position = Vector2(205, 156)
