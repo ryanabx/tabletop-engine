@@ -7,16 +7,27 @@
 
 [node name="GameBoard" type="Node2D" parent="."]
 
+[node name="GameObjects" type="Node2D" parent="GameBoard"]
+z_index = 10
+
+[node name="GameObject" parent="GameBoard/GameObjects" instance=ExtResource("1_sr361")]
+position = Vector2(179.648, 128.637)
+
+[node name="GameObject2" parent="GameBoard/GameObjects" instance=ExtResource("1_sr361")]
+position = Vector2(-292, 4)
+scale = Vector2(0.5625, 0.5625)
+
+[node name="GameObject3" parent="GameBoard/GameObjects" instance=ExtResource("1_sr361")]
+position = Vector2(-200, -224)
+
+[node name="GameObject4" parent="GameBoard/GameObjects" instance=ExtResource("1_sr361")]
+position = Vector2(279.72, -98.2276)
+scale = Vector2(1.25437, 1.65981)
+
 [node name="BoardCamera" type="Camera2D" parent="GameBoard"]
 
 [node name="BoardBG" type="Sprite2D" parent="GameBoard"]
-z_index = -5
+z_index = -500
 scale = Vector2(0.291556, 0.291556)
 texture = ExtResource("1_488j0")
 metadata/_edit_lock_ = true
-
-[node name="GameObject" parent="GameBoard" instance=ExtResource("1_sr361")]
-position = Vector2(179.648, 128.637)
-
-[node name="GameObject2" parent="GameBoard" instance=ExtResource("1_sr361")]
-position = Vector2(-344.792, -36.6625)
