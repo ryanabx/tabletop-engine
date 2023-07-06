@@ -1,21 +1,20 @@
+class_name RightClickMenuButton
 extends Button
 
 enum MENU_BUTTON_TYPE {
 	BLANK
 }
 
-var button_type: MENU_BUTTON_TYPE = MENU_BUTTON_TYPE.BLANK
+var _button_type: MENU_BUTTON_TYPE = MENU_BUTTON_TYPE.BLANK
 
-var parent = null
+var _parent: RightClickMenu = null
 
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	if get_parent():
-		parent = get_parent()
+func _init(parent: RightClickMenu, button_type: MENU_BUTTON_TYPE):
+	self._parent = parent
+	self._button_type = button_type
 
 
 func _on_pressed():
-	match button_type:
+	match _button_type:
 		MENU_BUTTON_TYPE.BLANK:
 			return

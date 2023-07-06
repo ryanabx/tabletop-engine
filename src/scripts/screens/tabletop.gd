@@ -1,6 +1,6 @@
 extends Node
 
-@onready var state_label = $MouseStateLabel
+@onready var state_label: Label = $UiManager/MouseStateLabel
 
 
 func _process(delta: float) -> void:

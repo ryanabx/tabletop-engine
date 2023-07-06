@@ -8,3 +8,5 @@ res://src/scenes/ui/right_click_menu.tscn
 res://src/scenes/ui/right_click_menu_button.tscn
 res://src/scripts/ui/right_click_menu_button.gd
 res://src/scripts/ui/right_click_menu.gd
+res://src/scripts/singletons/ui_manager.gd
+res://src/scripts/ui/ui_manager.gd

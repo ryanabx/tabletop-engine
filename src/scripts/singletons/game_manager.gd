@@ -19,6 +19,9 @@ func get_mouse_state() -> MOUSE_STATE:
 func highlighted_over_item() -> bool:
 	return _item_selected.size() > 0
 
+func get_highlighted_item() -> GameObject:
+	return _item_selected[0] # TODO: Add a check here for if an item exists
+
 func has_selection_lock(obj: GameObject) -> bool:
 	return _item_selected.size() > 0 and _item_selected[0] == obj
 
