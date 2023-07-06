@@ -22,13 +22,13 @@ func _ready() -> void:
 	collision_box.shape.size = get_rect().size # Set collision box to match the sprite
 
 func _on_collision_area_mouse_entered() -> void:
-	_grab_selection_lock()
+	GameManager.grab_selection_lock(self)
 
 func _on_collision_area_mouse_exited() -> void:
-	_release_selection_lock()
+	GameManager.release_selection_lock(self)
 
 func _on_collision_area_input_event(viewport: Viewport, event, _shape_idx) -> void:
-	if event is InputEventMouseButton and _has_selection_lock():
+	if event is InputEventMouseButton and GameManager.has_selection_lock(self):
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			grabbable = event.pressed
 			if grabbable:
@@ -40,30 +40,13 @@ func _on_collision_area_input_event(viewport: Viewport, event, _shape_idx) -> vo
 
 func _process(delta: float) -> void:
 	z_index = -get_index()
-	if grabbable and _has_selection_lock() and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+	if grabbable and GameManager.has_selection_lock(self) and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		global_position = get_global_mouse_position() + mouse_offset_vect
 		object_state = GAME_OBJECT_STATE.GRABBED
 	else:
 		object_state = GAME_OBJECT_STATE.OPEN
 	
-	modulate.b = 0.8 if _has_selection_lock() else 1.0
-
-func _has_selection_lock() -> bool:
-	return GameManager.item_selected.size() > 0 and GameManager.item_selected[0] == self
-
-func _grab_selection_lock() -> void:
-	var index = 0
-	while GameManager.item_selected.size() > index and GameManager.item_selected[index].get_index() < get_index():
-		index+=1
-	GameManager.item_selected.insert(index, self)
-
-func _release_selection_lock() -> void:
-	GameManager.item_selected.erase(self)
-
-func _reset_selection_lock() -> void:
-	_move_self_to_back()
-	_release_selection_lock()
-	GameManager.item_selected.push_back(self)
+	modulate.b = 0.8 if GameManager.has_selection_lock(self) else 1.0
 
 func _move_self_to_top() -> void:
 	if parent:
