@@ -8,13 +8,20 @@ enum RIGHT_CLICK_MENU_TYPE {
 
 var menu_type: RIGHT_CLICK_MENU_TYPE
 var associated_object: GameObject = null
+var _ui_manager: UiManager
 
-func _init(menu_type: RIGHT_CLICK_MENU_TYPE, associated_object: GameObject) -> void:
+func _init(menu_type: RIGHT_CLICK_MENU_TYPE, associated_object: GameObject, ui_manager: UiManager) -> void:
 	self.menu_type = menu_type
 	self.associated_object = associated_object
+	self._ui_manager = ui_manager
 
 func _ready() -> void:
 	_populate_right_click_menu()
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		if not get_global_rect().has_point(get_global_mouse_position()):
+			_ui_manager.destroy_rclick_menu()
 
 func _populate_right_click_menu():
 	match menu_type:
