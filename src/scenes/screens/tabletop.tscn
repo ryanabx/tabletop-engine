@@ -1,10 +1,15 @@
 [gd_scene load_steps=2 format=3 uid="uid://bd0t8uq0xv6wr"]
 
-[ext_resource type="PackedScene" uid="uid://djm14ahg7tlq6" path="res://src/scenes/game_objects/game_object.tscn" id="1_sr361"]
+[ext_resource type="Texture2D" uid="uid://cbpxdhvy0dyht" path="res://src/assets/wood-background.jpg" id="1_488j0"]
 
 [node name="Tabletop" type="Node"]
 
 [node name="GameBoard" type="Node2D" parent="."]
 
-[node name="GameObject" parent="GameBoard" instance=ExtResource("1_sr361")]
-position = Vector2(205, 156)
+[node name="BoardCamera" type="Camera2D" parent="GameBoard"]
+
+[node name="BoardBG" type="Sprite2D" parent="GameBoard"]
+z_index = -5
+scale = Vector2(0.291556, 0.291556)
+texture = ExtResource("1_488j0")
+metadata/_edit_lock_ = true
