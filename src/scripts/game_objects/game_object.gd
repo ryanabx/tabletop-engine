@@ -53,7 +53,7 @@ func _release_selection_lock() -> void:
 func _reset_selection_lock() -> void:
 	_move_self_to_back()
 	_release_selection_lock()
-	_grab_selection_lock()
+	GameManager.item_selected.push_back(self)
 
 func _move_self_to_top() -> void:
 	if parent:
