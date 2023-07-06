@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://u26fevpbhaf"]
+
+[ext_resource type="Texture2D" uid="uid://cgl436kyj0iv" path="res://src/assets/black-pixel.png" id="1_ksjt0"]
+[ext_resource type="Script" path="res://src/scripts/game_objects/collection.gd" id="2_6tgl3"]
+
+[node name="Collection" type="Sprite2D"]
+scale = Vector2(256.5, 256.5)
+texture = ExtResource("1_ksjt0")
+script = ExtResource("2_6tgl3")

@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bd0t8uq0xv6wr"]
+[gd_scene load_steps=3 format=3 uid="uid://bd0t8uq0xv6wr"]
 
 [ext_resource type="Texture2D" uid="uid://cbpxdhvy0dyht" path="res://src/assets/wood-background.jpg" id="1_488j0"]
+[ext_resource type="PackedScene" uid="uid://djm14ahg7tlq6" path="res://src/scenes/game_objects/game_object.tscn" id="1_sr361"]
 
 [node name="Tabletop" type="Node"]
 
@@ -13,3 +14,9 @@ z_index = -5
 scale = Vector2(0.291556, 0.291556)
 texture = ExtResource("1_488j0")
 metadata/_edit_lock_ = true
+
+[node name="GameObject" parent="GameBoard" instance=ExtResource("1_sr361")]
+position = Vector2(179.648, 128.637)
+
+[node name="GameObject2" parent="GameBoard" instance=ExtResource("1_sr361")]
+position = Vector2(-344.792, -36.6625)
