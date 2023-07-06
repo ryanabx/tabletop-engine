@@ -2,3 +2,5 @@ res://src/scenes/game_objects/game_object.tscn
 res://src/scenes/screens/tabletop.tscn
 res://src/scenes/game_objects/collection.tscn
 res://src/scripts/game_objects/game_object.gd
+res://src/scripts/singletons/game_manager.gd
+res://src/scripts/screens/tabletop.gd

@@ -24,15 +24,16 @@ func _on_collision_area_input_event(viewport: Viewport, event, _shape_idx) -> vo
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			grabbable = event.pressed
 			if grabbable:
-				mouse_offset_vect = global_position - event.global_position
+				mouse_offset_vect = global_position - get_global_mouse_position()
 				_move_self_to_top()
-		elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-			_reset_selection_lock()
+				GameManager.set_mouse_state(GameManager.MOUSE_STATE.GRAB)
+			else:
+				GameManager.set_mouse_state(GameManager.MOUSE_STATE.BASIC)
 
 func _process(delta: float) -> void:
 	z_index = -get_index()
 	if grabbable and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		global_position = get_global_mouse_position()
+		global_position = get_global_mouse_position() + mouse_offset_vect
 	
 	modulate.b = 0.8 if _has_selection_lock() else 1.0
 
