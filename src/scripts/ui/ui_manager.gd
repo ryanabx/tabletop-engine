@@ -13,6 +13,7 @@ func _input(event: InputEvent):
 			add_child(rclick_menu)
 
 func destroy_rclick_menu():
+	rclick_menu._set_object_highlight(false)
 	rclick_menu.queue_free()
 	print("Right click menu destroyed")
 	rclick_menu = null

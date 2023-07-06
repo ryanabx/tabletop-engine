@@ -23,9 +23,14 @@ func _input(event: InputEvent) -> void:
 		if not get_global_rect().has_point(get_global_mouse_position()):
 			_ui_manager.destroy_rclick_menu()
 
+func _set_object_highlight(highlight: bool):
+	if associated_object != null:
+		associated_object.modulate.g = 0.8 if highlight else 1.0
+
 func _populate_right_click_menu():
 	match menu_type:
 		RIGHT_CLICK_MENU_TYPE.GAME_OBJECT:
+			_set_object_highlight(true)
 			var go_to_back = RightClickMenuButton.new(self, RightClickMenuButton.MENU_BUTTON_TYPE.BLANK)
 			go_to_back.text = "Go to back"
 			add_child(go_to_back)
