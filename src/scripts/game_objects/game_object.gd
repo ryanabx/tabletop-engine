@@ -4,6 +4,7 @@ extends Sprite2D
 enum GAME_OBJECT_STATE {
 	OPEN,
 	GRABBED,
+	RIGHT_CLICKED,
 	IN_STACK
 }
 
@@ -34,19 +35,34 @@ func _on_collision_area_input_event(viewport: Viewport, event, _shape_idx) -> vo
 			if grabbable:
 				mouse_offset_vect = global_position - get_global_mouse_position()
 				_move_self_to_top()
+				object_state = GAME_OBJECT_STATE.GRABBED
 				GameManager.set_mouse_state(GameManager.MOUSE_STATE.GRAB)
 			else:
+				object_state = GAME_OBJECT_STATE.OPEN
 				GameManager.set_mouse_state(GameManager.MOUSE_STATE.BASIC)
+
+func set_my_state(state: GAME_OBJECT_STATE) -> void:
+	object_state = state
 
 func _process(delta: float) -> void:
 	z_index = -get_index()
-	if grabbable and GameManager.has_selection_lock(self) and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+	if object_state == GAME_OBJECT_STATE.GRABBED and GameManager.has_selection_lock(self) and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		global_position = get_global_mouse_position() + mouse_offset_vect
-		object_state = GAME_OBJECT_STATE.GRABBED
-	else:
-		object_state = GAME_OBJECT_STATE.OPEN
-	
-	modulate.b = 0.8 if GameManager.has_selection_lock(self) else 1.0
+	_set_modulate_from_state() # Set colors based on what state the object is in
+
+func _set_modulate_from_state():
+	match object_state:
+		GAME_OBJECT_STATE.OPEN:
+			modulate.b = 1.0
+			modulate.g = 1.0
+		GAME_OBJECT_STATE.GRABBED:
+			modulate.b = 0.6
+			modulate.g = 1.0
+		GAME_OBJECT_STATE.RIGHT_CLICKED:
+			modulate.b = 1.0
+			modulate.g = 0.6
+		_:
+			pass
 
 func _move_self_to_top() -> void:
 	if parent:

@@ -36,15 +36,10 @@ scale = Vector2(0.300752, 0.254237)
 texture = ExtResource("1_488j0")
 metadata/_edit_lock_ = true
 
-[node name="UiManager" type="Control" parent="."]
-z_index = 100
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="UiManager" type="CanvasLayer" parent="."]
+layer = 100
 script = ExtResource("4_gt2ye")
 
 [node name="MouseStateLabel" type="Label" parent="UiManager"]
-layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0

@@ -18,20 +18,21 @@ func _init(menu_type: RIGHT_CLICK_MENU_TYPE, associated_object: GameObject, ui_m
 func _ready() -> void:
 	_populate_right_click_menu()
 
-func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		if not get_global_rect().has_point(get_global_mouse_position()):
-			_ui_manager.destroy_rclick_menu()
+func destroy_menu():
+	_ui_manager.destroy_rclick_menu()
 
 func _set_object_highlight(highlight: bool):
 	if associated_object != null:
-		associated_object.modulate.g = 0.8 if highlight else 1.0
+		if highlight:
+			associated_object.set_my_state(GameObject.GAME_OBJECT_STATE.RIGHT_CLICKED)
+		else:
+			associated_object.set_my_state(GameObject.GAME_OBJECT_STATE.OPEN)			
 
 func _populate_right_click_menu():
 	match menu_type:
 		RIGHT_CLICK_MENU_TYPE.GAME_OBJECT:
 			_set_object_highlight(true)
-			var go_to_back = RightClickMenuButton.new(self, RightClickMenuButton.MENU_BUTTON_TYPE.BLANK)
+			var go_to_back = RightClickMenuButton.new(self, RightClickMenuButton.MENU_BUTTON_TYPE.BLANK, RightClickMenuButton.MENU_BUTTON_FUNCTIONALITY.GO_TO_BACK)
 			go_to_back.text = "Go to back"
 			add_child(go_to_back)
 		_:
@@ -42,6 +43,5 @@ func _determine_right_click_type():
 		return RIGHT_CLICK_MENU_TYPE.GAME_OBJECT
 	return RIGHT_CLICK_MENU_TYPE.BLANK
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
+func get_associated_object() -> GameObject:
+	return associated_object
