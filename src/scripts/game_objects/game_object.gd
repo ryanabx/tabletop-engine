@@ -19,12 +19,12 @@ func _on_collision_area_mouse_entered() -> void:
 func _on_collision_area_mouse_exited() -> void:
 	_release_selection_lock()
 
-func _on_collision_area_input_event(_viewport, event, _shape_idx) -> void:
+func _on_collision_area_input_event(viewport: Viewport, event, _shape_idx) -> void:
 	if event is InputEventMouseButton and _has_selection_lock():
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			grabbable = event.pressed
 			if grabbable:
-				mouse_offset_vect = global_position - event.global_position + get_viewport_transform().origin
+				mouse_offset_vect = global_position - event.global_position
 				_move_self_to_top()
 		elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 			_reset_selection_lock()
@@ -32,7 +32,7 @@ func _on_collision_area_input_event(_viewport, event, _shape_idx) -> void:
 func _process(delta: float) -> void:
 	z_index = -get_index()
 	if grabbable and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		global_position = get_global_mouse_position() + mouse_offset_vect
+		global_position = get_global_mouse_position()
 	
 	modulate.b = 0.8 if _has_selection_lock() else 1.0
 

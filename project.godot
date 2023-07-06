@@ -18,6 +18,12 @@ config/icon="res://icon.svg"
 
 GameManager="*res://src/scripts/singletons/game_manager.gd"
 
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
