@@ -1,6 +1,14 @@
 class_name GameObject
 extends Sprite2D
 
+enum GAME_OBJECT_STATE {
+	OPEN,
+	GRABBED,
+	IN_STACK
+}
+
+var object_state: GAME_OBJECT_STATE = GAME_OBJECT_STATE.OPEN
+
 var grabbable: bool = false
 var mouse_offset_vect: Vector2 = Vector2.ZERO
 
@@ -32,8 +40,11 @@ func _on_collision_area_input_event(viewport: Viewport, event, _shape_idx) -> vo
 
 func _process(delta: float) -> void:
 	z_index = -get_index()
-	if grabbable and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+	if grabbable and _has_selection_lock() and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		global_position = get_global_mouse_position() + mouse_offset_vect
+		object_state = GAME_OBJECT_STATE.GRABBED
+	else:
+		object_state = GAME_OBJECT_STATE.OPEN
 	
 	modulate.b = 0.8 if _has_selection_lock() else 1.0
 
@@ -45,7 +56,6 @@ func _grab_selection_lock() -> void:
 	while GameManager.item_selected.size() > index and GameManager.item_selected[index].get_index() < get_index():
 		index+=1
 	GameManager.item_selected.insert(index, self)
-	print("Item inserted at ",index, self.get_name())
 
 func _release_selection_lock() -> void:
 	GameManager.item_selected.erase(self)

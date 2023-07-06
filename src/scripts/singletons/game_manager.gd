@@ -15,3 +15,6 @@ func set_mouse_state(state: MOUSE_STATE) -> void:
 
 func get_mouse_state() -> MOUSE_STATE:
 	return _current_mouse_state
+
+func highlighted_over_item() -> bool:
+	return item_selected.size() > 0

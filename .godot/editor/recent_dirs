@@ -1,3 +1,5 @@
+res://src/scripts/ui
+res://src/scenes/ui
 res://src/scripts/screens
 res://src/scripts/singletons
 res://src/scripts/game_objects
