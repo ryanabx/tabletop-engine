@@ -1,8 +1,20 @@
-[gd_scene load_steps=3 format=3 uid="uid://djm14ahg7tlq6"]
+[gd_scene load_steps=4 format=3 uid="uid://djm14ahg7tlq6"]
 
 [ext_resource type="Script" path="res://src/scripts/game_objects/game_object.gd" id="1_igoix"]
 [ext_resource type="Texture2D" uid="uid://dajj2a4yaia1f" path="res://icon.svg" id="2_elbe6"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5t8y7"]
+
 [node name="GameObject" type="Sprite2D"]
 texture = ExtResource("2_elbe6")
 script = ExtResource("1_igoix")
+
+[node name="CollisionArea" type="Area2D" parent="."]
+monitoring = false
+monitorable = false
+
+[node name="CollisionBox" type="CollisionShape2D" parent="CollisionArea"]
+shape = SubResource("RectangleShape2D_5t8y7")
+
+[connection signal="mouse_entered" from="CollisionArea" to="." method="_on_collision_area_mouse_entered"]
+[connection signal="mouse_exited" from="CollisionArea" to="." method="_on_collision_area_mouse_exited"]
