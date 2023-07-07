@@ -102,18 +102,27 @@ func _set_modulate_from_state() -> void:
 			modulate.a = 1.0
 			modulate.b = 1.0
 			modulate.g = 1.0
+			scale = default_scale
 		GAME_OBJECT_STATE.GRABBED:
 			modulate.a = 1.0
 			modulate.b = 0.6
 			modulate.g = 1.0
+			scale = default_scale
 		GAME_OBJECT_STATE.RIGHT_CLICKED:
 			modulate.a = 1.0
 			modulate.b = 1.0
 			modulate.g = 0.6
+			scale = default_scale
 		GAME_OBJECT_STATE.IN_STACK:
 			modulate.a = 0.5
 			modulate.b = 1.0
 			modulate.g = 1.0
+			scale = default_scale
+		GAME_OBJECT_STATE.GRABBED_OVER_COLLECTION:
+			modulate.a = 0.9
+			modulate.b = 1.0
+			modulate.g = 1.0
+			scale = default_scale * 1.05
 		_:
 			pass
 
