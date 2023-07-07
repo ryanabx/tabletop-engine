@@ -12,7 +12,6 @@ func _input(event: InputEvent):
 			else:
 				rclick_menu = RightClickMenu.new(RightClickMenu.RIGHT_CLICK_MENU_TYPE.GAME_OBJECT, GameManager.get_highlighted_item(), self)
 				rclick_menu.global_position = get_viewport().get_mouse_position()
-				print("Created right click menu!")
 				add_child(rclick_menu)
 	elif event is InputEventMouseButton and rclick_menu != null and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		if not rclick_menu.get_global_rect().has_point(rclick_menu.get_global_mouse_position()):
@@ -21,6 +20,5 @@ func _input(event: InputEvent):
 func destroy_rclick_menu():
 	rclick_menu._set_object_highlight(false)
 	rclick_menu.queue_free()
-	print("Right click menu destroyed")
 	rclick_menu = null
 	
