@@ -21,7 +21,6 @@ func _init(parent: RightClickMenu, button_type: MENU_BUTTON_TYPE, button_functio
 	self._parent = parent
 	self._button_type = button_type
 	self._button_functionality = button_functionality
-	print(self._button_functionality)
 	self.pressed.connect(_on_pressed)
 	
 
