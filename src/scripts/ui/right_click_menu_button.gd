@@ -8,7 +8,8 @@ enum MENU_BUTTON_TYPE {
 enum MENU_BUTTON_FUNCTIONALITY {
 	BLANK,
 	GO_TO_BACK,
-	GO_TO_FRONT
+	GO_TO_FRONT,
+	FLIP_OBJECT
 }
 
 var _button_type: MENU_BUTTON_TYPE = MENU_BUTTON_TYPE.BLANK
@@ -37,4 +38,8 @@ func _on_pressed() -> void:
 		MENU_BUTTON_FUNCTIONALITY.GO_TO_BACK:
 			print("Sending object to back!")
 			_parent.get_associated_object()._move_self_to_back()
+			_parent.destroy_menu()
+		MENU_BUTTON_FUNCTIONALITY.FLIP_OBJECT:
+			print("Flipping object")
+			_parent.get_associated_object().flip_over()
 			_parent.destroy_menu()

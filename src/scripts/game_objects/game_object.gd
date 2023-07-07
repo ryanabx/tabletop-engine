@@ -8,6 +8,12 @@ enum GAME_OBJECT_STATE {
 	IN_STACK
 }
 
+enum GAME_OBJECT_SIDES {
+	FACE_UP,
+	FACE_DOWN
+}
+
+var _object_side: GAME_OBJECT_SIDES = GAME_OBJECT_SIDES.FACE_UP
 var object_state: GAME_OBJECT_STATE = GAME_OBJECT_STATE.OPEN
 var mouse_offset_vect: Vector2 = Vector2.ZERO
 
@@ -31,7 +37,7 @@ func _on_collision_area_mouse_entered() -> void:
 func _on_collision_area_mouse_exited() -> void:
 	GameManager.release_selection_lock(self)
 
-func _on_collision_area_input_event(viewport: Viewport, event, _shape_idx) -> void:
+func _on_collision_area_input_event(_viewport: Viewport, event, _shape_idx) -> void:
 	if event is InputEventMouseButton and GameManager.has_selection_lock(self):
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
@@ -45,8 +51,15 @@ func _on_collision_area_input_event(viewport: Viewport, event, _shape_idx) -> vo
 
 func set_my_state(state: GAME_OBJECT_STATE) -> void:
 	object_state = state
+	
+func get_state() -> GAME_OBJECT_STATE:
+	return object_state
 
-func _process(delta: float) -> void:
+func flip_over() -> void:
+	print("Flip sides")
+	_object_side = GAME_OBJECT_SIDES.FACE_DOWN if _object_side == GAME_OBJECT_SIDES.FACE_UP else GAME_OBJECT_SIDES.FACE_DOWN
+
+func _process(_delta: float) -> void:
 	z_index = -get_index()
 	if object_state == GAME_OBJECT_STATE.GRABBED and GameManager.has_selection_lock(self) and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		global_position = get_global_mouse_position() + mouse_offset_vect
@@ -75,3 +88,8 @@ func _move_self_to_back() -> void:
 	if parent:
 		parent.move_child(self, -1)
 		GameManager.refresh_selection(self)
+
+
+class GameObjectData:
+	var image_front: Image
+	var image_back: Image

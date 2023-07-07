@@ -6,13 +6,13 @@ enum RIGHT_CLICK_MENU_TYPE {
 	GAME_OBJECT
 }
 
-var menu_type: RIGHT_CLICK_MENU_TYPE
-var associated_object: GameObject = null
+var _menu_type: RIGHT_CLICK_MENU_TYPE
+var _associated_object: GameObject = null
 var _ui_manager: UiManager
 
 func _init(menu_type: RIGHT_CLICK_MENU_TYPE, associated_object: GameObject, ui_manager: UiManager) -> void:
-	self.menu_type = menu_type
-	self.associated_object = associated_object
+	self._menu_type = menu_type
+	self._associated_object = associated_object
 	self._ui_manager = ui_manager
 
 func _ready() -> void:
@@ -22,18 +22,24 @@ func destroy_menu():
 	_ui_manager.destroy_rclick_menu()
 
 func _set_object_highlight(highlight: bool):
-	if associated_object != null:
+	if _associated_object != null:
 		if highlight:
-			associated_object.set_my_state(GameObject.GAME_OBJECT_STATE.RIGHT_CLICKED)
+			_associated_object.set_my_state(GameObject.GAME_OBJECT_STATE.RIGHT_CLICKED)
 		else:
-			associated_object.set_my_state(GameObject.GAME_OBJECT_STATE.OPEN)			
+			_associated_object.set_my_state(GameObject.GAME_OBJECT_STATE.OPEN)			
 
 func _populate_right_click_menu():
-	match menu_type:
+	match _menu_type:
 		RIGHT_CLICK_MENU_TYPE.GAME_OBJECT:
 			_set_object_highlight(true)
+			var flip_object = RightClickMenuButton.new(self, RightClickMenuButton.MENU_BUTTON_TYPE.BLANK, RightClickMenuButton.MENU_BUTTON_FUNCTIONALITY.FLIP_OBJECT)
+			flip_object.text = "Flip object"
+			add_child(flip_object)
+			var go_to_front = RightClickMenuButton.new(self, RightClickMenuButton.MENU_BUTTON_TYPE.BLANK, RightClickMenuButton.MENU_BUTTON_FUNCTIONALITY.GO_TO_FRONT)
+			go_to_front.text = "Bring to front"
+			add_child(go_to_front)
 			var go_to_back = RightClickMenuButton.new(self, RightClickMenuButton.MENU_BUTTON_TYPE.BLANK, RightClickMenuButton.MENU_BUTTON_FUNCTIONALITY.GO_TO_BACK)
-			go_to_back.text = "Go to back"
+			go_to_back.text = "Send to back"
 			add_child(go_to_back)
 		_:
 			return
@@ -44,4 +50,4 @@ func _determine_right_click_type():
 	return RIGHT_CLICK_MENU_TYPE.BLANK
 
 func get_associated_object() -> GameObject:
-	return associated_object
+	return _associated_object
