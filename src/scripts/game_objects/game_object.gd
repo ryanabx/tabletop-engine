@@ -26,11 +26,14 @@ func _ready() -> void:
 	if self.get_parent():
 		parent = self.get_parent()
 	collision_box.shape.size = get_rect().size # Set collision box to match the sprite
+	_connect_signals()
 
 func _connect_signals() -> void:
 	collision_area.input_event.connect(_on_collision_area_input_event)
 	collision_area.mouse_entered.connect(_on_collision_area_mouse_entered)
 	collision_area.mouse_exited.connect(_on_collision_area_mouse_exited)
+	collision_area.area_entered.connect(_on_collision_area_area_entered)
+	collision_area.area_exited.connect(_on_collision_area_area_exited)
 
 func _input(event: InputEvent) -> void:
 	if get_state() == GAME_OBJECT_STATE.GRABBED and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and event is InputEventMouseMotion:
@@ -64,6 +67,12 @@ func _on_collision_area_input_event(_viewport: Viewport, event, _shape_idx) -> v
 			elif get_state() == GAME_OBJECT_STATE.GRABBED or get_state() == GAME_OBJECT_STATE.RIGHT_CLICKED:
 				_check_for_collections_then_open()
 
+func _on_collision_area_area_entered(area: Area2D) -> void:
+	scale *= 1.2
+
+func _on_collision_area_area_exited(area: Area2D) -> void:
+	scale /= 1.2
+
 func set_my_state(state: GAME_OBJECT_STATE) -> void:
 	_object_state = state
 	
@@ -79,7 +88,6 @@ func _process(_delta: float) -> void:
 	if get_state() == GAME_OBJECT_STATE.GRABBED and GameManager.has_selection_lock(self) and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		global_position = get_global_mouse_position() + mouse_offset_vect
 	_set_modulate_from_state() # Set colors based on what state the object is in
-	_set_scale_from_overlapping_collections()
 
 func _set_modulate_from_state() -> void:
 	match get_state():
@@ -101,12 +109,6 @@ func _set_modulate_from_state() -> void:
 			modulate.g = 1.0
 		_:
 			pass
-
-func _set_scale_from_overlapping_collections() -> void:
-	if collision_area.has_overlapping_areas():
-		scale = Vector2(1.03, 1.03)
-	else:
-		scale = Vector2(1.0, 1.0)
 
 func _move_self_to_top() -> void:
 	if parent:
