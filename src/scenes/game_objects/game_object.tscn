@@ -10,7 +10,7 @@ texture = ExtResource("2_elbe6")
 script = ExtResource("1_igoix")
 
 [node name="CollisionArea" type="Area2D" parent="."]
-monitoring = false
+collision_mask = 2
 monitorable = false
 
 [node name="CollisionBox" type="CollisionShape2D" parent="CollisionArea"]

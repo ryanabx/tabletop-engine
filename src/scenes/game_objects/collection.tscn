@@ -1,9 +1,20 @@
-[gd_scene load_steps=3 format=3 uid="uid://u26fevpbhaf"]
+[gd_scene load_steps=4 format=3 uid="uid://u26fevpbhaf"]
 
 [ext_resource type="Texture2D" uid="uid://cgl436kyj0iv" path="res://src/assets/black-pixel.png" id="1_ksjt0"]
 [ext_resource type="Script" path="res://src/scripts/game_objects/collection.gd" id="2_6tgl3"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pa3j0"]
+size = Vector2(1, 1)
+
 [node name="Collection" type="Sprite2D"]
-scale = Vector2(256.5, 256.5)
+scale = Vector2(512, 256)
 texture = ExtResource("1_ksjt0")
 script = ExtResource("2_6tgl3")
+
+[node name="CollisionArea" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionBox" type="CollisionShape2D" parent="CollisionArea"]
+shape = SubResource("RectangleShape2D_pa3j0")

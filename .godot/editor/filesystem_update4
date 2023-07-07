@@ -9,3 +9,4 @@ res://src/scripts/ui/right_click_menu.gd
 res://src/scripts/ui/ui_manager.gd
 res://src/scripts/ui/right_click_menu_button.gd
 res://src/scripts/game_objects/collection.gd
+res://src/scenes/game_objects/collection.tscn
