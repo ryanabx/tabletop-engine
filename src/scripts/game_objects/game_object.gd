@@ -39,16 +39,17 @@ func _connect_signals() -> void:
 	collision_area.area_exited.connect(_on_collision_area_area_exited)
 
 func _input(event: InputEvent) -> void:
-	if get_state() == GAME_OBJECT_STATE.GRABBED and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and event is InputEventMouseMotion:
-		_check_for_collections_then_open()
+	if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and event is InputEventMouseMotion:
+		_check_for_collections_then_stack()
 
-func _check_for_collections_then_open() -> void:
-	if collision_area.has_overlapping_areas(): # A collection is overlapping with a game object
-		var overlapping_object: GameCollection = collision_area.get_overlapping_areas()[0].get_parent()
-		add_to_collection(overlapping_object)
-	else: # No collection is overlapping, go back to open state
+func _check_for_collections_then_stack() -> void:
+	if get_state() == GAME_OBJECT_STATE.GRABBED:
 		set_my_state(GAME_OBJECT_STATE.OPEN)
 		GameManager.set_mouse_state(GameManager.MOUSE_STATE.BASIC)
+	elif get_state() == GAME_OBJECT_STATE.GRABBED_OVER_COLLECTION and collision_area.has_overlapping_areas():
+		var overlapping_object: GameCollection = collision_area.get_overlapping_areas()[0].get_parent()
+		add_to_collection(overlapping_object)
+	
 
 func add_to_collection(coll: GameCollection):
 	set_my_state(GAME_OBJECT_STATE.IN_STACK)
@@ -68,7 +69,7 @@ func _on_collision_area_input_event(_viewport: Viewport, event, _shape_idx) -> v
 				set_my_state(GAME_OBJECT_STATE.GRABBED)
 				GameManager.set_mouse_state(GameManager.MOUSE_STATE.GRAB)
 			elif get_state() == GAME_OBJECT_STATE.GRABBED or get_state() == GAME_OBJECT_STATE.RIGHT_CLICKED:
-				_check_for_collections_then_open()
+				_check_for_collections_then_stack()
 
 func _on_collision_area_area_entered(area: Area2D) -> void:
 	if get_state() == GAME_OBJECT_STATE.GRABBED:
@@ -91,7 +92,7 @@ func flip_over() -> void:
 
 func _process(_delta: float) -> void:
 	z_index = -get_index()
-	if get_state() == GAME_OBJECT_STATE.GRABBED and GameManager.has_selection_lock(self) and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+	if (get_state() == GAME_OBJECT_STATE.GRABBED or get_state() == GAME_OBJECT_STATE.GRABBED_OVER_COLLECTION) and GameManager.has_selection_lock(self) and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		global_position = get_global_mouse_position() + mouse_offset_vect
 	_set_modulate_from_state() # Set colors based on what state the object is in
 
