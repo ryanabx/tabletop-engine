@@ -14,7 +14,7 @@ enum GAME_OBJECT_SIDES {
 }
 
 var _object_side: GAME_OBJECT_SIDES = GAME_OBJECT_SIDES.FACE_UP
-var object_state: GAME_OBJECT_STATE = GAME_OBJECT_STATE.OPEN
+var _object_state: GAME_OBJECT_STATE = GAME_OBJECT_STATE.OPEN
 var mouse_offset_vect: Vector2 = Vector2.ZERO
 
 var parent = null
@@ -28,7 +28,7 @@ func _ready() -> void:
 	collision_box.shape.size = get_rect().size # Set collision box to match the sprite
 
 func _input(event: InputEvent) -> void:
-	if object_state == GAME_OBJECT_STATE.GRABBED and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and event is InputEventMouseMotion:
+	if get_state() == GAME_OBJECT_STATE.GRABBED and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and event is InputEventMouseMotion:
 		_check_for_collections_then_open()
 
 func _check_for_collections_then_open() -> void:
@@ -36,11 +36,11 @@ func _check_for_collections_then_open() -> void:
 		var overlapping_object: GameCollection = collision_area.get_overlapping_areas()[0].get_parent()
 		add_to_collection(overlapping_object)
 	else: # No collection is overlapping, go back to open state
-		object_state = GAME_OBJECT_STATE.OPEN
+		set_my_state(GAME_OBJECT_STATE.OPEN)
 		GameManager.set_mouse_state(GameManager.MOUSE_STATE.BASIC)
 
 func add_to_collection(coll: GameCollection):
-	object_state = GAME_OBJECT_STATE.IN_STACK
+	set_my_state(GAME_OBJECT_STATE.IN_STACK)
 
 func _on_collision_area_mouse_entered() -> void:
 	GameManager.grab_selection_lock(self)
@@ -51,19 +51,19 @@ func _on_collision_area_mouse_exited() -> void:
 func _on_collision_area_input_event(_viewport: Viewport, event, _shape_idx) -> void:
 	if event is InputEventMouseButton and GameManager.has_selection_lock(self):
 		if event.button_index == MOUSE_BUTTON_LEFT:
-			if event.pressed and object_state == GAME_OBJECT_STATE.OPEN:
+			if event.pressed and get_state() == GAME_OBJECT_STATE.OPEN:
 				mouse_offset_vect = global_position - get_global_mouse_position()
 				_move_self_to_top()
-				object_state = GAME_OBJECT_STATE.GRABBED
+				set_my_state(GAME_OBJECT_STATE.GRABBED)
 				GameManager.set_mouse_state(GameManager.MOUSE_STATE.GRAB)
-			elif object_state == GAME_OBJECT_STATE.GRABBED or object_state == GAME_OBJECT_STATE.RIGHT_CLICKED:
+			elif get_state() == GAME_OBJECT_STATE.GRABBED or get_state() == GAME_OBJECT_STATE.RIGHT_CLICKED:
 				_check_for_collections_then_open()
 
 func set_my_state(state: GAME_OBJECT_STATE) -> void:
-	object_state = state
+	_object_state = state
 	
 func get_state() -> GAME_OBJECT_STATE:
-	return object_state
+	return _object_state
 
 func flip_over() -> void:
 	print("Flip sides")
@@ -71,13 +71,13 @@ func flip_over() -> void:
 
 func _process(_delta: float) -> void:
 	z_index = -get_index()
-	if object_state == GAME_OBJECT_STATE.GRABBED and GameManager.has_selection_lock(self) and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+	if get_state() == GAME_OBJECT_STATE.GRABBED and GameManager.has_selection_lock(self) and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		global_position = get_global_mouse_position() + mouse_offset_vect
 	_set_modulate_from_state() # Set colors based on what state the object is in
 	_set_scale_from_overlapping_collections()
 
 func _set_modulate_from_state() -> void:
-	match object_state:
+	match get_state():
 		GAME_OBJECT_STATE.OPEN:
 			modulate.a = 1.0
 			modulate.b = 1.0
