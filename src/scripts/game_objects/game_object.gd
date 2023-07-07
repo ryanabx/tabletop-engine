@@ -4,6 +4,7 @@ extends Sprite2D
 enum GAME_OBJECT_STATE {
 	OPEN,
 	GRABBED,
+	GRABBED_OVER_COLLECTION,
 	RIGHT_CLICKED,
 	IN_STACK
 }
@@ -18,6 +19,7 @@ var _object_state: GAME_OBJECT_STATE = GAME_OBJECT_STATE.OPEN
 var mouse_offset_vect: Vector2 = Vector2.ZERO
 
 var parent = null
+var default_scale: Vector2 = Vector2.ONE
 
 @onready var collision_area = $CollisionArea
 @onready var collision_box = $CollisionArea/CollisionBox
@@ -26,6 +28,7 @@ func _ready() -> void:
 	if self.get_parent():
 		parent = self.get_parent()
 	collision_box.shape.size = get_rect().size # Set collision box to match the sprite
+	default_scale = scale
 	_connect_signals()
 
 func _connect_signals() -> void:
@@ -68,13 +71,16 @@ func _on_collision_area_input_event(_viewport: Viewport, event, _shape_idx) -> v
 				_check_for_collections_then_open()
 
 func _on_collision_area_area_entered(area: Area2D) -> void:
-	scale *= 1.2
+	if get_state() == GAME_OBJECT_STATE.GRABBED:
+		set_my_state(GAME_OBJECT_STATE.GRABBED_OVER_COLLECTION)
 
 func _on_collision_area_area_exited(area: Area2D) -> void:
-	scale /= 1.2
+	if get_state() == GAME_OBJECT_STATE.GRABBED_OVER_COLLECTION:
+		set_my_state(GAME_OBJECT_STATE.GRABBED)
 
-func set_my_state(state: GAME_OBJECT_STATE) -> void:
+func set_my_state(state: GAME_OBJECT_STATE) -> bool:
 	_object_state = state
+	return true
 	
 func get_state() -> GAME_OBJECT_STATE:
 	return _object_state
