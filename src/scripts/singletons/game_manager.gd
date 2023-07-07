@@ -33,3 +33,11 @@ func grab_selection_lock(obj: GameObject) -> void:
 
 func release_selection_lock(obj: GameObject) -> void:
 	_item_selected.erase(obj)
+
+func in_selection_pool(obj: GameObject) -> bool:
+	return _item_selected.has(obj)
+
+func refresh_selection(obj: GameObject) -> void:
+	if in_selection_pool(obj):
+		release_selection_lock(obj)
+		grab_selection_lock(obj)

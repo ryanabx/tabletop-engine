@@ -9,8 +9,6 @@ enum GAME_OBJECT_STATE {
 }
 
 var object_state: GAME_OBJECT_STATE = GAME_OBJECT_STATE.OPEN
-
-var grabbable: bool = false
 var mouse_offset_vect: Vector2 = Vector2.ZERO
 
 var parent = null
@@ -22,6 +20,11 @@ func _ready() -> void:
 		parent = self.get_parent()
 	collision_box.shape.size = get_rect().size # Set collision box to match the sprite
 
+func _input(event: InputEvent) -> void:
+	if object_state == GAME_OBJECT_STATE.GRABBED and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and event is InputEventMouseMotion:
+		object_state = GAME_OBJECT_STATE.OPEN
+		GameManager.set_mouse_state(GameManager.MOUSE_STATE.BASIC)
+
 func _on_collision_area_mouse_entered() -> void:
 	GameManager.grab_selection_lock(self)
 
@@ -31,8 +34,7 @@ func _on_collision_area_mouse_exited() -> void:
 func _on_collision_area_input_event(viewport: Viewport, event, _shape_idx) -> void:
 	if event is InputEventMouseButton and GameManager.has_selection_lock(self):
 		if event.button_index == MOUSE_BUTTON_LEFT:
-			grabbable = event.pressed
-			if grabbable:
+			if event.pressed:
 				mouse_offset_vect = global_position - get_global_mouse_position()
 				_move_self_to_top()
 				object_state = GAME_OBJECT_STATE.GRABBED
@@ -67,7 +69,9 @@ func _set_modulate_from_state():
 func _move_self_to_top() -> void:
 	if parent:
 		parent.move_child(self, 0)
+		GameManager.refresh_selection(self)
 
 func _move_self_to_back() -> void:
 	if parent:
 		parent.move_child(self, -1)
+		GameManager.refresh_selection(self)
