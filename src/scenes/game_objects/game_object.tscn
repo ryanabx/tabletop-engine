@@ -15,7 +15,3 @@ monitorable = false
 
 [node name="CollisionBox" type="CollisionShape2D" parent="CollisionArea"]
 shape = SubResource("RectangleShape2D_5t8y7")
-
-[connection signal="input_event" from="CollisionArea" to="." method="_on_collision_area_input_event"]
-[connection signal="mouse_entered" from="CollisionArea" to="." method="_on_collision_area_mouse_entered"]
-[connection signal="mouse_exited" from="CollisionArea" to="." method="_on_collision_area_mouse_exited"]

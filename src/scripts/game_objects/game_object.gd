@@ -27,6 +27,11 @@ func _ready() -> void:
 		parent = self.get_parent()
 	collision_box.shape.size = get_rect().size # Set collision box to match the sprite
 
+func _connect_signals() -> void:
+	collision_area.input_event.connect(_on_collision_area_input_event)
+	collision_area.mouse_entered.connect(_on_collision_area_mouse_entered)
+	collision_area.mouse_exited.connect(_on_collision_area_mouse_exited)
+
 func _input(event: InputEvent) -> void:
 	if get_state() == GAME_OBJECT_STATE.GRABBED and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and event is InputEventMouseMotion:
 		_check_for_collections_then_open()
