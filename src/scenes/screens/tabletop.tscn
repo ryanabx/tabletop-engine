@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://bd0t8uq0xv6wr"]
+[gd_scene load_steps=7 format=3 uid="uid://bd0t8uq0xv6wr"]
 
 [ext_resource type="Texture2D" uid="uid://cbpxdhvy0dyht" path="res://src/assets/wood-background.jpg" id="1_488j0"]
 [ext_resource type="Script" path="res://src/scripts/screens/tabletop.gd" id="1_cv5do"]
 [ext_resource type="PackedScene" uid="uid://djm14ahg7tlq6" path="res://src/scenes/game_objects/game_object.tscn" id="1_sr361"]
+[ext_resource type="Script" path="res://src/scripts/game_objects/game_board.gd" id="2_lhyvx"]
 [ext_resource type="PackedScene" uid="uid://u26fevpbhaf" path="res://src/scenes/game_objects/collection.tscn" id="2_ngnpu"]
 [ext_resource type="Script" path="res://src/scripts/ui/ui_manager.gd" id="4_gt2ye"]
 
@@ -10,6 +11,7 @@
 script = ExtResource("1_cv5do")
 
 [node name="GameBoard" type="Node2D" parent="."]
+script = ExtResource("2_lhyvx")
 
 [node name="Collections" type="Node2D" parent="GameBoard"]
 

@@ -3,8 +3,13 @@ extends CanvasLayer
 
 var rclick_menu: RightClickMenu = null
 
+var parent: Tabletop = null
 
-func _input(event: InputEvent):
+func _ready() -> void:
+	if get_parent() != null:
+		parent = get_parent()
+
+func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		if rclick_menu == null and GameManager.highlighted_over_item():
 			if GameManager.get_highlighted_item().get_state() == GameObject.GAME_OBJECT_STATE.GRABBED or GameManager.get_highlighted_item().get_state() == GameObject.GAME_OBJECT_STATE.GRABBED_OVER_COLLECTION:

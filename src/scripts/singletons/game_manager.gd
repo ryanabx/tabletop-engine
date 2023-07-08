@@ -4,7 +4,6 @@ var _item_selected: Array = []
 
 var _current_mouse_state: MOUSE_STATE = MOUSE_STATE.BASIC
 
-
 enum MOUSE_STATE {
 	BASIC,
 	GRAB
@@ -41,3 +40,9 @@ func refresh_selection(obj: GameObject) -> void:
 	if in_selection_pool(obj):
 		release_selection_lock(obj)
 		grab_selection_lock(obj)
+
+func get_bounds() -> Rect2:
+	return get_viewport().get_visible_rect()
+
+func get_tabletop() -> Tabletop:
+	return get_node("/root/Tabletop") as Tabletop

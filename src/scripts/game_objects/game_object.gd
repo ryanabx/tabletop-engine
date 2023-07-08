@@ -3,6 +3,7 @@ extends Sprite2D
 
 enum GAME_OBJECT_STATE {
 	OPEN,
+	SELECTION_LOCKED,
 	GRABBED,
 	GRABBED_OVER_COLLECTION,
 	RIGHT_CLICKED,
@@ -58,7 +59,8 @@ func _on_collision_area_mouse_entered() -> void:
 	GameManager.grab_selection_lock(self)
 
 func _on_collision_area_mouse_exited() -> void:
-	GameManager.release_selection_lock(self)
+	if not (get_state() == GAME_OBJECT_STATE.GRABBED or get_state() == GAME_OBJECT_STATE.GRABBED_OVER_COLLECTION) or not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		GameManager.release_selection_lock(self)
 
 func _on_collision_area_input_event(_viewport: Viewport, event, _shape_idx) -> void:
 	if event is InputEventMouseButton and GameManager.has_selection_lock(self):
@@ -80,21 +82,30 @@ func _on_collision_area_area_exited(area: Area2D) -> void:
 		set_my_state(GAME_OBJECT_STATE.GRABBED)
 
 func set_my_state(state: GAME_OBJECT_STATE) -> bool:
+	
 	_object_state = state
 	return true
+
+func _state_transition(prev: GAME_OBJECT_STATE, next: GAME_OBJECT_STATE) -> void:
+	
 	
 func get_state() -> GAME_OBJECT_STATE:
 	return _object_state
 
 func flip_over() -> void:
-	print("Flip sides")
 	_object_side = GAME_OBJECT_SIDES.FACE_DOWN if _object_side == GAME_OBJECT_SIDES.FACE_UP else GAME_OBJECT_SIDES.FACE_DOWN
 
 func _process(_delta: float) -> void:
 	z_index = -get_index()
 	if (get_state() == GAME_OBJECT_STATE.GRABBED or get_state() == GAME_OBJECT_STATE.GRABBED_OVER_COLLECTION) and GameManager.has_selection_lock(self) and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		global_position = get_global_mouse_position() + mouse_offset_vect
+		_move_if_safe()
 	_set_modulate_from_state() # Set colors based on what state the object is in
+
+func _move_if_safe() -> void:
+	var prev_position: Vector2 = global_position
+	global_position = get_global_mouse_position() + mouse_offset_vect
+	# if GameManager.get_bounds().encloses(get_rect()):
+		# global_position = prev_position
 
 func _set_modulate_from_state() -> void:
 	match get_state():
