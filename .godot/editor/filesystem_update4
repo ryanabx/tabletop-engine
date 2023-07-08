@@ -7,3 +7,4 @@ res://src/scripts/game_objects/game_object.gd
 res://src/scripts/game_objects/game_board.gd
 res://src/scripts/screens/tabletop.gd
 res://src/scripts/singletons/game_manager.gd
+res://src/scripts/ui/ui_manager.gd

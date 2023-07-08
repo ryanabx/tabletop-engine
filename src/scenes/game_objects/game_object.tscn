@@ -5,7 +5,7 @@
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5t8y7"]
 
-[node name="GameObject" type="Sprite2D"]
+[node name="GameObject" type="Sprite2D" groups=["game_object"]]
 texture = ExtResource("2_elbe6")
 script = ExtResource("1_igoix")
 

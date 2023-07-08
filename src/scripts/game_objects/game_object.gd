@@ -82,12 +82,8 @@ func _on_collision_area_area_exited(area: Area2D) -> void:
 		set_my_state(GAME_OBJECT_STATE.GRABBED)
 
 func set_my_state(state: GAME_OBJECT_STATE) -> bool:
-	
 	_object_state = state
 	return true
-
-func _state_transition(prev: GAME_OBJECT_STATE, next: GAME_OBJECT_STATE) -> void:
-	
 	
 func get_state() -> GAME_OBJECT_STATE:
 	return _object_state
