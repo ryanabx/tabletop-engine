@@ -14,10 +14,6 @@ config/name="open-boardgame-framework"
 config/features=PackedStringArray("4.1", "GL Compatibility")
 config/icon="res://icon.svg"
 
-[autoload]
-
-GameManager="*res://src/scripts/singletons/game_manager.gd"
-
 [display]
 
 window/size/viewport_width=1280

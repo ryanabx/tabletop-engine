@@ -52,6 +52,7 @@ func _select_object(obj: GameObject) -> void:
 	_selected_object = obj
 	print("Selecting")
 	_grab_offset = obj.position - get_local_mouse_position()
+	move_object_to_front(obj)
 	obj.select()
 
 func has_selected_object() -> bool:

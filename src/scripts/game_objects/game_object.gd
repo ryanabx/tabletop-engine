@@ -32,7 +32,6 @@ func select() -> void:
 	match get_state():
 		STATE.IDLE:
 			set_state(STATE.SELECTED)
-			(get_parent().get_parent() as GameBoard).move_object_to_front(self)
 		_:
 			print("WTF")
 
