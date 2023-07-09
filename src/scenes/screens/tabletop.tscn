@@ -1,11 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://bd0t8uq0xv6wr"]
+[gd_scene load_steps=5 format=3 uid="uid://bd0t8uq0xv6wr"]
 
 [ext_resource type="Texture2D" uid="uid://cbpxdhvy0dyht" path="res://src/assets/wood-background.jpg" id="1_488j0"]
 [ext_resource type="Script" path="res://src/scripts/screens/tabletop.gd" id="1_cv5do"]
 [ext_resource type="PackedScene" uid="uid://djm14ahg7tlq6" path="res://src/scenes/game_objects/game_object.tscn" id="1_sr361"]
 [ext_resource type="Script" path="res://src/scripts/game_objects/game_board.gd" id="2_lhyvx"]
-[ext_resource type="PackedScene" uid="uid://u26fevpbhaf" path="res://src/scenes/game_objects/collection.tscn" id="2_ngnpu"]
-[ext_resource type="Script" path="res://src/scripts/ui/ui_manager.gd" id="4_gt2ye"]
 
 [node name="Tabletop" type="Node"]
 script = ExtResource("1_cv5do")
@@ -13,66 +11,24 @@ script = ExtResource("1_cv5do")
 [node name="GameBoard" type="Node2D" parent="."]
 script = ExtResource("2_lhyvx")
 
-[node name="Collections" type="Node2D" parent="GameBoard"]
-
-[node name="Collection" parent="GameBoard/Collections" instance=ExtResource("2_ngnpu")]
-position = Vector2(-352, 216)
-
-[node name="GameObjects" type="Node2D" parent="GameBoard"]
+[node name="GameObjectManager" type="Node2D" parent="GameBoard"]
 z_index = 10
-metadata/_edit_lock_ = true
 
-[node name="GameObject" parent="GameBoard/GameObjects" instance=ExtResource("1_sr361")]
-position = Vector2(179.648, 128.637)
+[node name="GameObject" parent="GameBoard/GameObjectManager" instance=ExtResource("1_sr361")]
+position = Vector2(847.648, 544.637)
 
-[node name="GameObject2" parent="GameBoard/GameObjects" instance=ExtResource("1_sr361")]
-position = Vector2(-292, 4)
-scale = Vector2(0.5625, 0.5625)
+[node name="GameObject2" parent="GameBoard/GameObjectManager" instance=ExtResource("1_sr361")]
+position = Vector2(376, 420)
 
-[node name="GameObject3" parent="GameBoard/GameObjects" instance=ExtResource("1_sr361")]
-position = Vector2(-200, -224)
+[node name="GameObject3" parent="GameBoard/GameObjectManager" instance=ExtResource("1_sr361")]
+position = Vector2(468, 192)
 
-[node name="GameObject4" parent="GameBoard/GameObjects" instance=ExtResource("1_sr361")]
-position = Vector2(279.72, -98.2276)
-scale = Vector2(1.25437, 1.65981)
-
-[node name="BoardCamera" type="Camera2D" parent="GameBoard"]
-metadata/_edit_lock_ = true
+[node name="GameObject4" parent="GameBoard/GameObjectManager" instance=ExtResource("1_sr361")]
+position = Vector2(947.72, 317.772)
 
 [node name="BoardBG" type="Sprite2D" parent="GameBoard"]
 z_index = -500
-position = Vector2(8.10623e-05, 1.71661e-05)
+position = Vector2(640, 360)
 scale = Vector2(0.300752, 0.254237)
 texture = ExtResource("1_488j0")
 metadata/_edit_lock_ = true
-
-[node name="UiManager" type="CanvasLayer" parent="."]
-layer = 100
-script = ExtResource("4_gt2ye")
-
-[node name="MouseStateLabel" type="Label" parent="UiManager"]
-offset_right = 40.0
-offset_bottom = 23.0
-
-[node name="MainUi" type="Control" parent="UiManager"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="UiManager/MainUi"]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -112.0
-grow_horizontal = 2
-grow_vertical = 0
-
-[node name="ColorRect" type="ColorRect" parent="UiManager/MainUi/MarginContainer"]
-layout_mode = 2
-color = Color(0, 0, 0, 0.301961)
