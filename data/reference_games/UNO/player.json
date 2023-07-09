@@ -1,0 +1,16 @@
+{
+    "players": [
+        {
+            "name": "Player",
+            "amount": 4,
+            "personal_space": [
+                {
+                    "type": "hand",
+                    "location": [50, 50],
+                    "size": [50, 50],
+                    "inside": []
+                }
+            ]
+        }
+    ]
+}

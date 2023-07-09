@@ -1,0 +1,13 @@
+{
+    "actions": [
+        {
+            "name": "game_start",
+            "commands": [
+                {
+                "cmd": "shuffle",
+                "stack": "main"
+            }
+        ]
+        }
+    ]
+}

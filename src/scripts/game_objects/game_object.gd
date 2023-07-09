@@ -56,7 +56,7 @@ func revert_right_click() -> void:
 		_:
 			print("Wtf3")
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	state_label.text = state_to_string(get_state())
 	z_index = get_index()
 
