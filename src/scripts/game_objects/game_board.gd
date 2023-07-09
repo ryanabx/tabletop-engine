@@ -25,7 +25,7 @@ func _handle_right_clicks(event: InputEvent) -> void:
 					create_right_click_menu_obj(get_viewport().get_mouse_position(), _highlighted_object)
 				else:
 					print("Nothing to right click")
-	elif event is InputEventMouseButton and get_rclick_menu() != null and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+	elif event is InputEventMouseButton and get_rclick_menu() != null and event.button_index == MOUSE_BUTTON_LEFT:
 		if not get_rclick_menu().get_global_rect().has_point(get_rclick_menu().get_global_mouse_position()):
 			destroy_rclick_menu()
 

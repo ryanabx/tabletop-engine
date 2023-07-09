@@ -36,11 +36,6 @@ func _populate_right_click_menu():
 		_:
 			return
 
-func _determine_right_click_type():
-	if GameManager.highlighted_over_item():
-		return RIGHT_CLICK_MENU_TYPE.GAME_OBJECT
-	return RIGHT_CLICK_MENU_TYPE.BLANK
-
 func get_associated_object() -> GameObject:
 	return _associated_object
 
