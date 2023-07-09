@@ -77,7 +77,15 @@ func _process(_delta):
 	if get_selected_object() != null and get_selected_object().get_state() == GameObject.STATE.SELECTED and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		get_selected_object().position = get_global_mouse_position() + _grab_offset
 
+func _check_overlapping_areas_of_same_type(obj: GameObject) -> void:
+	var _groups = obj.get_groups()
+	_groups.erase("game_object")
+	for group in groups:
+		var _objs_in_group = get_tree().get_nodes_in_group(group)
+		# TODO: Get overlapping nodes of same type and implement stacking behavior
 
+func get_game_object_manager() -> Node2D:
+	return _game_object_manager
 
 func create_right_click_menu_obj(pos: Vector2, obj: GameObject):
 	print("Generate right click menu")

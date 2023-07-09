@@ -1,7 +1,9 @@
-res://src/scripts/ui/right_click_menu.gd
-res://src/scripts/game_objects/collection.gd
-res://src/scripts/ui/right_click_menu_button.gd
-res://src/scripts/screens/tabletop.gd
-res://src/scripts/game_objects/game_board.gd
-res://src/scripts/game_objects/game_object.gd
 res://src/scenes/screens/tabletop.tscn
+res://src/scripts/screens/tabletop.gd
+res://src/scenes/game_objects/game_object.tscn
+res://src/scenes/ui/right_click_menu.tscn
+res://src/scenes/ui/right_click_menu_button.tscn
+res://src/scenes/game_objects/collection.tscn
+res://src/scripts/game_objects/game_object.gd
+res://src/scripts/singletons/utils.gd
+res://src/scripts/game_objects/game_board.gd

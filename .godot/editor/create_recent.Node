@@ -1,3 +1,4 @@
+Node2D
 CanvasLayer
 VBoxContainer
 PanelContainer
@@ -5,7 +6,6 @@ Control
 Label
 ColorRect
 MarginContainer
-Node2D
 CollisionShape2D
 Area2D
 TextureButton

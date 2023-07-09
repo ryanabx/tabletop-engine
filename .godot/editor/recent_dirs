@@ -1,6 +1,6 @@
-C:/Users/ryanb/appdata/Local/Programs/Microsoft VS Code/bin
-res://src/scripts/game_objects
 res://src/scripts/singletons
+res://src/scripts/game_objects
+C:/Users/ryanb/appdata/Local/Programs/Microsoft VS Code/bin
 res://src/scripts/ui
 res://src/scenes/ui
 res://src/scripts/screens

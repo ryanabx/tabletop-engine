@@ -7,7 +7,6 @@
 
 [node name="Tabletop" type="Node"]
 script = ExtResource("1_cv5do")
-player_id = null
 
 [node name="GameBoard" type="Node2D" parent="."]
 script = ExtResource("2_lhyvx")

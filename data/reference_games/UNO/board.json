@@ -1,24 +1,22 @@
 {
     "board": [
         {
-            "name": "main",
-            "type": "stack",
-            "face_down": true,
+            "name": "blue_card",
+            "type": "card",
+            "groups": ["card"],
+            "objref_name": "UNO_BLUE0",
+            "face_up": true,
             "location": [50, 50],
-            "size": 5,
-            "inside": [
-                {
-
-                }
-            ]
+            "scale": 1
         },
         {
-            "name": "place",
-            "type": "stack",
-            "face_down": false,
-            "location": [55, 50],
-            "size": 5,
-            "inside": []
+            "name": "red_card",
+            "type": "card",
+            "groups": ["card"],
+            "objref_name": "UNO_REDDRAW2",
+            "face_up": true,
+            "location": [60, 50],
+            "scale": 1
         }
     ]
 }

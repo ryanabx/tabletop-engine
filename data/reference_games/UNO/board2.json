@@ -1,0 +1,24 @@
+{
+    "board": [
+        {
+            "name": "main",
+            "type": "stack",
+            "face_down": true,
+            "location": [50, 50],
+            "size": 5,
+            "inside": [
+                {
+
+                }
+            ]
+        },
+        {
+            "name": "place",
+            "type": "stack",
+            "face_down": false,
+            "location": [55, 50],
+            "size": 5,
+            "inside": []
+        }
+    ]
+}
