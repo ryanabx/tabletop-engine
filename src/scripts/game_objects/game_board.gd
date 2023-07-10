@@ -28,6 +28,8 @@ func _handle_right_clicks(event: InputEvent) -> void:
 				if _highlighted_object != null:
 					if _highlighted_object.get_state() == GameObject.STATE.IDLE:
 						create_right_click_menu_obj(get_viewport().get_mouse_position(), _highlighted_object)
+					if _highlighted_object.get_state() == GameObject.STATE.STACKED:
+						create_right_click_menu_stack(get_viewport().get_mouse_position(), _highlighted_object)
 				else:
 					print("Nothing to right click")
 	elif event is InputEventMouseButton and get_rclick_menu() != null and event.button_index == MOUSE_BUTTON_LEFT:
@@ -74,6 +76,7 @@ func _stack_select_object(obj: GameObject) -> void:
 	print("Stack Selecting")
 	_grab_offset = obj.position - get_local_mouse_position()
 	move_object_to_front(obj)
+	move_stack_to_front(obj.get_obj_stack())
 	obj.stack_select()
 
 func has_selected_object() -> bool:
@@ -120,6 +123,16 @@ func move_object_to_back(obj: GameObject) -> void:
 func move_object_to_front(obj: GameObject) -> void:
 	_game_object_manager.move_child(obj, -1)
 
+func move_stack_to_front(stck: ObjectStack) -> void:
+	for obj in stck.get_game_objects():
+		_game_object_manager.move_child(obj, -1)
+	
+func move_stack_to_back(stck: ObjectStack) -> void:
+	var game_objects_reverse = stck.get_game_objects().duplicate(false)
+	game_objects_reverse.reverse()
+	for obj in game_objects_reverse:
+		_game_object_manager.move_child(obj, 0)
+
 func _process(_delta):
 	_check_move_selected_object()
 	_check_move_stack()
@@ -142,6 +155,7 @@ func _check_move_stack() -> void:
 		if get_selected_object().get_state() == GameObject.STATE.STCK_SLCT:
 			get_selected_object().get_obj_stack().position = get_global_mouse_position() + _grab_offset
 			get_selected_object().get_obj_stack().stack_moved()
+# TODO: FIX BUG WHERE TWO OR MORE OBJECTS CAN BECOME "READY TO STACK" AND GET STUCK IN THAT POSITION
 
 func _get_overlapping_area_of_same_type(obj: GameObject, check_stack: bool) -> GameObject:
 	var _groups = obj.get_groups()
@@ -177,7 +191,15 @@ func get_game_object_manager() -> Node2D:
 
 func create_right_click_menu_obj(pos: Vector2, obj: GameObject):
 	print("Generate right click menu")
-	_right_click_menu = RightClickMenu.new(RightClickMenu.RIGHT_CLICK_MENU_TYPE.GAME_OBJECT, obj, self)
+	_right_click_menu = RightClickMenu.new(RightClickMenu.RIGHT_CLICK_MENU_TYPE.GAME_OBJECT, obj, null, self)
+	_right_click_menu.z_index = 1000
+	_right_click_menu.global_position = pos
+	add_child(_right_click_menu)
+	obj.right_click()
+
+func create_right_click_menu_stack(pos: Vector2, obj: GameObject):
+	print("Generate right click menu")
+	_right_click_menu = RightClickMenu.new(RightClickMenu.RIGHT_CLICK_MENU_TYPE.STACK, obj, obj.get_obj_stack(), self)
 	_right_click_menu.z_index = 1000
 	_right_click_menu.global_position = pos
 	add_child(_right_click_menu)

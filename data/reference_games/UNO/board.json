@@ -17,6 +17,15 @@
             "face_up": true,
             "location": [60, 50],
             "scale": 1
+        },
+        {
+            "name": "draw_4",
+            "type": "card",
+            "groups": ["card"],
+            "objref_name": "UNO_DRAW4",
+            "face_up": false,
+            "location": [100, 50],
+            "scale": 1
         }
     ]
 }

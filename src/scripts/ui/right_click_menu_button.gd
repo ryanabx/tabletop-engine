@@ -9,7 +9,9 @@ enum MENU_BUTTON_FUNCTIONALITY {
 	BLANK,
 	GO_TO_BACK,
 	GO_TO_FRONT,
-	FLIP_OBJECT
+	FLIP_OBJECT,
+	FLIP_STACK,
+	SHUFFLE_STACK
 }
 
 var _button_type: MENU_BUTTON_TYPE = MENU_BUTTON_TYPE.BLANK
@@ -38,4 +40,10 @@ func _on_pressed() -> void:
 			_board.destroy_rclick_menu()
 		MENU_BUTTON_FUNCTIONALITY.FLIP_OBJECT:
 			_parent.get_associated_object().flip()
+			_board.destroy_rclick_menu()
+		MENU_BUTTON_FUNCTIONALITY.FLIP_STACK:
+			_parent.get_associated_stack().flip()
+			_board.destroy_rclick_menu()
+		MENU_BUTTON_FUNCTIONALITY.SHUFFLE_STACK:
+			_parent.get_associated_stack().shuffle()
 			_board.destroy_rclick_menu()
