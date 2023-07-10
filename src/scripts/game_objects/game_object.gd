@@ -3,13 +3,7 @@ extends Node2D
 
 const DEFAULT_SIZE = Vector2(64.0, 64.0)
 
-enum STATE {
-	IDLE,
-	SELECTED,
-	RIGHT_CLICK,
-	IN_COLLECTION,
-	LOCKED,
-	STACKED
+enum STATE {IDLE,SELECTED,RIGHT_CLICK,LOCKED,STACKED,STCK_SLCT,READY_FOR_STACKING
 }
 
 enum OBJ_TYPE {
@@ -23,6 +17,11 @@ enum SIDE {UP,DOWN}
 var _obj_type: OBJ_TYPE = OBJ_TYPE.GENERIC
 var _obj_name: String = ""
 var _obj_images: Array = []
+
+var _next_in_stack: GameObject = null
+var _prev_in_stack: GameObject = null
+
+var _obj_stack: ObjectStack = null
 
 
 var _side: SIDE = SIDE.UP
@@ -58,6 +57,9 @@ func initialize_object(obj_conf, objref, img_dir):
 		_set_scale(Vector2(obj_conf.scale, obj_conf.scale), true)
 	
 	position = Vector2(obj_conf.location[0], obj_conf.location[1])
+	
+	for _group in obj_conf.groups:
+		add_to_group(_group)
 
 func _set_scale(_sc: Vector2, preserve_aspect: bool) -> void:
 	if not preserve_aspect:
@@ -68,6 +70,17 @@ func _set_scale(_sc: Vector2, preserve_aspect: bool) -> void:
 
 func get_rect() -> Rect2:
 	return _sprite.get_rect() * _sprite.get_transform()
+
+func get_stack_rect() -> Rect2:
+	var stack_transform: Transform2D = _sprite.get_transform()
+	stack_transform = stack_transform * 0.25
+	return _sprite.get_rect() * stack_transform
+
+func get_obj_stack() -> ObjectStack:
+	return _obj_stack
+
+func set_obj_stack(_stck: ObjectStack) -> void:
+	_obj_stack = _stck
 
 func set_state(state: STATE) -> bool:
 	_state = state
@@ -89,28 +102,72 @@ func select() -> void:
 		STATE.IDLE:
 			set_state(STATE.SELECTED)
 		_:
-			print("WTF")
+			print("Attempted transition from ", state_to_string(get_state()), " to selected failed (select).")
 
 func deselect() -> void:
 	match get_state():
 		STATE.SELECTED:
 			set_state(STATE.IDLE)
 		_:
-			print("Wtf")
+			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (deselect).")
+
+func stack_select() -> void:
+	match get_state():
+		STATE.STACKED:
+			set_state(STATE.STCK_SLCT)
+		_:
+			print("Attempted transition from ", state_to_string(get_state()), " to stack selected failed (stack select).")
+
+func stack_deselect() -> void:
+	match get_state():
+		STATE.STCK_SLCT:
+			set_state(STATE.STACKED)
+		_:
+			print("Attempted transition from ", state_to_string(get_state()), " to stacked failed (stack deselect).")
 
 func right_click() -> void:
 	match get_state():
 		STATE.IDLE:
 			set_state(STATE.RIGHT_CLICK)
 		_:
-			print("Wtf2")
+			print("Attempted transition from ", state_to_string(get_state()), " to right click failed (right click).")
 
 func revert_right_click() -> void:
 	match get_state():
 		STATE.RIGHT_CLICK:
 			set_state(STATE.IDLE)
 		_:
-			print("Wtf3")
+			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (revert right click).")
+
+func get_ready_for_stacking() -> void:
+	match get_state():
+		STATE.IDLE:
+			set_state(STATE.READY_FOR_STACKING)
+		_:
+			print("Attempted transition from ", state_to_string(get_state()), " to ready for stacking failed (get ready for stacking).")
+
+func get_unready_for_stacking() -> void:
+	match get_state():
+		STATE.READY_FOR_STACKING:
+			set_state(STATE.IDLE)
+		_:
+			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (get unready for stacking).")
+
+func make_stacked() -> void:
+	match get_state():
+		STATE.READY_FOR_STACKING:
+			set_state(STATE.STACKED)
+		STATE.SELECTED:
+			set_state(STATE.STACKED)
+		_:
+			print("Attempted transition from ", state_to_string(get_state()), " to stacked failed (make stacked).")
+
+func make_unstacked() -> void:
+	match get_state():
+		STATE.STACKED:
+			set_state(STATE.IDLE)
+		_:
+			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (make unstacked).")
 
 func _process(_delta: float) -> void:
 	state_label.text = state_to_string(get_state())
@@ -124,7 +181,11 @@ func state_to_string(state: STATE) -> String:
 			return "selected"
 		STATE.RIGHT_CLICK:
 			return "right click"
-		STATE.IN_COLLECTION:
-			return "in collection"
+		STATE.STACKED:
+			return "stacked"
+		STATE.STCK_SLCT:
+			return "stack selected"
+		STATE.READY_FOR_STACKING:
+			return "ready for stacking"
 		_:
 			return ""

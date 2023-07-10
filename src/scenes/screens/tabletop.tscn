@@ -1,8 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://bd0t8uq0xv6wr"]
+[gd_scene load_steps=4 format=3 uid="uid://bd0t8uq0xv6wr"]
 
 [ext_resource type="Texture2D" uid="uid://cbpxdhvy0dyht" path="res://src/assets/wood-background.jpg" id="1_488j0"]
 [ext_resource type="Script" path="res://src/scripts/screens/tabletop.gd" id="1_cv5do"]
-[ext_resource type="PackedScene" uid="uid://djm14ahg7tlq6" path="res://src/scenes/game_objects/game_object.tscn" id="1_sr361"]
 [ext_resource type="Script" path="res://src/scripts/game_objects/game_board.gd" id="2_lhyvx"]
 
 [node name="Tabletop" type="Node"]
@@ -13,18 +12,6 @@ script = ExtResource("2_lhyvx")
 
 [node name="GameObjectManager" type="Node2D" parent="GameBoard"]
 z_index = 10
-
-[node name="GameObject" parent="GameBoard/GameObjectManager" instance=ExtResource("1_sr361")]
-position = Vector2(847.648, 544.637)
-
-[node name="GameObject2" parent="GameBoard/GameObjectManager" instance=ExtResource("1_sr361")]
-position = Vector2(376, 420)
-
-[node name="GameObject3" parent="GameBoard/GameObjectManager" instance=ExtResource("1_sr361")]
-position = Vector2(468, 192)
-
-[node name="GameObject4" parent="GameBoard/GameObjectManager" instance=ExtResource("1_sr361")]
-position = Vector2(947.72, 317.772)
 
 [node name="BoardBG" type="Sprite2D" parent="GameBoard"]
 z_index = -500

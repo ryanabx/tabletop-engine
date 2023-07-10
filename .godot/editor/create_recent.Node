@@ -1,3 +1,4 @@
+Sprite2D
 Node2D
 CanvasLayer
 VBoxContainer
@@ -10,7 +11,6 @@ CollisionShape2D
 Area2D
 TextureButton
 Button
-Sprite2D
 Camera2D
 TextureRect
 CollisionPolygon2D
