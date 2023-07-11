@@ -3,8 +3,7 @@ extends Node2D
 
 const DEFAULT_SIZE = Vector2(64.0, 64.0)
 
-enum STATE {IDLE,SELECTED,RIGHT_CLICK,LOCKED,STACKED,STCK_SLCT,READY_FOR_STACKING
-}
+enum STATE {IDLE,SELECTED,RIGHT_CLICK,LOCKED,STACKED,STCK_SLCT,READY_FOR_STACKING,STACKED_READY}
 
 enum OBJ_TYPE {
 	GENERIC,
@@ -143,6 +142,8 @@ func get_ready_for_stacking() -> void:
 	match get_state():
 		STATE.IDLE:
 			set_state(STATE.READY_FOR_STACKING)
+		STATE.STACKED:
+			set_state(STATE.STACKED_READY)
 		_:
 			print("Attempted transition from ", state_to_string(get_state()), " to ready for stacking failed (get ready for stacking).")
 
@@ -150,6 +151,8 @@ func get_unready_for_stacking() -> void:
 	match get_state():
 		STATE.READY_FOR_STACKING:
 			set_state(STATE.IDLE)
+		STATE.STACKED_READY:
+			set_state(STATE.STACKED)
 		_:
 			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (get unready for stacking).")
 
@@ -158,6 +161,8 @@ func make_stacked() -> void:
 		STATE.READY_FOR_STACKING:
 			set_state(STATE.STACKED)
 		STATE.SELECTED:
+			set_state(STATE.STACKED)
+		STATE.STACKED_READY:
 			set_state(STATE.STACKED)
 		_:
 			print("Attempted transition from ", state_to_string(get_state()), " to stacked failed (make stacked).")
@@ -187,5 +192,7 @@ func state_to_string(state: STATE) -> String:
 			return "stack selected"
 		STATE.READY_FOR_STACKING:
 			return "ready for stacking"
+		STATE.STACKED_READY:
+			return "stacked and ready for stacking"
 		_:
 			return ""

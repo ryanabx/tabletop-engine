@@ -9,12 +9,14 @@ script = ExtResource("1_cv5do")
 
 [node name="GameBoard" type="Node2D" parent="."]
 script = ExtResource("2_lhyvx")
+metadata/_edit_lock_ = true
 
 [node name="GameObjectManager" type="Node2D" parent="GameBoard"]
 z_index = 10
+metadata/_edit_lock_ = true
 
 [node name="BoardBG" type="Sprite2D" parent="GameBoard"]
-z_index = -500
+z_index = -1000
 position = Vector2(640, 360)
 scale = Vector2(0.300752, 0.254237)
 texture = ExtResource("1_488j0")

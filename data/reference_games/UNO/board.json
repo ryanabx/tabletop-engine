@@ -26,6 +26,24 @@
             "face_up": false,
             "location": [100, 50],
             "scale": 1
+        },
+        {
+            "name": "draw_42",
+            "type": "card",
+            "groups": ["card"],
+            "objref_name": "UNO_DRAW4",
+            "face_up": false,
+            "location": [100, 100],
+            "scale": 1
+        },
+        {
+            "name": "yellow_card",
+            "type": "card",
+            "groups": ["card"],
+            "objref_name": "UNO_YELLOW9",
+            "face_up": false,
+            "location": [200, 50],
+            "scale": 1
         }
     ]
 }

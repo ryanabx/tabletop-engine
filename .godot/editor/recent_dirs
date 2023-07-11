@@ -1,3 +1,5 @@
+res://src/resources
+res://src/shaders
 res://src/assets
 res://src/scenes/game_objects
 res://src/scripts/singletons

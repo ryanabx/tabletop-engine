@@ -1,6 +1,8 @@
 class_name GameBoard
 extends Node2D
 
+const STACK_LERP: float = 0.8
+
 var _selected_object: GameObject = null
 
 var _grab_offset: Vector2 = Vector2.ZERO
@@ -22,7 +24,10 @@ func _handle_right_clicks(event: InputEvent) -> void:
 		if get_rclick_menu() == null:
 			if has_selected_object(): # Flip object
 				print("Flip!")
-				get_selected_object().flip()
+				if get_selected_object().get_state() == GameObject.STATE.STCK_SLCT:
+					get_selected_object().get_obj_stack().flip()
+				elif get_selected_object().get_state() == GameObject.STATE.SELECTED:
+					get_selected_object().flip()
 			else:
 				var _highlighted_object: GameObject = _get_overlapping_object(event.position)
 				if _highlighted_object != null:
@@ -90,7 +95,7 @@ func _release_selection() -> void:
 		if _current_stackable_object:
 			if _current_stackable_object.get_obj_stack():
 				print("Stacking object into already made stack")
-				_stack_object(_selected_object, _current_stackable_object.get_obj_stack())
+				_stack_object_to_stack(_selected_object, _current_stackable_object.get_obj_stack())
 			else:
 				print("Stacking 2 objects")
 				_stack_objects(_selected_object, _current_stackable_object)
@@ -102,13 +107,35 @@ func _release_selection() -> void:
 
 func _release_stack_selection() -> void:
 	if _selected_object:
+		if _current_stackable_object:
+			if _current_stackable_object.get_obj_stack():
+				print("Stacking stack into already made stack")
+				_stack_stacks(_selected_object.get_obj_stack(), _current_stackable_object.get_obj_stack())
+			else:
+				print("Stacking stack onto object")
+				_stack_stack_to_object(_selected_object.get_obj_stack(), _current_stackable_object)
+			_selected_object.make_stacked()
+			_current_stackable_object.make_stacked()
 		_selected_object.stack_deselect()
 	_grab_offset = Vector2.ZERO
 	_selected_object = null
 
-func _stack_object(obj: GameObject, stck: ObjectStack) -> void:
+func _stack_stacks(stck: ObjectStack, stck2: ObjectStack) -> void:
+	for obj in stck.get_game_objects():
+		obj.set_obj_stack(stck2)
+		stck2.add_game_object(obj)
+	stck2.make_unhovered()
+	stck.queue_free()
+
+func _stack_object_to_stack(obj: GameObject, stck: ObjectStack) -> void:
 	obj.set_obj_stack(stck)
 	stck.add_game_object(obj)
+	stck.make_unhovered()
+
+func _stack_stack_to_object(stck: ObjectStack, obj2: GameObject) -> void:
+	obj2.set_obj_stack(stck)
+	stck.add_game_object_to_bottom(obj2)
+	stck.make_unhovered()
 
 func _stack_objects(obj1: GameObject, obj2: GameObject) -> void:
 	var _new_stack = _stack_scene.instantiate()
@@ -140,22 +167,37 @@ func _process(_delta):
 func _check_move_selected_object() -> void:
 	if get_selected_object() != null and get_selected_object().get_state() == GameObject.STATE.SELECTED and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		get_selected_object().position = get_global_mouse_position() + _grab_offset
-		var stackable_object: GameObject = _get_overlapping_area_of_same_type(get_selected_object(), true)
-		if stackable_object != null:
-			_current_stackable_object = stackable_object
-			if _current_stackable_object.get_state() != GameObject.STATE.READY_FOR_STACKING:
-				_current_stackable_object.get_ready_for_stacking()
-			get_selected_object().position = get_selected_object().position.lerp(_current_stackable_object.position, 0.3)
-		elif _current_stackable_object != null:
-			_current_stackable_object.get_unready_for_stacking()
-			_current_stackable_object = null
+		_check_stacking(false)
+		
 
 func _check_move_stack() -> void:
 	if get_selected_object() != null and Input.is_mouse_button_pressed(MOUSE_BUTTON_MIDDLE):
 		if get_selected_object().get_state() == GameObject.STATE.STCK_SLCT:
 			get_selected_object().get_obj_stack().position = get_global_mouse_position() + _grab_offset
 			get_selected_object().get_obj_stack().stack_moved()
-# TODO: FIX BUG WHERE TWO OR MORE OBJECTS CAN BECOME "READY TO STACK" AND GET STUCK IN THAT POSITION
+			_check_stacking(true)
+
+func _check_stacking(holding_stack: bool) -> void:
+	var stackable_object: GameObject = _get_overlapping_area_of_same_type(get_selected_object(), true)
+	if stackable_object != null:
+		if _current_stackable_object and _current_stackable_object != stackable_object:
+			_current_stackable_object.get_unready_for_stacking()
+			_current_stackable_object = stackable_object
+		_current_stackable_object = stackable_object
+		if _current_stackable_object.get_state() != GameObject.STATE.READY_FOR_STACKING:
+			_current_stackable_object.get_ready_for_stacking()
+			if _current_stackable_object.get_obj_stack():
+				_current_stackable_object.get_obj_stack().make_hovered()
+		if holding_stack:
+			get_selected_object().get_obj_stack().position = get_selected_object().get_obj_stack().position.lerp(_current_stackable_object.position, STACK_LERP)
+			get_selected_object().get_obj_stack().stack_moved()
+		else:
+			get_selected_object().position = get_selected_object().position.lerp(_current_stackable_object.position, STACK_LERP)
+	elif _current_stackable_object != null:
+		_current_stackable_object.get_unready_for_stacking()
+		if _current_stackable_object.get_obj_stack():
+			_current_stackable_object.get_obj_stack().make_unhovered()
+		_current_stackable_object = null
 
 func _get_overlapping_area_of_same_type(obj: GameObject, check_stack: bool) -> GameObject:
 	var _groups = obj.get_groups()
@@ -167,6 +209,8 @@ func _get_overlapping_area_of_same_type(obj: GameObject, check_stack: bool) -> G
 		var _objs_in_group = get_tree().get_nodes_in_group(group)
 		for obj2 in _objs_in_group:
 			if obj2 == obj:
+				continue
+			if obj2.get_obj_stack() and obj.get_obj_stack() and obj2.get_obj_stack() == obj.get_obj_stack():
 				continue
 			if (not check_stack and _areas_overlap(obj, obj2)) or (check_stack and _stack_areas_overlap(obj, obj2)):
 				if best_obj == null or obj.position.distance_to(obj2.position) < best_dist:
