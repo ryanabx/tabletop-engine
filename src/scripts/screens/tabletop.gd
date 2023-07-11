@@ -12,6 +12,7 @@ const FNAME_ACTIONS = "actions.json"
 @onready var game_board: GameBoard = $GameBoard
 
 var _game_object_scene = preload("res://src/scenes/game_objects/game_object.tscn")
+var _stack_scene = preload("res://src/scenes/game_objects/stack.tscn")
 
 func _ready() -> void:
 	# Test code
@@ -47,25 +48,123 @@ func load_game(conf: Dictionary, objects: Dictionary, player: Dictionary, board:
 
 func _set_up_board(board: Dictionary, objects: Dictionary) -> void:
 	for item in board.board:
-		print(item)
-		match item.type:
-			"card":
-				_new_card(item, objects)
-			"stack":
-				_new_stack(item)
-			_:
-				_new_generic_object(item)
+		_parse_item(item, objects, [], null)
 		print("Added new child")
 
-func _new_generic_object(item: Dictionary) -> void:
+func _parse_item(item: Dictionary, objects: Dictionary, config_vars: Array, stack: ObjectStack) -> void:
+	print(item)
+	match item.type:
+		"card":
+			_new_card(item, objects, config_vars, stack)
+		"stack":
+			_new_stack(item, objects, config_vars, stack)
+		"foreach":
+			_new_foreach(item, objects, config_vars, stack)
+		"repeat":
+			_new_repeat(item, objects, config_vars, stack)
+		_:
+			_new_generic_object(item, objects, config_vars, stack)
+
+func _new_foreach(item: Dictionary, objects: Dictionary, config_vars: Array, stack: ObjectStack) -> void:
+	# Define foreach traits
+	var fr: String = item.foreach
+	var n: Array = item.in
+	var d: Array = item.do
+	
+	var _var: ConfigVariable = ConfigVariable.new(fr, n)
+	var _confvars: Array = config_vars.duplicate(false)
+	_confvars.append(_var)
+	
+	for i in range(n.size()):
+		_var.set_ind(i)
+		for _d in d:
+			_parse_item(_d, objects, _confvars, stack)
+
+func _new_repeat(item: Dictionary, objects: Dictionary, config_vars: Array, stack: ObjectStack) -> void:
+	# Define repeat traits
+	var amt: int = item.amount
+	var d: Array = item.do
+	
+	for i in range(amt):
+		for _d in d:
+			_parse_item(_d, objects, config_vars, stack)
+
+func _new_generic_object(item: Dictionary, objects: Dictionary, config_vars: Array, stack: ObjectStack) -> void:
 	pass
 
-func _new_card(item: Dictionary, objects: Dictionary) -> void:
-	var _new_card = _game_object_scene.instantiate()
-	var _objref = objects.objects[item.objref_name]
-	print(_objref)
-	game_board.get_game_object_manager().add_child(_new_card)
-	_new_card.initialize_object(item, _objref, objects.image_dir)
+func _new_stack(item: Dictionary, objects: Dictionary, config_vars: Array, stack: ObjectStack) -> void:
+	if stack:
+		print("Config Error: Attempted to stack a stack")
+	# Define stack traits
+	var location: Vector2 = Vector2(item.location[0], item.location[1])
+	var inside: Array = item.inside
+	
+	# Create stack and add it to the board
+	var _stack = _stack_scene.instantiate()
+	game_board.get_game_object_manager().add_child(_stack)
+	# Set stack location
+	_stack.position = location
+	
+	for _ins in inside:
+		_parse_item(_ins, objects, config_vars, _stack)
 
-func _new_stack(item: Dictionary) -> void:
-	pass
+func _new_card(item: Dictionary, objects: Dictionary, config_vars: Array, stack: ObjectStack) -> void:
+	# Define card traits
+	var type: String = item.type
+	var groups: Array = item.groups
+	var objref_name: String = item.objref_name
+	var face_up: bool = item.face_up
+	var location: Vector2 = Vector2(item.location[0], item.location[1])
+	var scale: float = item.scale
+	# Card trait config variable substitution
+	for _var in config_vars:
+		for i in range(groups.size()):
+			groups[i] = groups[i].replace(_var.get_repl(), _var.get_val())
+		objref_name = objref_name.replace(_var.get_repl(), _var.get_val())
+	# Define objref traits
+	var images: Array = objects.objects[objref_name].image
+	# Objref trait config variable substitution
+	for _var in config_vars:
+		for i in range(images.size()):
+			images[i] = images[i].replace(_var.get_repl(), _var.get_val())
+	# Create a new card and add it to the board
+	var _card = _game_object_scene.instantiate()
+	game_board.get_game_object_manager().add_child(_card)
+	# Set config variables
+	_card._obj_type = _card._type_from_string(type)
+	_card._obj_images = Utils.load_images_into_array(images, objects.image_dir)
+	_card._side = GameObject.SIDE.UP if face_up else GameObject.SIDE.DOWN
+	if _card._side == GameObject.SIDE.UP:
+		_card._sprite.set_texture(_card._obj_images[0])
+		print("Set texture")
+	else:
+		_card._sprite.set_texture(_card._obj_images[1])
+		print("Set texture face down")
+	_card._set_scale(Vector2(scale, scale), true)
+	_card.position = location
+	for _group in groups:
+		_card.add_to_group(_group)
+	if stack:
+		_card.set_state(GameObject.STATE.STACKED)
+		_card.set_obj_stack(stack)
+		stack.add_game_object(_card)
+
+# TODO: PARSE THE NEW BOARD.JSON FILE WITH LOOPS AND SHIT
+
+class ConfigVariable:
+	var _repl: String
+	var _vals: Array
+	var _index: int = 0
+	
+	func _init(repl: String, vals: Array) -> void:
+		_repl = repl
+		_vals = vals
+	
+	func get_repl() -> String:
+		return _repl
+	
+	func set_ind(ind: int) -> void:
+		_index = ind
+	
+	func get_val() -> String:
+		return _vals[_index]

@@ -38,28 +38,6 @@ func _type_from_string(obj_type: String) -> OBJ_TYPE:
 		_:
 			return OBJ_TYPE.GENERIC
 
-func initialize_object(obj_conf, objref, img_dir):
-	_obj_name = obj_conf.name
-	_obj_type = _type_from_string(obj_conf.type)
-	_obj_images = Utils.load_images_into_array(objref.image, img_dir)
-	_side = SIDE.UP if obj_conf.face_up else SIDE.DOWN
-	if _side == SIDE.UP:
-		_sprite.set_texture(_obj_images[0])
-		print("Set texture")
-	else:
-		_sprite.set_texture(_obj_images[1])
-		print("Set texture face down")
-	
-	if obj_conf.scale is Array:
-		_set_scale(Vector2(obj_conf.scale[0], obj_conf.scale[1]), false)
-	elif obj_conf.scale is float or obj_conf.scale is int:
-		_set_scale(Vector2(obj_conf.scale, obj_conf.scale), true)
-	
-	position = Vector2(obj_conf.location[0], obj_conf.location[1])
-	
-	for _group in obj_conf.groups:
-		add_to_group(_group)
-
 func _set_scale(_sc: Vector2, preserve_aspect: bool) -> void:
 	if not preserve_aspect:
 		_sprite.scale = (_sc * DEFAULT_SIZE) / _sprite.get_rect().size

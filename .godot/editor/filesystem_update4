@@ -9,3 +9,4 @@ res://src/scripts/game_objects/game_object.gd
 res://src/scripts/game_objects/stack.gd
 res://src/shaders/outline2d.gdshader
 res://src/resources/outline2d.tres
+res://src/scripts/screens/tabletop.gd

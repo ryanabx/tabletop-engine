@@ -1,0 +1,49 @@
+{
+    "board": [
+        {
+            "name": "blue_card",
+            "type": "card",
+            "groups": ["card"],
+            "objref_name": "UNO_BLUE0",
+            "face_up": true,
+            "location": [50, 50],
+            "scale": 1
+        },
+        {
+            "name": "red_card",
+            "type": "card",
+            "groups": ["card"],
+            "objref_name": "UNO_REDDRAW2",
+            "face_up": true,
+            "location": [60, 50],
+            "scale": 1
+        },
+        {
+            "name": "draw_4",
+            "type": "card",
+            "groups": ["card"],
+            "objref_name": "UNO_DRAW4",
+            "face_up": false,
+            "location": [100, 50],
+            "scale": 1
+        },
+        {
+            "name": "draw_42",
+            "type": "card",
+            "groups": ["card"],
+            "objref_name": "UNO_DRAW4",
+            "face_up": false,
+            "location": [100, 100],
+            "scale": 1
+        },
+        {
+            "name": "yellow_card",
+            "type": "card",
+            "groups": ["card"],
+            "objref_name": "UNO_YELLOW9",
+            "face_up": false,
+            "location": [200, 50],
+            "scale": 1
+        }
+    ]
+}
