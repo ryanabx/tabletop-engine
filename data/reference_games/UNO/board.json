@@ -55,11 +55,6 @@
                     ]
                 }
             ]
-        },
-        {
-            "type": "stack",
-            "location": [55, 50],
-            "inside": []
         }
     ]
 }
