@@ -2,7 +2,7 @@
     "board": [
         {
             "type": "stack",
-            "location": [500, 200],
+            "location": [640, 320],
             "inside": [
                 {
                     "type": "foreach",
@@ -24,7 +24,7 @@
                                             "objref_name": "UNO_$@",
                                             "face_up": false,
                                             "location": [0,0],
-                                            "scale": 1
+                                            "scale": 1.5
                                         }
                                     ]
                                 }
@@ -42,7 +42,7 @@
                             "objref_name": "UNO_DRAW4",
                             "face_up": false,
                             "location": [0,0],
-                            "scale": 1
+                            "scale": 1.5
                         },
                         {
                             "type": "card",
@@ -50,11 +50,17 @@
                             "objref_name": "UNO_WILD",
                             "face_up": false,
                             "location": [0,0],
-                            "scale": 1
+                            "scale": 1.5
                         }
                     ]
                 }
             ]
+        },
+        {
+            "type": "hand",
+            "player": 1,
+            "location": [640, 640],
+            "size": [640, 260]
         }
     ]
 }

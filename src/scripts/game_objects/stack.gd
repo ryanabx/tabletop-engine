@@ -86,7 +86,7 @@ func _set_scale(_vec: Vector2) -> void:
 	_scale = _vec
 
 func _draw() -> void:
-	draw_rect(Rect2(- _scale / 2.0, _scale), Color.BLACK, true)
+	draw_rect(Rect2(- _scale / 2.0, _scale), Color.from_hsv(0.0, 0.0, 0.0, 0.2), true)
 	draw_rect(Rect2(- (_scale + _padding) / 2.0, (_scale + _padding)), Color.from_hsv(clampf(_hue, 0.0, 1.0), 0.5, 1.0), false, _outline_size)
 
 func make_hovered() -> void:
@@ -96,7 +96,7 @@ func make_hovered() -> void:
 			_outline_size = H_BORDERSIZE
 			_state = STCKSTATE.HOVERED
 		_:
-			print("Wtf")
+			print("Wtf stack")
 
 func make_unhovered() -> void:
 	match _state:
@@ -105,7 +105,7 @@ func make_unhovered() -> void:
 			_outline_size = DEF_BORDERSIZE
 			_state = STCKSTATE.IDLE
 		_:
-			print("Wtf2")
+			print("Wtf2 stack")
 
 func _process(delta: float) -> void:
 	_hue = _hue + 0.1 * delta

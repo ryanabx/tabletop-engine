@@ -13,7 +13,7 @@
                 "command": "deal",
                 "method": "basic",
                 "from": "main_deck",
-                "players": 
+                "players": ""
             }
         ]
     }

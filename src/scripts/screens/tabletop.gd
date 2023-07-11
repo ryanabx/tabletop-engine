@@ -7,6 +7,8 @@ const FNAME_PLAYER = "player.json"
 const FNAME_BOARD = "board.json"
 const FNAME_ACTIONS = "actions.json"
 
+var _name: String = ""
+
 
 @export var player_id: int = 0
 @onready var game_board: GameBoard = $GameBoard
@@ -16,9 +18,20 @@ var _stack_scene = preload("res://src/scenes/game_objects/stack.tscn")
 
 func _ready() -> void:
 	# Test code
+	Globals.set_player_id(1)
 	var filename: String = "C:/Users/ryanb/source/repos/open-boardgame-framework/data/reference_games/UNO/"
 	load_game_from_folder(filename)
 	pass
+
+func _set_game_bg(_texture: Texture2D) -> void:
+	var game_bg: Sprite2D = $GameBoard/BoardBG
+	game_bg.set_texture(_texture)
+	var _sc: Vector2 = Vector2(get_viewport().get_size().x / _texture.get_size().x, get_viewport().get_size().y / _texture.get_size().y)
+	game_bg.scale = _sc
+	print(_sc, " ", game_bg.scale)
+
+func _set_game_name(_n: String) -> void:
+	_name = _n
 
 func load_json_from_file(fname: String) -> Dictionary:
 	if FileAccess.file_exists(fname):
@@ -43,16 +56,22 @@ func load_game_from_folder(folder_name: String) -> void:
 
 
 func load_game(conf: Dictionary, objects: Dictionary, player: Dictionary, board: Dictionary, actions: Dictionary) -> void:
+	print("Setting up config...")
+	_set_up_config(conf)
 	print("Setting up board...")
 	_set_up_board(board, objects)
+
+func _set_up_config(conf: Dictionary) -> void:
+	_set_game_name(conf.name)
+	_set_game_bg(Utils.load_texture_from_string(conf.background, conf.image_dir))
 
 func _set_up_board(board: Dictionary, objects: Dictionary) -> void:
 	for item in board.board:
 		_parse_item(item, objects, [], null)
-		print("Added new child")
+		# print("Added new child")
 
 func _parse_item(item: Dictionary, objects: Dictionary, config_vars: Array, stack: ObjectStack) -> void:
-	print(item)
+	# print(item)
 	match item.type:
 		"card":
 			_new_card(item, objects, config_vars, stack)
@@ -62,6 +81,8 @@ func _parse_item(item: Dictionary, objects: Dictionary, config_vars: Array, stac
 			_new_foreach(item, objects, config_vars, stack)
 		"repeat":
 			_new_repeat(item, objects, config_vars, stack)
+		"hand":
+			_new_hand(item, objects, config_vars, stack)
 		_:
 			_new_generic_object(item, objects, config_vars, stack)
 
@@ -88,6 +109,16 @@ func _new_repeat(item: Dictionary, objects: Dictionary, config_vars: Array, stac
 	for i in range(amt):
 		for _d in d:
 			_parse_item(_d, objects, config_vars, stack)
+
+func _new_hand(item: Dictionary, objects: Dictionary, config_vars: Array, stack: ObjectStack) -> void:
+	# Define hand traits
+	var pl: int = item.player
+	var location: Vector2 = Vector2(item.location[0], item.location[1])
+	var size: Vector2 = Vector2(item.size[0], item.size[1])
+	
+	# Create new hand and add it to the board
+	var _hand = Hand.new(pl, location, size)
+	game_board.get_game_object_manager().add_child(_hand)
 
 func _new_generic_object(item: Dictionary, objects: Dictionary, config_vars: Array, stack: ObjectStack) -> void:
 	pass
@@ -136,10 +167,10 @@ func _new_card(item: Dictionary, objects: Dictionary, config_vars: Array, stack:
 	_card._side = GameObject.SIDE.UP if face_up else GameObject.SIDE.DOWN
 	if _card._side == GameObject.SIDE.UP:
 		_card._sprite.set_texture(_card._obj_images[0])
-		print("Set texture")
+		# print("Set texture")
 	else:
 		_card._sprite.set_texture(_card._obj_images[1])
-		print("Set texture face down")
+		# print("Set texture face down")
 	_card._set_scale(Vector2(scale, scale), true)
 	_card.position = location
 	for _group in groups:

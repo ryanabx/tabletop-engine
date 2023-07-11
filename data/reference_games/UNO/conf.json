@@ -1,5 +1,7 @@
 {
     "name": "UNO",
     "version": 1,
-    "obf_api_version": 1
+    "obf_api_version": 1,
+    "image_dir": "C:/Users/ryanb/Pictures/UNO Cards/",
+    "background": "bg.jpg"
 }

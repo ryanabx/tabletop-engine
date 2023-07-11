@@ -3,7 +3,7 @@ extends Node2D
 
 const DEFAULT_SIZE = Vector2(64.0, 64.0)
 
-enum STATE {IDLE,SELECTED,RIGHT_CLICK,LOCKED,STACKED,STCK_SLCT,READY_FOR_STACKING,STACKED_READY}
+enum STATE {IDLE,SELECTED,RIGHT_CLICK,LOCKED,STACKED,STCK_SLCT,READY_FOR_STACKING,STACKED_READY,IN_HAND}
 
 enum OBJ_TYPE {
 	GENERIC,
@@ -21,6 +21,7 @@ var _next_in_stack: GameObject = null
 var _prev_in_stack: GameObject = null
 
 var _obj_stack: ObjectStack = null
+var _obj_hand: Hand = null
 
 
 var _side: SIDE = SIDE.UP
@@ -56,8 +57,14 @@ func get_stack_rect() -> Rect2:
 func get_obj_stack() -> ObjectStack:
 	return _obj_stack
 
+func get_hand() -> Hand:
+	return _obj_hand
+
 func set_obj_stack(_stck: ObjectStack) -> void:
 	_obj_stack = _stck
+
+func set_hand(_hnd: Hand) -> void:
+	_obj_hand = _hnd
 
 func set_state(state: STATE) -> bool:
 	_state = state
@@ -152,6 +159,24 @@ func make_unstacked() -> void:
 		_:
 			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (make unstacked).")
 
+func put_in_hand() -> void:
+	match get_state():
+		STATE.SELECTED:
+			set_state(STATE.IN_HAND)
+		STATE.STCK_SLCT:
+			set_state(STATE.IN_HAND)
+		STATE.STACKED:
+			set_state(STATE.IN_HAND)
+		_:
+			print("Attempted transition from ", state_to_string(get_state()), " to in hand failed (put in hand).")
+
+func take_out_of_hand():
+	match get_state():
+		STATE.IN_HAND:
+			set_state(STATE.IDLE)
+		_:
+			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (take out of hand).")
+
 func _process(_delta: float) -> void:
 	state_label.text = state_to_string(get_state())
 	z_index = get_index()
@@ -172,5 +197,7 @@ func state_to_string(state: STATE) -> String:
 			return "ready for stacking"
 		STATE.STACKED_READY:
 			return "stacked and ready for stacking"
+		STATE.IN_HAND:
+			return "in hand"
 		_:
 			return ""
