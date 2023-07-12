@@ -21,7 +21,7 @@ func _input(event: InputEvent) -> void:
 	_handle_selections(event)
 
 func _handle_right_clicks(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and not event.pressed:
+	if Input.is_action_just_pressed("game_menu"):
 		if get_rclick_menu() == null:
 			if has_selected_object(): # Flip object
 				print("Flip!")
@@ -38,33 +38,31 @@ func _handle_right_clicks(event: InputEvent) -> void:
 						create_right_click_menu_stack(get_viewport().get_mouse_position(), _highlighted_object)
 				else:
 					print("Nothing to right click")
-	elif event is InputEventMouseButton and get_rclick_menu() != null and (event.button_index == MOUSE_BUTTON_LEFT or event.button_index == MOUSE_BUTTON_MIDDLE):
+	elif get_rclick_menu() != null and (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")):
 		if not get_rclick_menu().get_global_rect().has_point(get_rclick_menu().get_global_mouse_position()):
 			destroy_rclick_menu()
 
 func _handle_selections(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT or event.button_index == MOUSE_BUTTON_MIDDLE:
-			if event.pressed:
-				var obj_selection: GameObject = _get_overlapping_object(event.position)
-				if obj_selection:
-					if obj_selection.get_state() == GameObject.STATE.STACKED and event.button_index == MOUSE_BUTTON_MIDDLE:
-						_stack_select_object(obj_selection)
-					elif obj_selection.get_state() == GameObject.STATE.STACKED:
-						obj_selection = obj_selection.get_obj_stack().release_top_of_stack()
-						_select_object(obj_selection)
-					elif obj_selection.get_state() == GameObject.STATE.IN_HAND:
-						print("In hand")
-						_select_object_from_hand(obj_selection)
-					else:
-						_select_object(obj_selection)
+	if Input.is_action_just_pressed("game_select") or Input.is_action_just_pressed("game_select_stack") and not get_selected_object():
+		var obj_selection: GameObject = _get_overlapping_object(event.position)
+		if obj_selection:
+			if obj_selection.get_state() == GameObject.STATE.STACKED and Input.is_action_pressed("game_select_stack"):
+				_stack_select_object(obj_selection)
+			elif obj_selection.get_state() == GameObject.STATE.STACKED:
+				obj_selection = obj_selection.get_obj_stack().release_top_of_stack()
+				_select_object(obj_selection)
+			elif obj_selection.get_state() == GameObject.STATE.IN_HAND:
+				print("In hand")
+				_select_object_from_hand(obj_selection)
 			else:
-				if get_selected_object():
-					if get_selected_object().get_state() == GameObject.STATE.STCK_SLCT:
-						_release_stack_selection()
-					elif get_selected_object().get_state() == GameObject.STATE.SELECTED:
-						print("Releasing selection")
-						_release_selection()
+				_select_object(obj_selection)
+	elif (Input.is_action_just_released("game_select") and not Input.is_action_pressed("game_select_stack")) or (Input.is_action_just_released("game_select_stack")  and not Input.is_action_pressed("game_select")):
+		if get_selected_object():
+			if get_selected_object().get_state() == GameObject.STATE.STCK_SLCT:
+				_release_stack_selection()
+			elif get_selected_object().get_state() == GameObject.STATE.SELECTED:
+				print("Releasing selection")
+				_release_selection()
 
 func _get_overlapping_object(point: Vector2) -> GameObject:
 	var game_objects = get_tree().get_nodes_in_group("game_object")
@@ -139,7 +137,7 @@ func _release_stack_selection() -> void:
 				_stack_stack_to_object(get_selected_object().get_obj_stack(), _current_stackable_object)
 			get_selected_object().make_stacked()
 			_current_stackable_object.make_stacked()
-			get_selected_object().stack_deselect()
+		get_selected_object().stack_deselect()
 	_grab_offset = Vector2.ZERO
 	set_selected_object(null)
 
@@ -204,15 +202,18 @@ func _process(_delta):
 	_check_move_stack()
 	
 func _check_move_selected_object() -> void:
-	if get_selected_object() != null and get_selected_object().get_state() == GameObject.STATE.SELECTED and (Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) or Input.is_mouse_button_pressed(MOUSE_BUTTON_MIDDLE)):
+	if get_selected_object() != null and get_selected_object().get_state() == GameObject.STATE.SELECTED and (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")):
+		
 		get_selected_object().position = get_global_mouse_position() + _grab_offset
+		get_selected_object().position = get_selected_object().position.clamp(get_viewport().get_visible_rect().position, get_viewport().get_visible_rect().position + get_viewport().get_visible_rect().size)
 		_check_stacking(false)
 		_check_over_hand(false)
 
 func _check_move_stack() -> void:
-	if get_selected_object() != null and Input.is_mouse_button_pressed(MOUSE_BUTTON_MIDDLE):
+	if get_selected_object() != null and Input.is_action_pressed("game_select_stack"):
 		if get_selected_object().get_state() == GameObject.STATE.STCK_SLCT:
 			get_selected_object().get_obj_stack().position = get_global_mouse_position() + _grab_offset
+			get_selected_object().get_obj_stack().position = get_selected_object().get_obj_stack().position.clamp(get_viewport().get_visible_rect().position, get_viewport().get_visible_rect().position + get_viewport().get_visible_rect().size)
 			get_selected_object().get_obj_stack().stack_moved()
 			_check_stacking(true)
 			_check_over_hand(true)

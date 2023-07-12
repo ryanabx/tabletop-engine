@@ -1,3 +1,4 @@
+res://src/scenes/ui
 res://src/scripts/singletons
 res://src/scenes/game_objects
 res://src/scripts/game_objects
@@ -6,6 +7,5 @@ res://src/shaders
 res://src/assets
 C:/Users/ryanb/appdata/Local/Programs/Microsoft VS Code/bin
 res://src/scripts/ui
-res://src/scenes/ui
 res://src/scripts/screens
 res://

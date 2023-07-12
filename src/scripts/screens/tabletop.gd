@@ -12,6 +12,7 @@ var _name: String = ""
 
 @export var player_id: int = 0
 @onready var game_board: GameBoard = $GameBoard
+@onready var user_interface: UserInterface = $UiLayer/UserInterface
 
 var _game_object_scene = preload("res://src/scenes/game_objects/game_object.tscn")
 var _stack_scene = preload("res://src/scenes/game_objects/stack.tscn")
@@ -63,6 +64,7 @@ func load_game(conf: Dictionary, objects: Dictionary, player: Dictionary, board:
 
 func _set_up_config(conf: Dictionary) -> void:
 	_set_game_name(conf.name)
+	user_interface.set_game_name(conf.name)
 	_set_game_bg(Utils.load_texture_from_string(conf.background, conf.image_dir))
 
 func _set_up_board(board: Dictionary, objects: Dictionary) -> void:
