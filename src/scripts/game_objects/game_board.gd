@@ -12,41 +12,82 @@ var _right_click_menu: RightClickMenu = null
 var _current_stackable_object: GameObject = null
 var _current_stackable_hand: Hand = null
 
+var _rclick_menu_just_created: bool = false
+
 @onready var _game_object_manager: Node2D = $GameObjectManager
+
+func _ready() -> void:
+	Utils.long_hold.connect(_on_long_hold)
+	Utils.short_press.connect(_on_short_press)
+	Utils.long_press.connect(_on_long_press)
+	Utils.start_long_hold.connect(_on_long_hold_just_pressed)
+
+func _on_long_hold(input_action: String) -> void:
+	# print("Long hold: ", input_action)
+	pass
+
+func _on_long_hold_just_pressed(input_action: String) -> void:
+	print("Long hold just pressed: ", input_action)
+	_handle_selections(input_action)
+
+func _on_short_press(input_action: String) -> void:
+	print("Short press: ", input_action)
+	
+	_handle_right_clicks(input_action)
+	
+	_handle_ending_rclick_menu(input_action)
+	_handle_unselections(input_action)
+	
+
+func _on_long_press(input_action: String) -> void:
+	# print("Long press: ", input_action)
+	_handle_ending_rclick_menu(input_action)
+	_handle_unselections(input_action)
+	
 
 var _stack_scene = preload("res://src/scenes/game_objects/stack.tscn")
 
-func _input(event: InputEvent) -> void:
-	_handle_right_clicks(event)
-	_handle_selections(event)
-
-func _handle_right_clicks(event: InputEvent) -> void:
-	if Input.is_action_just_pressed("game_menu"):
-		if get_rclick_menu() == null:
-			if has_selected_object(): # Flip object
-				print("Flip!")
-				if get_selected_object().get_state() == GameObject.STATE.STCK_SLCT:
-					get_selected_object().get_obj_stack().flip()
-				elif get_selected_object().get_state() == GameObject.STATE.SELECTED:
-					get_selected_object().flip()
-			else:
-				var _highlighted_object: GameObject = _get_overlapping_object(event.position)
-				if _highlighted_object != null:
-					if _highlighted_object.get_state() == GameObject.STATE.IDLE:
-						create_right_click_menu_obj(get_viewport().get_mouse_position(), _highlighted_object)
-					if _highlighted_object.get_state() == GameObject.STATE.STACKED:
-						create_right_click_menu_stack(get_viewport().get_mouse_position(), _highlighted_object)
-				else:
-					print("Nothing to right click")
-	elif get_rclick_menu() != null and (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")):
+func _handle_ending_rclick_menu(input_action: String) -> void:
+	if get_rclick_menu() != null and (input_action == "game_select" or input_action == "game_select_stack") and not _rclick_menu_just_created:
 		if not get_rclick_menu().get_global_rect().has_point(get_rclick_menu().get_global_mouse_position()):
+			print("Destroys right click menu")
 			destroy_rclick_menu()
 
-func _handle_selections(event: InputEvent) -> void:
-	if Input.is_action_just_pressed("game_select") or Input.is_action_just_pressed("game_select_stack") and not get_selected_object():
-		var obj_selection: GameObject = _get_overlapping_object(event.position)
+func _handle_right_clicks(input_action: String) -> void:
+	if get_rclick_menu() == null:
+		if has_selected_object(): # Flip object
+			print("Flip!")
+			if get_selected_object().get_state() == GameObject.STATE.STCK_SLCT:
+				get_selected_object().get_obj_stack().flip()
+			elif get_selected_object().get_state() == GameObject.STATE.SELECTED:
+				get_selected_object().flip()
+		else:
+			var _highlighted_object: GameObject = _get_overlapping_object(get_local_mouse_position())
+			if _highlighted_object != null:
+				if _highlighted_object.get_state() == GameObject.STATE.IDLE:
+					create_right_click_menu_obj(get_viewport().get_mouse_position(), _highlighted_object)
+					_rclick_menu_just_created = true					
+				if _highlighted_object.get_state() == GameObject.STATE.STACKED:
+					create_right_click_menu_stack(get_viewport().get_mouse_position(), _highlighted_object)
+					_rclick_menu_just_created = true
+			else:
+				print("Nothing to right click")
+
+func _handle_unselections(input_action: String) -> void:
+	if (input_action == "game_select" and not Input.is_action_pressed("game_select_stack")) or (input_action == "game_select_stack"  and not Input.is_action_pressed("game_select")):
+		if get_selected_object():
+			if get_selected_object().get_state() == GameObject.STATE.STCK_SLCT:
+				_release_stack_selection()
+			elif get_selected_object().get_state() == GameObject.STATE.SELECTED:
+				print("Releasing selection")
+				_release_selection()
+
+func _handle_selections(input_action: String) -> void:
+	if input_action == "game_select" or input_action == "game_select_stack" and not get_selected_object():
+		print("Time to select")
+		var obj_selection: GameObject = _get_overlapping_object(get_local_mouse_position())
 		if obj_selection:
-			if obj_selection.get_state() == GameObject.STATE.STACKED and Input.is_action_pressed("game_select_stack"):
+			if obj_selection.get_state() == GameObject.STATE.STACKED and input_action == "game_select_stack":
 				_stack_select_object(obj_selection)
 			elif obj_selection.get_state() == GameObject.STATE.STACKED:
 				obj_selection = obj_selection.get_obj_stack().release_top_of_stack()
@@ -56,13 +97,6 @@ func _handle_selections(event: InputEvent) -> void:
 				_select_object_from_hand(obj_selection)
 			else:
 				_select_object(obj_selection)
-	elif (Input.is_action_just_released("game_select") and not Input.is_action_pressed("game_select_stack")) or (Input.is_action_just_released("game_select_stack")  and not Input.is_action_pressed("game_select")):
-		if get_selected_object():
-			if get_selected_object().get_state() == GameObject.STATE.STCK_SLCT:
-				_release_stack_selection()
-			elif get_selected_object().get_state() == GameObject.STATE.SELECTED:
-				print("Releasing selection")
-				_release_selection()
 
 func _get_overlapping_object(point: Vector2) -> GameObject:
 	var game_objects = get_tree().get_nodes_in_group("game_object")
@@ -200,10 +234,11 @@ func move_stack_to_back(stck: ObjectStack) -> void:
 func _process(_delta):
 	_check_move_selected_object()
 	_check_move_stack()
+	if _rclick_menu_just_created:
+		_rclick_menu_just_created = false
 	
 func _check_move_selected_object() -> void:
 	if get_selected_object() != null and get_selected_object().get_state() == GameObject.STATE.SELECTED and (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")):
-		
 		get_selected_object().position = get_global_mouse_position() + _grab_offset
 		get_selected_object().position = get_selected_object().position.clamp(get_viewport().get_visible_rect().position, get_viewport().get_visible_rect().position + get_viewport().get_visible_rect().size)
 		_check_stacking(false)

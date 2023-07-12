@@ -6,3 +6,4 @@ res://src/scenes/ui/user_interface.tscn
 res://src/scripts/ui/user_interface.gd
 res://src/scripts/screens/tabletop.gd
 res://src/scripts/game_objects/game_board.gd
+res://src/scripts/singletons/utils.gd
