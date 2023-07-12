@@ -2,6 +2,3 @@ res://src/scenes/screens/tabletop.tscn
 res://src/shaders/outline2d.gdshader
 res://src/scenes/game_objects/stack.tscn
 res://src/scenes/game_objects/hand.tscn
-res://src/scripts/game_objects/game_board.gd
-res://src/scripts/game_objects/hand.gd
-res://src/scripts/game_objects/game_object.gd
