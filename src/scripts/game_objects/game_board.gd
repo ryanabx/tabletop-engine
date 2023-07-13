@@ -17,61 +17,69 @@ var _rclick_menu_just_created: bool = false
 @onready var _game_object_manager: Node2D = $GameObjectManager
 
 func _ready() -> void:
-	Utils.long_hold.connect(_on_long_hold)
-	Utils.short_press.connect(_on_short_press)
-	Utils.long_press.connect(_on_long_press)
-	Utils.start_long_hold.connect(_on_long_hold_just_pressed)
+	Utils.enhanced_inputs.connect(_on_enhanced_input)
 
 func _on_long_hold(input_action: String) -> void:
 	# print("Long hold: ", input_action)
 	pass
 
+func _on_enhanced_input(input_actions: Dictionary) -> void:
+	# BEEG FUNCTIONS
+	if Utils.is_action_just_long_held("game_select", input_actions) or Utils.is_action_just_long_held("game_select_stack", input_actions):
+		pass
+	pass
+	# TODO: FINISH THIS ENHANCED INPUT
+
 func _on_long_hold_just_pressed(input_action: String) -> void:
 	print("Long hold just pressed: ", input_action)
-	_handle_selections(input_action)
+	if input_action == "game_select" or input_action == "game_select_stack":
+		_handle_selections(input_action)
 
 func _on_short_press(input_action: String) -> void:
 	print("Short press: ", input_action)
-	
-	_handle_right_clicks(input_action)
-	
-	_handle_ending_rclick_menu(input_action)
-	_handle_unselections(input_action)
+	if input_action == "game_menu":
+		_handle_right_clicks(input_action)
+	if input_action == "game_select":
+		_handle_ending_rclick_menu(input_action)
+	if input_action == "game_select_stack" or input_action == "game_select":
+		_handle_unselections(input_action)
+	if input_action == "game_flip":
+		_handle_flipping(input_action)
 	
 
 func _on_long_press(input_action: String) -> void:
 	# print("Long press: ", input_action)
-	_handle_ending_rclick_menu(input_action)
-	_handle_unselections(input_action)
+	if input_action == "game_select":
+		_handle_ending_rclick_menu(input_action)
+	if input_action == "game_select_stack" or input_action == "game_select":
+		_handle_unselections(input_action)
 	
 
 var _stack_scene = preload("res://src/scenes/game_objects/stack.tscn")
 
 func _handle_ending_rclick_menu(input_action: String) -> void:
-	if get_rclick_menu() != null and (input_action == "game_select" or input_action == "game_select_stack") and not _rclick_menu_just_created:
+	if get_rclick_menu() != null:
 		if not get_rclick_menu().get_global_rect().has_point(get_rclick_menu().get_global_mouse_position()):
-			print("Destroys right click menu")
 			destroy_rclick_menu()
 
+func _handle_flipping(input_action: String) -> void:
+	if get_selected_object().get_state() == GameObject.STATE.STCK_SLCT:
+		get_selected_object().get_obj_stack().flip()
+	elif get_selected_object().get_state() == GameObject.STATE.SELECTED:
+		get_selected_object().flip()
+
 func _handle_right_clicks(input_action: String) -> void:
-	if get_rclick_menu() == null:
-		if has_selected_object(): # Flip object
-			print("Flip!")
-			if get_selected_object().get_state() == GameObject.STATE.STCK_SLCT:
-				get_selected_object().get_obj_stack().flip()
-			elif get_selected_object().get_state() == GameObject.STATE.SELECTED:
-				get_selected_object().flip()
+	if get_rclick_menu() == null and not has_selected_object():
+		var _highlighted_object: GameObject = _get_overlapping_object(get_local_mouse_position())
+		if _highlighted_object != null:
+			if _highlighted_object.get_state() == GameObject.STATE.IDLE:
+				create_right_click_menu_obj(get_viewport().get_mouse_position(), _highlighted_object)
+				_rclick_menu_just_created = true					
+			if _highlighted_object.get_state() == GameObject.STATE.STACKED:
+				create_right_click_menu_stack(get_viewport().get_mouse_position(), _highlighted_object)
+				_rclick_menu_just_created = true
 		else:
-			var _highlighted_object: GameObject = _get_overlapping_object(get_local_mouse_position())
-			if _highlighted_object != null:
-				if _highlighted_object.get_state() == GameObject.STATE.IDLE:
-					create_right_click_menu_obj(get_viewport().get_mouse_position(), _highlighted_object)
-					_rclick_menu_just_created = true					
-				if _highlighted_object.get_state() == GameObject.STATE.STACKED:
-					create_right_click_menu_stack(get_viewport().get_mouse_position(), _highlighted_object)
-					_rclick_menu_just_created = true
-			else:
-				print("Nothing to right click")
+			print("Nothing to right click")
 
 func _handle_unselections(input_action: String) -> void:
 	if (input_action == "game_select" and not Input.is_action_pressed("game_select_stack")) or (input_action == "game_select_stack"  and not Input.is_action_pressed("game_select")):
@@ -79,11 +87,10 @@ func _handle_unselections(input_action: String) -> void:
 			if get_selected_object().get_state() == GameObject.STATE.STCK_SLCT:
 				_release_stack_selection()
 			elif get_selected_object().get_state() == GameObject.STATE.SELECTED:
-				print("Releasing selection")
 				_release_selection()
 
 func _handle_selections(input_action: String) -> void:
-	if input_action == "game_select" or input_action == "game_select_stack" and not get_selected_object():
+	if not get_selected_object():
 		print("Time to select")
 		var obj_selection: GameObject = _get_overlapping_object(get_local_mouse_position())
 		if obj_selection:
