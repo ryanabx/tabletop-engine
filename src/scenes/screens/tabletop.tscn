@@ -27,3 +27,4 @@ metadata/_edit_lock_ = true
 layer = 100
 
 [node name="UserInterface" parent="UiLayer" instance=ExtResource("4_7raef")]
+mouse_filter = 2

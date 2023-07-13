@@ -1,7 +1,12 @@
-res://src/scenes/game_objects/stack.tscn
-res://src/shaders/outline2d.gdshader
 res://src/scenes/screens/tabletop.tscn
+res://src/shaders/outline2d.gdshader
+res://src/scenes/game_objects/stack.tscn
 res://src/scenes/game_objects/hand.tscn
 res://src/scenes/ui/user_interface.tscn
-res://src/scripts/singletons/utils.gd
 res://src/scripts/game_objects/game_board.gd
+res://src/scripts/singletons/utils.gd
+res://src/scenes/game_objects/game_object.tscn
+res://src/scenes/pages/title_screen.tscn
+res://src/scripts/singletons/globals.gd
+res://src/scripts/pages/title_screen.gd
+res://src/scenes/pages/solo_onboard.tscn

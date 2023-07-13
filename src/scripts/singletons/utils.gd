@@ -62,17 +62,15 @@ func _add_to_input_times(delta: float, mouse_only: bool) -> void:
 			input_time_dictionary[action].count += delta
 		elif input_time_dictionary[action].action_was_pressed:
 			input_time_dictionary[action].action_was_pressed = false
-			print("ACTION RELEASED: ", action)
 			if input_time_dictionary[action].count < KEYPRESS_THRESHOLD: # Short press
 				input_actions[action] = INPUT_TYPE.SHORT_PRESS # Trigger a short press
-				print(input_time_dictionary[action].count, " ", action)
 				input_time_dictionary[action].count = 0.0
 				input_time_dictionary[action].passed_threshold = false
 			else:
 				input_actions[action] = INPUT_TYPE.LONG_PRESS # Trigger a long press
 				input_time_dictionary[action].count = 0.0
 				input_time_dictionary[action].passed_threshold = false
-	if not input_actions.keys.is_empty():
+	if not input_actions.keys().is_empty():
 		enhanced_inputs.emit(input_actions)
 
 func is_action_just_short_released(action: String, input_actions: Dictionary) -> bool:
@@ -92,3 +90,12 @@ func is_action_just_long_held(action: String, input_actions: Dictionary) -> bool
 
 func is_action_long_held(action: String, input_actions: Dictionary) -> bool:
 	return action in input_actions and input_actions[action] == Utils.INPUT_TYPE.LONG_HOLD
+
+func is_action_just_held(action: String, input_actions: Dictionary) -> bool:
+	return is_action_just_short_held(action, input_actions) or is_action_just_long_held(action, input_actions)
+	
+func is_action_held(action: String, input_actions: Dictionary) -> bool:
+	return is_action_short_held(action, input_actions) or is_action_long_held(action, input_actions)
+
+func is_action_just_released(action: String, input_actions: Dictionary) -> bool:
+	return is_action_just_short_released(action, input_actions) or is_action_just_long_released(action, input_actions)
