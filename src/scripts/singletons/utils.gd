@@ -40,12 +40,20 @@ func _input(event: InputEvent):
 
 func _process(delta: float) -> void:
 	_add_to_input_times(delta, false)
+	_check_inputs()
 
 func _add_to_input_times(delta: float, mouse_only: bool) -> void:
-	var input_actions: Dictionary = {}
 	for action in InputMap.get_actions():
-		if InputMap.action_get_events(action).is_empty() or (not InputMap.action_get_events(action)[0] is InputEventMouseButton and mouse_only):
+		if InputMap.action_get_events(action).is_empty():
 			continue
+		if mouse_only and not InputMap.action_get_events(action)[0] is InputEventMouseButton:
+			continue
+		if Input.is_action_pressed(action):
+			input_time_dictionary[action].count += delta
+
+func _check_inputs() -> void:
+	var input_actions: Dictionary = {}	
+	for action in InputMap.get_actions():
 		if not input_time_dictionary[action].action_was_pressed and Input.is_action_pressed(action):
 			input_time_dictionary[action].action_was_pressed = true
 			input_actions[action] = INPUT_TYPE.START_SHORT_HOLD # Trigger the start of a short hold
@@ -59,7 +67,6 @@ func _add_to_input_times(delta: float, mouse_only: bool) -> void:
 					input_actions[action] = INPUT_TYPE.LONG_HOLD # Trigger a long hold
 			else:
 				input_actions[action] = INPUT_TYPE.SHORT_HOLD # Trigger a short hold
-			input_time_dictionary[action].count += delta
 		elif input_time_dictionary[action].action_was_pressed:
 			input_time_dictionary[action].action_was_pressed = false
 			if input_time_dictionary[action].count < KEYPRESS_THRESHOLD: # Short press
