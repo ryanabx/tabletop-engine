@@ -3,63 +3,51 @@ extends Node2D
 
 const STACK_LERP: float = 0.8
 
-var _selected_object: GameObject = null
-var _selection_box: bool = false
+var is_selecting: bool = false
 
-var _grab_offset: Vector2 = Vector2.ZERO
+var grab_offset: Vector2 = Vector2.ZERO
 
 var _right_click_menu: RightClickMenu = null
 
 var _current_stackable_object: GameObject = null
 var _current_stackable_hand: Hand = null
 
-var _selected_items: Array = []
+var selected_objects: Array = []
 
-var selection_rect: Rect2 = Rect2(0.0, 0.0, 0.0, 0.0)
+var selection_box: Rect2 = Rect2(0.0, 0.0, 0.0, 0.0)
 
+var _stack_scene = preload("res://src/scenes/game_objects/stack.tscn")
 
 @onready var _game_object_manager: Node2D = $GameObjectManager
 
 func _ready() -> void:
-	Utils.enhanced_inputs.connect(_on_enhanced_input)
+	Utils.enhanced_inputs.connect(process_input)
 
-func _on_enhanced_input(input_actions: Dictionary) -> void:
-	# Selection Inputs
+func process_input(input_actions: Dictionary) -> void:
+	# SELECTING OBJECTS
 	if Utils.is_action_just_long_held("game_select", input_actions) or Utils.is_action_just_long_held("game_select_stack", input_actions):
-		_check_selection(input_actions)
-	# Right click Inputs
+		select_object(input_actions)
+	# RIGHT CLICKING
 	if Utils.is_action_just_short_released("game_menu", input_actions) and get_rclick_menu() == null:
-		_handle_right_clicks()
+		right_click()
+	# ENDING RIGHT CLICK MENU
 	elif get_rclick_menu() != null:
 		if Utils.is_action_just_released("game_select", input_actions) or Utils.is_action_just_long_held("game_select", input_actions):
-			_handle_ending_rclick_menu()
+			end_right_click()
 		if Utils.is_action_just_released("game_select_stack", input_actions) or Utils.is_action_just_long_held("game_select_stack", input_actions):
-			_handle_ending_rclick_menu()
+			end_right_click()
 		if Utils.is_action_just_released("game_menu", input_actions) or Utils.is_action_just_long_held("game_menu", input_actions):
-			_handle_ending_rclick_menu()
-	# Deselection Inputs
+			end_right_click()
+	# DESELECTING OBJECTS
 	if Utils.is_action_just_long_released("game_select", input_actions) or Utils.is_action_just_long_released("game_select_stack", input_actions):
-		_handle_unselections()
-	# Flipping
-	if Utils.is_action_just_released("game_flip", input_actions) and get_selected_object() != null:
+		deselect()
+	# FLIPPING OBJECTS
+	if Utils.is_action_just_released("game_flip", input_actions) and has_selected_items():
 		print(input_actions, " ", Time.get_ticks_msec() / 1000.0)
-		_handle_flipping()
+		flip_selection()
 
-var _stack_scene = preload("res://src/scenes/game_objects/stack.tscn")
-
-func _handle_ending_rclick_menu() -> void:
-	if get_rclick_menu() != null:
-		if not get_rclick_menu().get_global_rect().has_point(get_rclick_menu().get_global_mouse_position()):
-			destroy_rclick_menu()
-
-func _handle_flipping() -> void:
-	if get_selected_object().get_state() == GameObject.STATE.STCK_SLCT:
-		get_selected_object().get_obj_stack().flip()
-	elif get_selected_object().get_state() == GameObject.STATE.SELECTED:
-		get_selected_object().flip()
-
-func _handle_right_clicks() -> void:
-	if get_rclick_menu() == null and not has_selected_object():
+func right_click() -> void:
+	if get_rclick_menu() == null and not has_selected_items():
 		var _highlighted_object: GameObject = _get_overlapping_object(get_local_mouse_position())
 		if _highlighted_object != null:
 			if _highlighted_object.get_state() == GameObject.STATE.IDLE:
@@ -68,36 +56,50 @@ func _handle_right_clicks() -> void:
 				create_right_click_menu_stack(get_viewport().get_mouse_position(), _highlighted_object)
 		else:
 			print("Nothing to right click")
+	elif has_selected_items():
+		pass # Multi select
 
-func _handle_unselections() -> void:
-	if get_selected_object():
-		if get_selected_object().get_state() == GameObject.STATE.STCK_SLCT:
-			_release_stack_selection()
-		elif get_selected_object().get_state() == GameObject.STATE.SELECTED:
-			_release_selection()
-	else:
-		release_selection_box()
 
-func _check_selection(input_actions: Dictionary) -> void:
-	if not get_selected_object():
+func end_right_click() -> void:
+	if get_rclick_menu() != null:
+		if not get_rclick_menu().get_global_rect().has_point(get_rclick_menu().get_global_mouse_position()):
+			destroy_rclick_menu()
+
+func flip_selection() -> void:
+	for obj in get_selected_items():
+		if obj.get_state() == GameObject.STATE.STCK_SLCT:
+			obj.get_obj_stack().flip()
+		elif obj.get_state() == GameObject.STATE.SELECTED:
+			obj.flip()
+			
+func select_object(input_actions: Dictionary) -> void:
+	if not has_selected_items():
 		var obj_selection: GameObject = _get_overlapping_object(get_local_mouse_position())
 		if obj_selection:
 			if obj_selection.get_state() == GameObject.STATE.STACKED and Utils.is_action_just_held("game_select_stack", input_actions):
-				_stack_select_object(obj_selection)
+				select_stack(obj_selection)
 			elif obj_selection.get_state() == GameObject.STATE.STACKED:
 				obj_selection = obj_selection.get_obj_stack().release_top_of_stack()
-				_select_object(obj_selection)
+				select_individual_object(obj_selection)
 			elif obj_selection.get_state() == GameObject.STATE.IN_HAND:
 				print("In hand")
-				_select_object_from_hand(obj_selection)
+				select_individual_object_from_hand(obj_selection)
 			else:
-				_select_object(obj_selection)
+				select_individual_object(obj_selection)
 		else:
-			_create_selection_rect()
+			initialize_selection_rect()
 
-func _create_selection_rect() -> void:
-	selection_rect.position = get_local_mouse_position()
-	_selection_box = true
+func deselect() -> void:
+	for obj in get_selected_items():
+		if obj.get_state() == GameObject.STATE.STCK_SLCT:
+			obj._release_stack_selection()
+		elif obj.get_state() == GameObject.STATE.SELECTED:
+			_release_selection()
+	release_selection_box()
+
+func initialize_selection_rect() -> void:
+	selection_box.position = get_local_mouse_position()
+	is_selecting = true
 
 func _get_overlapping_object(point: Vector2) -> GameObject:
 	var game_objects = get_tree().get_nodes_in_group("game_object")
@@ -109,90 +111,88 @@ func _get_overlapping_object(point: Vector2) -> GameObject:
 				best = g_obj
 	return best
 
-func _select_object(obj: GameObject) -> void:
-	set_selected_object(obj)
-	print("Selecting")
-	_grab_offset = obj.position - get_local_mouse_position()
+func select_individual_object(obj: GameObject) -> void:
+	print("Selecting Individual Object")
+	selected_objects = [obj]
+	grab_offset = obj.position - get_local_mouse_position()
 	move_object_to_front(obj)
 	obj.select()
 
-func _select_object_from_hand(obj: GameObject) -> void:
+func select_individual_object_from_hand(obj: GameObject) -> void:
 	obj.get_hand().remove_game_object(obj)
 	obj.take_out_of_hand()
 	obj.set_hand(null)
 	print("Take obj out of hand")
-	_select_object(obj)
+	select_individual_object(obj)
 
-func _stack_select_object(obj: GameObject) -> void:
-	set_selected_object(obj)
+func select_stack(obj: GameObject) -> void:
+	selected_objects = [obj]
 	print("Stack Selecting")
-	_grab_offset = obj.position - get_local_mouse_position()
+	grab_offset = obj.position - get_local_mouse_position()
 	move_object_to_front(obj)
 	move_stack_to_front(obj.get_obj_stack())
 	obj.stack_select()
 
-func has_selected_object() -> bool:
-	return get_selected_object() != null
+func has_selected_items() -> bool:
+	return not get_selected_items().is_empty()
 
-func get_selected_object() -> GameObject:
-	return _selected_object
-
-func set_selected_object(_slc: GameObject) -> void:
-	_selected_object = _slc
+func get_selected_items() -> Array:
+	return selected_objects
 
 func _release_selection() -> void:
-	if get_selected_object():
+	if has_selected_items():
 		if _current_stackable_hand:
 			print("Stacking card into hand")
-			_stack_object_to_hand(get_selected_object(), _current_stackable_hand)
+			objects_to_hand(get_selected_items(), _current_stackable_hand)
 		elif _current_stackable_object:
 			if _current_stackable_object.get_obj_stack():
 				print("Stacking object into already made stack")
-				_stack_object_to_stack(_selected_object, _current_stackable_object.get_obj_stack())
+				_stack_object_to_stack(get_selected_items(), _current_stackable_object.get_obj_stack())
 			else:
 				print("Stacking 2 objects")
 				_stack_objects(_selected_object, _current_stackable_object)
 			_selected_object.make_stacked()
 			_current_stackable_object.make_stacked()
-		_selected_object.deselect()
-	_grab_offset = Vector2.ZERO
+		_deselect_selected_items()
+	grab_offset = Vector2.ZERO
 	set_selected_object(null)
 
 func _release_stack_selection() -> void:
-	if get_selected_object():
+	if has_selected_items():
 		if _current_stackable_hand:
 			print("Stacking stack into hand")
-			_stack_stack_to_hand(get_selected_object().get_obj_stack(), _current_stackable_hand)
+			stack_to_hand(get_selected_object().get_obj_stack(), _current_stackable_hand)
 		elif _current_stackable_object:
 			if _current_stackable_object.get_obj_stack():
 				print("Stacking stack into already made stack")
-				_stack_stacks(get_selected_object().get_obj_stack(), _current_stackable_object.get_obj_stack())
+				stack_stacks(get_selected_object().get_obj_stack(), _current_stackable_object.get_obj_stack())
 			else:
 				print("Stacking stack onto object")
 				_stack_stack_to_object(get_selected_object().get_obj_stack(), _current_stackable_object)
 			get_selected_object().make_stacked()
 			_current_stackable_object.make_stacked()
 		get_selected_object().stack_deselect()
-	_grab_offset = Vector2.ZERO
+	grab_offset = Vector2.ZERO
 	set_selected_object(null)
 
-func _stack_object_to_hand(obj: GameObject, hand: Hand) -> void:
-	obj.put_in_hand()
-	obj.set_hand(hand)
-	hand.add_game_object(obj)
-	hand.make_unhovered()
+func objects_to_hand(objects: Array, hand: Hand) -> void:
+	for obj in objects:
+		obj.put_in_hand()
+		obj.set_hand(hand)
+		hand.add_game_object(obj)
+		hand.make_unhovered()
 
-func _stack_stack_to_hand(stck: ObjectStack, hand: Hand) -> void:
-	for _obj in stck.get_game_objects():
-		print("Object state: ", _obj.state_to_string(_obj.get_state()))
-		_obj.set_obj_stack(null)
-		_obj.put_in_hand()
-		_obj.set_hand(hand)
-		hand.add_game_object(_obj)
+func stack_to_hand(stck: ObjectStack, hand: Hand) -> void:
+	for obj in stck.get_game_objects():
+		print("Object state: ", obj.state_to_string(obj.get_state()))
+		obj.set_obj_stack(null)
+		obj.put_in_hand()
+		obj.set_hand(hand)
+		hand.add_game_object(obj)
 	stck.queue_free()
 	hand.make_unhovered()
 
-func _stack_stacks(stck: ObjectStack, stck2: ObjectStack) -> void:
+func stack_stacks(stck: ObjectStack, stck2: ObjectStack) -> void:
 	for obj in stck.get_game_objects():
 		obj.set_obj_stack(stck2)
 		stck2.add_game_object(obj)
@@ -239,12 +239,12 @@ func _process(_delta):
 	queue_redraw()
 
 func _update_selection_rect():
-	if _selection_box:
-		selection_rect.end = get_local_mouse_position()
+	if is_selecting:
+		selection_box.end = get_local_mouse_position()
 	
 func _check_move_selected_object() -> void:
 	if get_selected_object() != null and get_selected_object().get_state() == GameObject.STATE.SELECTED and (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")):
-		get_selected_object().position = get_global_mouse_position() + _grab_offset
+		get_selected_object().position = get_global_mouse_position() + grab_offset
 		get_selected_object().position = get_selected_object().position.clamp(get_viewport().get_visible_rect().position, get_viewport().get_visible_rect().position + get_viewport().get_visible_rect().size)
 		_check_stacking(false)
 		_check_over_hand(false)
@@ -252,7 +252,7 @@ func _check_move_selected_object() -> void:
 func _check_move_stack() -> void:
 	if get_selected_object() != null and Input.is_action_pressed("game_select_stack"):
 		if get_selected_object().get_state() == GameObject.STATE.STCK_SLCT:
-			get_selected_object().get_obj_stack().position = get_global_mouse_position() + _grab_offset
+			get_selected_object().get_obj_stack().position = get_global_mouse_position() + grab_offset
 			get_selected_object().get_obj_stack().position = get_selected_object().get_obj_stack().position.clamp(get_viewport().get_visible_rect().position, get_viewport().get_visible_rect().position + get_viewport().get_visible_rect().size)
 			get_selected_object().get_obj_stack().stack_moved()
 			_check_stacking(true)
@@ -346,6 +346,9 @@ func _stack_areas_overlap(obj1: GameObject, obj2: GameObject):
 func _hand_obj_areas_overlap(obj1: GameObject, _hand: Hand):
 	return (obj1.get_stack_rect() * obj1.get_transform().affine_inverse()).intersects(_hand.get_rect() * _hand.get_transform().affine_inverse())
 
+func _rect_obj_aread_overlap(obj1: GameObject, _rect: Rect2):
+	return (obj1.get_stack_rect() * obj1.get_transform().affine_inverse()).intersects(_rect)
+
 func get_game_object_manager() -> Node2D:
 	return _game_object_manager
 
@@ -375,11 +378,18 @@ func destroy_rclick_menu() -> void:
 	_right_click_menu = null
 
 func release_selection_box() -> void:
-	if _selection_box:
-		_selected_items = []
-		selection_rect = Rect2(0.0, 0.0, 0.0, 0.0)
-		_selection_box = false
+	if is_selecting:
+		selected_objects = _get_selected_items_from_rect()
+		selection_box = Rect2(0.0, 0.0, 0.0, 0.0)
+		is_selecting = false
+
+func _get_selected_items_from_rect() -> Array:
+	var items: Array = []
+	for obj in get_tree().get_nodes_in_group("game_object"):
+		if _rect_obj_aread_overlap(obj, selection_box):
+			items.append(obj)
+	return items
 
 func _draw() -> void:
-	if _selection_box:
-		draw_rect(selection_rect, Color.from_hsv(0.5, 1.0, 1.0, 0.8))
+	if is_selecting:
+		draw_rect(selection_box, Color.from_hsv(0.6, 1.0, 1.0, 0.5))
