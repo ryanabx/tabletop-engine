@@ -1,4 +1,6 @@
 res://src/scripts/game_objects/game_board.gd
-res://src/scripts/game_objects/game_object.gd
 res://src/scripts/game_objects/stack.gd
+res://src/scripts/game_objects/game_object.gd
+res://src/scripts/singletons/utils.gd
 res://src/scripts/game_objects/hand.gd
+res://src/scripts/game_objects/collection.gd

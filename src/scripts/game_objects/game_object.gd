@@ -14,11 +14,9 @@ enum OBJ_TYPE {
 enum SIDE {UP,DOWN}
 
 var _obj_type: OBJ_TYPE = OBJ_TYPE.GENERIC
-var _obj_name: String = ""
 var _obj_images: Array = []
 
-var _next_in_stack: GameObject = null
-var _prev_in_stack: GameObject = null
+var grab_offset: Vector2 = Vector2.ZERO
 
 var _obj_stack: ObjectStack = null
 var _obj_hand: Hand = null
@@ -30,6 +28,9 @@ var _state: STATE = STATE.IDLE
 @onready var state_label: Label = $StateLabel
 @onready var _sprite: Sprite2D = $ObjectSprite
 
+func _ready() -> void:
+	add_to_group("game_objects")
+
 func _type_from_string(obj_type: String) -> OBJ_TYPE:
 	match obj_type:
 		"stack":
@@ -38,6 +39,12 @@ func _type_from_string(obj_type: String) -> OBJ_TYPE:
 			return OBJ_TYPE.CARD
 		_:
 			return OBJ_TYPE.GENERIC
+
+func get_grab_offset() -> Vector2:
+	return grab_offset
+
+func set_grab_offset(offset: Vector2) -> void:
+	grab_offset = offset
 
 func _set_scale(_sc: Vector2, preserve_aspect: bool) -> void:
 	if not preserve_aspect:
@@ -60,18 +67,21 @@ func get_obj_stack() -> ObjectStack:
 func get_hand() -> Hand:
 	return _obj_hand
 
-func set_obj_stack(_stck: ObjectStack) -> void:
-	_obj_stack = _stck
-
-func set_hand(_hnd: Hand) -> void:
-	_obj_hand = _hnd
-
 func set_state(state: STATE) -> bool:
 	_state = state
 	return true
 
 func get_state() -> STATE:
 	return _state
+
+func is_stacked() -> bool:
+	return get_state() == STATE.STACKED or get_state() == STATE.STCK_SLCT or get_state() == STATE.STACKED_READY
+
+func is_in_hand() -> bool:
+	return get_state() == STATE.IN_HAND
+
+func unselectable() -> bool:
+	return false
 
 func get_side() -> SIDE:
 	return _side
@@ -141,13 +151,16 @@ func get_unready_for_stacking() -> void:
 		_:
 			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (get unready for stacking).")
 
-func make_stacked() -> void:
+func make_stacked(stack: ObjectStack) -> void:
 	match get_state():
 		STATE.READY_FOR_STACKING:
+			_obj_stack = stack
 			set_state(STATE.STACKED)
 		STATE.SELECTED:
+			_obj_stack = stack
 			set_state(STATE.STACKED)
 		STATE.STACKED_READY:
+			_obj_stack = stack
 			set_state(STATE.STACKED)
 		_:
 			print("Attempted transition from ", state_to_string(get_state()), " to stacked failed (make stacked).")
@@ -155,17 +168,21 @@ func make_stacked() -> void:
 func make_unstacked() -> void:
 	match get_state():
 		STATE.STACKED:
+			_obj_stack = null
 			set_state(STATE.IDLE)
 		_:
 			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (make unstacked).")
 
-func put_in_hand() -> void:
+func put_in_hand(hand: Hand) -> void:
 	match get_state():
 		STATE.SELECTED:
+			_obj_hand = hand
 			set_state(STATE.IN_HAND)
 		STATE.STCK_SLCT:
+			_obj_hand = hand
 			set_state(STATE.IN_HAND)
 		STATE.STACKED:
+			_obj_hand = hand
 			set_state(STATE.IN_HAND)
 		_:
 			print("Attempted transition from ", state_to_string(get_state()), " to in hand failed (put in hand).")
@@ -173,6 +190,7 @@ func put_in_hand() -> void:
 func take_out_of_hand():
 	match get_state():
 		STATE.IN_HAND:
+			_obj_hand = null
 			set_state(STATE.IDLE)
 		_:
 			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (take out of hand).")
