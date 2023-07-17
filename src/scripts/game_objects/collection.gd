@@ -1,22 +1,26 @@
 class_name GameCollection
-extends Node2D
+extends GameItem
 
-enum STATE {
-	IDLE, HOVERED
-}
 
-var _state = STATE.IDLE
 var _game_objects: Array = []
 var _scale: Vector2 = Vector2.ZERO
 
+var stack_counter_scene: PackedScene = load("res://src/scenes/ui/stack_counter.tscn")
+var stack_counter = null
+
 func _ready() -> void:
 	add_to_group("collections")
+	stack_counter = stack_counter_scene.instantiate()
+	stack_counter.z_index = 5
+	add_child(stack_counter)
+	
 
 func _process(_delta: float) -> void:
 	_update_objects()
+	stack_counter.set_label(str(get_num_objects()))
 
 func _update_objects() -> void:
-	print("Not Implemented")
+	print("_update_objects Not Implemented on: ",get_class()," ",get_name())
 	pass
 
 func get_game_objects() -> Array:
@@ -35,14 +39,11 @@ func add_game_object_to_bottom(obj: GameObject) -> void:
 	get_game_objects().push_front(obj)
 
 func add_game_object_special(_obj: GameObject) -> void:
-	print("Not implemented")
+	print("add_game_object_special not Implemented on: ",get_class())
 	pass
 
 func get_rect() -> Rect2:
 	return Rect2(- _scale / 2.0, _scale)
-
-func get_extents() -> Rect2:
-	return get_rect() * get_transform().affine_inverse()
 
 func get_top_object() -> GameObject:
 	if get_num_objects() == 0:
@@ -56,22 +57,22 @@ func remove_game_object(obj: GameObject) -> GameObject:
 	return remove_object_at(index)
 
 func remove_object_at(index: int) -> GameObject:
+	print("Removing object")
 	var target_object: GameObject = get_game_objects().pop_at(index)
-	target_object.make_unstacked()
+	target_object.remove_from_collection()
+	print(get_num_objects())
 	if get_num_objects() == 1:
 		remove_object_at(0)
 	elif get_num_objects() == 0:
+		print("remove stack")
 		queue_free()
 	return target_object
 
 func get_num_objects() -> int:
 	return get_game_objects().size()
 
-func get_state() -> STATE:
-	return _state
-
 func disabled() -> bool:
-	return true
+	return false
 
 func flip() -> void:
 	for obj in get_game_objects():
@@ -80,16 +81,5 @@ func flip() -> void:
 func shuffle() -> void:
 	get_game_objects().shuffle()
 
-func make_hovered() -> void:
-	match _state:
-		STATE.IDLE:
-			_state = STATE.HOVERED
-		_:
-			print("Wtf collection")
-
-func make_unhovered() -> void:
-	match _state:
-		STATE.HOVERED:
-			_state = STATE.IDLE
-		_:
-			print("Wtf2 collection")
+func _draw() -> void:
+	super._draw()

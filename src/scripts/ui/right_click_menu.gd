@@ -1,56 +1,68 @@
 class_name RightClickMenu
 extends VBoxContainer
 
-enum RIGHT_CLICK_MENU_TYPE {
-	BLANK,
-	GAME_OBJECT,
-	STACK
-}
+enum TYPE {NONE,GAME_OBJECT,OBJECT_GROUP,COLLECTION}
 
-var _menu_type: RIGHT_CLICK_MENU_TYPE
-var _associated_object: GameObject = null
-var _board: GameBoard
-var _associated_stack: ObjectStack
+var type: TYPE = TYPE.NONE
+var item: GameItem = null
+var object_group: Array = []
+var board: GameBoard = null
 
-func _init(menu_type: RIGHT_CLICK_MENU_TYPE, associated_object: GameObject, associated_stack: ObjectStack, board: GameBoard) -> void:
-	self._menu_type = menu_type
-	self._associated_object = associated_object
-	self._associated_stack = associated_stack
-	self._board = board
+static func from_collection(collection: GameCollection, brd: GameBoard) -> RightClickMenu:
+	var rclick_menu = RightClickMenu.new()
+	rclick_menu.type = TYPE.COLLECTION
+	rclick_menu.item = collection
+	rclick_menu.board = brd
+	return rclick_menu
+
+static func from_game_object(object: GameObject, brd: GameBoard) -> RightClickMenu:
+	var rclick_menu = RightClickMenu.new()
+	rclick_menu.type = TYPE.GAME_OBJECT
+	rclick_menu.item = object
+	rclick_menu.board = brd
+	return rclick_menu
+
+static func from_object_group(objects: Array, brd: GameBoard) -> RightClickMenu:
+	var rclick_menu = RightClickMenu.new()
+	rclick_menu.type = TYPE.OBJECT_GROUP
+	rclick_menu.object_group = objects
+	rclick_menu.board = brd
+	return rclick_menu
 
 func _ready() -> void:
-	_populate_right_click_menu()
-
-func destroy_menu():
-	get_board().destroy_rclick_menu()
-
-func _populate_right_click_menu():
-	match _menu_type:
-		RIGHT_CLICK_MENU_TYPE.GAME_OBJECT:
-			var flip_object = RightClickMenuButton.new(self, RightClickMenuButton.MENU_BUTTON_TYPE.BLANK, RightClickMenuButton.MENU_BUTTON_FUNCTIONALITY.FLIP_OBJECT)
-			flip_object.text = "Flip object"
-			add_child(flip_object)
-			var go_to_front = RightClickMenuButton.new(self, RightClickMenuButton.MENU_BUTTON_TYPE.BLANK, RightClickMenuButton.MENU_BUTTON_FUNCTIONALITY.GO_TO_FRONT)
-			go_to_front.text = "Bring to front"
-			add_child(go_to_front)
-			var go_to_back = RightClickMenuButton.new(self, RightClickMenuButton.MENU_BUTTON_TYPE.BLANK, RightClickMenuButton.MENU_BUTTON_FUNCTIONALITY.GO_TO_BACK)
-			go_to_back.text = "Send to back"
-			add_child(go_to_back)
-		RIGHT_CLICK_MENU_TYPE.STACK:
-			var flip_stack = RightClickMenuButton.new(self, RightClickMenuButton.MENU_BUTTON_TYPE.BLANK, RightClickMenuButton.MENU_BUTTON_FUNCTIONALITY.FLIP_STACK)
-			flip_stack.text = "Flip stack"
-			add_child(flip_stack)
-			var shuffle_stack = RightClickMenuButton.new(self, RightClickMenuButton.MENU_BUTTON_TYPE.BLANK, RightClickMenuButton.MENU_BUTTON_FUNCTIONALITY.SHUFFLE_STACK)
-			shuffle_stack.text = "Shuffle"
-			add_child(shuffle_stack)
+	match type:
+		TYPE.GAME_OBJECT:
+			init_game_object_menu()
+		TYPE.COLLECTION:
+			init_collection_menu()
 		_:
-			return
+			print("None")
 
-func get_associated_object() -> GameObject:
-	return _associated_object
+func init_game_object_menu() -> void:
+	add_child(RightClickMenuButton.new("Flip object", self._flip_item))
+	add_child(RightClickMenuButton.new("Go to front", self._move_item_to_front))
+	add_child(RightClickMenuButton.new("Send to back", self._move_item_to_back))
 
-func get_associated_stack() -> ObjectStack:
-	return _associated_stack
+func init_collection_menu():
+	add_child(RightClickMenuButton.new("Flip collection", self._flip_item))
+	add_child(RightClickMenuButton.new("Shuffle collection", self._shuffle_collection))
+	add_child(RightClickMenuButton.new("Go to front", self._move_item_to_front))
+	add_child(RightClickMenuButton.new("Send to back", self._move_item_to_back))
 
-func get_board() -> GameBoard:
-	return _board
+# RIGHT CLICK MENU FUNCIONALITIES
+
+func _shuffle_collection() -> void:
+	(item as GameCollection).shuffle()
+	board.destroy_rclick_menu()
+
+func _flip_item() -> void:
+	item.flip()
+	board.destroy_rclick_menu()
+
+func _move_item_to_front() -> void:
+	board.move_item_to_front(item)
+	board.destroy_rclick_menu()
+
+func _move_item_to_back() -> void:
+	board.move_item_to_back(item)
+	board.destroy_rclick_menu()

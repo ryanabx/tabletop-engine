@@ -1,9 +1,14 @@
 class_name GameObject
-extends Node2D
+extends GameItem
 
 const DEFAULT_SIZE = Vector2(64.0, 64.0)
 
-enum STATE {IDLE,SELECTED,RIGHT_CLICK,LOCKED,STACKED,STCK_SLCT,READY_FOR_STACKING,STACKED_READY,IN_HAND}
+enum STATE {
+	IDLE,
+	SELECTED,
+	RIGHT_CLICK,
+	LOCKED
+}
 
 enum OBJ_TYPE {
 	GENERIC,
@@ -11,15 +16,17 @@ enum OBJ_TYPE {
 	STACK
 }
 
-enum SIDE {UP,DOWN}
+enum SIDE {
+	UP,
+	DOWN
+}
 
 var _obj_type: OBJ_TYPE = OBJ_TYPE.GENERIC
 var _obj_images: Array = []
 
 var grab_offset: Vector2 = Vector2.ZERO
 
-var _obj_stack: ObjectStack = null
-var _obj_hand: Hand = null
+var collection: GameCollection = null
 
 
 var _side: SIDE = SIDE.UP
@@ -61,11 +68,15 @@ func get_stack_rect() -> Rect2:
 	stack_transform = stack_transform * 0.25
 	return _sprite.get_rect() * stack_transform
 
-func get_obj_stack() -> ObjectStack:
-	return _obj_stack
 
-func get_hand() -> Hand:
-	return _obj_hand
+func has_collection() -> bool:
+	return collection != null
+
+func get_collection() -> GameCollection:
+	return collection
+
+func set_collection(coll: GameCollection) -> void:
+	collection = coll
 
 func set_state(state: STATE) -> bool:
 	_state = state
@@ -73,12 +84,6 @@ func set_state(state: STATE) -> bool:
 
 func get_state() -> STATE:
 	return _state
-
-func is_stacked() -> bool:
-	return get_state() == STATE.STACKED or get_state() == STATE.STCK_SLCT or get_state() == STATE.STACKED_READY
-
-func is_in_hand() -> bool:
-	return get_state() == STATE.IN_HAND
 
 func unselectable() -> bool:
 	return false
@@ -105,20 +110,6 @@ func deselect() -> void:
 		_:
 			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (deselect).")
 
-func stack_select() -> void:
-	match get_state():
-		STATE.STACKED:
-			set_state(STATE.STCK_SLCT)
-		_:
-			print("Attempted transition from ", state_to_string(get_state()), " to stack selected failed (stack select).")
-
-func stack_deselect() -> void:
-	match get_state():
-		STATE.STCK_SLCT:
-			set_state(STATE.STACKED)
-		_:
-			print("Attempted transition from ", state_to_string(get_state()), " to stacked failed (stack deselect).")
-
 func right_click() -> void:
 	match get_state():
 		STATE.IDLE:
@@ -133,71 +124,24 @@ func revert_right_click() -> void:
 		_:
 			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (revert right click).")
 
-func get_ready_for_stacking() -> void:
-	match get_state():
-		STATE.IDLE:
-			set_state(STATE.READY_FOR_STACKING)
-		STATE.STACKED:
-			set_state(STATE.STACKED_READY)
-		_:
-			print("Attempted transition from ", state_to_string(get_state()), " to ready for stacking failed (get ready for stacking).")
-
-func get_unready_for_stacking() -> void:
-	match get_state():
-		STATE.READY_FOR_STACKING:
-			set_state(STATE.IDLE)
-		STATE.STACKED_READY:
-			set_state(STATE.STACKED)
-		_:
-			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (get unready for stacking).")
-
-func make_stacked(stack: ObjectStack) -> void:
-	match get_state():
-		STATE.READY_FOR_STACKING:
-			_obj_stack = stack
-			set_state(STATE.STACKED)
-		STATE.SELECTED:
-			_obj_stack = stack
-			set_state(STATE.STACKED)
-		STATE.STACKED_READY:
-			_obj_stack = stack
-			set_state(STATE.STACKED)
-		_:
-			print("Attempted transition from ", state_to_string(get_state()), " to stacked failed (make stacked).")
-
-func make_unstacked() -> void:
-	match get_state():
-		STATE.STACKED:
-			_obj_stack = null
-			set_state(STATE.IDLE)
-		_:
-			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (make unstacked).")
-
-func put_in_hand(hand: Hand) -> void:
+func put_in_collection(coll: GameCollection) -> void:
 	match get_state():
 		STATE.SELECTED:
-			_obj_hand = hand
-			set_state(STATE.IN_HAND)
-		STATE.STCK_SLCT:
-			_obj_hand = hand
-			set_state(STATE.IN_HAND)
-		STATE.STACKED:
-			_obj_hand = hand
-			set_state(STATE.IN_HAND)
-		_:
-			print("Attempted transition from ", state_to_string(get_state()), " to in hand failed (put in hand).")
-
-func take_out_of_hand():
-	match get_state():
-		STATE.IN_HAND:
-			_obj_hand = null
+			set_collection(coll)
 			set_state(STATE.IDLE)
 		_:
-			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (take out of hand).")
+			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (put in collection).")
+
+func remove_from_collection() -> void:
+	if has_collection():
+		set_collection(null)
+	else:
+		print("Cannot remove an object from a null collection")
 
 func _process(_delta: float) -> void:
 	state_label.text = state_to_string(get_state())
 	z_index = get_index()
+	queue_redraw()
 
 func state_to_string(state: STATE) -> String:
 	match state:
@@ -207,15 +151,12 @@ func state_to_string(state: STATE) -> String:
 			return "selected"
 		STATE.RIGHT_CLICK:
 			return "right click"
-		STATE.STACKED:
-			return "stacked"
-		STATE.STCK_SLCT:
-			return "stack selected"
-		STATE.READY_FOR_STACKING:
-			return "ready for stacking"
-		STATE.STACKED_READY:
-			return "stacked and ready for stacking"
-		STATE.IN_HAND:
-			return "in hand"
+		STATE.LOCKED:
+			return "locked"
 		_:
 			return ""
+
+func _draw() -> void:
+	super._draw()
+	if get_state() == STATE.SELECTED:
+		draw_rect(get_rect(), Color.from_hsv(1.0, 1.0, 1.0, 1.0), false, Globals.OUTLINE_THICKNESS * Globals.THICKNESS_RATIO)

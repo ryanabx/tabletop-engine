@@ -13,6 +13,7 @@ var _name: String = ""
 @export var player_id: int = 0
 @onready var game_board: GameBoard = $GameBoard
 @onready var user_interface: UserInterface = $UiLayer/UserInterface
+@onready var ui_layer: CanvasLayer = $UiLayer
 
 var _game_object_scene = preload("res://src/scenes/game_objects/game_object.tscn")
 var _stack_scene = preload("res://src/scenes/game_objects/stack.tscn")
@@ -72,23 +73,23 @@ func _set_up_board(board: Dictionary, objects: Dictionary) -> void:
 		_parse_item(item, objects, [], null)
 		# print("Added new child")
 
-func _parse_item(item: Dictionary, objects: Dictionary, config_vars: Array, stack: ObjectStack) -> void:
+func _parse_item(item: Dictionary, objects: Dictionary, config_vars: Array, collection: GameCollection) -> void:
 	# print(item)
 	match item.type:
 		"card":
-			_new_card(item, objects, config_vars, stack)
+			_new_card(item, objects, config_vars, collection)
 		"stack":
-			_new_stack(item, objects, config_vars, stack)
+			_new_stack(item, objects, config_vars, collection)
 		"foreach":
-			_new_foreach(item, objects, config_vars, stack)
+			_new_foreach(item, objects, config_vars, collection)
 		"repeat":
-			_new_repeat(item, objects, config_vars, stack)
+			_new_repeat(item, objects, config_vars, collection)
 		"hand":
-			_new_hand(item, objects, config_vars, stack)
+			_new_hand(item, objects, config_vars, collection)
 		_:
-			_new_generic_object(item, objects, config_vars, stack)
+			_new_generic_object(item, objects, config_vars, collection)
 
-func _new_foreach(item: Dictionary, objects: Dictionary, config_vars: Array, stack: ObjectStack) -> void:
+func _new_foreach(item: Dictionary, objects: Dictionary, config_vars: Array, collection: GameCollection) -> void:
 	# Define foreach traits
 	var fr: String = item.foreach
 	var n: Array = item.in
@@ -101,18 +102,18 @@ func _new_foreach(item: Dictionary, objects: Dictionary, config_vars: Array, sta
 	for i in range(n.size()):
 		_var.set_ind(i)
 		for _d in d:
-			_parse_item(_d, objects, _confvars, stack)
+			_parse_item(_d, objects, _confvars, collection)
 
-func _new_repeat(item: Dictionary, objects: Dictionary, config_vars: Array, stack: ObjectStack) -> void:
+func _new_repeat(item: Dictionary, objects: Dictionary, config_vars: Array, collection: GameCollection) -> void:
 	# Define repeat traits
 	var amt: int = item.amount
 	var d: Array = item.do
 	
 	for i in range(amt):
 		for _d in d:
-			_parse_item(_d, objects, config_vars, stack)
+			_parse_item(_d, objects, config_vars, collection)
 
-func _new_hand(item: Dictionary, objects: Dictionary, config_vars: Array, stack: ObjectStack) -> void:
+func _new_hand(item: Dictionary, objects: Dictionary, config_vars: Array, collection: GameCollection) -> void:
 	# Define hand traits
 	var pl: int = item.player
 	var location: Vector2 = Vector2(item.location[0], item.location[1])
@@ -122,11 +123,11 @@ func _new_hand(item: Dictionary, objects: Dictionary, config_vars: Array, stack:
 	var _hand = Hand.new(pl, location, size)
 	game_board.get_game_object_manager().add_child(_hand)
 
-func _new_generic_object(item: Dictionary, objects: Dictionary, config_vars: Array, stack: ObjectStack) -> void:
+func _new_generic_object(item: Dictionary, objects: Dictionary, config_vars: Array, collection: GameCollection) -> void:
 	pass
 
-func _new_stack(item: Dictionary, objects: Dictionary, config_vars: Array, stack: ObjectStack) -> void:
-	if stack:
+func _new_stack(item: Dictionary, objects: Dictionary, config_vars: Array, collection: GameCollection) -> void:
+	if collection:
 		print("Config Error: Attempted to stack a stack")
 	# Define stack traits
 	var location: Vector2 = Vector2(item.location[0], item.location[1])
@@ -140,8 +141,10 @@ func _new_stack(item: Dictionary, objects: Dictionary, config_vars: Array, stack
 	
 	for _ins in inside:
 		_parse_item(_ins, objects, config_vars, _stack)
+	
+	_stack.get_game_objects()[-1].position = _stack.position
 
-func _new_card(item: Dictionary, objects: Dictionary, config_vars: Array, stack: ObjectStack) -> void:
+func _new_card(item: Dictionary, objects: Dictionary, config_vars: Array, collection: GameCollection) -> void:
 	# Define card traits
 	var type: String = item.type
 	var groups: Array = item.groups
@@ -177,10 +180,10 @@ func _new_card(item: Dictionary, objects: Dictionary, config_vars: Array, stack:
 	_card.position = location
 	for _group in groups:
 		_card.add_to_group(_group)
-	if stack:
-		_card.set_state(GameObject.STATE.STACKED)
-		_card.set_obj_stack(stack)
-		stack.add_game_object(_card)
+	if collection:
+		_card.select()
+		_card.put_in_collection(collection)
+		collection.add_game_object_to_top(_card)
 
 # TODO: PARSE THE NEW BOARD.JSON FILE WITH LOOPS AND SHIT
 

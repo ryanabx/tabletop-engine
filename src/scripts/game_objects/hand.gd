@@ -32,6 +32,7 @@ func _update_objects() -> void:
 	var num_objects: int = get_num_objects()
 	var _extents: Array = get_horizontal_extents()
 	var _max_index = _get_max_index()
+	z_index = _max_index + 1
 	
 	var larg_x: float = 0.0
 	var larg_y: float = 64.0
@@ -64,6 +65,4 @@ func get_player_id() -> int:
 	return _player
 
 func _draw():
-	if not disabled():
-		draw_rect(Rect2(- _scale / 2.0, _scale), Color.from_hsv(clampf(_hue, 0.0, 1.0), 1.0, 1.0, 0.3), true)
-	# draw_rect(Rect2(- _scale / 2.0, _scale), Color.from_hsv(clampf(_hue, 0.0, 1.0), 0.5, 1.0), false, _outline_size)
+	super._draw()
