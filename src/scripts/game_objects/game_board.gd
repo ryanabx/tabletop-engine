@@ -5,8 +5,6 @@ const STACK_LERP: float = 0.8
 
 var is_selecting: bool = false
 
-var grab_offset: Vector2 = Vector2.ZERO
-
 var _right_click_menu: RightClickMenu = null
 
 var _current_stackable_item: GameItem = null
@@ -16,6 +14,9 @@ var selected_objects: Array = []
 var selection_box: Rect2 = Rect2(0.0, 0.0, 0.0, 0.0)
 
 var _stack_scene = preload("res://src/scenes/game_objects/stack.tscn")
+
+var group_selection_mode: bool = false
+var group_selection_down: bool = false
 
 @onready var front_layer: CanvasLayer = $/root/Tabletop/UiLayer
 
@@ -28,6 +29,8 @@ func process_input(input_actions: Dictionary) -> void:
 	# SELECTING OBJECTS
 	if Utils.is_action_just_long_held("game_select", input_actions) or Utils.is_action_just_long_held("game_select_stack", input_actions):
 		select_object(input_actions)
+		if group_selection_mode:
+			check_over_group_selection()
 	# RIGHT CLICKING
 	if Utils.is_action_just_short_released("game_menu", input_actions) and get_rclick_menu() == null:
 		print("Right Click")
@@ -43,10 +46,18 @@ func process_input(input_actions: Dictionary) -> void:
 		if Utils.is_action_just_released("game_menu", input_actions) or Utils.is_action_just_long_held("game_menu", input_actions):
 			print("End Right Click")
 			end_right_click()
+	# DESELECTING GROUP SELECTED OBJECTS V2
+	if Utils.is_action_just_released("game_select", input_actions) or Utils.is_action_just_released("game_select_stack", input_actions):
+		if group_selection_mode and not group_selection_down:
+			release_selection_group(input_actions)
 	# DESELECTING OBJECTS
 	if Utils.is_action_just_long_released("game_select", input_actions) or Utils.is_action_just_long_released("game_select_stack", input_actions):
 		print("Release Selection")
 		release_selection()
+	# DESELECTING GROUP SELECTED OBJECTS
+	if Utils.is_action_just_released("end_group_select", input_actions):
+		if group_selection_mode:
+			release_selection_group(input_actions)
 	# FLIPPING OBJECTS
 	if Utils.is_action_just_released("game_flip", input_actions) and has_selected_items():
 		print("Flip Selection")
@@ -62,8 +73,14 @@ func right_click() -> void:
 				create_right_click_menu_obj(get_local_mouse_position(), highlighted_obj)
 		else:
 			print("Nothing to right click")
-	elif has_selected_items():
-		pass # Multi select
+	elif has_selected_items() and group_selection_mode:
+		if get_overlapping_obj_from_selected(get_local_mouse_position()) != null:
+			create_right_click_menu_group(get_local_mouse_position(), get_selected_items())
+
+func check_over_group_selection() -> void:
+	if get_overlapping_obj_from_selected(get_local_mouse_position()) != null:
+		group_selection_down = true
+
 
 func end_right_click() -> void:
 	if get_rclick_menu() != null:
@@ -83,32 +100,47 @@ func select_object(input_actions: Dictionary) -> void:
 		if obj_selection:
 			if obj_selection.has_collection() and Utils.is_action_just_held("game_select_stack", input_actions):
 				print("Select Entire Collection")
-				select_objects(obj_selection.get_collection().get_game_objects())
+				select_objects(obj_selection.get_collection().get_game_objects(), false)
 			elif obj_selection.has_collection():
 				print("Select Object off Collection")
-				obj_selection = obj_selection.get_collection().remove_game_object(obj_selection)
-				select_objects([obj_selection])
+				obj_selection.get_collection().remove_game_object(obj_selection)
+				select_objects([obj_selection], false)
 			else:
 				print("Select Individual Object")
-				select_objects([obj_selection])
+				select_objects([obj_selection], false)
 		else:
 			print("Initialize selection rect")
 			initialize_selection_rect()
 
-func select_objects(objects: Array) -> void:
+func select_objects(objects: Array, group_selecting: bool) -> void:
 	for object in objects:
+		if group_selecting:
+			if object.has_collection():
+				if object.get_collection() is ObjectStack:
+					pass
+				else:
+					object.get_collection().remove_game_object(object)
 		object.select()
 	move_objects_to_front(objects)
 	set_selected_objects(objects)
 
 func set_selected_objects(objects: Array) -> void:
 	selected_objects = objects.duplicate()
-	for object in selected_objects:
-		object.set_grab_offset(object.position - get_local_mouse_position())
+	set_object_grab_offsets()
 
 func initialize_selection_rect() -> void:
 	selection_box.position = get_local_mouse_position()
 	is_selecting = true
+
+func get_overlapping_obj_from_selected(point: Vector2) -> GameObject:
+	var game_objects = get_selected_items()
+	var best: GameObject = null
+	for object in game_objects:
+		var g_obj := object as GameObject
+		if (g_obj.get_rect() * g_obj.get_transform().affine_inverse()).has_point(point):
+			if best == null or (g_obj.z_index > best.z_index):
+				best = g_obj
+	return best
 
 func get_overlapping_obj(point: Vector2) -> GameObject:
 	var game_objects = get_tree().get_nodes_in_group("game_object")
@@ -131,14 +163,26 @@ func release_selection() -> void:
 	if over_item():
 		stack_objects_to_item(get_selected_items(), get_stackable_item())
 		set_stackable_item(null)
+		group_selection_mode = false
 	else:
 		print("Releasing selection not over item")
+	if not group_selection_mode:
+		# Deselect everything
+		for object in get_selected_items():
+			object.deselect()
+		set_selected_objects([])
+	group_selection_down = false
+	if selection_box:
+		release_selection_box()
+
+func release_selection_group(input_actions: Dictionary) -> void:
 	# Deselect everything
-	for object in get_selected_items():
-		object.deselect()
-	grab_offset = Vector2.ZERO
-	release_selection_box()
-	set_selected_objects([])
+	if not Utils.is_action_just_short_released("game_menu", input_actions):
+		for object in get_selected_items():
+			object.deselect()
+		group_selection_mode = false
+		set_selected_objects([])
+
 
 func stack_objects_to_item(objects: Array, item: GameItem) -> void:
 	if item is GameCollection:
@@ -159,16 +203,16 @@ func convert_to_stack(objects: Array):
 		if object.has_collection():
 			object.get_collection().remove_game_object(object)
 		object.put_in_collection(_new_stack)
-		object.position = _new_stack.position
 		_new_stack.add_game_object_special(object)
+		object.position = _new_stack.position
 	
 func stack_objects_to_collection(objects: Array, collection: GameCollection) -> void:
 	for object in objects:
 		if object.has_collection():
 			object.get_collection().remove_game_object(object)
-		object.position = collection.position
 		object.put_in_collection(collection)
 		collection.add_game_object_special(object)
+		object.position = collection.position
 	collection.dehighlight()
 
 func over_item():
@@ -198,13 +242,22 @@ func move_objects_to_front(objects: Array) -> void:
 		game_object_manager.move_child(object, -1)
 
 func _process(_delta):
-	if has_selected_items():
-		move_selected_items()
+	if (Input.is_action_just_pressed("game_select") or Input.is_action_just_pressed("game_select_stack")):
+		set_object_grab_offsets()
+	if has_selected_items() and (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")):
+		if not group_selection_mode:
+			move_selected_items()
+		elif group_selection_mode and group_selection_down:
+			move_selected_items()
 	if is_selecting:
 		update_selection_rect()
 	queue_redraw()
 
-func update_selection_rect():
+func set_object_grab_offsets() -> void:
+	for object in get_selected_items():
+		object.set_grab_offset(object.position - get_local_mouse_position())
+
+func update_selection_rect() -> void:
 	selection_box.end = get_local_mouse_position()
 
 func move_selected_items() -> void:
@@ -279,17 +332,24 @@ func get_game_object_manager() -> Node2D:
 	return game_object_manager
 
 func create_right_click_menu_obj(pos: Vector2, object: GameObject):
-	print("Generate right click menu")
+	print("Generate right click menu obj")
 	_right_click_menu = RightClickMenu.from_game_object(object, self)
 	_right_click_menu.position = pos
 	front_layer.add_child(_right_click_menu)
 	object.right_click()
 
 func create_right_click_menu_stack(pos: Vector2, collection: GameCollection):
-	print("Generate right click menu")
+	print("Generate right click menu stack")
 	_right_click_menu = RightClickMenu.from_collection(collection, self)
 	_right_click_menu.position = pos
 	front_layer.add_child(_right_click_menu)
+
+func create_right_click_menu_group(pos: Vector2, selection: Array):
+	print("Generate right click menu menu group")
+	_right_click_menu = RightClickMenu.from_object_group(selection, self)
+	_right_click_menu.position = pos
+	front_layer.add_child(_right_click_menu)
+	
 
 func get_rclick_menu() -> RightClickMenu:
 	return _right_click_menu
@@ -303,10 +363,12 @@ func destroy_rclick_menu() -> void:
 func release_selection_box() -> void:
 	if is_selecting:
 		print("Releasing selection box")
-		set_selected_objects(select_in_range())
+		var objects: Array = select_in_range()
+		if not objects.is_empty():
+			select_objects(objects, true)
+			group_selection_mode = true
 		selection_box = Rect2(0.0, 0.0, 0.0, 0.0)
 		is_selecting = false
-		print("Done. Selected ", get_selected_items())
 
 func select_in_range() -> Array:
 	var items: Array = []

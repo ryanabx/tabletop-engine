@@ -66,3 +66,4 @@ func get_player_id() -> int:
 
 func _draw():
 	super._draw()
+	draw_rect(get_rect(), Color.from_hsv(0.0, 0.0, 1.0, 1.0), false, Globals.OUTLINE_THICKNESS * Globals.THICKNESS_RATIO)

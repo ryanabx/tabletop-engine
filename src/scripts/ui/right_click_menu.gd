@@ -35,6 +35,8 @@ func _ready() -> void:
 			init_game_object_menu()
 		TYPE.COLLECTION:
 			init_collection_menu()
+		TYPE.OBJECT_GROUP:
+			init_object_group_menu()
 		_:
 			print("None")
 
@@ -48,6 +50,11 @@ func init_collection_menu():
 	add_child(RightClickMenuButton.new("Shuffle collection", self._shuffle_collection))
 	add_child(RightClickMenuButton.new("Go to front", self._move_item_to_front))
 	add_child(RightClickMenuButton.new("Send to back", self._move_item_to_back))
+
+func init_object_group_menu():
+	add_child(RightClickMenuButton.new("Flip selection", self._flip_selected_objects))
+	add_child(RightClickMenuButton.new("Go to front", self._move_objects_to_front))
+	add_child(RightClickMenuButton.new("Send to back", self._move_objects_to_back))
 
 # RIGHT CLICK MENU FUNCIONALITIES
 
@@ -65,4 +72,19 @@ func _move_item_to_front() -> void:
 
 func _move_item_to_back() -> void:
 	board.move_item_to_back(item)
+	board.destroy_rclick_menu()
+
+func _flip_selected_objects() -> void:
+	for object in object_group:
+		object.flip()
+	board.destroy_rclick_menu()
+
+func _move_objects_to_front() -> void:
+	for object in object_group:
+		board.move_item_to_front(object)
+	board.destroy_rclick_menu()
+
+func _move_objects_to_back() -> void:
+	for object in object_group:
+		board.move_item_to_back(object)
 	board.destroy_rclick_menu()

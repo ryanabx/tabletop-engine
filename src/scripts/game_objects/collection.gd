@@ -50,23 +50,17 @@ func get_top_object() -> GameObject:
 		return null
 	return get_game_objects()[-1]
 
-func remove_game_object(obj: GameObject) -> GameObject:
+func remove_game_object(obj: GameObject) -> void:
 	var index: int = get_game_objects().find(obj)
 	if index == -1:
-		return null
-	return remove_object_at(index)
+		return
+	remove_object_at(index)
 
-func remove_object_at(index: int) -> GameObject:
+func remove_object_at(index: int) -> void:
 	print("Removing object")
 	var target_object: GameObject = get_game_objects().pop_at(index)
 	target_object.remove_from_collection()
 	print(get_num_objects())
-	if get_num_objects() == 1:
-		remove_object_at(0)
-	elif get_num_objects() == 0:
-		print("remove stack")
-		queue_free()
-	return target_object
 
 func get_num_objects() -> int:
 	return get_game_objects().size()

@@ -19,3 +19,4 @@ res://src/scripts/singletons/signals.gd
 res://src/scripts/game_objects/game_board_front.gd
 res://src/scripts/screens/game_board_front.gd
 res://src/scripts/ui/user_interface.gd
+res://src/scripts/ui/right_click_menu.gd

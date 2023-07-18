@@ -25,6 +25,14 @@ func _update_objects() -> void:
 func add_game_object_special(obj: GameObject) -> void:
 	add_game_object_to_top(obj)
 
+func remove_object_at(index: int) -> void:
+	super.remove_object_at(index)
+	if get_num_objects() == 1:
+		remove_object_at(0)
+	elif get_num_objects() == 0:
+		print("remove stack")
+		queue_free()
+
 func _draw() -> void:
 	super._draw()
 
