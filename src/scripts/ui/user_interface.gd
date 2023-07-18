@@ -13,5 +13,5 @@ func _process(_delta: float) -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	if board.is_selecting:
+	if board != null and board.is_selecting:
 		draw_rect(board.selection_box, Color.from_hsv(0.6, 1.0, 1.0, 0.5))

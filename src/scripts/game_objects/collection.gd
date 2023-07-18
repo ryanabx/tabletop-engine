@@ -57,7 +57,6 @@ func remove_game_object(obj: GameObject) -> void:
 	remove_object_at(index)
 
 func remove_object_at(index: int) -> void:
-	print("Removing object")
 	var target_object: GameObject = get_game_objects().pop_at(index)
 	target_object.remove_from_collection()
 	print(get_num_objects())
