@@ -1,0 +1,16 @@
+res://src/scripts/game_objects/stack.gd
+res://src/scripts/game_objects/game_object.gd
+res://src/scripts/ui/user_interface.gd
+res://src/scripts/game_objects/collection.gd
+res://src/scripts/game_objects/game_board.gd
+res://src/scripts/game_objects/game_item.gd
+res://src/scenes/screens/tabletop.tscn
+res://src/shaders/outline2d.gdshader
+res://src/scenes/game_objects/game_object.tscn
+res://src/scenes/pages/title_screen.tscn
+res://src/scenes/pages/solo_onboard.tscn
+res://src/scenes/ui/stack_counter.tscn
+res://src/scenes/ui/right_click_menu.tscn
+res://src/scripts/game_objects/hand.gd
+res://src/scenes/ui/user_interface.tscn
+res://src/scripts/ui/menu_bar.gd

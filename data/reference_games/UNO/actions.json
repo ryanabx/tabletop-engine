@@ -1,0 +1,20 @@
+{
+    "actions": {
+        "game_start": [
+            {
+                "command": "reset_board"
+            },
+            {
+                "command": "shuffle",
+                "method": "basic",
+                "on": "main_deck"
+            },
+            {
+                "command": "deal",
+                "method": "basic",
+                "from": "main_deck",
+                "players": ""
+            }
+        ]
+    }
+}

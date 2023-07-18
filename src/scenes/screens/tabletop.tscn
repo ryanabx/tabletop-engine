@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://bd0t8uq0xv6wr"]
+
+[ext_resource type="Texture2D" uid="uid://cbpxdhvy0dyht" path="res://src/assets/wood-background.jpg" id="1_488j0"]
+[ext_resource type="Script" path="res://src/scripts/screens/tabletop.gd" id="1_cv5do"]
+[ext_resource type="Script" path="res://src/scripts/game_objects/game_board.gd" id="2_lhyvx"]
+[ext_resource type="PackedScene" uid="uid://ma7a666pl2us" path="res://src/scenes/ui/user_interface.tscn" id="4_7raef"]
+
+[node name="Tabletop" type="Node"]
+script = ExtResource("1_cv5do")
+
+[node name="GameBoard" type="Node2D" parent="."]
+script = ExtResource("2_lhyvx")
+metadata/_edit_lock_ = true
+
+[node name="GameObjectManager" type="Node2D" parent="GameBoard"]
+metadata/_edit_lock_ = true
+
+[node name="BoardBG" type="Sprite2D" parent="GameBoard"]
+z_index = -1000
+position = Vector2(640, 360)
+scale = Vector2(0.300752, 0.254237)
+texture = ExtResource("1_488j0")
+metadata/_edit_lock_ = true
+
+[node name="UiLayer" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="UserInterface" parent="UiLayer" instance=ExtResource("4_7raef")]
+mouse_filter = 2

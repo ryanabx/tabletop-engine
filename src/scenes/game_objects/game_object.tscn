@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://djm14ahg7tlq6"]
+
+[ext_resource type="Script" path="res://src/scripts/game_objects/game_object.gd" id="1_igoix"]
+[ext_resource type="Texture2D" uid="uid://dajj2a4yaia1f" path="res://icon.svg" id="2_elbe6"]
+
+[node name="GameObject" type="Node2D" groups=["game_object"]]
+script = ExtResource("1_igoix")
+
+[node name="ObjectSprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_elbe6")
+
+[node name="StateLabel" type="Label" parent="."]
+visible = false
+offset_right = 40.0
+offset_bottom = 23.0
+theme_type_variation = &"HeaderLarge"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
