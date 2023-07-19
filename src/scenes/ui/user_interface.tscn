@@ -25,3 +25,8 @@ layout_mode = 0
 anchors_preset = 0
 anchor_right = 0.0
 grow_horizontal = 1
+
+[node name="Coordinates" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0

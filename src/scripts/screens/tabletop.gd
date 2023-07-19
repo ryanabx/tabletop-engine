@@ -18,6 +18,15 @@ var _name: String = ""
 var _game_object_scene = preload("res://src/scenes/game_objects/game_object.tscn")
 var _stack_scene = preload("res://src/scenes/game_objects/stack.tscn")
 
+func get_camera_controller() -> Node2D:
+	return camera_controller
+
+func get_user_interface() -> UserInterface:
+	return user_interface
+
+func get_board() -> GameBoard:
+	return game_board
+
 func _ready() -> void:
 	# Test code
 	Globals.set_player_id(1)
@@ -183,6 +192,7 @@ func _new_card(item: Dictionary, objects: Dictionary, config_vars: Array, collec
 		collection.add_game_object_to_top(_card)
 
 # TODO: PARSE THE NEW BOARD.JSON FILE WITH LOOPS AND SHIT
+
 
 class ConfigVariable:
 	var _repl: String

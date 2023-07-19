@@ -1,8 +1,10 @@
 extends Node2D
 
 @onready var board = $/root/Tabletop/GameBoard
+@onready var coordinates_label = $Coordinates
 
 func _process(_delta: float) -> void:
+	
 	queue_redraw()
 
 func _draw() -> void:

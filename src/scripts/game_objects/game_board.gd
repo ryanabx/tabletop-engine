@@ -28,6 +28,8 @@ func _ready() -> void:
 	Utils.enhanced_inputs.connect(process_input)
 
 func process_input(input_actions: Dictionary) -> void:
+	if Globals.get_camera_controller().in_free_cam():
+		return
 	# SELECTING OBJECTS
 	if Utils.is_action_just_long_held("game_select", input_actions) or Utils.is_action_just_long_held("game_select_stack", input_actions):
 		select_object(input_actions)
