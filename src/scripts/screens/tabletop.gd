@@ -9,11 +9,11 @@ const FNAME_ACTIONS = "actions.json"
 
 var _name: String = ""
 
-
 @export var player_id: int = 0
 @onready var game_board: GameBoard = $GameBoard
 @onready var user_interface: UserInterface = $UiLayer/UserInterface
 @onready var ui_layer: CanvasLayer = $UiLayer
+@onready var camera_controller: Node2D = $CameraController
 
 var _game_object_scene = preload("res://src/scenes/game_objects/game_object.tscn")
 var _stack_scene = preload("res://src/scenes/game_objects/stack.tscn")
@@ -24,13 +24,6 @@ func _ready() -> void:
 	var filename: String = "C:/Users/ryanb/source/repos/open-boardgame-framework/data/reference_games/UNO/"
 	load_game_from_folder(filename)
 	pass
-
-func _set_game_bg(_texture: Texture2D) -> void:
-	var game_bg: Sprite2D = $GameBoard/BoardBG
-	game_bg.set_texture(_texture)
-	var _sc: Vector2 = Vector2(get_viewport().get_size().x / _texture.get_size().x, get_viewport().get_size().y / _texture.get_size().y)
-	game_bg.scale = _sc
-	print(_sc, " ", game_bg.scale)
 
 func _set_game_name(_n: String) -> void:
 	_name = _n
@@ -70,7 +63,7 @@ func _set_up_actions(actions: Dictionary, board: Dictionary, objects: Dictionary
 func _set_up_config(conf: Dictionary) -> void:
 	_set_game_name(conf.name)
 	user_interface.set_game_name(conf.name)
-	_set_game_bg(Utils.load_texture_from_string(conf.background, conf.image_dir))
+	camera_controller.set_bg(Utils.load_texture_from_string(conf.background, conf.image_dir))
 
 func _set_up_board(board: Dictionary, objects: Dictionary) -> void:
 	for item in board.board:

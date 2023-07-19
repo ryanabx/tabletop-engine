@@ -18,7 +18,9 @@ var _stack_scene = preload("res://src/scenes/game_objects/stack.tscn")
 var group_selection_mode: bool = false
 var group_selection_down: bool = false
 
-@onready var front_layer: CanvasLayer = $/root/Tabletop/UiLayer
+var border: Rect2 = Rect2(-1000, -1000, 2000, 2000)
+
+@onready var front_layer: Node2D = $/root/Tabletop/Highlights
 
 @onready var game_object_manager: Node2D = $GameObjectManager
 
@@ -29,8 +31,8 @@ func process_input(input_actions: Dictionary) -> void:
 	# SELECTING OBJECTS
 	if Utils.is_action_just_long_held("game_select", input_actions) or Utils.is_action_just_long_held("game_select_stack", input_actions):
 		select_object(input_actions)
-		if group_selection_mode:
-			check_over_group_selection()
+	if group_selection_mode and Utils.is_action_just_long_held("game_select", input_actions):
+		check_over_group_selection()
 	# RIGHT CLICKING
 	if Utils.is_action_just_short_released("game_menu", input_actions) and get_rclick_menu() == null:
 		print("Right Click")
@@ -108,7 +110,7 @@ func select_object(input_actions: Dictionary) -> void:
 			else:
 				print("Select Individual Object")
 				select_objects([obj_selection], false)
-		else:
+		elif not Utils.is_action_just_long_held("game_select_stack", input_actions):
 			print("Initialize selection rect")
 			initialize_selection_rect()
 
@@ -263,7 +265,7 @@ func update_selection_rect() -> void:
 func move_selected_items() -> void:
 	for object in get_selected_items():
 		object.position = get_local_mouse_position() + object.get_grab_offset()
-		object.position = object.position.clamp(get_viewport().get_visible_rect().position, get_viewport().get_visible_rect().position + get_viewport().get_visible_rect().size)
+		object.position = object.position.clamp(border.position, border.end)
 	# CHECK STACKING
 	var stackable_collection: GameCollection = find_stackable_collection(get_selected_items())
 	if stackable_collection == null:
@@ -376,3 +378,6 @@ func select_in_range() -> Array:
 		if _rect_obj_areas_overlap(object, selection_box):
 			items.append(object)
 	return items
+
+func _draw() -> void:
+	draw_rect(border, Color.from_hsv(0.0, 0.0, 1.0, 1.0), false, Globals.OUTLINE_THICKNESS * 3.0)

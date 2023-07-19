@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://ma7a666pl2us"]
 
 [ext_resource type="Script" path="res://src/scripts/ui/user_interface.gd" id="1_u2rch"]
-[ext_resource type="Script" path="res://src/scripts/ui/menu_bar.gd" id="2_loyrj"]
+[ext_resource type="PackedScene" uid="uid://bc0wmak5rj2nq" path="res://src/scenes/ui/menu_bar.tscn" id="2_5lxdm"]
 
 [node name="UserInterface" type="Control"]
 layout_mode = 3
@@ -20,21 +20,8 @@ offset_bottom = 32.0
 grow_horizontal = 2
 color = Color(0, 0, 0, 1)
 
-[node name="MenuBar" type="MenuBar" parent="."]
-z_index = 100
-layout_mode = 2
-offset_right = 1280.0
-offset_bottom = 48.0
-script = ExtResource("2_loyrj")
-
-[node name="File" type="PopupMenu" parent="MenuBar"]
-
-[node name="Edit" type="PopupMenu" parent="MenuBar"]
-
-[node name="Config" type="PopupMenu" parent="MenuBar"]
-
-[node name="Actions" type="PopupMenu" parent="MenuBar"]
-
-[node name="Options" type="PopupMenu" parent="MenuBar"]
-
-[node name="Help" type="PopupMenu" parent="MenuBar"]
+[node name="MenuBar" parent="." instance=ExtResource("2_5lxdm")]
+layout_mode = 0
+anchors_preset = 0
+anchor_right = 0.0
+grow_horizontal = 1
