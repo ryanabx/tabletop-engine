@@ -55,6 +55,7 @@ func init_object_group_menu():
 	add_child(RightClickMenuButton.new("Flip selection", self._flip_selected_objects))
 	add_child(RightClickMenuButton.new("Go to front", self._move_objects_to_front))
 	add_child(RightClickMenuButton.new("Send to back", self._move_objects_to_back))
+	add_child(RightClickMenuButton.new("Stack selected objects", self._stack_selected_objects))
 
 # RIGHT CLICK MENU FUNCIONALITIES
 
@@ -87,4 +88,8 @@ func _move_objects_to_front() -> void:
 func _move_objects_to_back() -> void:
 	for object in object_group:
 		board.move_item_to_back(object)
+	board.destroy_rclick_menu()
+
+func _stack_selected_objects() -> void:
+	board.convert_to_stack(object_group)
 	board.destroy_rclick_menu()

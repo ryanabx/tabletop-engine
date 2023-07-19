@@ -62,6 +62,10 @@ func load_game(conf: Dictionary, objects: Dictionary, player: Dictionary, board:
 	_set_up_config(conf)
 	print("Setting up board...")
 	_set_up_board(board, objects)
+	_set_up_actions(actions, board, objects)
+
+func _set_up_actions(actions: Dictionary, board: Dictionary, objects: Dictionary) -> void:
+	pass
 
 func _set_up_config(conf: Dictionary) -> void:
 	_set_game_name(conf.name)

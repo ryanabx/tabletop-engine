@@ -1,5 +1,7 @@
-OptionButton
+ColorRect
+PopupMenu
 MenuButton
+OptionButton
 Label
 MenuBar
 Control
@@ -13,7 +15,6 @@ VBoxContainer
 HBoxContainer
 AspectRatioContainer
 TextureRect
-ColorRect
 CanvasGroup
 Sprite2D
 Node2D
