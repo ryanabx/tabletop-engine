@@ -18,11 +18,24 @@ var _stack_scene = preload("res://src/scenes/game_objects/stack.tscn")
 var group_selection_mode: bool = false
 var group_selection_down: bool = false
 
-var border: Rect2 = Rect2(-1000, -1000, 2000, 2000)
+var border: Rect2 = Rect2(0, 0, 1280, 720)
 
 @onready var front_layer: Node2D = $/root/Tabletop/Highlights
 
 @onready var game_object_manager: Node2D = $GameObjectManager
+
+func reset_board() -> void:
+	for item in game_object_manager.get_children():
+		item.queue_free()
+	
+	group_selection_down = false
+	group_selection_mode = false
+	border = Rect2(0, 0, 1280, 720)
+	selection_box = Rect2(0.0, 0.0, 0.0, 0.0)
+	selected_objects = []
+	_current_stackable_item = null
+	game_menu_open = false
+	is_selecting = false
 
 func _ready() -> void:
 	Utils.enhanced_inputs.connect(process_input)
@@ -349,7 +362,6 @@ func get_game_object_manager() -> Node2D:
 func create_right_click_menu_obj(object: GameObject):
 	print("Generate right click menu obj")
 	SignalManager.game_menu_create.emit(RightClickMenu.TYPE.GAME_OBJECT, [object])
-	object.right_click()
 
 func create_right_click_menu_stack(collection: GameCollection):
 	print("Generate right click menu stack")

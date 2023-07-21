@@ -6,7 +6,6 @@ const DEFAULT_SIZE = Vector2(64.0, 64.0)
 enum STATE {
 	IDLE,
 	SELECTED,
-	RIGHT_CLICK,
 	LOCKED
 }
 
@@ -110,20 +109,6 @@ func deselect() -> void:
 		_:
 			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (deselect).")
 
-func right_click() -> void:
-	match get_state():
-		STATE.IDLE:
-			set_state(STATE.RIGHT_CLICK)
-		_:
-			print("Attempted transition from ", state_to_string(get_state()), " to right click failed (right click).")
-
-func revert_right_click() -> void:
-	match get_state():
-		STATE.RIGHT_CLICK:
-			set_state(STATE.IDLE)
-		_:
-			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (revert right click).")
-
 func put_in_collection(coll: GameCollection) -> void:
 	match get_state():
 		STATE.SELECTED:
@@ -149,8 +134,6 @@ func state_to_string(state: STATE) -> String:
 			return "idle"
 		STATE.SELECTED:
 			return "selected"
-		STATE.RIGHT_CLICK:
-			return "right click"
 		STATE.LOCKED:
 			return "locked"
 		_:

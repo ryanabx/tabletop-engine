@@ -39,12 +39,7 @@ func options_button_pressed(index: int) -> void:
 		0: toggle_fullscreen()
 
 func load_config() -> void:
-	print("Loading config dialog")
-	var fd = FileDialog.new()
-	add_child(fd)
-	fd.popup_window = true
-	fd.popup()
-	fd.grab_focus()
+	SignalManager.create_load_config_dialog.emit()
 
 func toggle_fullscreen() -> void:
 	options.set_item_checked(0, not options.is_item_checked(0))

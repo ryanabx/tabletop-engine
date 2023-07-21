@@ -23,6 +23,8 @@ func set_bg(texture: Texture2D) -> void:
 
 func update_bg_scale() -> void:
 	var texture = game_bg.get_texture()
+	if texture == null:
+		return
 	var _sc: Vector2 = Vector2(get_viewport().get_size().x / texture.get_size().x, get_viewport().get_size().y / texture.get_size().y)
 	game_bg.scale = _sc / camera.zoom
 	game_bg.position = camera.position

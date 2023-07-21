@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://c288phnhk4720"]
+
+[ext_resource type="Script" path="res://src/scripts/dialogs/load_config_dialog.gd" id="1_s6pm3"]
+
+[node name="LoadConfigDialog" type="FileDialog"]
+title = "Open a Directory"
+initial_position = 2
+size = Vector2i(640, 320)
+ok_button_text = "Select Current Folder"
+dialog_text = "Select a folder to open config files from:"
+file_mode = 2
+access = 2
+script = ExtResource("1_s6pm3")

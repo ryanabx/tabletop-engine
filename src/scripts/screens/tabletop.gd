@@ -18,6 +18,15 @@ var _name: String = ""
 var _game_object_scene = preload("res://src/scenes/game_objects/game_object.tscn")
 var _stack_scene = preload("res://src/scenes/game_objects/stack.tscn")
 
+func reset_tabletop() -> void:
+	game_board.reset_board()
+	_name = ""
+	# TODO: Continue implementing this
+
+func _on_config_folder_loaded(folder: String) -> void:
+	reset_tabletop()
+	load_game_from_folder(folder)
+
 func get_camera_controller() -> Node2D:
 	return camera_controller
 
@@ -28,11 +37,9 @@ func get_board() -> GameBoard:
 	return game_board
 
 func _ready() -> void:
-	# Test code
+	SignalManager.config_folder_opened.connect(_on_config_folder_loaded)
 	Globals.set_player_id(1)
-	var filename: String = "C:/Users/ryanb/source/repos/open-boardgame-framework/data/reference_games/UNO/"
-	load_game_from_folder(filename)
-	pass
+	
 
 func _set_game_name(_n: String) -> void:
 	_name = _n
@@ -51,11 +58,11 @@ func load_json_from_file(fname: String) -> Dictionary:
 		return {}
 
 func load_game_from_folder(folder_name: String) -> void:
-	var conf = load_json_from_file(folder_name + FNAME_CONF)
-	var objects = load_json_from_file(folder_name + FNAME_OBJECTS)
-	var player = load_json_from_file(folder_name + FNAME_PLAYER)
-	var board = load_json_from_file(folder_name + FNAME_BOARD)
-	var actions = load_json_from_file(folder_name + FNAME_ACTIONS)
+	var conf = load_json_from_file(folder_name + "/" + FNAME_CONF)
+	var objects = load_json_from_file(folder_name + "/" + FNAME_OBJECTS)
+	var player = load_json_from_file(folder_name + "/" + FNAME_PLAYER)
+	var board = load_json_from_file(folder_name + "/" + FNAME_BOARD)
+	var actions = load_json_from_file(folder_name + "/" + FNAME_ACTIONS)
 	load_game(conf, objects, player, board, actions)
 
 
