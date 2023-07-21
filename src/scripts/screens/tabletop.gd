@@ -119,7 +119,7 @@ func _new_repeat(item: Dictionary, objects: Dictionary, config_vars: Array, coll
 		for _d in d:
 			_parse_item(_d, objects, config_vars, collection)
 
-func _new_hand(item: Dictionary, objects: Dictionary, config_vars: Array, collection: GameCollection) -> void:
+func _new_hand(item: Dictionary, _objects: Dictionary, _config_vars: Array, _collection: GameCollection) -> void:
 	# Define hand traits
 	var pl: int = item.player
 	var location: Vector2 = Vector2(item.location[0], item.location[1])
@@ -129,7 +129,7 @@ func _new_hand(item: Dictionary, objects: Dictionary, config_vars: Array, collec
 	var _hand = Hand.new(pl, location, size)
 	game_board.get_game_object_manager().add_child(_hand)
 
-func _new_generic_object(item: Dictionary, objects: Dictionary, config_vars: Array, collection: GameCollection) -> void:
+func _new_generic_object(_item: Dictionary, _objects: Dictionary, _config_vars: Array, _collection: GameCollection) -> void:
 	pass
 
 func _new_stack(item: Dictionary, objects: Dictionary, config_vars: Array, collection: GameCollection) -> void:

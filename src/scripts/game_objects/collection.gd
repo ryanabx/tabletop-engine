@@ -1,7 +1,6 @@
 class_name GameCollection
 extends GameItem
 
-
 var _game_objects: Array = []
 var _scale: Vector2 = Vector2.ZERO
 
@@ -14,7 +13,6 @@ func _ready() -> void:
 	stack_counter.z_index = 5
 	add_child(stack_counter)
 	
-
 func _process(_delta: float) -> void:
 	_update_objects()
 	stack_counter.set_label(str(get_num_objects()))

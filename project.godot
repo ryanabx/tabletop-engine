@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="open-boardgame-framework"
+run/main_scene="res://src/scenes/screens/tabletop.tscn"
 config/features=PackedStringArray("4.1", "GL Compatibility")
 config/icon="res://icon.svg"
 
