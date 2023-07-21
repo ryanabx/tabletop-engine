@@ -1,6 +1,8 @@
 class_name ObjectStack
 extends GameCollection
 
+var permastack: bool = false
+
 
 func _update_objects() -> void:
 	var larg_x: float = 0.0
@@ -27,11 +29,12 @@ func add_game_object_special(obj: GameObject) -> void:
 
 func remove_object_at(index: int) -> void:
 	super.remove_object_at(index)
-	if get_num_objects() == 1:
-		remove_object_at(0)
-	elif get_num_objects() == 0:
-		print("remove stack")
-		queue_free()
+	if not permastack:
+		if get_num_objects() == 1:
+			remove_object_at(0)
+		elif get_num_objects() == 0:
+			print("remove stack")
+			queue_free()
 
 func _draw() -> void:
 	super._draw()

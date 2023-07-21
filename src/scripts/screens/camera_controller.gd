@@ -41,6 +41,8 @@ func check_free_cam() -> void:
 	if free_cam:
 		camera.position = initial_camera_pos - (get_viewport().get_mouse_position() - initial_mouse_pos) / camera.zoom
 		game_bg.position = camera.position
+	
+	camera.position = camera.position.clamp(Globals.get_bounds().position, Globals.get_bounds().end)
 
 func in_free_cam() -> bool:
 	return free_cam

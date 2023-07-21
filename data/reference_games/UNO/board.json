@@ -2,6 +2,7 @@
     "board": [
         {
             "type": "stack",
+            "permanent": false,
             "location": [640, 320],
             "inside": [
                 {

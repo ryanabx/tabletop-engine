@@ -91,7 +91,7 @@ func _shuffle_collection() -> void:
 	(item as GameCollection).shuffle()
 
 func _flip_item() -> void:
-	SignalManager.flip_items.emit([item])
+	item.flip()
 
 func _move_item_to_front() -> void:
 	SignalManager.move_items_to_front.emit([item])
@@ -100,7 +100,8 @@ func _move_item_to_back() -> void:
 	SignalManager.move_items_to_back.emit([item])
 
 func _flip_selected_objects() -> void:
-	SignalManager.flip_items.emit(object_group)
+	for object in object_group:
+		object.flip()
 
 func _move_objects_to_front() -> void:
 	SignalManager.move_items_to_front.emit(object_group)

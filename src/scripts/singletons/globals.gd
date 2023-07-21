@@ -28,3 +28,6 @@ func get_camera_zoom() -> Vector2:
 
 func get_board() -> GameBoard:
 	return board
+
+func get_bounds() -> Rect2:
+	return board.get_border()

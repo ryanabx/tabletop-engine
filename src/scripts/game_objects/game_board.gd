@@ -28,12 +28,32 @@ func _ready() -> void:
 	Utils.enhanced_inputs.connect(process_input)
 	SignalManager.game_menu_create.connect(_on_game_menu_create)
 	SignalManager.game_menu_destroy.connect(_on_game_menu_destroy)
+	SignalManager.move_items_to_back.connect(_on_items_to_back)
+	SignalManager.move_items_to_front.connect(_on_items_to_front)
+
+func _on_items_to_back(objects: Array) -> void:
+	if objects.size() == 1:
+		move_item_to_back(objects[0])
+	else:
+		move_objects_to_back(objects)
+
+func _on_items_to_front(objects: Array) -> void:
+	if objects.size() == 1:
+		move_item_to_front(objects[0])
+	else:
+		move_objects_to_front(objects)
 
 func _on_game_menu_create():
 	game_menu_open = true
 
 func _on_game_menu_destroy():
 	game_menu_open = false
+
+func set_border(bord: Rect2) -> void:
+	border = bord
+
+func get_border() -> Rect2:
+	return border
 
 func process_input(input_actions: Dictionary) -> void:
 	if Globals.get_camera_controller().in_free_cam():

@@ -73,6 +73,7 @@ func _set_up_config(conf: Dictionary) -> void:
 	_set_game_name(conf.name)
 	user_interface.set_game_name(conf.name)
 	camera_controller.set_bg(Utils.load_texture_from_string(conf.background, conf.image_dir))
+	game_board.set_border(Rect2(conf.bounds[0], conf.bounds[1], conf.bounds[2], conf.bounds[3]))
 
 func _set_up_board(board: Dictionary, objects: Dictionary) -> void:
 	for item in board.board:
