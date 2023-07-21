@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 Utils="*res://src/scripts/singletons/utils.gd"
 Globals="*res://src/scripts/singletons/globals.gd"
+SignalManager="*res://src/scripts/singletons/signal_manager.gd"
 
 [display]
 

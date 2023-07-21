@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://bd0t8uq0xv6wr"]
+[gd_scene load_steps=7 format=3 uid="uid://bd0t8uq0xv6wr"]
 
 [ext_resource type="Script" path="res://src/scripts/screens/tabletop.gd" id="1_cv5do"]
 [ext_resource type="Script" path="res://src/scripts/game_objects/game_board.gd" id="2_lhyvx"]
 [ext_resource type="Script" path="res://src/scripts/screens/highlights.gd" id="3_ofc5r"]
 [ext_resource type="PackedScene" uid="uid://ma7a666pl2us" path="res://src/scenes/ui/user_interface.tscn" id="4_7raef"]
+[ext_resource type="PackedScene" uid="uid://3uwharyjlmsp" path="res://src/scenes/ui/right_click_menu.tscn" id="5_4v42b"]
 [ext_resource type="Script" path="res://src/scripts/screens/camera_controller.gd" id="5_rko6e"]
 
 [node name="Tabletop" type="Node"]
@@ -25,6 +26,8 @@ layer = 105
 
 [node name="UserInterface" parent="UiLayer" instance=ExtResource("4_7raef")]
 mouse_filter = 2
+
+[node name="RightClickMenu" parent="UiLayer/UserInterface" instance=ExtResource("5_4v42b")]
 
 [node name="CameraController" type="Node2D" parent="."]
 script = ExtResource("5_rko6e")
