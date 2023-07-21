@@ -2,12 +2,10 @@
 
 [ext_resource type="Script" path="res://src/scripts/ui/right_click_menu.gd" id="1_ncvbs"]
 
-[node name="RightClickMenu" type="VBoxContainer"]
-z_index = 4096
-z_as_relative = false
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="RightClickMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1280.0
 script = ExtResource("1_ncvbs")
+
+[node name="PopupMenu" type="PopupMenu" parent="."]
