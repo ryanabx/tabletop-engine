@@ -27,8 +27,6 @@ layer = 105
 [node name="UserInterface" parent="UiLayer" instance=ExtResource("4_7raef")]
 mouse_filter = 2
 
-[node name="RightClickMenu" parent="UiLayer/UserInterface" instance=ExtResource("5_4v42b")]
-
 [node name="CameraController" type="Node2D" parent="."]
 script = ExtResource("5_rko6e")
 
@@ -37,3 +35,5 @@ position = Vector2(640, 360)
 
 [node name="BoardBG" type="Sprite2D" parent="CameraController"]
 z_index = -1000
+
+[node name="RightClickMenu" parent="." instance=ExtResource("5_4v42b")]
