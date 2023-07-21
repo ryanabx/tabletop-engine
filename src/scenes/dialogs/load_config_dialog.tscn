@@ -7,7 +7,6 @@ title = "Open a Directory"
 initial_position = 2
 size = Vector2i(640, 320)
 ok_button_text = "Select Current Folder"
-dialog_text = "Select a folder to open config files from:"
 file_mode = 2
 access = 2
 script = ExtResource("1_s6pm3")

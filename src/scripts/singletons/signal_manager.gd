@@ -10,8 +10,9 @@ signal move_items_to_back(objects: Array)
 signal shuffle_items(objects: Array)
 signal convert_to_stack(objects: Array)
 
-# Create Dialogs
+# Menubar Signals
 signal create_load_config_dialog()
+signal reset_tabletop()
 
 # File Dialogs
 signal config_folder_opened(folder: String)

@@ -9,12 +9,22 @@ var initial_mouse_pos: Vector2 = Vector2.ZERO
 var free_cam: bool = false
 var initial_camera_pos: Vector2 = Vector2.ZERO
 
+var start_pos: Vector2
+
+func _ready() -> void:
+	SignalManager.reset_tabletop.connect(_reset_camera)
+	start_pos = camera.offset
+
+func _reset_camera() -> void:
+	camera.zoom = Vector2.ONE
+	camera.offset = start_pos
+
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("ui_zoom_in"):
 		camera.zoom *= 1.1
 	if Input.is_action_just_pressed("ui_zoom_out"):
 		camera.zoom *= 0.9
-	camera.position += Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED
+	camera.offset += Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED
 	update_bg_scale()
 	check_free_cam()
 

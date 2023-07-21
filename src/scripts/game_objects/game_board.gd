@@ -20,8 +20,6 @@ var group_selection_down: bool = false
 
 var border: Rect2 = Rect2(0, 0, 1280, 720)
 
-@onready var front_layer: Node2D = $/root/Tabletop/Highlights
-
 @onready var game_object_manager: Node2D = $GameObjectManager
 
 func reset_board() -> void:

@@ -7,6 +7,8 @@ const VERSION_NUMBER: String = "0.0.1"
 const OUTLINE_THICKNESS: float = 6.0
 const THICKNESS_RATIO: float = 0.8
 
+var game_name = ""
+
 @onready var tabletop = $/root/Tabletop
 @onready var camera_controller = $/root/Tabletop/CameraController
 @onready var board = $/root/Tabletop/GameBoard

@@ -7,6 +7,8 @@ extends Control
 @onready var options: PopupMenu = $Menu/Options
 @onready var help: PopupMenu = $Menu/Help
 
+@onready var game_name_label: Label = $GameName
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	_populate_popup_menus()
@@ -17,6 +19,7 @@ func _ready() -> void:
 func _populate_popup_menus() -> void:
 	print("HIII")
 	file.add_item("Load Config")
+	file.add_item("Reset Tabletop")
 	actions.add_submenu_item("Run Action", "run_action")
 	options.add_check_item("Fullscreen")
 	help.add_item("About Open Boardgame Framework")
@@ -25,12 +28,13 @@ func _populate_popup_menus() -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+func _process(_delta: float) -> void:
+	game_name_label.text = "Current Game: " + Globals.game_name
 
 func file_button_pressed(index: int) -> void:
 	match index:
 		0: load_config()
+		1: SignalManager.reset_tabletop.emit()
 
 		
 
