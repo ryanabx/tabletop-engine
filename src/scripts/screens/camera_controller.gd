@@ -18,6 +18,7 @@ func _ready() -> void:
 func _reset_camera() -> void:
 	camera.zoom = Vector2.ONE
 	camera.offset = start_pos
+	game_bg.set_texture(null)
 
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("ui_zoom_in"):

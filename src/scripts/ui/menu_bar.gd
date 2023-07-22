@@ -20,6 +20,7 @@ func _populate_popup_menus() -> void:
 	print("HIII")
 	file.add_item("Load Config")
 	file.add_item("Reset Tabletop")
+	file.add_item("Exit Open Boardgame Framework")
 	actions.add_submenu_item("Run Action", "run_action")
 	options.add_check_item("Fullscreen")
 	help.add_item("About Open Boardgame Framework")
@@ -35,6 +36,7 @@ func file_button_pressed(index: int) -> void:
 	match index:
 		0: load_config()
 		1: SignalManager.reset_tabletop.emit()
+		2: get_tree().quit()
 
 		
 

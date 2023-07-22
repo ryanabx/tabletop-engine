@@ -146,7 +146,7 @@ func _new_stack(item: Dictionary, objects: Dictionary, config_vars: Array, colle
 	var inside: Array = item.inside
 	
 	# Create stack and add it to the board
-	var _stack = _stack_scene.instantiate()
+	var _stack: ObjectStack = _stack_scene.instantiate()
 	game_board.get_game_object_manager().add_child(_stack)
 	# Set stack location
 	_stack.position = location
@@ -154,7 +154,12 @@ func _new_stack(item: Dictionary, objects: Dictionary, config_vars: Array, colle
 	for _ins in inside:
 		_parse_item(_ins, objects, config_vars, _stack)
 	
-	_stack.get_game_objects()[-1].position = _stack.position
+	if item.permanent:
+		_stack.permastack = true
+		_stack.base_size = Vector2(item.size[0], item.size[1])
+	
+	if _stack.get_num_objects() != 0:
+		_stack.get_game_objects()[-1].position = _stack.position
 
 func _new_card(item: Dictionary, objects: Dictionary, config_vars: Array, collection: GameCollection) -> void:
 	# Define card traits

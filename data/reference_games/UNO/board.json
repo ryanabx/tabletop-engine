@@ -2,8 +2,9 @@
     "board": [
         {
             "type": "stack",
-            "permanent": false,
-            "location": [640, 320],
+            "permanent": true,
+            "location": [480, 320],
+            "size": [72, 156],
             "inside": [
                 {
                     "type": "foreach",
@@ -56,6 +57,13 @@
                     ]
                 }
             ]
+        },
+        {
+            "type": "stack",
+            "location": [700, 320],
+            "size": [72, 156],
+            "permanent": true,
+            "inside": []
         },
         {
             "type": "hand",

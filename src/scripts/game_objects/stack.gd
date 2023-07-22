@@ -3,10 +3,11 @@ extends GameCollection
 
 var permastack: bool = false
 
+var base_size: Vector2 = Vector2.ZERO
 
 func _update_objects() -> void:
-	var larg_x: float = 0.0
-	var larg_y: float = 0.0
+	var larg_x: float = base_size.x
+	var larg_y: float = base_size.y
 	
 	var _max_index = _get_max_index()
 	z_index = _max_index + 1
@@ -38,6 +39,8 @@ func remove_object_at(index: int) -> void:
 
 func _draw() -> void:
 	super._draw()
+	if permastack and get_num_objects() == 0:
+		draw_rect(Rect2(-base_size.x / 2.0, -base_size.y / 2.0, base_size.x, base_size.y), Color.from_hsv(0.0, 0.0, 0.0, 0.8))
 
 func _process(delta: float) -> void:
 	super._process(delta)
