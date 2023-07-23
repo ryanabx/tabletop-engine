@@ -71,7 +71,7 @@ func process_input(input_actions: Dictionary) -> void:
 		return
 	# SELECTING OBJECTS
 	if Utils.is_action_just_long_held("game_select", input_actions) or Utils.is_action_just_long_held("game_select_stack", input_actions):
-		select_object(input_actions)
+		check_selecting_obj(input_actions)
 	if group_selection_mode and Utils.is_action_just_long_held("game_select", input_actions):
 		check_over_group_selection()
 	# RIGHT CLICKING
@@ -120,38 +120,35 @@ func flip_selection() -> void:
 		else:
 			object.flip()
 			
-func select_object(input_actions: Dictionary) -> void:
+func check_selecting_obj(input_actions: Dictionary) -> void:
 	if not has_selected_items():
 		var obj_selection: GameObject = get_overlapping_obj(get_local_mouse_position())
 		if obj_selection:
-			if obj_selection.has_collection() and Utils.is_action_just_held("game_select_stack", input_actions):
-				print("Select Entire Collection")
-				select_objects(obj_selection.get_collection().get_game_objects(), false)
-			elif obj_selection.has_collection():
-				print("Select Object off Collection")
-				obj_selection.get_collection().remove_game_object(obj_selection)
-				select_objects([obj_selection], false)
-			else:
-				print("Select Individual Object")
-				select_objects([obj_selection], false)
-		elif not Utils.is_action_just_long_held("game_select_stack", input_actions):
+			if obj_selection.has_collection() and Utils.is_action_just_held("game_select_stack", input_actions): # Select collection
+				if obj_selection.get_collection().get_permanence():
+					print("Cannot stack select permanent stack")
+				else:
+					print("Select Collection")
+					select_objects(obj_selection.get_collection().get_game_objects())
+			else: # Select object
+				print("Select Object: has_collection:", obj_selection.has_collection())
+				if obj_selection.has_collection():
+					print("Remove game object from collection")
+					obj_selection.get_collection().remove_game_object(obj_selection)
+				select_objects([obj_selection])
+		elif not Utils.is_action_just_long_held("game_select_stack", input_actions): # Selection box
 			print("Initialize selection rect")
 			initialize_selection_rect()
 
-func select_objects(objects: Array, group_selecting: bool) -> void:
+func select_objects(objects: Array) -> void:
 	for object in objects:
-		if group_selecting:
-			if object.has_collection():
-				if object.get_collection() is ObjectStack:
-					pass
-				else:
-					object.get_collection().remove_game_object(object)
 		object.select()
 	move_objects_to_front(objects)
 	set_selected_objects(objects)
 
 func set_selected_objects(objects: Array) -> void:
 	selected_objects = objects.duplicate()
+	print("selected ", selected_objects.size()," objects")
 	set_object_grab_offsets()
 
 func initialize_selection_rect() -> void:
@@ -204,6 +201,7 @@ func release_selection() -> void:
 func release_selection_group(input_actions: Dictionary) -> void:
 	# Deselect everything
 	if not Utils.is_action_just_short_released("game_menu", input_actions):
+		print("Release selection group")
 		for object in get_selected_items():
 			object.deselect()
 		group_selection_mode = false
@@ -215,7 +213,6 @@ func stack_objects_to_item(objects: Array, item: GameItem) -> void:
 		print("Stack objects to collection (stack to collection)")
 		stack_objects_to_collection(objects, item as GameCollection)
 	elif item is GameObject:
-		(item as GameObject).select()
 		print("Stack objects to object (convert to stack)")
 		convert_to_stack([item] + objects)
 
@@ -230,6 +227,7 @@ func convert_to_stack(objects: Array):
 			object.get_collection().remove_game_object(object)
 		object.put_in_collection(_new_stack)
 		_new_stack.add_game_object_special(object)
+		_new_stack.set_permanence(false)
 		object.position = _new_stack.position
 	
 func stack_objects_to_collection(objects: Array, collection: GameCollection) -> void:
@@ -374,7 +372,7 @@ func release_selection_box() -> void:
 		print("Releasing selection box")
 		var objects: Array = select_in_range()
 		if not objects.is_empty():
-			select_objects(objects, true)
+			select_objects(objects)
 			group_selection_mode = true
 		selection_box = Rect2(0.0, 0.0, 0.0, 0.0)
 		is_selecting = false

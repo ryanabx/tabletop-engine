@@ -4,7 +4,6 @@ extends GameCollection
 const V_PADDING = 16.0
 
 var _player: int
-var _hue: float = 0.0
 
 func _init(_pl: int, _pos: Vector2, _siz: Vector2):
 	_player = _pl
@@ -17,10 +16,6 @@ func disabled() -> bool:
 
 func _process(delta: float) -> void:
 	super._process(delta)
-	_hue = _hue + 0.1 * delta
-	if _hue >= 1.0:
-		_hue = _hue - 1.0
-	queue_redraw()
 
 func get_horizontal_extents() -> Array:
 	var _extents: Rect2 = get_extents()
@@ -29,6 +24,7 @@ func get_horizontal_extents() -> Array:
 	return [_ext1, _ext2]
 
 func _update_objects() -> void:
+	super._update_objects()
 	var num_objects: int = get_num_objects()
 	var _extents: Array = get_horizontal_extents()
 	var _max_index = _get_max_index()

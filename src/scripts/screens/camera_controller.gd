@@ -38,13 +38,13 @@ func update_bg_scale() -> void:
 		return
 	var _sc: Vector2 = Vector2(get_viewport().get_size().x / texture.get_size().x, get_viewport().get_size().y / texture.get_size().y)
 	game_bg.scale = _sc / camera.zoom
-	game_bg.position = camera.position
+	game_bg.position = camera.position + camera.offset
 
 func check_free_cam() -> void:
 	if Input.is_action_just_pressed("free_cam"):
 		free_cam = true
 		initial_mouse_pos = get_viewport().get_mouse_position()
-		initial_camera_pos = camera.position
+		initial_camera_pos = camera.offset
 		Input.set_default_cursor_shape(Input.CURSOR_DRAG)
 	elif Input.is_action_just_released("free_cam"):
 		initial_mouse_pos = Vector2.ZERO
@@ -52,10 +52,10 @@ func check_free_cam() -> void:
 		Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 	
 	if free_cam:
-		camera.position = initial_camera_pos - (get_viewport().get_mouse_position() - initial_mouse_pos) / camera.zoom
+		camera.offset = initial_camera_pos - (get_viewport().get_mouse_position() - initial_mouse_pos) / camera.zoom
 		game_bg.position = camera.position
 	
-	camera.position = camera.position.clamp(Globals.get_bounds().position, Globals.get_bounds().end)
+	camera.offset = camera.offset.clamp(Globals.get_bounds().position, Globals.get_bounds().end)
 
 func in_free_cam() -> bool:
 	return free_cam

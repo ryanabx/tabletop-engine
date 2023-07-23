@@ -4,22 +4,28 @@ extends GameItem
 var _game_objects: Array = []
 var _scale: Vector2 = Vector2.ZERO
 
-var stack_counter_scene: PackedScene = load("res://src/scenes/ui/stack_counter.tscn")
-var stack_counter = null
+var permanent: bool = true
+
+var label: Label = null
+
+const STACK_RECT_SIZE: float = 32.0
+
+const PADDING: float = 8.0
 
 func _ready() -> void:
 	add_to_group("collections")
-	stack_counter = stack_counter_scene.instantiate()
-	stack_counter.z_index = 5
-	add_child(stack_counter)
-	
-func _process(_delta: float) -> void:
-	_update_objects()
-	stack_counter.set_label(str(get_num_objects()))
+	label = Label.new()
+	# label.set_anchors_and_offsets_preset(label.PRESET_CENTER)
+	add_child(label)
 
 func _update_objects() -> void:
-	print("_update_objects Not Implemented on: ",get_class()," ",get_name())
 	pass
+
+func get_permanence() -> bool:
+	return permanent
+
+func set_permanence(per: bool) -> void:
+	permanent = per
 
 func get_game_objects() -> Array:
 	return _game_objects
@@ -57,7 +63,12 @@ func remove_game_object(obj: GameObject) -> void:
 func remove_object_at(index: int) -> void:
 	var target_object: GameObject = get_game_objects().pop_at(index)
 	target_object.remove_from_collection()
-	print(get_num_objects())
+	if not permanent:
+		if get_num_objects() == 1:
+			remove_object_at(0)
+		elif get_num_objects() == 0:
+			print("remove stack")
+			queue_free()
 
 func get_num_objects() -> int:
 	return get_game_objects().size()
@@ -72,5 +83,15 @@ func flip() -> void:
 func shuffle() -> void:
 	get_game_objects().shuffle()
 
+func _process(_delta: float) -> void:
+	_update_objects()
+	label.set_text(str(get_num_objects()))
+	label.position = get_rect().position
+	queue_redraw()
+
 func _draw() -> void:
 	super._draw()
+	draw_rect(label.get_rect(), Color.from_hsv(1.0, 1.0, 0.0, 0.8), true)
+	draw_rect(label.get_rect(), Color.from_hsv(1.0, 1.0, 0.0, 0.8), false, PADDING)
+	if permanent:
+		draw_rect(get_rect(), Color.from_hsv(0.0, 0.0, 0.0, 0.8))

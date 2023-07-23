@@ -3,7 +3,6 @@ extends PopupMenu
 
 enum TYPE {NONE,GAME_OBJECT,OBJECT_GROUP,COLLECTION}
 
-var item: GameItem = null
 var object_group: Array = []
 
 func _ready() -> void:
@@ -26,18 +25,13 @@ func _reset_popup_menu() -> void:
 func _on_menu_created(type: RightClickMenu.TYPE, objects: Array):
 	_reset_popup_menu()
 	print("Menu created. Position: ",position)
+	object_group = objects
 	match type:
 		TYPE.GAME_OBJECT:
-			item = objects[0]
-			object_group = []
 			init_game_object_menu()
 		TYPE.COLLECTION:
-			item = objects[0]
-			object_group = []
 			init_collection_menu()
 		TYPE.OBJECT_GROUP:
-			item = null
-			object_group = objects
 			init_object_group_menu()
 		_:
 			print("None")
@@ -45,63 +39,78 @@ func _on_menu_created(type: RightClickMenu.TYPE, objects: Array):
 	popup()
 
 func init_game_object_menu() -> void:
-	add_item("Flip object")
-	add_item("Go to front")
-	add_item("Send to back")
-	index_pressed.connect(_on_clicked_from_object)
+	add_item("Flip object", 0)
+	var ordering_menu = PopupMenu.new()
+	ordering_menu.name = "ordering"
+	add_child(ordering_menu)
+	add_submenu_item("Ordering", "ordering", 1)
+	ordering_menu.add_item("Bring to front", 2)
+	ordering_menu.add_item("Send to back", 3)
+	id_pressed.connect(_on_clicked_from_object)
+	ordering_menu.id_pressed.connect(_on_clicked_from_object)
 	
 
 func init_collection_menu():
-	add_item("Shuffle collection")
-	add_item("Flip collection")
-	add_item("Go to front")
-	add_item("Send to back")
-	index_pressed.connect(_on_clicked_from_collection)
+	add_item("Shuffle collection", 0)
+	add_item("Flip collection", 1)
+	var ordering_menu = PopupMenu.new()
+	ordering_menu.name = "ordering"
+	add_child(ordering_menu)
+	add_submenu_item("Ordering", "ordering", 2)
+	ordering_menu.add_item("Go to front", 3)
+	ordering_menu.add_item("Send to back", 4)
+	var orientation_menu = PopupMenu.new()
+	orientation_menu.name = "orientation"
+	id_pressed.connect(_on_clicked_from_collection)
+	ordering_menu.id_pressed.connect(_on_clicked_from_collection)
+	orientation_menu.id_pressed.connect(_on_clicked_from_collection)
 
 func init_object_group_menu():
-	add_item("Convert to stack")
-	add_item("Flip selection")
-	add_item("Go to front")
-	add_item("Send to back")
-	index_pressed.connect(_on_clicked_from_object_group)
+	add_item("Stack selection", 0)
+	add_item("Flip selection", 1)
+	var ordering_menu = PopupMenu.new()
+	ordering_menu.name = "ordering"
+	add_child(ordering_menu)
+	add_submenu_item("Ordering", "ordering", 2)
+	ordering_menu.add_item("Go to front", 3)
+	ordering_menu.add_item("Send to back", 4)
+	id_pressed.connect(_on_clicked_from_object_group)
+	ordering_menu.id_pressed.connect(_on_clicked_from_object_group)
 
 # RIGHT CLICK MENU FUNCIONALITIES
 
-func _on_clicked_from_collection(index: int) -> void:
-	match index:
-		0: _shuffle_collection()
-		1: _flip_item()
-		2: _move_item_to_front()
-		3: _move_item_to_back()
-
-func _on_clicked_from_object(index: int) -> void:
-	match index:
-		0: _flip_item()
-		1: _move_item_to_front()
-		2: _move_item_to_back()
-
-func _on_clicked_from_object_group(index: int) -> void:
-	match index:
-		0: _stack_selected_objects()
-		1: _flip_item()
+func _on_clicked_from_object(id: int) -> void:
+	match id:
+		0: _flip_selected_objects()
 		2: _move_objects_to_front()
 		3: _move_objects_to_back()
 
+func _on_clicked_from_collection(id: int) -> void:
+	match id:
+		0: _shuffle_collection()
+		1: _flip_selected_objects()
+		3: _move_objects_to_front()
+		4: _move_objects_to_back()
+
+func _on_clicked_from_object_group(id: int) -> void:
+	match id:
+		0: _stack_selected_objects()
+		1: _flip_selected_objects()
+		3: _move_objects_to_front()
+		4: _move_objects_to_back()
+
 func _shuffle_collection() -> void:
-	(item as GameCollection).shuffle()
-
-func _flip_item() -> void:
-	item.flip()
-
-func _move_item_to_front() -> void:
-	SignalManager.move_items_to_front.emit([item])
-
-func _move_item_to_back() -> void:
-	SignalManager.move_items_to_back.emit([item])
+	for object in object_group:
+		if object is GameCollection:
+			(object as GameCollection).shuffle()
 
 func _flip_selected_objects() -> void:
 	for object in object_group:
 		object.flip()
+
+func _set_objects_orientation(flipped: bool) -> void:
+	for object in object_group:
+		object.set_side(flipped)
 
 func _move_objects_to_front() -> void:
 	SignalManager.move_items_to_front.emit(object_group)

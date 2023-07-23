@@ -155,7 +155,7 @@ func _new_stack(item: Dictionary, objects: Dictionary, config_vars: Array, colle
 		_parse_item(_ins, objects, config_vars, _stack)
 	
 	if item.permanent:
-		_stack.permastack = true
+		_stack.permanent = true
 		_stack.base_size = Vector2(item.size[0], item.size[1])
 	
 	if _stack.get_num_objects() != 0:
@@ -198,7 +198,6 @@ func _new_card(item: Dictionary, objects: Dictionary, config_vars: Array, collec
 	for _group in groups:
 		_card.add_to_group(_group)
 	if collection:
-		_card.select()
 		_card.put_in_collection(collection)
 		collection.add_game_object_to_top(_card)
 

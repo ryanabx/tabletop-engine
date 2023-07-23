@@ -7,11 +7,18 @@ const VERSION_NUMBER: String = "0.0.1"
 const OUTLINE_THICKNESS: float = 6.0
 const THICKNESS_RATIO: float = 0.8
 
+var default_font: Font = null
+
 var game_name = ""
 
 @onready var tabletop = $/root/Tabletop
 @onready var camera_controller = $/root/Tabletop/CameraController
 @onready var board = $/root/Tabletop/GameBoard
+
+func _ready() -> void:
+	var l = Label.new()
+	default_font = l.get_theme_default_font()
+	l.free()
 
 func set_player_id(id: int) -> void:
 	_player_id = id

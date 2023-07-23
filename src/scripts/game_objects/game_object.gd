@@ -95,6 +95,9 @@ func flip() -> void:
 	if _obj_type != OBJ_TYPE.GENERIC:
 		_sprite.texture = _obj_images[0] if _side == SIDE.UP else _obj_images[1]
 
+func set_side(sd: bool) -> void:
+	_side = SIDE.UP if sd else SIDE.DOWN
+
 func select() -> void:
 	match get_state():
 		STATE.IDLE:
@@ -110,12 +113,10 @@ func deselect() -> void:
 			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (deselect).")
 
 func put_in_collection(coll: GameCollection) -> void:
-	match get_state():
-		STATE.SELECTED:
-			set_collection(coll)
-			set_state(STATE.IDLE)
-		_:
-			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (put in collection).")
+	if not has_collection():
+		set_collection(coll)
+	else:
+		print("Cannot add an object to a collection when a collection already exists")
 
 func remove_from_collection() -> void:
 	if has_collection():
