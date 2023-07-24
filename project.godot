@@ -20,6 +20,8 @@ config/icon="res://icon.svg"
 Utils="*res://src/scripts/singletons/utils.gd"
 Globals="*res://src/scripts/singletons/globals.gd"
 SignalManager="*res://src/scripts/singletons/signal_manager.gd"
+Tabletop="*res://src/scripts/singletons/tabletop.gd"
+Player="*res://src/scripts/singletons/player.gd"
 
 [display]
 

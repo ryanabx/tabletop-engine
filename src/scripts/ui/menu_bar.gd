@@ -30,7 +30,7 @@ func _populate_popup_menus() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	game_name_label.text = "Current Game: " + Globals.game_name
+	game_name_label.text = "Current Game: " + Tabletop.game.name
 
 func file_button_pressed(index: int) -> void:
 	match index:

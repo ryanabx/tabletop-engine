@@ -67,7 +67,7 @@ func get_border() -> Rect2:
 	return border
 
 func process_input(input_actions: Dictionary) -> void:
-	if Globals.get_camera_controller().in_free_cam():
+	if Tabletop.camera_controller.in_free_cam():
 		return
 	# SELECTING OBJECTS
 	if Utils.is_action_just_long_held("game_select", input_actions) or Utils.is_action_just_long_held("game_select_stack", input_actions):
@@ -353,9 +353,6 @@ func object_overlaps_point(object: GameObject, point: Vector2):
 
 func _rect_obj_areas_overlap(obj1: GameObject, _rect: Rect2):
 	return (obj1.get_stack_rect() * obj1.get_transform().affine_inverse()).intersects(_rect.abs())
-
-func get_game_object_manager() -> Node2D:
-	return game_object_manager
 
 func create_right_click_menu_obj(object: GameObject):
 	print("Generate right click menu obj")

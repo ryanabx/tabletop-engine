@@ -3,11 +3,12 @@ extends FileDialog
 
 func _ready() -> void:
     SignalManager.create_load_config_dialog.connect(_on_create_load_config)
-    dir_selected.connect(_on_directory_decided)
+    file_selected.connect(_on_file_decided)
+    filters = ["*.json"]
 
 func _on_create_load_config() -> void:
     popup()
 
-func _on_directory_decided(dir: String) -> void:
-    SignalManager.config_folder_opened.emit(dir)
+func _on_file_decided(fname: String) -> void:
+    SignalManager.config_file_opened.emit(fname)
 

@@ -15,11 +15,6 @@ enum OBJ_TYPE {
 	STACK
 }
 
-enum SIDE {
-	UP,
-	DOWN
-}
-
 var _obj_type: OBJ_TYPE = OBJ_TYPE.GENERIC
 var _obj_images: Array = []
 
@@ -28,7 +23,7 @@ var grab_offset: Vector2 = Vector2.ZERO
 var collection: GameCollection = null
 
 
-var _side: SIDE = SIDE.UP
+var face_up: bool = true
 var _state: STATE = STATE.IDLE
 
 @onready var state_label: Label = $StateLabel
@@ -87,16 +82,19 @@ func get_state() -> STATE:
 func unselectable() -> bool:
 	return false
 
-func get_side() -> SIDE:
-	return _side
+func is_facing_up() -> bool:
+	return face_up
 
 func flip() -> void:
-	_side = SIDE.UP if _side == SIDE.DOWN else SIDE.DOWN
+	face_up = not face_up
 	if _obj_type != OBJ_TYPE.GENERIC:
-		_sprite.texture = _obj_images[0] if _side == SIDE.UP else _obj_images[1]
+		update_texture()
+
+func update_texture() -> void:
+	_sprite.texture = _obj_images[0] if face_up else _obj_images[1]
 
 func set_side(sd: bool) -> void:
-	_side = SIDE.UP if sd else SIDE.DOWN
+	face_up = sd
 
 func select() -> void:
 	match get_state():

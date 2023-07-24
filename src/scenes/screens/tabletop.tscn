@@ -1,6 +1,5 @@
-[gd_scene load_steps=8 format=3 uid="uid://bd0t8uq0xv6wr"]
+[gd_scene load_steps=7 format=3 uid="uid://bd0t8uq0xv6wr"]
 
-[ext_resource type="Script" path="res://src/scripts/screens/tabletop.gd" id="1_cv5do"]
 [ext_resource type="Script" path="res://src/scripts/game_objects/game_board.gd" id="2_lhyvx"]
 [ext_resource type="Script" path="res://src/scripts/screens/highlights.gd" id="3_ofc5r"]
 [ext_resource type="PackedScene" uid="uid://ma7a666pl2us" path="res://src/scenes/ui/user_interface.tscn" id="4_7raef"]
@@ -8,9 +7,7 @@
 [ext_resource type="Script" path="res://src/scripts/screens/camera_controller.gd" id="5_rko6e"]
 [ext_resource type="PackedScene" uid="uid://c288phnhk4720" path="res://src/scenes/dialogs/load_config_dialog.tscn" id="7_ml236"]
 
-[node name="Tabletop" type="Node"]
-script = ExtResource("1_cv5do")
-player_id = null
+[node name="Base" type="Node"]
 
 [node name="Highlights" type="Node2D" parent="."]
 z_index = 200

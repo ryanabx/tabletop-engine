@@ -16,8 +16,3 @@ script = ExtResource("1_u2rch")
 [node name="MenuBar" parent="." instance=ExtResource("2_5lxdm")]
 layout_mode = 1
 offset_bottom = 32.0
-
-[node name="Coordinates" type="Label" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0

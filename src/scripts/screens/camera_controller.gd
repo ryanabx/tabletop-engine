@@ -55,8 +55,10 @@ func check_free_cam() -> void:
 	if free_cam:
 		camera.offset = initial_camera_pos - (get_viewport().get_mouse_position() - initial_mouse_pos) / camera.zoom
 		game_bg.position = camera.position
-	
-	camera.offset = camera.offset.clamp(Globals.get_bounds().position, Globals.get_bounds().end)
+
+func set_background_from_file(fname: String, image_dir: String) -> void:
+	var _texture: Texture2D = Utils.load_texture_from_string(fname, image_dir)
+	game_bg.set_texture(_texture)
 
 func in_free_cam() -> bool:
 	return free_cam

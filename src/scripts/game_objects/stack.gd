@@ -1,8 +1,6 @@
 class_name ObjectStack
 extends GameCollection
 
-var base_size: Vector2 = Vector2.ZERO
-
 func _update_objects() -> void:
 	super._update_objects()
 	var larg_x: float = 0

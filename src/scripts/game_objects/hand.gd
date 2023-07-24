@@ -3,16 +3,8 @@ extends GameCollection
 
 const V_PADDING = 16.0
 
-var _player: int
-
-func _init(_pl: int, _pos: Vector2, _siz: Vector2):
-	_player = _pl
-	position = _pos
-	_scale = _siz
-	add_to_group("hands")
-
 func disabled() -> bool:
-	return Globals.get_player_id() != get_player_id()
+	return false
 
 func _process(delta: float) -> void:
 	super._process(delta)
@@ -36,7 +28,7 @@ func _update_objects() -> void:
 	for i in range(get_num_objects()):
 		var _obj: GameObject = get_game_objects()[i]
 		get_parent().move_child(_obj, _max_index)
-		if _obj.get_side() == GameObject.SIDE.DOWN:
+		if not _obj.get_side():
 			_obj.flip()
 		var _lerp_amt: float = (i + 1.0) / (num_objects + 1.0)
 		var _pos: Vector2 = _extents[0].lerp(_extents[1], _lerp_amt)
@@ -50,15 +42,13 @@ func _update_objects() -> void:
 	_scale.y = larg_y + V_PADDING
 
 func add_game_object_special(obj: GameObject) -> void:
+	super.add_game_object_special(obj)
 	var i: int = 0
 	for a in range(get_num_objects()):
 		if obj.position.x < get_game_objects()[a].position.x:
 			break
 		i = i + 1
 	get_game_objects().insert(i, obj)
-
-func get_player_id() -> int:
-	return _player
 
 func _draw():
 	draw_rect(get_rect(), Color.from_hsv(0.0, 0.0, 1.0, 1.0), false, Globals.OUTLINE_THICKNESS * Globals.THICKNESS_RATIO)

@@ -25,7 +25,6 @@ func load_images_into_array(image_strings: Array, image_directory: String) -> Ar
 	return result
 
 func load_texture_from_string(fname: String, image_directory: String) -> Texture2D:
-	var result: Array = []
 	var _image = Image.new()
 	var _err = _image.load(image_directory + fname)
 	if _err != OK:
@@ -106,3 +105,16 @@ func is_action_held(action: String, input_actions: Dictionary) -> bool:
 
 func is_action_just_released(action: String, input_actions: Dictionary) -> bool:
 	return is_action_just_short_released(action, input_actions) or is_action_just_long_released(action, input_actions)
+
+func load_json_from_file(fname: String) -> Dictionary:
+	if FileAccess.file_exists(fname):
+		var data_file = FileAccess.open(fname, FileAccess.READ)
+		var parsed_result = JSON.parse_string(data_file.get_as_text())
+		if parsed_result is Dictionary:
+			return parsed_result
+		else:
+			print("Error parsing file")
+			return {}
+	else:
+		print("File not found: ",fname)
+		return {}

@@ -15,4 +15,4 @@ signal create_load_config_dialog()
 signal reset_tabletop()
 
 # File Dialogs
-signal config_folder_opened(folder: String)
+signal config_file_opened(fname: String)

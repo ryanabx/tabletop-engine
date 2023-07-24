@@ -3,10 +3,10 @@
 [ext_resource type="Script" path="res://src/scripts/dialogs/load_config_dialog.gd" id="1_s6pm3"]
 
 [node name="LoadConfigDialog" type="FileDialog"]
-title = "Open a Directory"
+title = "Open a File"
 initial_position = 2
 size = Vector2i(640, 320)
-ok_button_text = "Select Current Folder"
-file_mode = 2
+ok_button_text = "Open"
+file_mode = 0
 access = 2
 script = ExtResource("1_s6pm3")

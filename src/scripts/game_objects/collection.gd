@@ -4,6 +4,8 @@ extends GameItem
 var _game_objects: Array = []
 var _scale: Vector2 = Vector2.ZERO
 
+var base_size: Vector2 = Vector2.ZERO
+
 var permanent: bool = true
 
 var label: Label = null
@@ -40,14 +42,15 @@ func _get_max_index() -> int:
 	return max_index
 
 func add_game_object_to_top(obj: GameObject) -> void:
+	obj.put_in_collection(self)
 	get_game_objects().push_back(obj)
 
 func add_game_object_to_bottom(obj: GameObject) -> void:
+	obj.put_in_collection(self)
 	get_game_objects().push_front(obj)
 
-func add_game_object_special(_obj: GameObject) -> void:
-	print("add_game_object_special not Implemented on: ",get_class())
-	pass
+func add_game_object_special(obj: GameObject) -> void:
+	obj.put_in_collection(self)
 
 func get_rect() -> Rect2:
 	return Rect2(- _scale / 2.0, _scale)
