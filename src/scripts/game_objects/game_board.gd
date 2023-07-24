@@ -286,6 +286,8 @@ func update_selection_rect() -> void:
 
 func move_selected_items() -> void:
 	for object in get_selected_items():
+		if object.has_collection() and object.get_collection().get_permanence():
+			object.get_collection().remove_game_object(object)
 		object.position = get_local_mouse_position() + object.get_grab_offset()
 		object.position = object.position.clamp(border.position, border.end)
 	# CHECK STACKING

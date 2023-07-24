@@ -1,5 +1,17 @@
 {
+    "name": "UNO",
+    "version": 1,
+    "obf_api_version": 1,
     "image_dir": "C:/Users/ryanb/Pictures/UNO Cards/",
+    "background": "bg.jpg",
+    "board_settings": {
+        "board_scale": [64, 64],
+        "bounds": [0, 0, 20, 11.25]
+    },
+    "player_settings": {
+        "min_players": 2,
+        "max_players": 4
+    },
     "objects": {
         "UNO_BLUE0": {"image": ["UNO_BLUE0.png","UNO_FLIPPED.png"]},
         "UNO_BLUE1": {"image": ["UNO_BLUE1.png","UNO_FLIPPED.png"]},
@@ -55,5 +67,83 @@
         "UNO_GREENDRAW2": {"image": ["UNO_GREENDRAW2.png","UNO_FLIPPED.png"]},
         "UNO_DRAW4": {"image": ["UNO_DRAW4.png","UNO_FLIPPED.png"]},
         "UNO_WILD": {"image": ["UNO_WILD.png","UNO_FLIPPED.png"]}
-    }
+    },
+    "board": [
+        {
+            "type": "stack",
+            "permanent": true,
+            "location": [480, 320],
+            "size": [72, 156],
+            "inside": [
+                {
+                    "type": "foreach",
+                    "foreach": "$",
+                    "in": ["RED", "BLUE", "YELLOW", "GREEN"],
+                    "do": [
+                        {
+                            "type": "foreach",
+                            "foreach": "@",
+                            "in": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "SKIP", "TURN", "DRAW2"],
+                            "do": [
+                                {
+                                    "type": "repeat",
+                                    "amount": 2,
+                                    "do": [
+                                        {
+                                            "type": "card",
+                                            "groups": ["card"],
+                                            "objref_name": "UNO_$@",
+                                            "face_up": false,
+                                            "location": [0,0],
+                                            "scale": 1.5
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "repeat",
+                    "amount": 4,
+                    "do": [
+                        {
+                            "type": "card",
+                            "groups": ["card"],
+                            "objref_name": "UNO_DRAW4",
+                            "face_up": false,
+                            "location": [0,0],
+                            "scale": 1.5
+                        },
+                        {
+                            "type": "card",
+                            "groups": ["card"],
+                            "objref_name": "UNO_WILD",
+                            "face_up": false,
+                            "location": [0,0],
+                            "scale": 1.5
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "stack",
+            "location": [700, 320],
+            "base_size": [64, 64],
+            "permanent": true,
+            "inside": []
+        },
+        {
+            "type": "hand",
+            "location": [10, 10],
+            "base_size": [10, 4],
+            "options": {
+                "permanent": true,
+                "can_use": [true, false, false, false],
+                "viewing_state": ["FACE_UP", "FACE_DOWN", "FACE_DOWN", "FACE_DOWN"],
+                "force_state": "NONE"
+            }
+        }
+    ]
 }

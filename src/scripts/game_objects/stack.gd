@@ -5,8 +5,8 @@ var base_size: Vector2 = Vector2.ZERO
 
 func _update_objects() -> void:
 	super._update_objects()
-	var larg_x: float = base_size.x
-	var larg_y: float = base_size.y
+	var larg_x: float = 0
+	var larg_y: float = 0
 	
 	var _max_index = _get_max_index()
 	z_index = _max_index + 1
@@ -22,7 +22,10 @@ func _update_objects() -> void:
 			larg_x = _sc.x
 		if _sc.y > larg_y:
 			larg_y = _sc.y
-	_scale = Vector2(larg_x, larg_y)
+	if get_num_objects() > 0:
+		_scale = Vector2(larg_x, larg_y)
+	else:
+		_scale = base_size
 
 func add_game_object_special(obj: GameObject) -> void:
 	add_game_object_to_top(obj)

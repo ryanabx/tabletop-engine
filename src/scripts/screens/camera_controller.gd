@@ -3,7 +3,8 @@ extends Node2D
 @onready var camera = $Camera2D
 @onready var game_bg = $BoardBG
 
-const MOVEMENT_SPEED: float = 10.0
+const MOVEMENT_SPEED: float = 1000.0
+const ROTATION_SPEED: float = 1.0
 
 var initial_mouse_pos: Vector2 = Vector2.ZERO
 var free_cam: bool = false
@@ -25,7 +26,7 @@ func _process(_delta: float) -> void:
 		camera.zoom *= 1.1
 	if Input.is_action_just_pressed("ui_zoom_out"):
 		camera.zoom *= 0.9
-	camera.offset += Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED
+	camera.offset += Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED * _delta
 	update_bg_scale()
 	check_free_cam()
 

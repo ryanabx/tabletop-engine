@@ -12,9 +12,12 @@ const STACK_RECT_SIZE: float = 32.0
 
 const PADDING: float = 8.0
 
+const LABEL_OPACITY = 0.6
+
 func _ready() -> void:
 	add_to_group("collections")
 	label = Label.new()
+	label.modulate.a = 0.6
 	# label.set_anchors_and_offsets_preset(label.PRESET_CENTER)
 	add_child(label)
 
@@ -90,8 +93,8 @@ func _process(_delta: float) -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	super._draw()
-	draw_rect(label.get_rect(), Color.from_hsv(1.0, 1.0, 0.0, 0.8), true)
-	draw_rect(label.get_rect(), Color.from_hsv(1.0, 1.0, 0.0, 0.8), false, PADDING)
 	if permanent:
-		draw_rect(get_rect(), Color.from_hsv(0.0, 0.0, 0.0, 0.8))
+		draw_rect(get_rect(), Color.from_hsv(0.0, 0.0, 0.0, 0.8), false,PADDING)
+	super._draw()
+	draw_rect(label.get_rect(), Color.from_hsv(1.0, 1.0, 0.0, LABEL_OPACITY), true)
+	draw_rect(label.get_rect(), Color.from_hsv(1.0, 1.0, 0.0, LABEL_OPACITY), false, PADDING)

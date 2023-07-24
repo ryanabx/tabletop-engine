@@ -49,7 +49,7 @@ func init_game_object_menu() -> void:
 	id_pressed.connect(_on_clicked_from_object)
 	ordering_menu.id_pressed.connect(_on_clicked_from_object)
 	
-
+# TODO: FIX RIGHT CLICK MENU
 func init_collection_menu():
 	add_item("Shuffle collection", 0)
 	add_item("Flip collection", 1)
