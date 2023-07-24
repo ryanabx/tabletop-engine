@@ -1,5 +1,5 @@
 class_name GameCollection
-extends GameItem
+extends GameObject
 
 var _game_objects: Array = []
 var _scale: Vector2 = Vector2.ZERO
@@ -41,33 +41,33 @@ func _get_max_index() -> int:
 		max_index = max(obj.get_index(), max_index)
 	return max_index
 
-func add_game_object_to_top(obj: GameObject) -> void:
+func add_game_object_to_top(obj: Piece) -> void:
 	obj.put_in_collection(self)
 	get_game_objects().push_back(obj)
 
-func add_game_object_to_bottom(obj: GameObject) -> void:
+func add_game_object_to_bottom(obj: Piece) -> void:
 	obj.put_in_collection(self)
 	get_game_objects().push_front(obj)
 
-func add_game_object_special(obj: GameObject) -> void:
+func add_game_object_special(obj: Piece) -> void:
 	obj.put_in_collection(self)
 
 func get_rect() -> Rect2:
 	return Rect2(- _scale / 2.0, _scale)
 
-func get_top_object() -> GameObject:
+func get_top_object() -> Piece:
 	if get_num_objects() == 0:
 		return null
 	return get_game_objects()[-1]
 
-func remove_game_object(obj: GameObject) -> void:
+func remove_game_object(obj: Piece) -> void:
 	var index: int = get_game_objects().find(obj)
 	if index == -1:
 		return
 	remove_object_at(index)
 
 func remove_object_at(index: int) -> void:
-	var target_object: GameObject = get_game_objects().pop_at(index)
+	var target_object: Piece = get_game_objects().pop_at(index)
 	target_object.remove_from_collection()
 	if not permanent:
 		if get_num_objects() == 1:

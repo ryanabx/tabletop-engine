@@ -1,7 +1,7 @@
 # TABLETOP SINGLETON - Contains all the data about the current tabletop session
 extends Node
 
-var _game_object_scene: PackedScene = preload("res://src/scenes/game_objects/game_object.tscn")
+var piece_scene: PackedScene = preload("res://src/scenes/game_objects/piece.tscn")
 
 var EMPTY_GAME: Dictionary = {
 	"name": "Untitled",
@@ -107,7 +107,7 @@ func new_piece(object: Dictionary, collection: GameCollection, vars: Array) -> v
 	for cvar in vars:
 		object.piece_type = object.piece_type.replace(cvar.get_repl(), cvar.get_val())
 	# Create piece and add it to board
-	var piece = _game_object_scene.instantiate()
+	var piece: Piece = piece_scene.instantiate()
 	board.game_object_manager.add_child(piece)
 	# Set piece variables
 	piece._obj_images = Utils.load_images_into_array(game.piece_types[object.piece_type].image, game.image_directory)

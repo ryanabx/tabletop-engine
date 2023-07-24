@@ -7,7 +7,7 @@ var is_selecting: bool = false
 
 var game_menu_open: bool = false
 
-var _current_stackable_item: GameItem = null
+var _current_stackable_item: GameObject = null
 
 var selected_objects: Array = []
 
@@ -97,7 +97,7 @@ func process_input(input_actions: Dictionary) -> void:
 
 func right_click() -> void:
 	if not game_menu_open and not has_selected_items():
-		var highlighted_obj: GameObject = get_overlapping_obj(get_local_mouse_position())
+		var highlighted_obj: Piece = get_overlapping_obj(get_local_mouse_position())
 		if highlighted_obj != null:
 			if highlighted_obj.has_collection():
 				create_right_click_menu_stack(highlighted_obj.get_collection())
@@ -122,7 +122,7 @@ func flip_selection() -> void:
 			
 func check_selecting_obj(input_actions: Dictionary) -> void:
 	if not has_selected_items():
-		var obj_selection: GameObject = get_overlapping_obj(get_local_mouse_position())
+		var obj_selection: Piece = get_overlapping_obj(get_local_mouse_position())
 		if obj_selection:
 			if obj_selection.has_collection() and Utils.is_action_just_held("game_select_stack", input_actions): # Select collection
 				if obj_selection.get_collection().get_permanence():
@@ -155,21 +155,21 @@ func initialize_selection_rect() -> void:
 	selection_box.position = get_local_mouse_position()
 	is_selecting = true
 
-func get_overlapping_obj_from_selected(point: Vector2) -> GameObject:
+func get_overlapping_obj_from_selected(point: Vector2) -> Piece:
 	var game_objects = get_selected_items()
-	var best: GameObject = null
+	var best: Piece = null
 	for object in game_objects:
-		var g_obj := object as GameObject
+		var g_obj := object as Piece
 		if (g_obj.get_rect() * g_obj.get_transform().affine_inverse()).has_point(point):
 			if best == null or (g_obj.z_index > best.z_index):
 				best = g_obj
 	return best
 
-func get_overlapping_obj(point: Vector2) -> GameObject:
+func get_overlapping_obj(point: Vector2) -> Piece:
 	var game_objects = get_tree().get_nodes_in_group("game_object")
-	var best: GameObject = null
+	var best: Piece = null
 	for object in game_objects:
-		var g_obj := object as GameObject
+		var g_obj := object as Piece
 		if (g_obj.get_rect() * g_obj.get_transform().affine_inverse()).has_point(point):
 			if best == null or (g_obj.z_index > best.z_index):
 				best = g_obj
@@ -208,11 +208,11 @@ func release_selection_group(input_actions: Dictionary) -> void:
 		set_selected_objects([])
 
 
-func stack_objects_to_item(objects: Array, item: GameItem) -> void:
+func stack_objects_to_item(objects: Array, item: GameObject) -> void:
 	if item is GameCollection:
 		print("Stack objects to collection (stack to collection)")
 		stack_objects_to_collection(objects, item as GameCollection)
-	elif item is GameObject:
+	elif item is Piece:
 		print("Stack objects to object (convert to stack)")
 		convert_to_stack([item] + objects)
 
@@ -225,7 +225,6 @@ func convert_to_stack(objects: Array):
 	for object in objects:
 		if object.has_collection():
 			object.get_collection().remove_game_object(object)
-		object.put_in_collection(_new_stack)
 		_new_stack.add_game_object_special(object)
 		_new_stack.set_permanence(false)
 		object.position = _new_stack.position
@@ -234,7 +233,6 @@ func stack_objects_to_collection(objects: Array, collection: GameCollection) -> 
 	for object in objects:
 		if object.has_collection():
 			object.get_collection().remove_game_object(object)
-		object.put_in_collection(collection)
 		collection.add_game_object_special(object)
 		object.position = collection.position
 	collection.dehighlight()
@@ -242,17 +240,17 @@ func stack_objects_to_collection(objects: Array, collection: GameCollection) -> 
 func over_item():
 	return _current_stackable_item != null
 
-func get_stackable_item() -> GameItem:
+func get_stackable_item() -> GameObject:
 	return _current_stackable_item
 
-func move_item_to_front(item: GameItem) -> void:
-	if item is GameObject:
+func move_item_to_front(item: GameObject) -> void:
+	if item is Piece:
 		move_objects_to_front([item])
 	elif item is GameCollection:
 		move_objects_to_front((item as GameCollection).get_game_objects())
 
-func move_item_to_back(item: GameItem) -> void:
-	if item is GameObject:
+func move_item_to_back(item: GameObject) -> void:
+	if item is Piece:
 		move_objects_to_back([item])
 	elif item is GameCollection:
 		move_objects_to_back((item as GameCollection).get_game_objects())
@@ -293,7 +291,7 @@ func move_selected_items() -> void:
 	# CHECK STACKING
 	var stackable_collection: GameCollection = find_stackable_collection(get_selected_items())
 	if stackable_collection == null:
-		var stackable_object: GameObject = find_stackable_object(get_selected_items())
+		var stackable_object: Piece = find_stackable_object(get_selected_items())
 		if stackable_object == null:
 			set_stackable_item(null)
 		else:
@@ -301,16 +299,16 @@ func move_selected_items() -> void:
 	else:
 		set_stackable_item(stackable_collection)
 	
-func set_stackable_item(item: GameItem) -> void:
+func set_stackable_item(item: GameObject) -> void:
 	if get_stackable_item() != null and get_stackable_item() != item:
 		get_stackable_item().dehighlight()
 	_current_stackable_item = item
 	if item != null:
 		item.highlight()
 
-func find_stackable_object(objects: Array) -> GameObject:
+func find_stackable_object(objects: Array) -> Piece:
 	var game_objs: Array = get_tree().get_nodes_in_group("game_objects")
-	var best_object: GameObject = null
+	var best_object: Piece = null
 	var best_dist: float = 0.0
 	var ref_position = get_local_mouse_position()
 	for object in game_objs:
@@ -348,13 +346,13 @@ func has_any(arr1: Array, arr2: Array) -> bool:
 func collection_overlaps_point(collection: GameCollection, point: Vector2) -> bool:
 	return collection.get_extents().has_point(point)
 
-func object_overlaps_point(object: GameObject, point: Vector2):
+func object_overlaps_point(object: Piece, point: Vector2):
 	return object.get_extents().has_point(point)
 
-func _rect_obj_areas_overlap(obj1: GameObject, _rect: Rect2):
+func _rect_obj_areas_overlap(obj1: Piece, _rect: Rect2):
 	return (obj1.get_stack_rect() * obj1.get_transform().affine_inverse()).intersects(_rect.abs())
 
-func create_right_click_menu_obj(object: GameObject):
+func create_right_click_menu_obj(object: Piece):
 	print("Generate right click menu obj")
 	SignalManager.game_menu_create.emit(RightClickMenu.TYPE.GAME_OBJECT, [object])
 

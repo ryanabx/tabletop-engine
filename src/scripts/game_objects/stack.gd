@@ -25,7 +25,7 @@ func _update_objects() -> void:
 	else:
 		_scale = base_size
 
-func add_game_object_special(obj: GameObject) -> void:
+func add_game_object_special(obj: Piece) -> void:
 	add_game_object_to_top(obj)
 
 func _draw() -> void:

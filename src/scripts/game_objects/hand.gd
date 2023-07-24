@@ -26,7 +26,7 @@ func _update_objects() -> void:
 	var larg_y: float = 64.0
 	
 	for i in range(get_num_objects()):
-		var _obj: GameObject = get_game_objects()[i]
+		var _obj: Piece = get_game_objects()[i]
 		get_parent().move_child(_obj, _max_index)
 		if not _obj.get_side():
 			_obj.flip()
@@ -41,7 +41,7 @@ func _update_objects() -> void:
 			larg_y = _sc.y
 	_scale.y = larg_y + V_PADDING
 
-func add_game_object_special(obj: GameObject) -> void:
+func add_game_object_special(obj: Piece) -> void:
 	super.add_game_object_special(obj)
 	var i: int = 0
 	for a in range(get_num_objects()):
