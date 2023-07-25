@@ -5,7 +5,8 @@
     "image_directory": "C:/Users/ryanb/Pictures/UNO Cards/",
     "background": "bg.jpg",
     "board_settings": {
-        "board_scale": [64, 64],
+        "scale_x": 64,
+        "scale_y": 64,
         "bounds": [0, 0, 20, 11.25]
     },
     "player_settings": {
@@ -71,8 +72,8 @@
     "board_objects": [
         {
             "type": "collection",
-            "location": [480, 320],
-            "base_size": [72, 156],
+            "location": [7.5, 5],
+            "base_size": [1, 1],
             "options": {
                 "behavior": "stack",
                 "permanent": true,
@@ -100,7 +101,7 @@
                                             "piece_type": "UNO_$@",
                                             "face_up": false,
                                             "location": [0,0],
-                                            "scale": 1.5
+                                            "scale": [1.5, 2.25]
                                         }
                                     ]
                                 }
@@ -117,14 +118,14 @@
                             "piece_type": "UNO_DRAW4",
                             "face_up": false,
                             "location": [0,0],
-                            "scale": 1.5
+                            "scale": [1.5, 2.25]
                         },
                         {
                             "type": "piece",
                             "piece_type": "UNO_WILD",
                             "face_up": false,
                             "location": [0,0],
-                            "scale": 1.5
+                            "scale": [1.5, 2.25]
                         }
                     ]
                 }
@@ -132,8 +133,8 @@
         },
         {
             "type": "collection",
-            "location": [700, 320],
-            "base_size": [64, 64],
+            "location": [11, 5],
+            "base_size": [1, 1],
             "options": {
                 "behavior": "stack",
                 "permanent": true,

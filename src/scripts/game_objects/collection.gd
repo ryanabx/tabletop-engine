@@ -86,6 +86,10 @@ func flip() -> void:
 	for obj in get_game_objects():
 		obj.flip()
 
+func set_side(side: bool) -> void:
+	for obj in get_game_objects():
+		obj.set_side(side)
+
 func shuffle() -> void:
 	get_game_objects().shuffle()
 

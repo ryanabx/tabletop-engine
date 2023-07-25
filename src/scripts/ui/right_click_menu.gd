@@ -13,12 +13,12 @@ func _ready() -> void:
 func _reset_popup_menu() -> void:
 	set_position(Vector2.ZERO)
 	# Disconnect previously connected signals
-	if index_pressed.is_connected(_on_clicked_from_object):
-		index_pressed.disconnect(_on_clicked_from_object)
-	if index_pressed.is_connected(_on_clicked_from_collection):
-		index_pressed.disconnect(_on_clicked_from_collection)
-	if index_pressed.is_connected(_on_clicked_from_object_group):
-		index_pressed.disconnect(_on_clicked_from_object_group)
+	if id_pressed.is_connected(_on_clicked_from_object):
+		id_pressed.disconnect(_on_clicked_from_object)
+	if id_pressed.is_connected(_on_clicked_from_collection):
+		id_pressed.disconnect(_on_clicked_from_collection)
+	if id_pressed.is_connected(_on_clicked_from_object_group):
+		id_pressed.disconnect(_on_clicked_from_object_group)
 	clear()
 	set_position(get_viewport().get_mouse_position())
 
@@ -52,7 +52,7 @@ func init_game_object_menu() -> void:
 # TODO: FIX RIGHT CLICK MENU
 func init_collection_menu():
 	add_item("Shuffle collection", 0)
-	add_item("Flip collection", 1)
+	
 	var ordering_menu = PopupMenu.new()
 	ordering_menu.name = "ordering"
 	add_child(ordering_menu)
@@ -61,13 +61,24 @@ func init_collection_menu():
 	ordering_menu.add_item("Send to back", 4)
 	var orientation_menu = PopupMenu.new()
 	orientation_menu.name = "orientation"
+	orientation_menu.add_item("Face up", 5)
+	orientation_menu.add_item("Face down", 6)
+	orientation_menu.add_item("Flip collection", 1)
+	add_child(orientation_menu)
+	add_submenu_item("Set Orientation", "orientation", 7)
 	id_pressed.connect(_on_clicked_from_collection)
 	ordering_menu.id_pressed.connect(_on_clicked_from_collection)
 	orientation_menu.id_pressed.connect(_on_clicked_from_collection)
 
 func init_object_group_menu():
-	add_item("Stack selection", 0)
-	add_item("Flip selection", 1)
+	add_item("Convert to stack", 0)
+	var orientation_menu = PopupMenu.new()
+	orientation_menu.add_item("Face up", 5)
+	orientation_menu.add_item("Face down", 6)
+	orientation_menu.add_item("Flip selection", 1)
+	add_child(orientation_menu)
+	orientation_menu.name = "orientation"
+	add_submenu_item("Set Orientation", "orientation", 7)
 	var ordering_menu = PopupMenu.new()
 	ordering_menu.name = "ordering"
 	add_child(ordering_menu)
@@ -76,6 +87,7 @@ func init_object_group_menu():
 	ordering_menu.add_item("Send to back", 4)
 	id_pressed.connect(_on_clicked_from_object_group)
 	ordering_menu.id_pressed.connect(_on_clicked_from_object_group)
+	orientation_menu.id_pressed.connect(_on_clicked_from_collection)
 
 # RIGHT CLICK MENU FUNCIONALITIES
 
@@ -91,6 +103,8 @@ func _on_clicked_from_collection(id: int) -> void:
 		1: _flip_selected_objects()
 		3: _move_objects_to_front()
 		4: _move_objects_to_back()
+		5: _set_objects_orientation(true)
+		6: _set_objects_orientation(false)
 
 func _on_clicked_from_object_group(id: int) -> void:
 	match id:
@@ -98,6 +112,8 @@ func _on_clicked_from_object_group(id: int) -> void:
 		1: _flip_selected_objects()
 		3: _move_objects_to_front()
 		4: _move_objects_to_back()
+		5: _set_objects_orientation(true)
+		6: _set_objects_orientation(false)
 
 func _shuffle_collection() -> void:
 	for object in object_group:

@@ -47,12 +47,8 @@ func get_grab_offset() -> Vector2:
 func set_grab_offset(offset: Vector2) -> void:
 	grab_offset = offset
 
-func _set_scale(_sc: Vector2, preserve_aspect: bool) -> void:
-	if not preserve_aspect:
-		_sprite.scale = (_sc * DEFAULT_SIZE) / _sprite.get_rect().size
-	else:
-		_sprite.scale.x = (_sc.x * DEFAULT_SIZE.x) / _sprite.get_rect().size.x
-		_sprite.scale.y = (_sc.x * DEFAULT_SIZE.x) / _sprite.get_rect().size.x
+func _set_scale(_sc: Vector2) -> void:
+	_sprite.scale = (_sc) / _sprite.get_rect().size
 
 func get_rect() -> Rect2:
 	return _sprite.get_rect() * _sprite.get_transform()
@@ -94,6 +90,7 @@ func update_texture() -> void:
 
 func set_side(sd: bool) -> void:
 	face_up = sd
+	update_texture()
 
 func select() -> void:
 	match get_state():

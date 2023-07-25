@@ -41,6 +41,7 @@ func _ready() -> void:
 	SignalManager.game_menu_destroy.connect(_on_game_menu_destroy)
 	SignalManager.move_items_to_back.connect(_on_items_to_back)
 	SignalManager.move_items_to_front.connect(_on_items_to_front)
+	SignalManager.convert_to_stack.connect(convert_to_stack)
 
 func _on_items_to_back(objects: Array) -> void:
 	if objects.size() == 1:
