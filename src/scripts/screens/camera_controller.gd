@@ -27,8 +27,8 @@ func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("ui_zoom_out"):
 		camera.zoom *= 0.9
 	camera.offset += Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED * _delta
-	update_bg_scale()
 	check_free_cam()
+	update_bg_scale()
 
 func set_bg(texture: Texture2D) -> void:
 	game_bg.set_texture(texture)
@@ -54,7 +54,6 @@ func check_free_cam() -> void:
 	
 	if free_cam:
 		camera.offset = initial_camera_pos - (get_viewport().get_mouse_position() - initial_mouse_pos) / camera.zoom
-		game_bg.position = camera.position
 
 func set_background_from_file(fname: String, image_dir: String) -> void:
 	var _texture: Texture2D = Utils.load_texture_from_string(fname, image_dir)

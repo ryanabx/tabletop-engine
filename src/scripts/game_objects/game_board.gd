@@ -17,6 +17,7 @@ var _stack_scene = preload("res://src/scenes/game_objects/stack.tscn")
 
 var group_selection_mode: bool = false
 var group_selection_down: bool = false
+var previously_stacked: bool = false
 
 var border: Rect2 = Rect2(0, 0, 1280, 720)
 
@@ -28,6 +29,7 @@ func reset_board() -> void:
 	
 	group_selection_down = false
 	group_selection_mode = false
+	previously_stacked = false
 	border = Rect2(0, 0, 1280, 720)
 	selection_box = Rect2(0.0, 0.0, 0.0, 0.0)
 	selected_objects = []
@@ -83,6 +85,8 @@ func process_input(input_actions: Dictionary) -> void:
 	if Utils.is_action_just_released("game_select", input_actions) or Utils.is_action_just_released("game_select_stack", input_actions):
 		if group_selection_mode and not group_selection_down:
 			release_selection_group(input_actions)
+		elif not group_selection_mode and Utils.is_action_just_released("game_select", input_actions):
+			check_instant_selection()
 	# DESELECTING OBJECTS
 	if Utils.is_action_just_long_released("game_select", input_actions) or Utils.is_action_just_long_released("game_select_stack", input_actions):
 		print("Release Selection")
@@ -120,26 +124,48 @@ func flip_selection() -> void:
 			object.get_collection().flip()
 		else:
 			object.flip()
+
+func check_instant_selection() -> void:
+	if not has_selected_items():
+		var obj_selection: Piece = get_overlapping_obj(get_local_mouse_position())
+		if obj_selection:
+			if obj_selection.has_collection():
+				selecting_collection(obj_selection, true)
+				group_selection_mode = true
+				previously_stacked = true
+			else:
+				selecting_piece(obj_selection)
+				group_selection_mode = true
+				previously_stacked = false
 			
 func check_selecting_obj(input_actions: Dictionary) -> void:
 	if not has_selected_items():
 		var obj_selection: Piece = get_overlapping_obj(get_local_mouse_position())
 		if obj_selection:
 			if obj_selection.has_collection() and Utils.is_action_just_held("game_select_stack", input_actions): # Select collection
-				if obj_selection.get_collection().get_permanence():
-					print("Cannot stack select permanent stack")
-				else:
-					print("Select Collection")
-					select_objects(obj_selection.get_collection().get_game_objects())
-			else: # Select object
-				print("Select Object: has_collection:", obj_selection.has_collection())
-				if obj_selection.has_collection():
-					print("Remove game object from collection")
-					obj_selection.get_collection().remove_game_object(obj_selection)
-				select_objects([obj_selection])
-		elif not Utils.is_action_just_long_held("game_select_stack", input_actions): # Selection box
+				selecting_collection(obj_selection, false)
+			else: # Select piece
+				selecting_piece(obj_selection)
+		elif Utils.is_action_just_long_held("game_select", input_actions) and not Utils.is_action_just_long_held("game_select_stack", input_actions): # Selection box
 			print("Initialize selection rect")
 			initialize_selection_rect()
+
+func selecting_piece(obj_selection: Piece) -> void:
+	print("Select Object: has_collection:", obj_selection.has_collection())
+	if obj_selection.has_collection():
+		print("Remove game object from collection")
+		obj_selection.get_collection().remove_game_object(obj_selection)
+	select_objects([obj_selection])
+
+func selecting_collection(obj_selection: Piece, instant_selection: bool) -> void:
+	if obj_selection.get_collection().get_permanence():
+		if not instant_selection:
+			print("Cannot stack select permanent stack")
+			return
+		select_objects(obj_selection.get_collection().get_game_objects())
+	else:
+		print("Select Collection")
+		select_objects(obj_selection.get_collection().get_game_objects())
 
 func select_objects(objects: Array) -> void:
 	for object in objects:
@@ -188,6 +214,7 @@ func release_selection() -> void:
 		stack_objects_to_item(get_selected_items(), get_stackable_item())
 		set_stackable_item(null)
 		group_selection_mode = false
+		previously_stacked = false
 	else:
 		print("Releasing selection not over item")
 	if not group_selection_mode:
@@ -205,8 +232,18 @@ func release_selection_group(input_actions: Dictionary) -> void:
 		print("Release selection group")
 		for object in get_selected_items():
 			object.deselect()
+		if previously_stacked and objects_not_in_collection(get_selected_items()):
+			convert_to_stack(get_selected_items())
 		group_selection_mode = false
+		previously_stacked = false
 		set_selected_objects([])
+
+func objects_not_in_collection(objects: Array) -> bool:
+	for obj in objects:
+		if obj.has_collection():
+			return false
+	
+	return true
 
 
 func stack_objects_to_item(objects: Array, item: GameObject) -> void:
@@ -372,8 +409,22 @@ func release_selection_box() -> void:
 		if not objects.is_empty():
 			select_objects(objects)
 			group_selection_mode = true
+		previously_stacked = objects_part_of_same_collection(objects)
 		selection_box = Rect2(0.0, 0.0, 0.0, 0.0)
 		is_selecting = false
+
+func objects_part_of_same_collection(objects: Array) -> bool:
+	if objects.is_empty():
+		return false
+	
+	var coll: GameCollection = objects[0].get_collection()
+	if coll == null:
+		return false
+	
+	for obj in objects:
+		if obj.get_collection() != coll:
+			return false
+	return true
 
 func select_in_range() -> Array:
 	var items: Array = []

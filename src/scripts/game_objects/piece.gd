@@ -9,13 +9,6 @@ enum STATE {
 	LOCKED
 }
 
-enum OBJ_TYPE {
-	GENERIC,
-	CARD,
-	STACK
-}
-
-var _obj_type: OBJ_TYPE = OBJ_TYPE.GENERIC
 var _obj_images: Array = []
 
 var grab_offset: Vector2 = Vector2.ZERO
@@ -31,15 +24,6 @@ var _state: STATE = STATE.IDLE
 
 func _ready() -> void:
 	add_to_group("game_objects")
-
-func _type_from_string(obj_type: String) -> OBJ_TYPE:
-	match obj_type:
-		"stack":
-			return OBJ_TYPE.STACK
-		"card":
-			return OBJ_TYPE.CARD
-		_:
-			return OBJ_TYPE.GENERIC
 
 func get_grab_offset() -> Vector2:
 	return grab_offset
@@ -57,7 +41,6 @@ func get_stack_rect() -> Rect2:
 	var stack_transform: Transform2D = _sprite.get_transform()
 	stack_transform = stack_transform * 0.25
 	return _sprite.get_rect() * stack_transform
-
 
 func has_collection() -> bool:
 	return collection != null
