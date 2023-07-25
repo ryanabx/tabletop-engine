@@ -23,7 +23,7 @@ var _state: STATE = STATE.IDLE
 @onready var _sprite: Sprite2D = $ObjectSprite
 
 func _ready() -> void:
-	add_to_group("game_objects")
+	add_to_group("piece")
 
 func get_grab_offset() -> Vector2:
 	return grab_offset

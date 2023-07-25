@@ -85,7 +85,7 @@ func process_input(input_actions: Dictionary) -> void:
 	if Utils.is_action_just_released("game_select", input_actions) or Utils.is_action_just_released("game_select_stack", input_actions):
 		if group_selection_mode and not group_selection_down:
 			release_selection_group(input_actions)
-		elif not group_selection_mode and Utils.is_action_just_released("game_select", input_actions):
+		elif not group_selection_mode and Utils.is_action_just_short_released("game_select", input_actions):
 			check_instant_selection()
 	# DESELECTING OBJECTS
 	if Utils.is_action_just_long_released("game_select", input_actions) or Utils.is_action_just_long_released("game_select_stack", input_actions):
@@ -146,12 +146,10 @@ func check_selecting_obj(input_actions: Dictionary) -> void:
 				selecting_collection(obj_selection, false)
 			else: # Select piece
 				selecting_piece(obj_selection)
-		elif Utils.is_action_just_long_held("game_select", input_actions) and not Utils.is_action_just_long_held("game_select_stack", input_actions): # Selection box
-			print("Initialize selection rect")
+		elif not Utils.is_action_just_long_held("game_select_stack", input_actions): # Selection box
 			initialize_selection_rect()
 
 func selecting_piece(obj_selection: Piece) -> void:
-	print("Select Object: has_collection:", obj_selection.has_collection())
 	if obj_selection.has_collection():
 		print("Remove game object from collection")
 		obj_selection.get_collection().remove_game_object(obj_selection)
@@ -193,7 +191,7 @@ func get_overlapping_obj_from_selected(point: Vector2) -> Piece:
 	return best
 
 func get_overlapping_obj(point: Vector2) -> Piece:
-	var game_objects = get_tree().get_nodes_in_group("game_object")
+	var game_objects = get_tree().get_nodes_in_group("piece")
 	var best: Piece = null
 	for object in game_objects:
 		var g_obj := object as Piece
@@ -345,7 +343,7 @@ func set_stackable_item(item: GameObject) -> void:
 		item.highlight()
 
 func find_stackable_object(objects: Array) -> Piece:
-	var game_objs: Array = get_tree().get_nodes_in_group("game_objects")
+	var game_objs: Array = get_tree().get_nodes_in_group("piece")
 	var best_object: Piece = null
 	var best_dist: float = 0.0
 	var ref_position = get_local_mouse_position()
@@ -407,6 +405,7 @@ func release_selection_box() -> void:
 		print("Releasing selection box")
 		var objects: Array = select_in_range()
 		if not objects.is_empty():
+			print("release_selection_box()::select_objects(objects)")
 			select_objects(objects)
 			group_selection_mode = true
 		previously_stacked = objects_part_of_same_collection(objects)
@@ -428,7 +427,7 @@ func objects_part_of_same_collection(objects: Array) -> bool:
 
 func select_in_range() -> Array:
 	var items: Array = []
-	for object in get_tree().get_nodes_in_group("game_object"):
+	for object in get_tree().get_nodes_in_group("piece"):
 		if _rect_obj_areas_overlap(object, selection_box):
 			items.append(object)
 	return items
