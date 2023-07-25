@@ -105,6 +105,7 @@ func _shuffle_collection() -> void:
 			(object as GameCollection).shuffle()
 
 func _flip_selected_objects() -> void:
+	print("Flip objects")
 	for object in object_group:
 		object.flip()
 

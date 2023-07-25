@@ -87,8 +87,7 @@ func is_facing_up() -> bool:
 
 func flip() -> void:
 	face_up = not face_up
-	if _obj_type != OBJ_TYPE.GENERIC:
-		update_texture()
+	update_texture()
 
 func update_texture() -> void:
 	_sprite.texture = _obj_images[0] if face_up else _obj_images[1]

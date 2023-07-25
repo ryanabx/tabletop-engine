@@ -104,13 +104,14 @@ func new_collection(object: Dictionary, collection: GameCollection, vars: Array)
 
 func new_piece(object: Dictionary, collection: GameCollection, vars: Array) -> void:
 	# Piece trait config variable substitution
+	var p_type: String = object.piece_type
 	for cvar in vars:
-		object.piece_type = object.piece_type.replace(cvar.get_repl(), cvar.get_val())
+		p_type = p_type.replacen(cvar.get_repl(), cvar.get_val())
 	# Create piece and add it to board
 	var piece: Piece = piece_scene.instantiate()
 	board.game_object_manager.add_child(piece)
 	# Set piece variables
-	piece._obj_images = Utils.load_images_into_array(game.piece_types[object.piece_type].image, game.image_directory)
+	piece._obj_images = Utils.load_images_into_array(game.piece_types[p_type].image, game.image_directory)
 	piece.face_up = object.face_up
 	piece.update_texture()
 	piece._set_scale(Vector2(object.scale, object.scale), true)
