@@ -78,19 +78,22 @@ func get_state() -> STATE:
 func unselectable() -> bool:
 	return false
 
-func is_facing_up() -> bool:
-	return face_up
-
 func flip() -> void:
 	face_up = not face_up
 	update_texture()
 
 func update_texture() -> void:
-	_sprite.texture = _obj_images[0] if face_up else _obj_images[1]
+	if has_collection():
+		_sprite.texture = _obj_images[0] if get_collection().decide_face(self) else _obj_images[1]
+	else:
+		_sprite.texture = _obj_images[0] if face_up else _obj_images[1]
 
 func set_side(sd: bool) -> void:
 	face_up = sd
 	update_texture()
+
+func get_side() -> bool:
+	return face_up
 
 func select() -> void:
 	match get_state():
@@ -109,12 +112,14 @@ func deselect() -> void:
 func put_in_collection(coll: GameCollection) -> void:
 	if not has_collection():
 		set_collection(coll)
+		update_texture()
 	else:
 		print("Cannot add an object to a collection when a collection already exists")
 
 func remove_from_collection() -> void:
 	if has_collection():
 		set_collection(null)
+		update_texture()
 	else:
 		print("Cannot remove an object from a null collection")
 

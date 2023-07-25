@@ -22,14 +22,14 @@ func _update_objects() -> void:
 	var _max_index = _get_max_index()
 	z_index = _max_index + 1
 	
-	var larg_x: float = 0.0
-	var larg_y: float = 64.0
+	var larg_x: float = 0
+	var larg_y: float = 0
 	
 	for i in range(get_num_objects()):
 		var _obj: Piece = get_game_objects()[i]
 		get_parent().move_child(_obj, _max_index)
-		if not _obj.get_side():
-			_obj.flip()
+		if piece_enforcement == GameCollection.PIECE_ENFORCEMENT_TYPE.ACTUAL:
+			_obj.set_side(face_up)
 		var _lerp_amt: float = (i + 1.0) / (num_objects + 1.0)
 		var _pos: Vector2 = _extents[0].lerp(_extents[1], _lerp_amt)
 		_obj.position = _pos
@@ -39,7 +39,10 @@ func _update_objects() -> void:
 			larg_x = _sc.x
 		if _sc.y > larg_y:
 			larg_y = _sc.y
-	_scale.y = larg_y + V_PADDING
+	if get_num_objects() > 0:
+		_scale = Vector2(base_size.x, larg_y + V_PADDING)
+	else:
+		_scale = base_size
 
 func add_game_object_special(obj: Piece) -> void:
 	super.add_game_object_special(obj)

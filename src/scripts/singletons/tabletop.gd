@@ -102,6 +102,15 @@ func new_collection(object: Dictionary, collection: GameCollection, vars: Array)
 	board.game_object_manager.add_child(c)
 	c.position = Vector2(object.location[0] * game.board_settings.scale_x, object.location[1] * game.board_settings.scale_y)
 
+	match object.options.force_state[0]:
+		"ACTUAL":
+			c.piece_enforcement = GameCollection.PIECE_ENFORCEMENT_TYPE.ACTUAL
+			c.face_up = object.options.force_state[1]
+		"VIEWING":
+			c.piece_enforcement = GameCollection.PIECE_ENFORCEMENT_TYPE.VIEWING
+			c.face_up = object.options.force_state[1]
+		"NONE": c.piece_enforcement = GameCollection.PIECE_ENFORCEMENT_TYPE.NONE
+
 	for x in object.inside:
 		parse_object(x, c, vars)
 	

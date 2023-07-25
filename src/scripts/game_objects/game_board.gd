@@ -351,7 +351,7 @@ func object_overlaps_point(object: Piece, point: Vector2):
 	return object.get_extents().has_point(point)
 
 func _rect_obj_areas_overlap(obj1: Piece, _rect: Rect2):
-	return (obj1.get_stack_rect() * obj1.get_transform().affine_inverse()).intersects(_rect.abs())
+	return (obj1.get_rect() * obj1.get_transform().affine_inverse()).intersects(_rect.abs())
 
 func create_right_click_menu_obj(object: Piece):
 	print("Generate right click menu obj")

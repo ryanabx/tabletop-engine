@@ -13,6 +13,8 @@ func _update_objects() -> void:
 		position = get_game_objects()[-1].position
 	
 	for obj in _game_objects:
+		if piece_enforcement == GameCollection.PIECE_ENFORCEMENT_TYPE.ACTUAL:
+			obj.set_side(face_up)
 		obj.position = position
 		get_parent().move_child(obj, _max_index)
 		var _sc = obj.get_rect().size

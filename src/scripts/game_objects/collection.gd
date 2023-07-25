@@ -8,6 +8,15 @@ var base_size: Vector2 = Vector2.ZERO
 
 var permanent: bool = true
 
+enum PIECE_ENFORCEMENT_TYPE {
+	NONE,
+	VIEWING,
+	ACTUAL
+}
+
+var piece_enforcement: PIECE_ENFORCEMENT_TYPE = PIECE_ENFORCEMENT_TYPE.NONE
+var face_up: bool = true
+
 var label: Label = null
 
 const STACK_RECT_SIZE: float = 32.0
@@ -92,6 +101,15 @@ func set_side(side: bool) -> void:
 
 func shuffle() -> void:
 	get_game_objects().shuffle()
+
+func decide_face(piece: Piece) -> bool:
+	if piece.get_collection() != self:
+		return piece.get_side()
+	
+	if piece_enforcement == PIECE_ENFORCEMENT_TYPE.VIEWING:
+		return face_up
+	else:
+		return piece.get_side()
 
 func _process(_delta: float) -> void:
 	_update_objects()

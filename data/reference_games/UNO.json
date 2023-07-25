@@ -77,9 +77,7 @@
             "options": {
                 "behavior": "stack",
                 "permanent": true,
-                "can_use": [true, true, true, true],
-                "viewing_state": ["FACE_UP", "FACE_DOWN", "FACE_DOWN", "FACE_DOWN"],
-                "force_state": "NONE"
+                "force_state": ["ACTUAL", false]
             },
             "inside": [
                 {
@@ -140,20 +138,20 @@
                 "permanent": true,
                 "can_use": [true, false, false, false],
                 "viewing_state": ["FACE_UP", "FACE_DOWN", "FACE_DOWN", "FACE_DOWN"],
-                "force_state": "NONE"
+                "force_state": ["ACTUAL", true]
             },
             "inside": []
         },
         {
             "type": "collection",
             "location": [10, 10],
-            "base_size": [10, 4],
+            "base_size": [10, 2.5],
             "options": {
                 "behavior": "hand",
                 "permanent": true,
                 "can_use": [true, false, false, false],
                 "viewing_state": ["FACE_UP", "FACE_DOWN", "FACE_DOWN", "FACE_DOWN"],
-                "force_state": "NONE"
+                "force_state": ["VIEWING", true]
             },
             "inside": []
         }
