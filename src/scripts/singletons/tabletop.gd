@@ -5,14 +5,24 @@ var piece_scene: PackedScene = preload("res://src/scenes/game_objects/piece.tscn
 
 var EMPTY_GAME: Dictionary = {
 	"name": "Untitled",
-	"version": [0,0,1],
+	"version": {"major": 1, "minor": 0},
 	"obf_api_version": Globals.CURRENT_API_VERSION,
 	"board_settings": {
-		"scale_x": 1,
-		"scale_y": 1
+		"scale": {"x": 1, "y": 1},
+		"bounds": {
+			"position": {"x": 0, "y": 0},
+			"scale": {"x": 1280, "y": 720}
+		},
+		"camera": {
+			"position": {"x": 0, "y": 0},
+			"scale": {"x": 1280},
+			"rotation_degrees": 0.0
+		}
 	},
 	"board_objects": []
 }
+
+var initialized: bool = false
 
 # Crucial tabletop operation nodes
 @onready var board: GameBoard = $/root/Base/GameBoard
@@ -24,7 +34,7 @@ var game: Dictionary = EMPTY_GAME # Empty game
 func reset_tabletop() -> void:
 	game = EMPTY_GAME
 	board.reset_board()
-	# TODO: Continue implementing this
+	initialize_game()
 
 func _on_config_file_loaded(fname: String) -> void:
 	reset_tabletop()
@@ -32,6 +42,11 @@ func _on_config_file_loaded(fname: String) -> void:
 
 func _ready() -> void:
 	SignalManager.config_file_opened.connect(_on_config_file_loaded)
+	
+func _process(_delta: float) -> void:
+	if not initialized:
+		initialize_game()
+		initialized = true
 
 func load_game_from_file(fname: String) -> void:
 	game = Utils.load_json_from_file(fname)
@@ -46,13 +61,21 @@ func initialize_game() -> void:
 
 func init_general() -> void:
 	# INITIALIZE GENERAL SETTINGS
-	board.set_border(Rect2(
-		game.board_settings.bounds[0] * game.board_settings.scale_x,
-		game.board_settings.bounds[1] * game.board_settings.scale_y,
-		game.board_settings.bounds[2] * game.board_settings.scale_x,
-		game.board_settings.bounds[3] * game.board_settings.scale_y
-		))
-	board.set_board_texture(game.background, game.image_directory)
+	var bord: Rect2 = Rect2(
+		game.board_settings.bounds.position.x * game.board_settings.scale.x,
+		game.board_settings.bounds.position.y * game.board_settings.scale.y,
+		game.board_settings.bounds.scale.x * game.board_settings.scale.x,
+		game.board_settings.bounds.scale.y * game.board_settings.scale.y
+		)
+	bord.position -= Vector2(
+		game.board_settings.bounds.scale.x * game.board_settings.scale.x / 2.0,
+		game.board_settings.bounds.scale.y * game.board_settings.scale.y / 2.0
+		)
+	board.set_border(bord)
+
+	if "background" in game and "image_directory" in game:
+		board.set_board_texture(game.background, game.image_directory)
+	camera_controller.reset_camera()
 
 func init_board() -> void:
 	# INITIALIZE BOARD
@@ -98,7 +121,7 @@ func new_collection(object: Dictionary, collection: GameCollection, vars: Array)
 		"hand": c = Hand.new()
 		_: c = ObjectStack.new()
 	board.game_object_manager.add_child(c)
-	c.position = Vector2(object.location[0] * game.board_settings.scale_x, object.location[1] * game.board_settings.scale_y)
+	c.position = Vector2(object.position.x * game.board_settings.scale.x, object.position.y * game.board_settings.scale.y)
 
 	match object.options.force_state[0]:
 		"ACTUAL":
@@ -114,7 +137,10 @@ func new_collection(object: Dictionary, collection: GameCollection, vars: Array)
 	
 	if object.options.permanent:
 		c.permanent = true
-		c.base_size = Vector2(object.base_size[0] * game.board_settings.scale_x, object.base_size[1] * game.board_settings.scale_y)
+		c.base_size = Vector2(object.scale.x * game.board_settings.scale.x, object.scale.y * game.board_settings.scale.y)
+	
+	if "rotation_degrees" in object:
+		c.rotation_degrees = object.rotation_degrees
 	
 	if c.get_num_objects() != 0:
 		c.get_game_objects()[-1].position = c.position
@@ -130,8 +156,8 @@ func new_piece(object: Dictionary, collection: GameCollection, vars: Array) -> v
 	# Set piece variables
 	piece._obj_images = Utils.load_images_into_array(game.piece_types[p_type].image, game.image_directory)
 	piece.set_side(object.face_up)
-	piece._set_scale(Vector2(object.scale[0] * game.board_settings.scale_x, object.scale[1] * game.board_settings.scale_y))
-	piece.position = Vector2(object.location[0] * game.board_settings.scale_x, object.location[1] * game.board_settings.scale_y)
+	piece._set_scale(Vector2(object.scale.x * game.board_settings.scale.x, object.scale.y * game.board_settings.scale.y))
+	piece.position = Vector2(object.position.x * game.board_settings.scale.x, object.position.y * game.board_settings.scale.y)
 	if collection:
 		collection.add_game_object_to_top(piece)
 

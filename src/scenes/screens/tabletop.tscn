@@ -17,11 +17,11 @@ script = ExtResource("3_ofc5r")
 script = ExtResource("2_lhyvx")
 metadata/_edit_lock_ = true
 
+[node name="BoardTexture" type="Sprite2D" parent="GameBoard"]
+z_index = -1000
+
 [node name="GameObjectManager" type="Node2D" parent="GameBoard"]
 metadata/_edit_lock_ = true
-
-[node name="BoardTexture" type="Sprite2D" parent="GameBoard"]
-centered = false
 
 [node name="UiLayer" type="CanvasLayer" parent="."]
 layer = 105
@@ -33,10 +33,11 @@ mouse_filter = 2
 script = ExtResource("5_rko6e")
 
 [node name="Camera2D" type="Camera2D" parent="CameraController"]
-position = Vector2(640, 360)
-
-[node name="BoardBG" type="Sprite2D" parent="CameraController"]
-z_index = -1000
+ignore_rotation = false
+position_smoothing_enabled = true
+position_smoothing_speed = 9.0
+rotation_smoothing_enabled = true
+rotation_smoothing_speed = 9.0
 
 [node name="RightClickMenu" parent="." instance=ExtResource("5_4v42b")]
 

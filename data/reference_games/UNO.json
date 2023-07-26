@@ -1,17 +1,23 @@
 {
     "name": "UNO",
-    "version": [0,0,1],
+    "version": {"major": 1, "minor": 0},
     "obf_api_version": 1,
     "image_directory": "C:/Users/ryanb/Pictures/UNO Cards/",
     "background": "bg.jpg",
     "board_settings": {
-        "scale_x": 64,
-        "scale_y": 64,
-        "bounds": [0, 0, 20, 11.25]
+        "scale": {"x": 64, "y": 64},
+        "bounds": {
+            "position": {"x": 0, "y": 0},
+            "scale": {"x": 20, "y": 20}
+        },
+        "camera": {
+            "position": {"x": 0, "y": 0},
+            "scale": {"y": 20},
+            "rotation_degrees": 0.0
+        }
     },
     "player_settings": {
-        "min_players": 2,
-        "max_players": 4
+        "players":  {"min": 2, "max": 4}
     },
     "piece_types": {
         "UNO_BLUE0": {"image": ["UNO_BLUE0.png","UNO_FLIPPED.png"]},
@@ -72,8 +78,8 @@
     "board_objects": [
         {
             "type": "collection",
-            "location": [7.5, 5],
-            "base_size": [1, 1],
+            "position": {"x": 2, "y": 0},
+            "scale": {"x": 2.5, "y": 3.5},
             "options": {
                 "behavior": "stack",
                 "permanent": true,
@@ -98,8 +104,8 @@
                                             "type": "piece",
                                             "piece_type": "UNO_$@",
                                             "face_up": false,
-                                            "location": [0,0],
-                                            "scale": [1.5, 2.25]
+                                            "position": {"x": 0,"y": 0},
+                                            "scale": {"x": 2.5, "y": 3.5}
                                         }
                                     ]
                                 }
@@ -115,15 +121,15 @@
                             "type": "piece",
                             "piece_type": "UNO_DRAW4",
                             "face_up": false,
-                            "location": [0,0],
-                            "scale": [1.5, 2.25]
+                            "position": {"x": 0.0, "y": 0.0},
+                            "scale": {"x": 2.5, "y": 3.5}
                         },
                         {
                             "type": "piece",
                             "piece_type": "UNO_WILD",
                             "face_up": false,
-                            "location": [0,0],
-                            "scale": [1.5, 2.25]
+                            "position": {"x": 0.0, "y": 0.0},
+                            "scale": {"x": 2.5, "y": 3.5}
                         }
                     ]
                 }
@@ -131,26 +137,64 @@
         },
         {
             "type": "collection",
-            "location": [11, 5],
-            "base_size": [1, 1],
+            "position": {"x": -2, "y": 0},
+            "scale": {"x": 2.5, "y": 3.5},
             "options": {
                 "behavior": "stack",
                 "permanent": true,
                 "can_use": [true, false, false, false],
-                "viewing_state": ["FACE_UP", "FACE_DOWN", "FACE_DOWN", "FACE_DOWN"],
                 "force_state": ["ACTUAL", true]
             },
             "inside": []
         },
         {
             "type": "collection",
-            "location": [10, 10],
-            "base_size": [10, 2.5],
+            "position": {"x": 0, "y": 8},
+            "scale": {"x": 12, "y": 3.5},
+            "rotation_degrees": 0,
             "options": {
                 "behavior": "hand",
                 "permanent": true,
                 "can_use": [true, false, false, false],
-                "viewing_state": ["FACE_UP", "FACE_DOWN", "FACE_DOWN", "FACE_DOWN"],
+                "force_state": ["VIEWING", true]
+            },
+            "inside": []
+        },
+        {
+            "type": "collection",
+            "position": {"x": 0, "y": -8},
+            "scale": {"x": 12, "y": 3.5},
+            "rotation_degrees": 180,
+            "options": {
+                "behavior": "hand",
+                "permanent": true,
+                "can_use": [true, false, false, false],
+                "force_state": ["VIEWING", true]
+            },
+            "inside": []
+        },
+        {
+            "type": "collection",
+            "position": {"x": -8, "y": 0},
+            "scale": {"x": 12, "y": 3.5},
+            "rotation_degrees": 90,
+            "options": {
+                "behavior": "hand",
+                "permanent": true,
+                "can_use": [true, false, false, false],
+                "force_state": ["VIEWING", true]
+            },
+            "inside": []
+        },
+        {
+            "type": "collection",
+            "position": {"x": 8, "y": 0},
+            "scale": {"x": 12, "y": 3.5},
+            "rotation_degrees": 270,
+            "options": {
+                "behavior": "hand",
+                "permanent": true,
+                "can_use": [true, false, false, false],
                 "force_state": ["VIEWING", true]
             },
             "inside": []

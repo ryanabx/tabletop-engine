@@ -25,9 +25,10 @@ var border: Rect2 = Rect2(0, 0, 1280, 720)
 @onready var board_texture: Sprite2D = $BoardTexture
 
 func reset_board() -> void:
+	# Remove all game objects
 	for item in game_object_manager.get_children():
 		item.queue_free()
-	
+	# Reset variables
 	group_selection_down = false
 	group_selection_mode = false
 	previously_stacked = false
@@ -74,26 +75,28 @@ func get_border() -> Rect2:
 func set_board_texture(fname: String, dir: String) -> void:
 	board_texture.set_texture(Utils.load_texture_from_string(fname, dir))
 	board_texture.scale = (get_border().size) / board_texture.get_rect().size
-	board_texture.position = get_border().position
+	board_texture.position = get_border().get_center()
 
 func process_input(input_actions: Dictionary) -> void:
 	if Tabletop.camera_controller.in_free_cam():
 		return
 	# SELECTING OBJECTS
 	if Utils.is_action_just_long_held("game_select", input_actions) or Utils.is_action_just_long_held("game_select_stack", input_actions):
-		check_selecting_obj(input_actions)
-	if group_selection_mode and Utils.is_action_just_long_held("game_select", input_actions):
-		check_over_group_selection()
+		if group_selection_mode:
+			if Utils.is_action_just_long_held("game_select", input_actions):
+				check_over_group_selection()
+		else:
+			check_selecting_obj(input_actions)
 	# RIGHT CLICKING
 	if Utils.is_action_just_short_released("game_menu", input_actions) and not game_menu_open:
-		print("Right Click")
 		right_click()
 	# DESELECTING GROUP SELECTED OBJECTS V2
 	if Utils.is_action_just_released("game_select", input_actions) or Utils.is_action_just_released("game_select_stack", input_actions):
 		if group_selection_mode and not group_selection_down:
 			release_selection_group(input_actions)
 		elif not group_selection_mode and Utils.is_action_just_short_released("game_select", input_actions):
-			check_instant_selection()
+			# check_instant_selection()
+			pass
 	# DESELECTING OBJECTS
 	if Utils.is_action_just_long_released("game_select", input_actions) or Utils.is_action_just_long_released("game_select_stack", input_actions):
 		print("Release Selection")
@@ -117,9 +120,12 @@ func right_click() -> void:
 				create_right_click_menu_obj(highlighted_obj)
 		else:
 			print("Nothing to right click")
-	elif has_selected_items() and group_selection_mode:
+	elif has_selected_items():
 		if get_overlapping_obj_from_selected(get_local_mouse_position()) != null:
-			create_right_click_menu_group(get_selected_items())
+			if get_selected_items().size() > 1:
+				create_right_click_menu_group(get_selected_items())
+			else:
+				create_right_click_menu_obj(get_selected_items()[0])
 
 func check_over_group_selection() -> void:
 	if get_overlapping_obj_from_selected(get_local_mouse_position()) != null:
@@ -136,14 +142,8 @@ func check_instant_selection() -> void:
 	if not has_selected_items():
 		var obj_selection: Piece = get_overlapping_obj(get_local_mouse_position())
 		if obj_selection:
-			if obj_selection.has_collection():
-				selecting_collection(obj_selection, true)
-				group_selection_mode = true
-				previously_stacked = true
-			else:
-				selecting_piece(obj_selection)
-				group_selection_mode = true
-				previously_stacked = false
+			group_selection_mode = true
+			selecting_piece(obj_selection)
 			
 func check_selecting_obj(input_actions: Dictionary) -> void:
 	if not has_selected_items():
@@ -157,7 +157,7 @@ func check_selecting_obj(input_actions: Dictionary) -> void:
 			initialize_selection_rect()
 
 func selecting_piece(obj_selection: Piece) -> void:
-	if obj_selection.has_collection():
+	if obj_selection.has_collection() and not group_selection_mode:
 		print("Remove game object from collection")
 		obj_selection.get_collection().remove_game_object(obj_selection)
 	select_objects([obj_selection])
@@ -309,14 +309,20 @@ func move_objects_to_front(objects: Array) -> void:
 func _process(_delta):
 	if (Input.is_action_just_pressed("game_select") or Input.is_action_just_pressed("game_select_stack")):
 		set_object_grab_offsets()
-	if has_selected_items() and (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")):
-		if not group_selection_mode:
-			move_selected_items()
-		elif group_selection_mode and group_selection_down:
-			move_selected_items()
+	if has_selected_items():
+		if (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")):
+			if not group_selection_mode:
+				move_selected_items()
+			elif group_selection_mode and group_selection_down:
+				move_selected_items()
+		rotate_items_to_rotation()
 	if is_selecting:
 		update_selection_rect()
 	queue_redraw()
+
+func rotate_items_to_rotation():
+	for obj in get_selected_items():
+		obj.rotation = Tabletop.camera_controller.camera.rotation
 
 func set_object_grab_offsets() -> void:
 	for object in get_selected_items():

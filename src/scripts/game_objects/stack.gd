@@ -16,6 +16,7 @@ func _update_objects() -> void:
 		if piece_enforcement == GameCollection.PIECE_ENFORCEMENT_TYPE.ACTUAL:
 			obj.set_side(face_up)
 		obj.position = position
+		obj.rotation = rotation
 		get_parent().move_child(obj, _max_index)
 		var _sc = obj.get_rect().size
 		if _sc.x > larg_x:
@@ -28,6 +29,9 @@ func _update_objects() -> void:
 		_scale = base_size
 
 func add_game_object_special(obj: Piece) -> void:
+	if obj in get_game_objects():
+		print("Cannot add object when already added")
+		return
 	add_game_object_to_top(obj)
 
 func _draw() -> void:

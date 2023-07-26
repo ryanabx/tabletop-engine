@@ -51,15 +51,22 @@ func _get_max_index() -> int:
 	return max_index
 
 func add_game_object_to_top(obj: Piece) -> void:
+	if obj in get_game_objects():
+		print("Cannot add object when already added")
+		return
 	obj.put_in_collection(self)
 	get_game_objects().push_back(obj)
 
 func add_game_object_to_bottom(obj: Piece) -> void:
+	if obj in get_game_objects():
+		print("Cannot add object when already added")
+		return
 	obj.put_in_collection(self)
 	get_game_objects().push_front(obj)
 
-func add_game_object_special(obj: Piece) -> void:
-	obj.put_in_collection(self)
+func add_game_object_special(_obj: Piece) -> void:
+	print("Not implemented")
+	pass
 
 func get_rect() -> Rect2:
 	return Rect2(- _scale / 2.0, _scale)
