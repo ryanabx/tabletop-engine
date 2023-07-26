@@ -83,7 +83,10 @@
             "options": {
                 "behavior": "stack",
                 "permanent": true,
-                "force_state": ["ACTUAL", false]
+                "force_state": false
+            },
+            "players": {
+                "viewing": [false, false, false, false]
             },
             "inside": [
                 {
@@ -143,7 +146,10 @@
                 "behavior": "stack",
                 "permanent": true,
                 "can_use": [true, false, false, false],
-                "force_state": ["ACTUAL", true]
+                "force_state": true
+            },
+            "players": {
+                "viewing": [true, true, true, true]
             },
             "inside": []
         },
@@ -155,8 +161,10 @@
             "options": {
                 "behavior": "hand",
                 "permanent": true,
-                "can_use": [true, false, false, false],
-                "force_state": ["VIEWING", true]
+                "force_state": false
+            },
+            "players": {
+                "viewing": [true, false, false, false]
             },
             "inside": []
         },
@@ -168,8 +176,10 @@
             "options": {
                 "behavior": "hand",
                 "permanent": true,
-                "can_use": [true, false, false, false],
-                "force_state": ["VIEWING", true]
+                "force_state": false
+            },
+            "players": {
+                "viewing": [false, true, false, false]
             },
             "inside": []
         },
@@ -181,8 +191,10 @@
             "options": {
                 "behavior": "hand",
                 "permanent": true,
-                "can_use": [true, false, false, false],
-                "force_state": ["VIEWING", true]
+                "force_state": false
+            },
+            "players": {
+                "viewing": [false, false, true, false]
             },
             "inside": []
         },
@@ -194,8 +206,10 @@
             "options": {
                 "behavior": "hand",
                 "permanent": true,
-                "can_use": [true, false, false, false],
-                "force_state": ["VIEWING", true]
+                "force_state": false
+            },
+            "players": {
+                "viewing": [false, false, false, true]
             },
             "inside": []
         }

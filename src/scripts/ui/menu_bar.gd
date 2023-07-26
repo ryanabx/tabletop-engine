@@ -51,27 +51,39 @@ func options_menu() -> void:
 	options.name = "Options"
 	menu.add_child(options)
 
+	var set_player_submenu: PopupMenu = PopupMenu.new()
+	set_player_submenu.index_pressed.connect(set_player)
+	set_player_submenu.name = "set_player"
+	options.add_child(set_player_submenu)
+	if "players" in Globals.get_tabletop().game.player_settings:
+		for i in range(Globals.get_tabletop().game.player_settings.players.max):
+			set_player_submenu.add_item(str("P",i+1))
+		options.add_submenu_item("Set Player", "set_player", 2)
+
 	options.add_item("Toggle Fullscreen", 0)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	game_name_label.text = "Current Game: " + Tabletop.game.name
+	game_name_label.text = "Current Game: " + Globals.get_tabletop().game.name
+
+func set_player(index: int) -> void:
+	Player.set_id(index)
 
 func file_pressed(id: int) -> void:
 	match id:
 		0: load_config()
-		10: Tabletop.reset_tabletop()
-		11: Tabletop.camera_controller.reset_camera()
+		10: Globals.get_tabletop().reset_tabletop()
+		11: Globals.get_tabletop().camera_controller.reset_camera()
 		2: get_tree().quit()
 
 func view_pressed(id: int) -> void:
 	match id:
-		0: Tabletop.camera_controller.reset_camera()
-		2: Tabletop.camera_controller.set_camera_orientation(0)
-		3: Tabletop.camera_controller.set_camera_orientation(90)
-		4: Tabletop.camera_controller.set_camera_orientation(180)
-		5: Tabletop.camera_controller.set_camera_orientation(270)
-		6: Tabletop.camera_controller.snap_to_nearest_orientation()
+		0: Globals.get_tabletop().camera_controller.reset_camera()
+		2: Globals.get_tabletop().camera_controller.set_camera_orientation(0)
+		3: Globals.get_tabletop().camera_controller.set_camera_orientation(90)
+		4: Globals.get_tabletop().camera_controller.set_camera_orientation(180)
+		5: Globals.get_tabletop().camera_controller.set_camera_orientation(270)
+		6: Globals.get_tabletop().camera_controller.snap_to_nearest_orientation()
 
 func options_pressed(index: int) -> void:
 	match index:

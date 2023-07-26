@@ -3,7 +3,7 @@ extends Node
 
 # CURRENT PLAYER NUMBER
 
-var _id: int = 1 # TESTING PURPOSES
+var _id: int = 0 # TESTING PURPOSES
 
 func set_id(id: int) -> void:
     _id = id

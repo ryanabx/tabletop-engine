@@ -21,8 +21,8 @@ func _update_objects() -> void:
 	for i in range(get_num_objects()):
 		var _obj: Piece = get_game_objects()[i]
 		get_parent().move_child(_obj, _max_index)
-		if piece_enforcement == GameCollection.PIECE_ENFORCEMENT_TYPE.ACTUAL:
-			_obj.set_side(face_up)
+		if force_state is bool:
+			_obj.set_side(force_state as bool)
 		var _lerp_amt: float = (i + 1.0) / (num_objects + 1.0)
 		var _pos: Vector2 = to_global(Vector2(get_rect().position.x, get_rect().get_center().y)).lerp(to_global(Vector2(get_rect().end.x, get_rect().get_center().y)), _lerp_amt)
 		_obj.position = _pos

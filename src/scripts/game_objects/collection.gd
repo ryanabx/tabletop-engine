@@ -8,14 +8,9 @@ var base_size: Vector2 = Vector2.ZERO
 
 var permanent: bool = true
 
-enum PIECE_ENFORCEMENT_TYPE {
-	NONE,
-	VIEWING,
-	ACTUAL
-}
+var force_state = null
 
-var piece_enforcement: PIECE_ENFORCEMENT_TYPE = PIECE_ENFORCEMENT_TYPE.NONE
-var face_up: bool = true
+var can_view: Array = []
 
 var label: Label = null
 
@@ -113,10 +108,11 @@ func decide_face(piece: Piece) -> bool:
 	if piece.get_collection() != self:
 		return piece.get_side()
 	
-	if piece_enforcement == PIECE_ENFORCEMENT_TYPE.VIEWING:
-		return face_up
-	else:
+	if can_view.size() <= Player.get_id():
 		return piece.get_side()
+	
+	return can_view[Player.get_id()] if can_view[Player.get_id()] is bool else piece.get_side()
+	
 
 func _process(_delta: float) -> void:
 	_update_objects()

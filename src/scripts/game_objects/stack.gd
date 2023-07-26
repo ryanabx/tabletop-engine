@@ -13,8 +13,8 @@ func _update_objects() -> void:
 		position = get_game_objects()[-1].position
 	
 	for obj in _game_objects:
-		if piece_enforcement == GameCollection.PIECE_ENFORCEMENT_TYPE.ACTUAL:
-			obj.set_side(face_up)
+		if force_state is bool:
+			obj.set_side(force_state as bool)
 		obj.position = position
 		obj.rotation = rotation
 		get_parent().move_child(obj, _max_index)

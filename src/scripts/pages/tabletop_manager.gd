@@ -1,12 +1,17 @@
-# TABLETOP SINGLETON - Contains all the data about the current tabletop session
+# TABLETOP SINGLETON - Contains all the data about the current tabletop session\
+class_name TabletopManager
 extends Node
 
 var piece_scene: PackedScene = preload("res://src/scenes/game_objects/piece.tscn")
+var base_scene: PackedScene = preload("res://src/scenes/screens/tabletop.tscn")
 
 var EMPTY_GAME: Dictionary = {
 	"name": "Untitled",
 	"version": {"major": 1, "minor": 0},
 	"obf_api_version": Globals.CURRENT_API_VERSION,
+	"player_settings": {
+		"players": {"min": 1, "max": 2}
+	},
 	"board_settings": {
 		"scale": {"x": 1, "y": 1},
 		"bounds": {
@@ -25,34 +30,48 @@ var EMPTY_GAME: Dictionary = {
 var initialized: bool = false
 
 # Crucial tabletop operation nodes
-@onready var board: GameBoard = $/root/Base/GameBoard
-@onready var user_interface: UserInterface = $/root/Base/UiLayer/UserInterface
-@onready var camera_controller: Node2D = $/root/Base/CameraController
+@onready var board: GameBoard
+@onready var user_interface: UserInterface
+@onready var camera_controller: Node2D
 
-var game: Dictionary = EMPTY_GAME # Empty game
+@onready var tabletop: Node = null
+
+var game: Dictionary
+
+func load_tabletop(gm: Dictionary) -> void:
+	if tabletop != null:
+		tabletop.queue_free()
+	game = gm
+	make_new_tabletop()
+	initialize_tabletop()
 
 func reset_tabletop() -> void:
-	game = EMPTY_GAME
-	board.reset_board()
-	initialize_game()
+	load_tabletop(game)
+
+func load_tabletop_from_file(fname: String) -> void:
+	var gm: Dictionary = Utils.load_json_from_file(fname)
+	if gm.is_empty():
+		print("There was a problem loading the game from file: ",fname)
+		return
+	load_tabletop(gm)
+
+func make_new_tabletop() -> void:
+	var _tt: Node = base_scene.instantiate()
+	board = _tt.get_node("./GameBoard")
+	user_interface = _tt.get_node("./UiLayer/UserInterface")
+	camera_controller = _tt.get_node("./CameraController")
+	tabletop = _tt
+	add_child(_tt)
 
 func _on_config_file_loaded(fname: String) -> void:
-	reset_tabletop()
-	load_game_from_file(fname)
+	load_tabletop_from_file(fname)
 
 func _ready() -> void:
 	SignalManager.config_file_opened.connect(_on_config_file_loaded)
-	
-func _process(_delta: float) -> void:
-	if not initialized:
-		initialize_game()
-		initialized = true
+	load_tabletop(EMPTY_GAME)
 
-func load_game_from_file(fname: String) -> void:
-	game = Utils.load_json_from_file(fname)
-	if game.is_empty():
-		print("There was a problem loading the game from file: ",fname)
-	# If the game loaded well, attempt to initialize the game
+func initialize_tabletop() -> void:
+	
 	initialize_game()
 
 func initialize_game() -> void:
@@ -123,14 +142,8 @@ func new_collection(object: Dictionary, collection: GameCollection, vars: Array)
 	board.game_object_manager.add_child(c)
 	c.position = Vector2(object.position.x * game.board_settings.scale.x, object.position.y * game.board_settings.scale.y)
 
-	match object.options.force_state[0]:
-		"ACTUAL":
-			c.piece_enforcement = GameCollection.PIECE_ENFORCEMENT_TYPE.ACTUAL
-			c.face_up = object.options.force_state[1]
-		"VIEWING":
-			c.piece_enforcement = GameCollection.PIECE_ENFORCEMENT_TYPE.VIEWING
-			c.face_up = object.options.force_state[1]
-		"NONE": c.piece_enforcement = GameCollection.PIECE_ENFORCEMENT_TYPE.NONE
+	c.force_state = object.options.force_state
+	c.can_view = object.players.viewing
 
 	for x in object.inside:
 		parse_object(x, c, vars)

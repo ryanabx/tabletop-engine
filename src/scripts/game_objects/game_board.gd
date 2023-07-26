@@ -41,6 +41,7 @@ func reset_board() -> void:
 	board_texture.texture = null
 
 func _ready() -> void:
+	print("Ready")
 	Utils.enhanced_inputs.connect(process_input)
 	SignalManager.game_menu_create.connect(_on_game_menu_create)
 	SignalManager.game_menu_destroy.connect(_on_game_menu_destroy)
@@ -78,7 +79,7 @@ func set_board_texture(fname: String, dir: String) -> void:
 	board_texture.position = get_border().get_center()
 
 func process_input(input_actions: Dictionary) -> void:
-	if Tabletop.camera_controller.in_free_cam():
+	if Globals.get_tabletop().camera_controller.in_free_cam():
 		return
 	# SELECTING OBJECTS
 	if Utils.is_action_just_long_held("game_select", input_actions) or Utils.is_action_just_long_held("game_select_stack", input_actions):
@@ -175,6 +176,7 @@ func selecting_collection(obj_selection: Piece, instant_selection: bool) -> void
 func select_objects(objects: Array) -> void:
 	for object in objects:
 		object.select()
+		object.rotation = Globals.get_tabletop().camera_controller.camera.rotation
 	move_objects_to_front(objects)
 	set_selected_objects(objects)
 
@@ -315,14 +317,9 @@ func _process(_delta):
 				move_selected_items()
 			elif group_selection_mode and group_selection_down:
 				move_selected_items()
-		rotate_items_to_rotation()
 	if is_selecting:
 		update_selection_rect()
 	queue_redraw()
-
-func rotate_items_to_rotation():
-	for obj in get_selected_items():
-		obj.rotation = Tabletop.camera_controller.camera.rotation
 
 func set_object_grab_offsets() -> void:
 	for object in get_selected_items():

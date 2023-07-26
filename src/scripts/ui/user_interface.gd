@@ -9,5 +9,5 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	coordinates_label.position = get_local_mouse_position() + Vector2(20.0, -30.0)
-	var coordinates = Tabletop.board.get_local_mouse_position()
+	var coordinates = Globals.get_tabletop().board.get_local_mouse_position()
 	coordinates_label.set_text(str(round(coordinates.x),",", round(coordinates.y)))
