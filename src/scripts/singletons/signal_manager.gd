@@ -12,7 +12,6 @@ signal convert_to_stack(objects: Array)
 
 # Menubar Signals
 signal create_load_config_dialog()
-signal reset_tabletop()
 
 # File Dialogs
 signal config_file_opened(fname: String)

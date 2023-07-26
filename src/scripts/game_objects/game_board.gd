@@ -22,6 +22,7 @@ var previously_stacked: bool = false
 var border: Rect2 = Rect2(0, 0, 1280, 720)
 
 @onready var game_object_manager: Node2D = $GameObjectManager
+@onready var board_texture: Sprite2D = $BoardTexture
 
 func reset_board() -> void:
 	for item in game_object_manager.get_children():
@@ -36,6 +37,7 @@ func reset_board() -> void:
 	_current_stackable_item = null
 	game_menu_open = false
 	is_selecting = false
+	board_texture.texture = null
 
 func _ready() -> void:
 	Utils.enhanced_inputs.connect(process_input)
@@ -68,6 +70,11 @@ func set_border(bord: Rect2) -> void:
 
 func get_border() -> Rect2:
 	return border
+
+func set_board_texture(fname: String, dir: String) -> void:
+	board_texture.set_texture(Utils.load_texture_from_string(fname, dir))
+	board_texture.scale = (get_border().size) / board_texture.get_rect().size
+	board_texture.position = get_border().position
 
 func process_input(input_actions: Dictionary) -> void:
 	if Tabletop.camera_controller.in_free_cam():
@@ -317,6 +324,8 @@ func set_object_grab_offsets() -> void:
 
 func update_selection_rect() -> void:
 	selection_box.end = get_local_mouse_position()
+	selection_box.position = selection_box.position.clamp(border.position, border.end)
+	selection_box.end = selection_box.end.clamp(border.position, border.end)
 
 func move_selected_items() -> void:
 	for object in get_selected_items():
@@ -363,10 +372,8 @@ func find_stackable_collection(objects: Array) -> GameCollection:
 	var ref_position = get_local_mouse_position()
 	for collection in collections:
 		if collection.disabled() or has_any(collection.get_game_objects(), objects):
-			# print(collection.disabled(), " ", has_any(collection.get_game_objects(), objects))
 			continue
 		elif collection_overlaps_point(collection, ref_position):
-			# print(collection)
 			if best_object == null or ref_position.distance_to(collection.position) < best_dist:
 				best_dist = ref_position.distance_to(collection.position)
 				best_object = collection

@@ -32,7 +32,6 @@ func _on_config_file_loaded(fname: String) -> void:
 
 func _ready() -> void:
 	SignalManager.config_file_opened.connect(_on_config_file_loaded)
-	SignalManager.reset_tabletop.connect(reset_tabletop)
 
 func load_game_from_file(fname: String) -> void:
 	game = Utils.load_json_from_file(fname)
@@ -47,14 +46,13 @@ func initialize_game() -> void:
 
 func init_general() -> void:
 	# INITIALIZE GENERAL SETTINGS
-	camera_controller.set_background_from_file(game.background, game.image_directory)
 	board.set_border(Rect2(
 		game.board_settings.bounds[0] * game.board_settings.scale_x,
 		game.board_settings.bounds[1] * game.board_settings.scale_y,
 		game.board_settings.bounds[2] * game.board_settings.scale_x,
 		game.board_settings.bounds[3] * game.board_settings.scale_y
 		))
-	pass
+	board.set_board_texture(game.background, game.image_directory)
 
 func init_board() -> void:
 	# INITIALIZE BOARD

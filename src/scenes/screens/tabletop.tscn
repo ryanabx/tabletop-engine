@@ -20,6 +20,9 @@ metadata/_edit_lock_ = true
 [node name="GameObjectManager" type="Node2D" parent="GameBoard"]
 metadata/_edit_lock_ = true
 
+[node name="BoardTexture" type="Sprite2D" parent="GameBoard"]
+centered = false
+
 [node name="UiLayer" type="CanvasLayer" parent="."]
 layer = 105
 

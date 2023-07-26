@@ -1,7 +1,6 @@
 extends Node2D
 
 @onready var camera = $Camera2D
-@onready var game_bg = $BoardBG
 
 const MOVEMENT_SPEED: float = 1000.0
 const ROTATION_SPEED: float = 1.0
@@ -13,13 +12,11 @@ var initial_camera_pos: Vector2 = Vector2.ZERO
 var start_pos: Vector2
 
 func _ready() -> void:
-	SignalManager.reset_tabletop.connect(_reset_camera)
 	start_pos = camera.offset
 
-func _reset_camera() -> void:
+func reset_camera() -> void:
 	camera.zoom = Vector2.ONE
 	camera.offset = start_pos
-	game_bg.set_texture(null)
 
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("ui_zoom_in"):
@@ -28,18 +25,6 @@ func _process(_delta: float) -> void:
 		camera.zoom *= 0.9
 	camera.offset += Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED * _delta
 	check_free_cam()
-	update_bg_scale()
-
-func set_bg(texture: Texture2D) -> void:
-	game_bg.set_texture(texture)
-
-func update_bg_scale() -> void:
-	var texture = game_bg.get_texture()
-	if texture == null:
-		return
-	var _sc: Vector2 = Vector2(get_viewport().get_size().x / texture.get_size().x, get_viewport().get_size().y / texture.get_size().y)
-	game_bg.scale = _sc / camera.zoom
-	game_bg.position = camera.position + camera.offset
 
 func check_free_cam() -> void:
 	if Input.is_action_just_pressed("free_cam"):
@@ -54,10 +39,6 @@ func check_free_cam() -> void:
 	
 	if free_cam:
 		camera.offset = initial_camera_pos - (get_viewport().get_mouse_position() - initial_mouse_pos) / camera.zoom
-
-func set_background_from_file(fname: String, image_dir: String) -> void:
-	var _texture: Texture2D = Utils.load_texture_from_string(fname, image_dir)
-	game_bg.set_texture(_texture)
 
 func in_free_cam() -> bool:
 	return free_cam

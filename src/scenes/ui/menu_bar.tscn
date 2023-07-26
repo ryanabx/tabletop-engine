@@ -22,20 +22,8 @@ color = Color(0, 0, 0, 1)
 
 [node name="Menu" type="MenuBar" parent="."]
 layout_mode = 1
-offset_right = 330.0
+offset_right = 1280.0
 offset_bottom = 31.0
-
-[node name="File" type="PopupMenu" parent="Menu"]
-
-[node name="Edit" type="PopupMenu" parent="Menu"]
-
-[node name="Config" type="PopupMenu" parent="Menu"]
-
-[node name="Actions" type="PopupMenu" parent="Menu"]
-
-[node name="Options" type="PopupMenu" parent="Menu"]
-
-[node name="Help" type="PopupMenu" parent="Menu"]
 
 [node name="GameName" type="Label" parent="."]
 layout_mode = 1
