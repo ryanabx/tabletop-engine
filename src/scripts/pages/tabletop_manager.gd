@@ -1,9 +1,8 @@
-# TABLETOP SINGLETON - Contains all the data about the current tabletop session\
 class_name TabletopManager
 extends Node
 
-var piece_scene: PackedScene = preload("res://src/scenes/game_objects/piece.tscn")
-var base_scene: PackedScene = preload("res://src/scenes/screens/tabletop.tscn")
+var piece_scene: PackedScene = preload("res://src/scenes/game_elements/piece.tscn")
+var base_scene: PackedScene = preload("res://src/scenes/game_elements/game_base.tscn")
 
 var EMPTY_GAME: Dictionary = {
 	"name": "Untitled",

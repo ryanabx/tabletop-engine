@@ -2,8 +2,9 @@ extends Node2D
 
 @onready var camera = $Camera2D
 
-const MOVEMENT_SPEED: float = 1000.0
+const MOVEMENT_SPEED: float = 1150.0
 const ROTATION_SPEED: float = 2.0
+const ZOOM_SPEED: float = 2.0
 
 var initial_mouse_pos: Vector2 = Vector2.ZERO
 var free_cam: bool = false
@@ -36,6 +37,8 @@ func _process(_delta: float) -> void:
 		camera.zoom *= 0.9
 	camera.position += (Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED * _delta).rotated(camera.rotation)
 	camera.rotation += Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise") * ROTATION_SPEED * _delta
+	if absf(Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise")) < 0.1 and absf(roundf(camera.rotation_degrees / 45.0) * 45.0 - camera.rotation_degrees) < 7.5:
+		camera.rotation_degrees = roundf(camera.rotation_degrees / 45.0) * 45.0
 	check_free_cam()
 
 func check_free_cam() -> void:

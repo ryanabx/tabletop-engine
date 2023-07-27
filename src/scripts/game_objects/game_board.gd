@@ -13,7 +13,7 @@ var selected_objects: Array = []
 
 var selection_box: Rect2 = Rect2(0.0, 0.0, 0.0, 0.0)
 
-var _stack_scene = preload("res://src/scenes/game_objects/stack.tscn")
+var _stack_scene = preload("res://src/scenes/game_elements/stack.tscn")
 
 var group_selection_mode: bool = false
 var group_selection_down: bool = false
