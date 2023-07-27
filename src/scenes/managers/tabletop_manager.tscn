@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://su6c60ryam8h"]
+
+[ext_resource type="Script" path="res://src/scripts/pages/tabletop_manager.gd" id="1_sqpop"]
+
+[node name="TabletopManager" type="Node"]
+script = ExtResource("1_sqpop")
