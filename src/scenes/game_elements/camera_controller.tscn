@@ -8,6 +8,6 @@ script = ExtResource("1_67wnr")
 [node name="Camera2D" type="Camera2D" parent="."]
 ignore_rotation = false
 position_smoothing_enabled = true
-position_smoothing_speed = 9.0
+position_smoothing_speed = 10.0
 rotation_smoothing_enabled = true
 rotation_smoothing_speed = 9.0

@@ -19,6 +19,8 @@ var group_selection_mode: bool = false
 var group_selection_down: bool = false
 var previously_stacked: bool = false
 
+var highlighted_piece: Piece = null
+
 var border: Rect2 = Rect2(0, 0, 1280, 720)
 
 @onready var game_object_manager: Node2D = $GameObjectManager
@@ -113,12 +115,11 @@ func process_input(input_actions: Dictionary) -> void:
 
 func right_click() -> void:
 	if not game_menu_open and not has_selected_items():
-		var highlighted_obj: Piece = get_overlapping_obj(get_local_mouse_position())
-		if highlighted_obj != null:
-			if highlighted_obj.has_collection():
-				create_right_click_menu_stack(highlighted_obj.get_collection())
+		if highlighted_piece != null:
+			if highlighted_piece.has_collection():
+				create_right_click_menu_stack(highlighted_piece.get_collection())
 			else:
-				create_right_click_menu_obj(highlighted_obj)
+				create_right_click_menu_obj(highlighted_piece)
 		else:
 			print("Nothing to right click")
 	elif has_selected_items():
@@ -309,6 +310,7 @@ func move_objects_to_front(objects: Array) -> void:
 		game_object_manager.move_child(object, -1)
 
 func _process(_delta):
+	highlighted_piece = get_overlapping_obj(get_local_mouse_position())
 	if (Input.is_action_just_pressed("game_select") or Input.is_action_just_pressed("game_select_stack")):
 		set_object_grab_offsets()
 	if has_selected_items():
