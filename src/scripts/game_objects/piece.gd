@@ -9,14 +9,14 @@ enum STATE {
 	LOCKED
 }
 
-var _obj_images: Array = []
-
 var grab_offset: Vector2 = Vector2.ZERO
 
 var collection: GameCollection = null
 
 
 var face_up: bool = true
+var image_up: Texture2D = null
+var image_down: Texture2D = null
 var _state: STATE = STATE.IDLE
 
 @onready var state_label: Label = $StateLabel
@@ -31,7 +31,7 @@ func get_grab_offset() -> Vector2:
 func set_grab_offset(offset: Vector2) -> void:
 	grab_offset = offset
 
-func _set_scale(_sc: Vector2) -> void:
+func set_sprite_scale(_sc: Vector2) -> void:
 	_sprite.scale = (_sc) / _sprite.get_rect().size
 
 func get_rect() -> Rect2:
@@ -66,10 +66,12 @@ func flip() -> void:
 	update_texture()
 
 func update_texture() -> void:
+	if not image_up or not image_down:
+		return
 	if has_collection():
-		_sprite.texture = _obj_images[0] if get_collection().decide_face(self) else _obj_images[1]
+		_sprite.texture = image_up if get_collection().decide_face(self) else image_down
 	else:
-		_sprite.texture = _obj_images[0] if face_up else _obj_images[1]
+		_sprite.texture = image_up if face_up else image_down
 
 func set_side(sd: bool) -> void:
 	face_up = sd

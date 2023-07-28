@@ -5,6 +5,8 @@ extends Node
 
 const BASE_SCALE: float = 1.0
 
+const SCREEN_SIZE = Vector2(1280.0, 720.0)
+
 const OUTLINE_THICKNESS: float = 6.0
 const THICKNESS_RATIO: float = 0.8
 

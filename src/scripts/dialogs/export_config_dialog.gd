@@ -10,5 +10,4 @@ func _on_create_export_config() -> void:
 
 func _on_folder_decided(fpath: String) -> void:
 	var game_config: GameConfig = GameConfig.build_config_from_directory(fpath)
-	var result: int = ResourceSaver.save(game_config, "user://config.obf.res", 0x20)
-	print("Finished exporting with code ",result)
+	SignalManager.export_conf.emit(game_config)

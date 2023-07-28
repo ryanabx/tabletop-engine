@@ -56,9 +56,12 @@ func options_menu() -> void:
 	set_player_submenu.name = "set_player"
 	options.add_child(set_player_submenu)
 	if Globals.get_tabletop().game != null:
-		for i in range(Globals.get_tabletop().game.player_settings.players.maximum):
-			set_player_submenu.add_item(str("P",i+1))
-		options.add_submenu_item("Set Player", "set_player", 2)
+		if Globals.get_tabletop().game.player != null:
+			for i in range(Globals.get_tabletop().game.player.max):
+				set_player_submenu.add_item(str("P",i+1))
+			options.add_submenu_item("Set Player", "set_player", 2)
+		else:
+			print("Ugh")
 	options.add_item("Toggle Fullscreen", 0)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

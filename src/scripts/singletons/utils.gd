@@ -29,6 +29,7 @@ func load_texture_from_string(fname: String, image_directory: String) -> Texture
 	var _err = _image.load(image_directory + fname)
 	if _err != OK:
 		print("Failed to load image: ",image_directory + fname)
+		return null
 	var _texture = ImageTexture.new()
 	_texture = ImageTexture.create_from_image(_image)
 	return _texture
@@ -123,14 +124,11 @@ func load_json_from_file(fname: String) -> Dictionary:
 		return {}
 
 func load_images_from_directory(dir: String) -> Dictionary:
-	var textures: Dictionary = {'arr': [], 'ref': {}}
+	var textures: Dictionary = {}
 	var directory_access = DirAccess.open(dir)
 	if directory_access.dir_exists("."):
-		var i = 0
 		for fname in directory_access.get_files():
 			var _tx = load_texture_from_string(fname, str(dir,"/"))
 			if _tx != null:
-				textures.arr.append(_tx)
-				textures.ref[fname] = i
-				i += 1
+				textures[fname] = _tx
 	return textures

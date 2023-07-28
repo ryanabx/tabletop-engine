@@ -16,4 +16,4 @@ signal create_export_config_dialog()
 
 # File Dialogs
 signal config_file_opened(fname: String)
-signal export_config(dirname: String)
+signal export_conf(config: Resource)

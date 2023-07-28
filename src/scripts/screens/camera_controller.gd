@@ -11,7 +11,7 @@ var free_cam: bool = false
 var initial_camera_pos: Vector2 = Vector2.ZERO
 
 func set_camera_transform(_tr: Transform2D) -> void:
-	camera.zoom = _tr.get_scale()
+	camera.zoom = Vector2(get_viewport().get_visible_rect().size.y, get_viewport().get_visible_rect().size.y) / _tr.get_scale()
 	camera.rotation = _tr.get_rotation()
 	camera.position = _tr.get_origin()
 

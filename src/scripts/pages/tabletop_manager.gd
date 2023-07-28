@@ -21,60 +21,120 @@ func _ready() -> void:
 	tabletop = _tt
 	add_child(_tt)
 
-func set_game(_g: GameConfig) -> void:
-	print("Freeing the old tabletop")
-	# Free the old tabletop
-	tabletop.free()
-	# Set the new game
-	print("Setting the new game")
-	game = _g
-	# Make new tabletop
-	print("Making the new tabletop")
+func reset_tabletop() -> void:
+	if tabletop != null:
+		tabletop.queue_free()
+		tabletop = null
 	var _tt: Node = base_scene.instantiate()
 	board = _tt.get_node("./GameBoard")
 	user_interface = _tt.get_node("./UiLayer/UserInterface")
 	camera_controller = _tt.get_node("./CameraController")
 	tabletop = _tt
 	add_child(_tt)
-	print("Basic Configuration Stuff")
-	# Basic Configuration Stuff
-	board.set_border(game.board_settings.bounds)
-	if game.background_image != -1:
-		board.set_board_texture(game.textures[game.background_image])
-	camera_controller.set_camera_transform(game.board_settings.camera)
-	print("Reset the board")
-	# Reset the board
-	reset_board()
 
-func reset_board() -> void:
-	for obj in game.board_objects:
-		if obj is GameConfig.CollectionResource:
-			match (obj as GameConfig.CollectionResource).behavior:
-				"stack": instantiate_collection(ObjectStack.new(), obj)
-				"hand": instantiate_collection(Hand.new(), obj)
-				_: pass
-		elif obj is GameConfig.PieceResource:
-			instantiate_piece(piece_scene.instantiate(), obj)
+func load_config(config: Resource) -> void:
+	# Load basic game stuff
+	game = config
+	reset_tabletop()
+	build_game()
+	build_board_objects()
 
-func instantiate_piece(pc: Piece, obj: GameConfig.PieceResource) -> void:
-	pc.position = obj.transform.get_origin()
-	pc.rotation = obj.transform.get_rotation()
-	pc.face_up = obj.face_up
-	pc._obj_images = [obj.image_up, obj.image_down]
-	pc.update_texture()
-	pc._set_scale(obj.transform.get_scale())
-	board.game_object_manager.add_child(pc)
+func build_game() -> void:
+	print(game.images.keys())
+	# Set up camera transform
+	camera_controller.set_camera_transform(
+		Transform2D(
+			game.camera.rotation,
+			Vector2(game.camera.scale.x, game.camera.scale.y),
+			0.0,
+			Vector2(game.camera.position.x, game.camera.position.y)
+		)
+	)
+	# Set up game border
+	if "border" in game.board:
+		board.set_border(
+			Rect2(
+				Vector2(game.board.border.position.x, game.board.border.position.y) - Vector2(game.board.border.scale.x, game.board.border.scale.y) / 2,
+				Vector2(game.board.border.scale.x, game.board.border.scale.y)
+			)
+		)
+	# Set up game bg
+	if "background_image" in game.board and game.board.background_image != "":
+		board.set_board_texture(game.images[game.board.background_image])
 
-func instantiate_collection(coll: GameCollection, obj: GameConfig.CollectionResource) -> void:
-	coll.position = obj.transform.get_origin()
-	coll.rotation = obj.transform.get_rotation()
-	coll._scale = obj.transform.get_scale()
-	coll.permanent = obj.permanent
-	coll.force_state = obj.force_state
-	coll.view_perms = obj.view_perms
-	board.game_object_manager.add_child(coll)
-	for pc in obj.inside:
-		if pc is GameConfig.PieceResource:
-			var piece: Piece = piece_scene.instantiate()
-			coll.add_game_object_to_top(piece)
-			instantiate_piece(piece, pc)
+func build_board_objects() -> void:
+	for item in game.objects:
+		process_object(item)
+
+func process_object(obj: Dictionary) -> void:
+	# Use templates if they exist
+	if "template" in obj:
+		obj.merge(game.templates[obj.template])
+	
+	# Handle for loops
+	if "for" in obj:
+		for key in obj.keys():
+			if key == "for" or key == "in" or typeof(obj[key]) != TYPE_STRING:
+				continue
+			for i in range(obj["for"].size()):
+				for j in range(obj["in"][i].size()):
+					var repl: String = obj["for"][i]
+					var val: String = obj["in"][i][j]
+					obj[key] = obj[key].replacen(repl, val)
+	
+	# Create objects
+	var amount: int = obj.repeat if "repeat" in obj else 1
+
+	for i in range(amount):
+		if "type" not in obj:
+			print("Error: object does not contain a type")
+			break
+		match obj.type:
+			"piece":
+				new_piece(obj)
+			"stack":
+				new_collection(obj)
+			"hand":
+				new_collection(obj)
+			_:
+				print("Huh?")
+
+func new_piece(obj: Dictionary) -> void:
+	var piece: Piece = piece_scene.instantiate()
+	if "name" in obj:
+		piece.add_to_group(obj.name)
+	# Add child
+	board.game_object_manager.add_child(piece)
+	# Piece transforms
+	piece.position = Vector2(obj.position.x, obj.position.y) if "position" in obj else Vector2.ZERO
+	piece.set_sprite_scale(Vector2(obj.scale.x, obj.scale.y) if "scale" in obj else Vector2.ONE)
+	piece.rotation_degrees = obj.rotation if "rotation" in obj else 0.0
+	# Piece exclusives
+	piece.image_up = game.images[obj.image_up]
+	piece.image_down = game.images[obj.image_down]
+	piece.face_up = obj.face_up
+	# Collections
+	if "collection" in obj:
+		var coll: GameCollection = (get_tree().get_nodes_in_group(obj.collection)[0] as GameCollection)
+		coll.add_game_object_to_top(piece)
+		piece.position = coll.position
+
+func new_collection(obj: Dictionary) -> void:
+	var collection: GameCollection
+	match obj.type:
+		"hand": collection = Hand.new()
+		"stack": collection = ObjectStack.new()
+		_: return
+	if "name" in obj:
+		collection.add_to_group(obj.name)
+	# Add child
+	board.game_object_manager.add_child(collection)
+	# Collection transforms
+	collection.position = Vector2(obj.position.x, obj.position.y) if "position" in obj else Vector2.ZERO
+	collection.base_size = Vector2(obj.scale.x, obj.scale.y) if "scale" in obj else Vector2.ONE
+	collection.rotation_degrees = obj.rotation if "rotation" in obj else 0.0
+	# Collection exclusives
+	collection.permanent = obj.permanent
+	collection.force_state = obj.force_state
+	collection.view_perms = obj.view_perms
+	
