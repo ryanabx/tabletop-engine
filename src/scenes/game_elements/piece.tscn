@@ -6,9 +6,6 @@
 [node name="Piece" type="Node2D" groups=["game_object"]]
 script = ExtResource("1_dxg0g")
 
-[node name="ObjectSprite" type="Sprite2D" parent="."]
-texture = ExtResource("2_5l7kr")
-
 [node name="StateLabel" type="Label" parent="."]
 visible = false
 offset_right = 40.0
@@ -17,3 +14,6 @@ theme_type_variation = &"HeaderLarge"
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 2
+
+[node name="ObjectSprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_5l7kr")

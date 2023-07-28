@@ -33,6 +33,9 @@ func load_texture_from_string(fname: String, image_directory: String) -> Texture
 	_texture = ImageTexture.create_from_image(_image)
 	return _texture
 
+func rect_with_padding(rct: Rect2, padding: float) -> Rect2:
+	return Rect2(rct.position - Vector2(padding, padding), rct.size + Vector2(padding * 2, padding * 2))
+
 func _input(event: InputEvent):
 	if event is InputEventMouseMotion:
 		_add_to_input_times(2.0, true)
@@ -113,8 +116,21 @@ func load_json_from_file(fname: String) -> Dictionary:
 		if parsed_result is Dictionary:
 			return parsed_result
 		else:
-			print("Error parsing file")
+			print("Error parsing file: ",fname)
 			return {}
 	else:
 		print("File not found: ",fname)
 		return {}
+
+func load_images_from_directory(dir: String) -> Dictionary:
+	var textures: Dictionary = {'arr': [], 'ref': {}}
+	var directory_access = DirAccess.open(dir)
+	if directory_access.dir_exists("."):
+		var i = 0
+		for fname in directory_access.get_files():
+			var _tx = load_texture_from_string(fname, str(dir,"/"))
+			if _tx != null:
+				textures.arr.append(_tx)
+				textures.ref[fname] = i
+				i += 1
+	return textures

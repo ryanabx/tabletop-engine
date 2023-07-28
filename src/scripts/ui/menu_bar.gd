@@ -16,6 +16,7 @@ func file_menu() -> void:
 	menu.add_child(file)
 
 	file.add_item("Load Config", 0)
+	file.add_item("Export Config", 3)
 
 	# Reset submenu
 	var reset_submenu: PopupMenu = PopupMenu.new()
@@ -25,7 +26,6 @@ func file_menu() -> void:
 	file.add_submenu_item("Reset", "reset", 1)
 	reset_submenu.add_item("Reset Tabletop", 10)
 	reset_submenu.add_item("Reset Camera", 11)
-
 	file.add_item("Exit Open Boardgame Framework", 2)
 
 func view_menu() -> void:
@@ -55,16 +55,18 @@ func options_menu() -> void:
 	set_player_submenu.index_pressed.connect(set_player)
 	set_player_submenu.name = "set_player"
 	options.add_child(set_player_submenu)
-	if "players" in Globals.get_tabletop().game.player_settings:
-		for i in range(Globals.get_tabletop().game.player_settings.players.max):
+	if Globals.get_tabletop().game != null:
+		for i in range(Globals.get_tabletop().game.player_settings.players.maximum):
 			set_player_submenu.add_item(str("P",i+1))
 		options.add_submenu_item("Set Player", "set_player", 2)
-
 	options.add_item("Toggle Fullscreen", 0)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	game_name_label.text = "Current Game: " + Globals.get_tabletop().game.name
+	if Globals.get_tabletop().game != null:
+		game_name_label.text = "Current Game: " + Globals.get_tabletop().game.name
+	else:
+		game_name_label.text = "Current Game: Untitled"
 
 func set_player(index: int) -> void:
 	Player.set_id(index)
@@ -72,6 +74,7 @@ func set_player(index: int) -> void:
 func file_pressed(id: int) -> void:
 	match id:
 		0: load_config()
+		3: export_config()
 		10: Globals.get_tabletop().reset_tabletop()
 		11: Globals.get_tabletop().camera_controller.reset_camera()
 		2: get_tree().quit()
@@ -91,6 +94,9 @@ func options_pressed(index: int) -> void:
 
 func load_config() -> void:
 	SignalManager.create_load_config_dialog.emit()
+
+func export_config() -> void:
+	SignalManager.create_export_config_dialog.emit()
 
 func toggle_fullscreen() -> void:
 	if DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:

@@ -75,8 +75,8 @@ func set_border(bord: Rect2) -> void:
 func get_border() -> Rect2:
 	return border
 
-func set_board_texture(fname: String, dir: String) -> void:
-	board_texture.set_texture(Utils.load_texture_from_string(fname, dir))
+func set_board_texture(txtur: Texture2D) -> void:
+	board_texture.set_texture(txtur)
 	board_texture.scale = (get_border().size) / board_texture.get_rect().size
 	board_texture.position = get_border().get_center()
 

@@ -10,7 +10,7 @@ var permanent: bool = true
 
 var force_state = null
 
-var can_view: Array = []
+var view_perms: Array = []
 
 var label: Label = null
 
@@ -108,10 +108,10 @@ func decide_face(piece: Piece) -> bool:
 	if piece.get_collection() != self:
 		return piece.get_side()
 	
-	if can_view.size() <= Player.get_id():
+	if view_perms.size() <= Player.get_id():
 		return piece.get_side()
 	
-	return can_view[Player.get_id()] if can_view[Player.get_id()] is bool else piece.get_side()
+	return view_perms[Player.get_id()] if view_perms[Player.get_id()] is bool else piece.get_side()
 	
 
 func _process(_delta: float) -> void:

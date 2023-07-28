@@ -21,4 +21,4 @@ func dehighlight() -> void:
 
 func _draw() -> void:
 	if highlighted:
-		draw_rect(get_rect(), Color.from_hsv(0.5, 1.0, 1.0, 1.0), false, Globals.OUTLINE_THICKNESS)
+		draw_rect(Utils.rect_with_padding(get_rect(), Globals.OBJECT_HIGHLIGHT_PADDING), Globals.OBJECT_HIGHLIGHT_COLOR, false, Globals.OBJECT_HIGHLIGHT_BORDER)

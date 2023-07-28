@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bd0t8uq0xv6wr"]
+[gd_scene load_steps=8 format=3 uid="uid://bd0t8uq0xv6wr"]
 
 [ext_resource type="Script" path="res://src/scripts/screens/highlights.gd" id="1_pvbv3"]
 [ext_resource type="PackedScene" uid="uid://bu8c42i3gp2e6" path="res://src/scenes/game_elements/game_board.tscn" id="2_t7a5p"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://uing22je8p0x" path="res://src/scenes/game_elements/camera_controller.tscn" id="4_lowna"]
 [ext_resource type="PackedScene" uid="uid://3uwharyjlmsp" path="res://src/scenes/ui/right_click_menu.tscn" id="5_buo43"]
 [ext_resource type="PackedScene" uid="uid://c288phnhk4720" path="res://src/scenes/dialogs/load_config_dialog.tscn" id="6_dylcp"]
+[ext_resource type="PackedScene" uid="uid://bwqbseudnfewb" path="res://src/scenes/dialogs/export_config_dialog.tscn" id="7_sp4gb"]
 
 [node name="Base" type="Node"]
 
@@ -22,3 +23,5 @@ script = ExtResource("1_pvbv3")
 [node name="RightClickMenu" parent="." instance=ExtResource("5_buo43")]
 
 [node name="LoadConfigDialog" parent="." instance=ExtResource("6_dylcp")]
+
+[node name="ExportConfigDialog" parent="." instance=ExtResource("7_sp4gb")]

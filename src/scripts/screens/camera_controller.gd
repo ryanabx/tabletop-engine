@@ -10,19 +10,10 @@ var initial_mouse_pos: Vector2 = Vector2.ZERO
 var free_cam: bool = false
 var initial_camera_pos: Vector2 = Vector2.ZERO
 
-func reset_camera() -> void:
-	if "x" in Globals.get_tabletop().game.board_settings.camera.scale:
-		camera.zoom = Vector2(
-			get_viewport().get_visible_rect().size.x / (Globals.get_tabletop().game.board_settings.camera.scale.x * Globals.get_tabletop().game.board_settings.scale.x),
-			get_viewport().get_visible_rect().size.x / (Globals.get_tabletop().game.board_settings.camera.scale.x * Globals.get_tabletop().game.board_settings.scale.x)
-			)
-	elif "y" in Globals.get_tabletop().game.board_settings.camera.scale:
-		camera.zoom = Vector2(
-			get_viewport().get_visible_rect().size.y / (Globals.get_tabletop().game.board_settings.camera.scale.y * Globals.get_tabletop().game.board_settings.scale.y),
-			get_viewport().get_visible_rect().size.y / (Globals.get_tabletop().game.board_settings.camera.scale.y * Globals.get_tabletop().game.board_settings.scale.y)
-			)
-	camera.position = Vector2(Globals.get_tabletop().game.board_settings.camera.position.x * Globals.get_tabletop().game.board_settings.scale.x, Globals.get_tabletop().game.board_settings.camera.position.y * Globals.get_tabletop().game.board_settings.scale.y)
-	camera.rotation_degrees = Globals.get_tabletop().game.board_settings.camera.rotation_degrees
+func set_camera_transform(_tr: Transform2D) -> void:
+	camera.zoom = _tr.get_scale()
+	camera.rotation = _tr.get_rotation()
+	camera.position = _tr.get_origin()
 
 func set_camera_orientation(deg: float) -> void:
 	camera.rotation_degrees = deg
