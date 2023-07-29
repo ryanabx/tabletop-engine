@@ -47,13 +47,13 @@ func build_game() -> void:
 	if "y" in game.camera.scale:
 		camera_controller.set_camera_transform(
 			Vector2(game.camera.position.x, game.camera.position.y) * coordinate_scale,
-			Vector2(game.camera.scale.y, game.camera.scale.y) * (coordinate_scale / get_viewport().get_visible_rect().size.y),
+			Vector2(game.camera.scale.y, game.camera.scale.y) * coordinate_scale.y / get_viewport().get_visible_rect().size.y,
 			game.camera.rotation
 		)
 	elif "x" in game.camera.scale:
 		camera_controller.set_camera_transform(
 			Vector2(game.camera.position.x, game.camera.position.y) * coordinate_scale,
-			Vector2(game.camera.scale.x, game.camera.scale.x) * (coordinate_scale / get_viewport().get_visible_rect().size.x),
+			Vector2(game.camera.scale.x, game.camera.scale.x) * coordinate_scale.x / get_viewport().get_visible_rect().size.x,
 			game.camera.rotation
 		)
 	# Set up game border
@@ -79,16 +79,24 @@ func process_object(obj: Dictionary) -> void:
 	
 	# Handle for loops
 	if "for" in obj:
-		for key in obj.keys():
-			if key == "for" or key == "in" or typeof(obj[key]) != TYPE_STRING:
-				continue
-			for i in range(obj["for"].size()):
-				for j in range(obj["in"][i].size()):
-					var repl: String = obj["for"][i]
-					var val: String = obj["in"][i][j]
-					obj[key] = obj[key].replacen(repl, val)
+		var indices: Array = []
+		for i in range(obj.keys().size()):
+			indices.append(0)
+		
+
+	else:
+		new_object(obj)
 	
 	# Create objects
+
+func make_object_dict(original: Dictionary, repl: Array, val: Array) -> Dictionary:
+	var obj: Dictionary = original.duplicate(true)
+	for key in obj.keys():
+		for i in repl.size():
+			obj[key] = obj[key].replacen(repl[i], val[i])
+	return obj
+	
+func new_object(obj: Dictionary) -> void:
 	var amount: int = obj.repeat if "repeat" in obj else 1
 
 	for i in range(amount):

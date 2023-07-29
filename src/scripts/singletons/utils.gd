@@ -128,7 +128,9 @@ func load_images_from_directory(dir: String) -> Dictionary:
 	var directory_access = DirAccess.open(dir)
 	if directory_access.dir_exists("."):
 		for fname in directory_access.get_files():
-			var _tx = load_texture_from_string(fname, str(dir,"/"))
-			if _tx != null:
-				textures[fname] = _tx
+			var file_ext: String = fname.rsplit(".")[-1]
+			if file_ext in ["png", "jpg", "jpeg", "bmp"]:
+				var _tx = load_texture_from_string(fname, str(dir,"/"))
+				if _tx != null:
+					textures[fname] = _tx
 	return textures
