@@ -12,6 +12,7 @@ var base_scene: PackedScene = preload("res://src/scenes/game_elements/game_base.
 @onready var tabletop: Node = null
 
 var game: GameConfig = null
+var coordinate_scale: Vector2 = Vector2.ONE
 
 func _ready() -> void:
 	var _tt: Node = base_scene.instantiate()
@@ -35,6 +36,7 @@ func reset_tabletop() -> void:
 func load_config(config: Resource) -> void:
 	# Load basic game stuff
 	game = config
+	coordinate_scale = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
 	reset_tabletop()
 	build_game()
 	build_board_objects()
@@ -42,20 +44,24 @@ func load_config(config: Resource) -> void:
 func build_game() -> void:
 	print(game.images.keys())
 	# Set up camera transform
-	camera_controller.set_camera_transform(
-		Transform2D(
-			game.camera.rotation,
-			Vector2(game.camera.scale.x, game.camera.scale.y),
-			0.0,
-			Vector2(game.camera.position.x, game.camera.position.y)
+	if "y" in game.camera.scale:
+		camera_controller.set_camera_transform(
+			Vector2(game.camera.position.x, game.camera.position.y) * coordinate_scale,
+			Vector2(game.camera.scale.y, game.camera.scale.y) * (coordinate_scale / get_viewport().get_visible_rect().size.y),
+			game.camera.rotation
 		)
-	)
+	elif "x" in game.camera.scale:
+		camera_controller.set_camera_transform(
+			Vector2(game.camera.position.x, game.camera.position.y) * coordinate_scale,
+			Vector2(game.camera.scale.x, game.camera.scale.x) * (coordinate_scale / get_viewport().get_visible_rect().size.x),
+			game.camera.rotation
+		)
 	# Set up game border
 	if "border" in game.board:
 		board.set_border(
 			Rect2(
-				Vector2(game.board.border.position.x, game.board.border.position.y) - Vector2(game.board.border.scale.x, game.board.border.scale.y) / 2,
-				Vector2(game.board.border.scale.x, game.board.border.scale.y)
+				(Vector2(game.board.border.position.x, game.board.border.position.y) - Vector2(game.board.border.scale.x, game.board.border.scale.y) / 2) * coordinate_scale,
+				Vector2(game.board.border.scale.x, game.board.border.scale.y) * coordinate_scale
 			)
 		)
 	# Set up game bg
@@ -106,13 +112,15 @@ func new_piece(obj: Dictionary) -> void:
 	# Add child
 	board.game_object_manager.add_child(piece)
 	# Piece transforms
-	piece.position = Vector2(obj.position.x, obj.position.y) if "position" in obj else Vector2.ZERO
-	piece.set_sprite_scale(Vector2(obj.scale.x, obj.scale.y) if "scale" in obj else Vector2.ONE)
+	piece.position = Vector2(obj.position.x, obj.position.y) * coordinate_scale if "position" in obj else Vector2.ZERO
 	piece.rotation_degrees = obj.rotation if "rotation" in obj else 0.0
 	# Piece exclusives
 	piece.image_up = game.images[obj.image_up]
 	piece.image_down = game.images[obj.image_down]
-	piece.face_up = obj.face_up
+	piece.set_side(obj.face_up)
+	piece.set_sprite_scale(Vector2(obj.scale.x, obj.scale.y) * coordinate_scale if "scale" in obj else Vector2.ONE)
+	print(Vector2(obj.scale.x, obj.scale.y) * coordinate_scale)
+	print(piece._sprite.scale)
 	# Collections
 	if "collection" in obj:
 		var coll: GameCollection = (get_tree().get_nodes_in_group(obj.collection)[0] as GameCollection)
@@ -130,8 +138,9 @@ func new_collection(obj: Dictionary) -> void:
 	# Add child
 	board.game_object_manager.add_child(collection)
 	# Collection transforms
-	collection.position = Vector2(obj.position.x, obj.position.y) if "position" in obj else Vector2.ZERO
-	collection.base_size = Vector2(obj.scale.x, obj.scale.y) if "scale" in obj else Vector2.ONE
+	collection.position = Vector2(obj.position.x, obj.position.y) * coordinate_scale if "position" in obj else Vector2.ZERO
+	collection.base_size = Vector2(obj.scale.x, obj.scale.y) * coordinate_scale if "scale" in obj else Vector2.ONE
+	collection._scale = Vector2(obj.scale.x, obj.scale.y) * coordinate_scale if "scale" in obj else Vector2.ONE
 	collection.rotation_degrees = obj.rotation if "rotation" in obj else 0.0
 	# Collection exclusives
 	collection.permanent = obj.permanent

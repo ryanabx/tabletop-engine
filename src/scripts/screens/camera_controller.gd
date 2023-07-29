@@ -10,10 +10,10 @@ var initial_mouse_pos: Vector2 = Vector2.ZERO
 var free_cam: bool = false
 var initial_camera_pos: Vector2 = Vector2.ZERO
 
-func set_camera_transform(_tr: Transform2D) -> void:
-	camera.zoom = Vector2(get_viewport().get_visible_rect().size.y, get_viewport().get_visible_rect().size.y) / _tr.get_scale()
-	camera.rotation = _tr.get_rotation()
-	camera.position = _tr.get_origin()
+func set_camera_transform(pos: Vector2, sc: Vector2, rot: float) -> void:
+	camera.zoom = sc
+	camera.rotation_degrees = rot
+	camera.position = pos
 
 func set_camera_orientation(deg: float) -> void:
 	camera.rotation_degrees = deg

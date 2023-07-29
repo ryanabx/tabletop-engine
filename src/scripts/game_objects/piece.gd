@@ -32,7 +32,9 @@ func set_grab_offset(offset: Vector2) -> void:
 	grab_offset = offset
 
 func set_sprite_scale(_sc: Vector2) -> void:
-	_sprite.scale = (_sc) / _sprite.get_rect().size
+	_sprite.scale = (_sc) / _sprite.texture.get_size()
+	scale = Vector2.ONE
+	print("Sprite texture: ", _sprite.texture.get_size(), "sc: ", _sc)
 
 func get_rect() -> Rect2:
 	return _sprite.get_rect() * _sprite.get_transform()
