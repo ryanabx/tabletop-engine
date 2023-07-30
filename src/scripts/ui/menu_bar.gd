@@ -1,6 +1,6 @@
-extends Control
+extends MenuBar
 
-@onready var menu: MenuBar = $Menu
+@onready var menu: MenuBar = self
 @onready var player: PopupMenu
 
 
@@ -52,7 +52,8 @@ func file_menu() -> void:
 	file.add_submenu_item("Reset", "reset", 1)
 	reset_submenu.add_item("Reset Tabletop", 10)
 	reset_submenu.add_item("Reset Camera", 11)
-	file.add_item("Exit Open Boardgame Framework", 2)
+	file.add_item("Exit to Title Screen", 2)
+	file.add_item("Exit Open Boardgame Framework", 4)
 
 func view_menu() -> void:
 	var view: PopupMenu = PopupMenu.new()
@@ -91,7 +92,8 @@ func file_pressed(id: int) -> void:
 		3: export_config()
 		10: Globals.get_tabletop().reset_tabletop()
 		11: Globals.get_tabletop().reset_camera()
-		2: get_tree().quit()
+		2: get_tree().change_scene_to_file("res://src/scenes/pages/title_screen.tscn")
+		4: get_tree().quit()
 
 func view_pressed(id: int) -> void:
 	match id:

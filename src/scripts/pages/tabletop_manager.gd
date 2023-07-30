@@ -7,6 +7,8 @@ var hand_scene: PackedScene = preload("res://src/scenes/game_elements/hand.tscn"
 
 var base_scene: PackedScene = preload("res://src/scenes/game_elements/game_base.tscn")
 
+var action_queue: Array = []
+
 # Crucial tabletop operation nodes
 @onready var board: GameBoard
 @onready var user_interface: UserInterface
@@ -20,35 +22,46 @@ var coordinate_scale: Vector2 = Vector2.ONE
 func _ready() -> void:
 	var _tt: Node = base_scene.instantiate()
 	board = _tt.get_node("./GameBoard")
-	user_interface = _tt.get_node("./UiLayer/UserInterface")
+	user_interface = _tt.get_node("./UserInterfaceLayer/UserInterface")
 	camera_controller = _tt.get_node("./CameraController")
 	tabletop = _tt
 	add_child(_tt)
+
+func _process(_delta: float) -> void:
+	if not action_queue.is_empty():
+		var cmd: Dictionary = action_queue.pop_front()
+		await parse_command(cmd)
 
 func reset_tabletop() -> void:
 	if tabletop != null:
 		tabletop.queue_free()
+		await tabletop.tree_exited
 		tabletop = null
-	var _tt: Node = base_scene.instantiate()
-	board = _tt.get_node("./GameBoard")
-	user_interface = _tt.get_node("./UiLayer/UserInterface")
-	camera_controller = _tt.get_node("./CameraController")
-	tabletop = _tt
-	add_child(_tt)
+		board = null
+		user_interface = null
+		camera_controller = null
+	tabletop = base_scene.instantiate()
+	board = tabletop.get_node("./GameBoard")
+	user_interface = tabletop.get_node("./UserInterfaceLayer/UserInterface")
+	camera_controller = tabletop.get_node("./CameraController")
+	tabletop.tree_exited.connect(tabletop_exiting_tree)
+	tabletop.ready.connect(tabletop_ready)
+	add_child(tabletop)
 
-func load_config(config: Resource) -> void:
+func tabletop_ready() -> void:
+	print("TABLETOP READY")
+
+func tabletop_exiting_tree() -> void:
+	print("OLD TABLETOP LEFT TREE")
+
+func load_config(config: Resource) -> bool:
 	# Load basic game stuff
 	game = config
 	coordinate_scale = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
-	reset_tabletop()
+	await reset_tabletop()
 	build_game()
 	build_board_objects()
-	await tabletop.ready
-
-func reset_board() -> void:
-	for obj in board.game_object_manager.get_children():
-		obj.queue_free()
-	build_board_objects()
+	return true
 
 func reset_camera() -> void:
 	if game == null:
@@ -111,7 +124,6 @@ func process_object(obj: Dictionary) -> void:
 				t = t * size
 			var _o: Dictionary = make_object_dict(obj, repls)
 			new_object(_o)
-
 	else:
 		new_object(obj)
 	
@@ -146,6 +158,7 @@ func new_piece(obj: Dictionary) -> void:
 	var piece: Piece = piece_scene.instantiate()
 	if "name" in obj:
 		piece.add_to_group(obj.name)
+		piece.set_name(obj.name)
 	# Add child
 	board.game_object_manager.add_child(piece)
 	# Piece transforms
@@ -156,8 +169,6 @@ func new_piece(obj: Dictionary) -> void:
 	piece.image_down = game.images[obj.image_down]
 	piece.set_side(obj.face_up)
 	piece.set_sprite_scale(Vector2(obj.scale.x, obj.scale.y) * coordinate_scale if "scale" in obj else Vector2.ONE)
-	print(Vector2(obj.scale.x, obj.scale.y) * coordinate_scale)
-	print(piece._sprite.scale)
 	# Collections
 	if "collection" in obj:
 		var coll: GameCollection = (get_tree().get_nodes_in_group(obj.collection)[0] as GameCollection)
@@ -172,6 +183,7 @@ func new_collection(obj: Dictionary) -> void:
 		_: return
 	if "name" in obj:
 		collection.add_to_group(obj.name)
+		collection.set_name(obj.name)
 	# Add child
 	board.game_object_manager.add_child(collection)
 	# Collection transforms
@@ -187,17 +199,17 @@ func new_collection(obj: Dictionary) -> void:
 func run_action(index: int) -> void:
 	var action: Array = game.actions[index].actions.duplicate(true)
 	for cmd in action:
-		parse_command(cmd)
-	print("Action ",game.actions[index].name, " finished running.")
+		action_queue.append(cmd)
+	print("Action ",game.actions[index].name, " added to queue.")
 
 func parse_command(cmd: Dictionary) -> void:
 	var result: bool = true
 	var repeat = cmd.repeat if "repeat" in cmd else 1
+	print("Running command ",cmd.cmd)
 	for i in range(repeat):
 		match cmd.cmd:
 			"reset_board":
-				pass
-				# result = cmd_reset_board(cmd)
+				result = await cmd_reset_board(cmd)
 			"shuffle":
 				result = cmd_shuffle(cmd)
 			"move_top":
@@ -209,8 +221,9 @@ func parse_command(cmd: Dictionary) -> void:
 ### ACTION COMMANDS ###
 
 func cmd_reset_board(_cmd: Dictionary) -> bool:
-	await load_config(game)
-	return true
+	var result = await load_config(game)
+	print("Done resetting board")
+	return result
 
 func cmd_shuffle(cmd: Dictionary) -> bool:
 	if not "targets" in cmd.args:
@@ -224,18 +237,14 @@ func cmd_shuffle(cmd: Dictionary) -> bool:
 func cmd_move_top(cmd: Dictionary) -> bool:
 	if not "from" in cmd.args:
 		return false
-	var from = get_tree().get_nodes_in_group(cmd.args.from)[0]
+	var from = get_tree().get_first_node_in_group(cmd.args.from)
 	if "to" in cmd.args:
-		var to = get_tree().get_nodes_in_group(cmd.args.to)[0]
+		var to = get_tree().get_first_node_in_group(cmd.args.to)
+		print("from: ",from, "to: ",to)
+		if from.get_num_objects() == 0:
+			print("No objects")
+			return false
 		var piece: Piece = from.get_game_objects()[-1]
-		from.remove_game_object(piece)
-		to.add_game_object_to_top(piece)
-		from._update_objects()
-		to._update_objects()
-		print("Hey hey")
-	else:
-		var piece: Piece = from.get_game_objects()[-1]
-		from.remove_game_object(piece)
-		piece.position = Vector2.ZERO
-		from._update_objects()
+		print("Piece name: ",piece.name)
+		board.stack_objects_to_item([piece], to)
 	return true

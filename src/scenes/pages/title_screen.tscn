@@ -98,3 +98,5 @@ theme_override_font_sizes/font_size = 20
 text = "version number"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[connection signal="pressed" from="HBoxContainer/ButtonMargins/MenuButtons/PlaySolo" to="." method="_on_play_solo_pressed"]

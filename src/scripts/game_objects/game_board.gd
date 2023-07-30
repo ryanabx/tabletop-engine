@@ -43,7 +43,6 @@ func reset_board() -> void:
 	board_texture.texture = null
 
 func _ready() -> void:
-	print("Ready")
 	Utils.enhanced_inputs.connect(process_input)
 	SignalManager.game_menu_create.connect(_on_game_menu_create)
 	SignalManager.game_menu_destroy.connect(_on_game_menu_destroy)
@@ -102,7 +101,6 @@ func process_input(input_actions: Dictionary) -> void:
 			pass
 	# DESELECTING OBJECTS
 	if Utils.is_action_just_long_released("game_select", input_actions) or Utils.is_action_just_long_released("game_select_stack", input_actions):
-		print("Release Selection")
 		release_selection()
 	# DESELECTING GROUP SELECTED OBJECTS
 	if Utils.is_action_just_released("end_group_select", input_actions):
@@ -110,7 +108,6 @@ func process_input(input_actions: Dictionary) -> void:
 			release_selection_group(input_actions)
 	# FLIPPING OBJECTS
 	if Utils.is_action_just_released("game_flip", input_actions) and has_selected_items():
-		print("Flip Selection")
 		flip_selection()
 
 func right_click() -> void:
@@ -120,8 +117,6 @@ func right_click() -> void:
 				create_right_click_menu_stack(highlighted_piece.get_collection())
 			else:
 				create_right_click_menu_obj(highlighted_piece)
-		else:
-			print("Nothing to right click")
 	elif has_selected_items():
 		if get_overlapping_obj_from_selected(get_local_mouse_position()) != null:
 			if get_selected_items().size() > 1:
@@ -160,18 +155,15 @@ func check_selecting_obj(input_actions: Dictionary) -> void:
 
 func selecting_piece(obj_selection: Piece) -> void:
 	if obj_selection.has_collection() and not group_selection_mode:
-		print("Remove game object from collection")
 		obj_selection.get_collection().remove_game_object(obj_selection)
 	select_objects([obj_selection])
 
 func selecting_collection(obj_selection: Piece, instant_selection: bool) -> void:
 	if obj_selection.get_collection().get_permanence():
 		if not instant_selection:
-			print("Cannot stack select permanent stack")
 			return
 		select_objects(obj_selection.get_collection().get_game_objects())
 	else:
-		print("Select Collection")
 		select_objects(obj_selection.get_collection().get_game_objects())
 
 func select_objects(objects: Array) -> void:
@@ -183,7 +175,6 @@ func select_objects(objects: Array) -> void:
 
 func set_selected_objects(objects: Array) -> void:
 	selected_objects = objects.duplicate()
-	print("selected ", selected_objects.size()," objects")
 	set_object_grab_offsets()
 
 func initialize_selection_rect() -> void:
@@ -223,8 +214,6 @@ func release_selection() -> void:
 		set_stackable_item(null)
 		group_selection_mode = false
 		previously_stacked = false
-	else:
-		print("Releasing selection not over item")
 	if not group_selection_mode:
 		# Deselect everything
 		for object in get_selected_items():
@@ -237,7 +226,6 @@ func release_selection() -> void:
 func release_selection_group(input_actions: Dictionary) -> void:
 	# Deselect everything
 	if not Utils.is_action_just_short_released("game_menu", input_actions):
-		print("Release selection group")
 		for object in get_selected_items():
 			object.deselect()
 		if previously_stacked and objects_not_in_collection(get_selected_items()):
@@ -256,10 +244,8 @@ func objects_not_in_collection(objects: Array) -> bool:
 
 func stack_objects_to_item(objects: Array, item: GameObject) -> void:
 	if item is GameCollection:
-		print("Stack objects to collection (stack to collection)")
 		stack_objects_to_collection(objects, item as GameCollection)
 	elif item is Piece:
-		print("Stack objects to object (convert to stack)")
 		convert_to_stack([item] + objects)
 
 func convert_to_stack(objects: Array):
@@ -401,23 +387,18 @@ func _rect_obj_areas_overlap(obj1: Piece, _rect: Rect2):
 	return (obj1.get_rect() * obj1.get_transform().affine_inverse()).intersects(_rect.abs())
 
 func create_right_click_menu_obj(object: Piece):
-	print("Generate right click menu obj")
 	SignalManager.game_menu_create.emit(RightClickMenu.TYPE.GAME_OBJECT, [object])
 
 func create_right_click_menu_stack(collection: GameCollection):
-	print("Generate right click menu stack")
 	SignalManager.game_menu_create.emit(RightClickMenu.TYPE.COLLECTION, [collection])
 
 func create_right_click_menu_group(selection: Array):
-	print("Generate right click menu menu group")
 	SignalManager.game_menu_create.emit(RightClickMenu.TYPE.OBJECT_GROUP, selection)
 
 func release_selection_box() -> void:
 	if is_selecting:
-		print("Releasing selection box")
 		var objects: Array = select_in_range()
 		if not objects.is_empty():
-			print("release_selection_box()::select_objects(objects)")
 			select_objects(objects)
 			group_selection_mode = true
 		previously_stacked = objects_part_of_same_collection(objects)

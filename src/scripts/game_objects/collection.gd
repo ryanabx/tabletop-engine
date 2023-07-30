@@ -46,6 +46,7 @@ func _get_max_index() -> int:
 	return max_index
 
 func add_game_object_to_top(obj: Piece) -> void:
+	print("Add object to top")
 	if obj in get_game_objects():
 		print("Cannot add object when already added")
 		return

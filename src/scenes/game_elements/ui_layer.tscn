@@ -1,9 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://do4ayt0lspujy"]
-
-[ext_resource type="PackedScene" uid="uid://ma7a666pl2us" path="res://src/scenes/ui/user_interface.tscn" id="1_2k6q4"]
-
-[node name="UiLayer" type="CanvasLayer"]
-layer = 105
-
-[node name="UserInterface" parent="." instance=ExtResource("1_2k6q4")]
-mouse_filter = 2

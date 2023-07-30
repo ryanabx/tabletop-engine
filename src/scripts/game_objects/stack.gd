@@ -17,7 +17,7 @@ func _update_objects() -> void:
 			obj.set_side(force_state as bool)
 		obj.position = position
 		obj.rotation = rotation
-		get_parent().move_child(obj, _max_index)
+		obj.get_parent().move_child(obj, _max_index)
 		var _sc = obj.get_rect().size
 		if _sc.x > larg_x:
 			larg_x = _sc.x
