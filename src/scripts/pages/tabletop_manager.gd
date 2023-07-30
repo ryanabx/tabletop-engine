@@ -2,6 +2,7 @@ class_name TabletopManager
 extends Node
 
 var piece_scene: PackedScene = preload("res://src/scenes/game_elements/piece.tscn")
+
 var base_scene: PackedScene = preload("res://src/scenes/game_elements/game_base.tscn")
 
 # Crucial tabletop operation nodes
@@ -41,9 +42,15 @@ func load_config(config: Resource) -> void:
 	build_game()
 	build_board_objects()
 
-func build_game() -> void:
-	print(game.images.keys())
-	# Set up camera transform
+func reset_camera() -> void:
+	if game == null:
+		camera_controller.set_camera_transform(
+			Vector2.ZERO,
+			Vector2.ONE,
+			0.0
+		)
+		return
+	
 	if "y" in game.camera.scale:
 		camera_controller.set_camera_transform(
 			Vector2(game.camera.position.x, game.camera.position.y) * coordinate_scale,
@@ -56,6 +63,11 @@ func build_game() -> void:
 			Vector2(game.camera.scale.x, game.camera.scale.x) * coordinate_scale.x / get_viewport().get_visible_rect().size.x,
 			game.camera.rotation
 		)
+
+func build_game() -> void:
+	print(game.images.keys())
+	# Set up camera transform
+	reset_camera()
 	# Set up game border
 	if "border" in game.board:
 		board.set_border(
@@ -79,21 +91,30 @@ func process_object(obj: Dictionary) -> void:
 	
 	# Handle for loops
 	if "for" in obj:
-		var indices: Array = []
-		for i in range(obj.keys().size()):
-			indices.append(0)
-		
+		var total_objs: int = 1
+		for x in obj["for"].keys():
+			total_objs = total_objs * obj["for"][x].size()
+		for i in range(total_objs):
+			var repls: Dictionary = {}
+			var t: int = 1
+			for key in obj["for"].keys():
+				var size = obj["for"][key].size()
+				repls[key] = obj["for"][key][(i/t) % size]
+				t = t * size
+			var _o: Dictionary = make_object_dict(obj, repls)
+			new_object(_o)
 
 	else:
 		new_object(obj)
 	
 	# Create objects
 
-func make_object_dict(original: Dictionary, repl: Array, val: Array) -> Dictionary:
+func make_object_dict(original: Dictionary, repls: Dictionary) -> Dictionary:
 	var obj: Dictionary = original.duplicate(true)
 	for key in obj.keys():
-		for i in repl.size():
-			obj[key] = obj[key].replacen(repl[i], val[i])
+		for repl in repls.keys():
+			if typeof(obj[key]) == TYPE_STRING:
+				obj[key] = obj[key].replacen(repl, repls[repl])
 	return obj
 	
 func new_object(obj: Dictionary) -> void:

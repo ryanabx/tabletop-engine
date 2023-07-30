@@ -10,3 +10,6 @@ func set_id(id: int) -> void:
 
 func get_id() -> int:
     return _id
+
+func get_number() -> int:
+    return _id + 1

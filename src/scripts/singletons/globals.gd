@@ -12,6 +12,9 @@ const THICKNESS_RATIO: float = 0.8
 
 const SELECTION_BOX_OUTLINE: float = 2.0
 
+# UserInterface.gd
+const GAME_NAME_PADDING: float = 2.0
+
 # GameObject.gd
 const OBJECT_HIGHLIGHT_BORDER: float = 2.0
 const OBJECT_HIGHLIGHT_PADDING: float = 6.0

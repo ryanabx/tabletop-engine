@@ -1,0 +1,38 @@
+[gd_scene load_steps=4 format=3 uid="uid://lpw6t5xb1d5i"]
+
+[ext_resource type="Script" path="res://src/scripts/dialogs/export_config_dialog.gd" id="1_1dtoy"]
+[ext_resource type="Script" path="res://src/scripts/dialogs/export_config_dialog2.gd" id="2_r3kfd"]
+[ext_resource type="Script" path="res://src/scripts/dialogs/load_config_dialog.gd" id="3_spydn"]
+
+[node name="Dialogs" type="Node"]
+
+[node name="ExportConfigFolderOpen" type="FileDialog" parent="."]
+title = "Open a Directory"
+initial_position = 2
+size = Vector2i(860, 480)
+unresizable = true
+borderless = true
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+script = ExtResource("1_1dtoy")
+
+[node name="ExportConfigFileSave" type="FileDialog" parent="."]
+initial_position = 2
+size = Vector2i(860, 480)
+unresizable = true
+borderless = true
+ok_button_text = "Save"
+access = 2
+script = ExtResource("2_r3kfd")
+
+[node name="ImportConfigFileOpen" type="FileDialog" parent="."]
+title = "Open a File"
+initial_position = 2
+size = Vector2i(860, 480)
+unresizable = true
+borderless = true
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+script = ExtResource("3_spydn")

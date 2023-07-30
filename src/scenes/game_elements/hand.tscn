@@ -4,3 +4,6 @@
 
 [node name="Hand" type="Node2D" groups=["hands"]]
 script = ExtResource("1_8x60w")
+
+[node name="Draw Behind" type="Node2D" parent="."]
+z_index = -10

@@ -21,7 +21,7 @@ var previously_stacked: bool = false
 
 var highlighted_piece: Piece = null
 
-var border: Rect2 = Rect2(0, 0, 1280, 720)
+var border: Rect2 = Rect2(-640, -360, 1280, 720)
 
 @onready var game_object_manager: Node2D = $GameObjectManager
 @onready var board_texture: Sprite2D = $BoardTexture
