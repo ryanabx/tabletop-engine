@@ -196,6 +196,8 @@ func get_overlapping_obj(point: Vector2) -> Piece:
 	var best: Piece = null
 	for object in game_objects:
 		var g_obj := object as Piece
+		if g_obj.has_collection() and not g_obj.can_access(Player.get_id()):
+			continue
 		if (g_obj.get_rect() * g_obj.get_transform().affine_inverse()).has_point(point):
 			if best == null or (g_obj.z_index > best.z_index):
 				best = g_obj
@@ -238,9 +240,7 @@ func objects_not_in_collection(objects: Array) -> bool:
 	for obj in objects:
 		if obj.has_collection():
 			return false
-	
 	return true
-
 
 func stack_objects_to_item(objects: Array, item: GameObject) -> void:
 	if item is GameCollection:
@@ -338,9 +338,13 @@ func move_selected_items() -> void:
 func set_stackable_item(item: GameObject) -> void:
 	if get_stackable_item() != null and get_stackable_item() != item:
 		get_stackable_item().dehighlight()
-	_current_stackable_item = item
-	if item != null:
-		item.highlight()
+	# If stack is permitted
+	if item and not item.can_access(Player.get_id()):
+		pass
+	else:
+		_current_stackable_item = item
+	if _current_stackable_item != null:
+		_current_stackable_item.highlight()
 
 func find_stackable_object(objects: Array) -> Piece:
 	var game_objs: Array = get_tree().get_nodes_in_group("piece")
@@ -421,6 +425,8 @@ func objects_part_of_same_collection(objects: Array) -> bool:
 func select_in_range() -> Array:
 	var items: Array = []
 	for object in get_tree().get_nodes_in_group("piece"):
+		if not object.can_access(Player.get_id()):
+			continue
 		if _rect_obj_areas_overlap(object, selection_box):
 			items.append(object)
 	return items

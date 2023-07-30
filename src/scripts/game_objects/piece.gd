@@ -25,6 +25,12 @@ var _state: STATE = STATE.IDLE
 func _ready() -> void:
 	add_to_group("piece")
 
+func can_access(player_id: int) -> bool:
+	if not has_collection() or (has_collection() and get_collection().can_access(player_id)):
+		return true
+	else:
+		return false
+
 func get_grab_offset() -> Vector2:
 	return grab_offset
 

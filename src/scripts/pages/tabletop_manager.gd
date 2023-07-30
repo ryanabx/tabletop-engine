@@ -192,9 +192,14 @@ func new_collection(obj: Dictionary) -> void:
 	collection._scale = Vector2(obj.scale.x, obj.scale.y) * coordinate_scale if "scale" in obj else Vector2.ONE
 	collection.rotation_degrees = obj.rotation if "rotation" in obj else 0.0
 	# Collection exclusives
-	collection.permanent = obj.permanent
-	collection.force_state = obj.force_state
-	collection.view_perms = obj.view_perms
+	if "permanent" in obj:
+		collection.permanent = obj.permanent
+	if "force_state" in obj:
+		collection.force_state = obj.force_state
+	if "view_perms" in obj:
+		collection.view_perms = obj.view_perms
+	if "access_perms" in obj:
+		collection.access_perms = obj.access_perms
 	
 func run_action(index: int) -> void:
 	var action: Array = game.actions[index].actions.duplicate(true)

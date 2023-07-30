@@ -11,6 +11,7 @@ var permanent: bool = true
 var force_state = null
 
 var view_perms: Array = []
+var access_perms: Array = []
 
 var label: Label = null
 
@@ -29,6 +30,9 @@ func _ready() -> void:
 
 func _update_objects() -> void:
 	pass
+
+func can_access(player_id: int) -> bool:
+	return access_perms.is_empty() or access_perms[player_id]
 
 func get_permanence() -> bool:
 	return permanent
