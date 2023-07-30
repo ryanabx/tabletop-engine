@@ -23,13 +23,15 @@ func snap_to_nearest_orientation() -> void:
 
 func _process(_delta: float) -> void:
 	if Input.is_action_pressed("ui_zoom_in"):
-		camera.zoom *= 1.025
+		camera.zoom *= 1.020
 	if Input.is_action_pressed("ui_zoom_out"):
-		camera.zoom *= 0.975
+		camera.zoom *= 0.980
 	camera.position += (Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED * _delta).rotated(camera.rotation)
 	camera.rotation += Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise") * ROTATION_SPEED * _delta
 	if absf(Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise")) < 0.1 and absf(roundf(camera.rotation_degrees / 45.0) * 45.0 - camera.rotation_degrees) < 7.5:
 		camera.rotation_degrees = roundf(camera.rotation_degrees / 45.0) * 45.0
+	camera.zoom = camera.zoom.clamp(Vector2(0.2, 0.2), Vector2(10.0, 10.0))
+	camera.position = camera.position.clamp(Globals.get_tabletop().board.get_border().position, Globals.get_tabletop().board.get_border().end)
 	check_free_cam()
 
 func check_free_cam() -> void:

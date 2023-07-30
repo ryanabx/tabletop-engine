@@ -11,6 +11,7 @@ extends Resource
 @export var templates: Dictionary
 @export var objects: Array
 @export var images: Dictionary
+@export var actions: Array
 
 static func build_config_from_directory(dir: String) -> Resource:
 	var game: Dictionary = Utils.load_json_from_file(str(dir, "/conf.json"))
@@ -33,11 +34,12 @@ static func build_config_from_directory(dir: String) -> Resource:
 	g_conf.templates = game.templates
 	g_conf.objects = game.objects
 	g_conf.images = Utils.load_images_from_directory(str(dir,"/images"))
+	g_conf.actions = game.actions
 	return g_conf
 
 # Validates that the config has all the variables necessary
 static func config_validated(game: Dictionary) -> bool:
-	for x in ["name", "game_version", "board", "camera", "player", "objects", "templates"]:
+	for x in ["name", "game_version", "board", "camera", "player", "objects", "templates", "actions"]:
 		if not x in game:
 			return false
 	return true

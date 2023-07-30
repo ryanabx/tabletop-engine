@@ -2,6 +2,8 @@ class_name TabletopManager
 extends Node
 
 var piece_scene: PackedScene = preload("res://src/scenes/game_elements/piece.tscn")
+var stack_scene: PackedScene = preload("res://src/scenes/game_elements/stack.tscn")
+var hand_scene: PackedScene = preload("res://src/scenes/game_elements/hand.tscn")
 
 var base_scene: PackedScene = preload("res://src/scenes/game_elements/game_base.tscn")
 
@@ -40,6 +42,12 @@ func load_config(config: Resource) -> void:
 	coordinate_scale = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
 	reset_tabletop()
 	build_game()
+	build_board_objects()
+	await tabletop.ready
+
+func reset_board() -> void:
+	for obj in board.game_object_manager.get_children():
+		obj.queue_free()
 	build_board_objects()
 
 func reset_camera() -> void:
@@ -159,8 +167,8 @@ func new_piece(obj: Dictionary) -> void:
 func new_collection(obj: Dictionary) -> void:
 	var collection: GameCollection
 	match obj.type:
-		"hand": collection = Hand.new()
-		"stack": collection = ObjectStack.new()
+		"hand": collection = hand_scene.instantiate()
+		"stack": collection = stack_scene.instantiate()
 		_: return
 	if "name" in obj:
 		collection.add_to_group(obj.name)
@@ -176,3 +184,58 @@ func new_collection(obj: Dictionary) -> void:
 	collection.force_state = obj.force_state
 	collection.view_perms = obj.view_perms
 	
+func run_action(index: int) -> void:
+	var action: Array = game.actions[index].actions.duplicate(true)
+	for cmd in action:
+		parse_command(cmd)
+	print("Action ",game.actions[index].name, " finished running.")
+
+func parse_command(cmd: Dictionary) -> void:
+	var result: bool = true
+	var repeat = cmd.repeat if "repeat" in cmd else 1
+	for i in range(repeat):
+		match cmd.cmd:
+			"reset_board":
+				pass
+				# result = cmd_reset_board(cmd)
+			"shuffle":
+				result = cmd_shuffle(cmd)
+			"move_top":
+				result = cmd_move_top(cmd)
+			_:
+				result = false
+	print("Command ",cmd.cmd, " returned ",result)
+
+### ACTION COMMANDS ###
+
+func cmd_reset_board(_cmd: Dictionary) -> bool:
+	await load_config(game)
+	return true
+
+func cmd_shuffle(cmd: Dictionary) -> bool:
+	if not "targets" in cmd.args:
+		return false
+	for group_name in cmd.args.targets:
+		var collections = get_tree().get_nodes_in_group(group_name)
+		for c in collections:
+			c.shuffle()
+	return true
+
+func cmd_move_top(cmd: Dictionary) -> bool:
+	if not "from" in cmd.args:
+		return false
+	var from = get_tree().get_nodes_in_group(cmd.args.from)[0]
+	if "to" in cmd.args:
+		var to = get_tree().get_nodes_in_group(cmd.args.to)[0]
+		var piece: Piece = from.get_game_objects()[-1]
+		from.remove_game_object(piece)
+		to.add_game_object_to_top(piece)
+		from._update_objects()
+		to._update_objects()
+		print("Hey hey")
+	else:
+		var piece: Piece = from.get_game_objects()[-1]
+		from.remove_game_object(piece)
+		piece.position = Vector2.ZERO
+		from._update_objects()
+	return true

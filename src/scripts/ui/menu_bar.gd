@@ -10,6 +10,17 @@ func _ready() -> void:
 	view_menu()
 	options_menu()
 	player_menu()
+	actions_menu()
+
+func actions_menu() -> void:
+	if Globals.get_tabletop().game != null:
+		var actions: PopupMenu = PopupMenu.new()
+		actions.index_pressed.connect(run_action)
+		actions.name = "Actions"
+		if Globals.get_tabletop().game.actions != null:
+			for i in Globals.get_tabletop().game.actions:
+				actions.add_item(i.name)
+		menu.add_child(actions)
 
 func player_menu() -> void:
 	if Globals.get_tabletop().game != null:
@@ -70,6 +81,9 @@ func options_menu() -> void:
 func set_player(index: int) -> void:
 	Player.set_id(index)
 	player.name = str("Player ",Player.get_number())
+
+func run_action(index: int) -> void:
+	Globals.get_tabletop().run_action(index)
 
 func file_pressed(id: int) -> void:
 	match id:
