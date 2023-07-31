@@ -79,6 +79,7 @@ alignment = 1
 
 [node name="TitleText" type="Label" parent="HBoxContainer/TitleMargins/TitleList"]
 layout_mode = 2
+theme_type_variation = &"HeaderLarge"
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 5
 theme_override_constants/shadow_offset_y = 5

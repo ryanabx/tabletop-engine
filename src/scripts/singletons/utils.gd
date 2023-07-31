@@ -83,32 +83,32 @@ func _check_inputs() -> void:
 	if not input_actions.keys().is_empty():
 		enhanced_inputs.emit(input_actions)
 
-func is_action_just_short_released(action: String, input_actions: Dictionary) -> bool:
+func just_short_released(action: String, input_actions: Dictionary) -> bool:
 	return action in input_actions and input_actions[action] == Utils.INPUT_TYPE.SHORT_PRESS
 
-func is_action_just_short_held(action: String, input_actions: Dictionary) -> bool:
+func just_short_held(action: String, input_actions: Dictionary) -> bool:
 	return action in input_actions and input_actions[action] == Utils.INPUT_TYPE.START_SHORT_HOLD
 
-func is_action_short_held(action: String, input_actions: Dictionary) -> bool:
+func short_held(action: String, input_actions: Dictionary) -> bool:
 	return action in input_actions and input_actions[action] == Utils.INPUT_TYPE.SHORT_HOLD
 	
-func is_action_just_long_released(action: String, input_actions: Dictionary) -> bool:
+func just_long_released(action: String, input_actions: Dictionary) -> bool:
 	return action in input_actions and input_actions[action] == Utils.INPUT_TYPE.LONG_PRESS
 
-func is_action_just_long_held(action: String, input_actions: Dictionary) -> bool:
+func just_long_held(action: String, input_actions: Dictionary) -> bool:
 	return action in input_actions and input_actions[action] == Utils.INPUT_TYPE.START_LONG_HOLD
 
-func is_action_long_held(action: String, input_actions: Dictionary) -> bool:
+func long_held(action: String, input_actions: Dictionary) -> bool:
 	return action in input_actions and input_actions[action] == Utils.INPUT_TYPE.LONG_HOLD
 
-func is_action_just_held(action: String, input_actions: Dictionary) -> bool:
-	return is_action_just_short_held(action, input_actions) or is_action_just_long_held(action, input_actions)
+func just_held(action: String, input_actions: Dictionary) -> bool:
+	return just_short_held(action, input_actions) or just_long_held(action, input_actions)
 	
-func is_action_held(action: String, input_actions: Dictionary) -> bool:
-	return is_action_short_held(action, input_actions) or is_action_long_held(action, input_actions)
+func held(action: String, input_actions: Dictionary) -> bool:
+	return short_held(action, input_actions) or long_held(action, input_actions)
 
-func is_action_just_released(action: String, input_actions: Dictionary) -> bool:
-	return is_action_just_short_released(action, input_actions) or is_action_just_long_released(action, input_actions)
+func just_released(action: String, input_actions: Dictionary) -> bool:
+	return just_short_released(action, input_actions) or just_long_released(action, input_actions)
 
 func load_json_from_file(fname: String) -> Dictionary:
 	if FileAccess.file_exists(fname):
@@ -134,3 +134,10 @@ func load_images_from_directory(dir: String) -> Dictionary:
 				if _tx != null:
 					textures[fname] = _tx
 	return textures
+
+func has_any(arr1: Array, arr2: Array) -> bool:
+	for x in arr1:
+		for y in arr2:
+			if x == y:
+				return true
+	return false

@@ -10,4 +10,5 @@ func _on_create_export_config() -> void:
 
 func _on_folder_decided(fpath: String) -> void:
 	var game_config: GameConfig = GameConfig.build_config_from_directory(fpath)
+	hide()
 	SignalManager.export_conf.emit(game_config)

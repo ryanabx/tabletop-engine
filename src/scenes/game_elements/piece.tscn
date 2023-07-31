@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://dkqkwkwwhdjur"]
+[gd_scene load_steps=2 format=3 uid="uid://dkqkwkwwhdjur"]
 
 [ext_resource type="Script" path="res://src/scripts/game_objects/piece.gd" id="1_dxg0g"]
-[ext_resource type="Texture2D" uid="uid://cnqhfmcablwlm" path="res://icon.svg" id="2_5l7kr"]
 
 [node name="Piece" type="Node2D" groups=["game_object"]]
 script = ExtResource("1_dxg0g")
@@ -16,4 +15,3 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 2
 
 [node name="ObjectSprite" type="Sprite2D" parent="."]
-texture = ExtResource("2_5l7kr")

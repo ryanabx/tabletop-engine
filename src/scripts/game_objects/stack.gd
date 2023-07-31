@@ -7,7 +7,6 @@ func _update_objects() -> void:
 	var larg_y: float = 0
 	
 	var _max_index = _get_max_index()
-	z_index = _max_index + 1
 
 	if not get_permanence() and get_num_objects() > 0 and position != get_game_objects()[-1].position:
 		position = get_game_objects()[-1].position

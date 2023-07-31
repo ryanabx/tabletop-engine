@@ -2,7 +2,7 @@ class_name UserInterface
 extends Control
 
 var coordinates_label: Label
-@onready var game_name_label: Label = $VBoxContainer/GameNameLabel
+@onready var game_name_label: Label = $PanelContainer/MarginContainer/VBoxContainer/GameNameLabel
 
 func _ready() -> void:
 	coordinates_label = Label.new()
@@ -18,6 +18,3 @@ func _process(_delta: float) -> void:
 	else:
 		game_name_label.text = "Current Game: Untitled"
 	queue_redraw()
-
-func _draw() -> void:
-	draw_rect(Utils.rect_with_padding(game_name_label.get_global_rect(), Globals.GAME_NAME_PADDING), Color.BLACK * Color(1.0, 1.0, 1.0, 0.4))

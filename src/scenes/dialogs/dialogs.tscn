@@ -9,9 +9,7 @@
 [node name="ExportConfigFolderOpen" type="FileDialog" parent="."]
 title = "Open a Directory"
 initial_position = 2
-size = Vector2i(860, 480)
-unresizable = true
-borderless = true
+size = Vector2i(720, 480)
 ok_button_text = "Select Current Folder"
 file_mode = 2
 access = 2
@@ -19,9 +17,7 @@ script = ExtResource("1_1dtoy")
 
 [node name="ExportConfigFileSave" type="FileDialog" parent="."]
 initial_position = 2
-size = Vector2i(860, 480)
-unresizable = true
-borderless = true
+size = Vector2i(720, 480)
 ok_button_text = "Save"
 access = 2
 script = ExtResource("2_r3kfd")
@@ -29,9 +25,7 @@ script = ExtResource("2_r3kfd")
 [node name="ImportConfigFileOpen" type="FileDialog" parent="."]
 title = "Open a File"
 initial_position = 2
-size = Vector2i(860, 480)
-unresizable = true
-borderless = true
+size = Vector2i(720, 480)
 ok_button_text = "Open"
 file_mode = 0
 access = 2

@@ -12,5 +12,5 @@ func _on_config_created(conf: Resource) -> void:
 	popup()
 
 func _on_file_decided(fpath: String) -> void:
-	var result: int = ResourceSaver.save(config, fpath, 0x20)
+	var result: int = ResourceSaver.save(config, fpath, (32+64))
 	print("Finished exporting with code ",result)

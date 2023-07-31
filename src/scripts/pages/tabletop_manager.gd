@@ -60,6 +60,14 @@ func load_config(config: Resource) -> bool:
 	coordinate_scale = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
 	await reset_tabletop()
 	build_game()
+	reset_camera()
+	build_board_objects()
+	return true
+
+func reset_game() -> bool:
+	await reset_tabletop()
+	build_game()
+	reset_camera()
 	build_board_objects()
 	return true
 
@@ -72,23 +80,23 @@ func reset_camera() -> void:
 		)
 		return
 	
-	if "y" in game.camera.scale:
+	var camera_transform: Dictionary = game.camera[Player.get_id()]
+	
+	if "y" in camera_transform.scale:
 		camera_controller.set_camera_transform(
-			Vector2(game.camera.position.x, game.camera.position.y) * coordinate_scale,
-			Vector2(game.camera.scale.y, game.camera.scale.y) * coordinate_scale.y / get_viewport().get_visible_rect().size.y,
-			game.camera.rotation
+			Vector2(camera_transform.position.x, camera_transform.position.y) * coordinate_scale,
+			Vector2(camera_transform.scale.y, camera_transform.scale.y) * coordinate_scale.y / get_viewport().get_visible_rect().size.y,
+			camera_transform.rotation
 		)
-	elif "x" in game.camera.scale:
+	elif "x" in camera_transform.scale:
 		camera_controller.set_camera_transform(
-			Vector2(game.camera.position.x, game.camera.position.y) * coordinate_scale,
-			Vector2(game.camera.scale.x, game.camera.scale.x) * coordinate_scale.x / get_viewport().get_visible_rect().size.x,
-			game.camera.rotation
+			Vector2(camera_transform.position.x, camera_transform.position.y) * coordinate_scale,
+			Vector2(camera_transform.scale.x, camera_transform.scale.x) * coordinate_scale.x / get_viewport().get_visible_rect().size.x,
+			camera_transform.rotation
 		)
 
 func build_game() -> void:
 	print(game.images.keys())
-	# Set up camera transform
-	reset_camera()
 	# Set up game border
 	if "border" in game.board:
 		board.set_border(
@@ -226,9 +234,9 @@ func parse_command(cmd: Dictionary) -> void:
 ### ACTION COMMANDS ###
 
 func cmd_reset_board(_cmd: Dictionary) -> bool:
-	var result = await load_config(game)
+	await reset_game()
 	print("Done resetting board")
-	return result
+	return true
 
 func cmd_shuffle(cmd: Dictionary) -> bool:
 	if not "targets" in cmd.args:

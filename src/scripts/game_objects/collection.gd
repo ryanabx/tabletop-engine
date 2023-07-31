@@ -18,13 +18,17 @@ var label: Label = null
 const STACK_RECT_SIZE: float = 32.0
 
 const PADDING: float = 8.0
+const N_PADDING: float = 4.0
 
 const LABEL_OPACITY = 0.6
 
 func _ready() -> void:
 	add_to_group("collections")
+	
 	label = Label.new()
 	label.modulate.a = 0.6
+	label.z_index = 500
+	label.z_as_relative = true
 	# label.set_anchors_and_offsets_preset(label.PRESET_CENTER)
 	add_child(label)
 
@@ -33,6 +37,9 @@ func _update_objects() -> void:
 
 func can_access(player_id: int) -> bool:
 	return access_perms.is_empty() or access_perms[player_id]
+
+func can_view(player_id: int) -> bool:
+	return view_perms.is_empty() or view_perms[player_id]
 
 func get_permanence() -> bool:
 	return permanent
@@ -107,17 +114,7 @@ func set_side(side: bool) -> void:
 		obj.set_side(side)
 
 func shuffle() -> void:
-	get_game_objects().shuffle()
-
-func decide_face(piece: Piece) -> bool:
-	if piece.get_collection() != self:
-		return piece.get_side()
-	
-	if view_perms.size() <= Player.get_id():
-		return piece.get_side()
-	
-	return view_perms[Player.get_id()] if view_perms[Player.get_id()] is bool else piece.get_side()
-	
+	get_game_objects().shuffle()	
 
 func _process(_delta: float) -> void:
 	_update_objects()
@@ -127,7 +124,10 @@ func _process(_delta: float) -> void:
 
 func _draw() -> void:
 	if permanent:
-		draw_rect(get_rect(), Color.from_hsv(0.0, 0.0, 0.0, 0.8), false,PADDING)
+		if not can_access(Player.get_id()):
+			draw_rect(get_rect(), Color.from_hsv(0.0, 0.0, 0.0, 0.5), false,N_PADDING)
+			draw_rect(get_rect(), Color.RED * Color(1.0, 1.0, 1.0, 0.1))
+		else:
+			draw_rect(get_rect(), Color.from_hsv(0.0, 0.0, 0.0, 0.8), false,PADDING)
+			draw_rect(get_rect(), Color.BLACK * Color(1.0, 1.0, 1.0, 0.3))
 	super._draw()
-	draw_rect(label.get_rect(), Color.from_hsv(1.0, 1.0, 0.0, LABEL_OPACITY), true)
-	draw_rect(label.get_rect(), Color.from_hsv(1.0, 1.0, 0.0, LABEL_OPACITY), false, PADDING)

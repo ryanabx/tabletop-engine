@@ -13,7 +13,6 @@ func _update_objects() -> void:
 	super._update_objects()
 	var num_objects: int = get_num_objects()
 	var _max_index = _get_max_index()
-	z_index = _max_index + 1
 	
 	var larg_x: float = 0
 	var larg_y: float = 0

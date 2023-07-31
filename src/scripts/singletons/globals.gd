@@ -1,6 +1,11 @@
 # GLOBALS SINGLETON - Contains constants related to theming and open boardgame framework details
 extends Node
 
+# MULTIPLAYER
+
+const DEFAULT_PORT: int = 23698
+const DEFAULT_MAX_PLAYERS: int = 4
+
 # THEMING GLOBALS
 
 const BASE_SCALE: float = 1.0

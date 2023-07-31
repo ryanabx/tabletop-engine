@@ -6,7 +6,7 @@ extends Resource
 @export var game_version: Array
 @export var api_version: int
 @export var board: Dictionary
-@export var camera: Dictionary
+@export var camera: Array
 @export var player: Dictionary
 @export var templates: Dictionary
 @export var objects: Array

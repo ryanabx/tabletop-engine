@@ -82,6 +82,7 @@ func options_menu() -> void:
 func set_player(index: int) -> void:
 	Player.set_id(index)
 	player.name = str("Player ",Player.get_number())
+	Globals.get_tabletop().reset_camera()
 
 func run_action(index: int) -> void:
 	Globals.get_tabletop().run_action(index)

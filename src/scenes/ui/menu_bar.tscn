@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://bc0wmak5rj2nq"]
-
-[ext_resource type="Script" path="res://src/scripts/ui/menu_bar.gd" id="1_mbf7a"]
-
-[node name="Menu" type="MenuBar"]
-offset_bottom = 32.0
-switch_on_hover = false
-script = ExtResource("1_mbf7a")

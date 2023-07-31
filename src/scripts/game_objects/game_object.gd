@@ -9,6 +9,9 @@ func get_extents() -> Rect2:
 func can_access(_player_id: int) -> bool:
 	return true
 
+func can_view(_player_id: int) -> bool:
+	return true
+
 func get_rect() -> Rect2:
 	print("get_rect Not Implemented on: ",get_class())
 	return Rect2(0.0, 0.0, 0.0, 0.0)

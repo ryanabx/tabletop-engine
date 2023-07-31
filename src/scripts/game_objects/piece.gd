@@ -19,6 +19,8 @@ var image_up: Texture2D = null
 var image_down: Texture2D = null
 var _state: STATE = STATE.IDLE
 
+var _sc: Vector2 = Vector2.ONE
+
 @onready var state_label: Label = $StateLabel
 @onready var _sprite: Sprite2D = $ObjectSprite
 
@@ -30,6 +32,17 @@ func can_access(player_id: int) -> bool:
 		return true
 	else:
 		return false
+	
+func can_view(player_id: int) -> bool:
+	if not has_collection():
+		if _state == STATE.SELECTED:
+			return true
+		else:
+			return face_up
+	elif has_collection() and get_collection().can_view(player_id):
+		return true
+	else:
+		return false
 
 func get_grab_offset() -> Vector2:
 	return grab_offset
@@ -37,9 +50,8 @@ func get_grab_offset() -> Vector2:
 func set_grab_offset(offset: Vector2) -> void:
 	grab_offset = offset
 
-func set_sprite_scale(_sc: Vector2) -> void:
-	_sprite.scale = (_sc) / _sprite.texture.get_size()
-	scale = Vector2.ONE
+func set_sprite_scale(sc: Vector2) -> void:
+	_sc = sc
 
 func get_rect() -> Rect2:
 	return _sprite.get_rect() * _sprite.get_transform()
@@ -70,19 +82,16 @@ func unselectable() -> bool:
 
 func flip() -> void:
 	face_up = not face_up
-	update_texture()
 
 func update_texture() -> void:
 	if not image_up or not image_down:
 		return
-	if has_collection():
-		_sprite.texture = image_up if get_collection().decide_face(self) else image_down
-	else:
-		_sprite.texture = image_up if face_up else image_down
+	_sprite.texture = image_up if can_view(Player.get_id()) else image_down
+	_sprite.scale = (_sc) / _sprite.texture.get_size()
+	scale = Vector2.ONE
 
 func set_side(sd: bool) -> void:
 	face_up = sd
-	update_texture()
 
 func get_side() -> bool:
 	return face_up
@@ -104,20 +113,19 @@ func deselect() -> void:
 func put_in_collection(coll: GameCollection) -> void:
 	if not has_collection():
 		set_collection(coll)
-		update_texture()
 	else:
 		print("Cannot add an object to a collection when a collection already exists")
 
 func remove_from_collection() -> void:
 	if has_collection():
 		set_collection(null)
-		update_texture()
 	else:
 		print("Cannot remove an object from a null collection")
 
 func _process(_delta: float) -> void:
 	state_label.text = state_to_string(get_state())
 	z_index = get_index()
+	update_texture()
 	queue_redraw()
 
 func state_to_string(state: STATE) -> String:
