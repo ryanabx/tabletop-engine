@@ -27,20 +27,24 @@ var _sc: Vector2 = Vector2.ONE
 func _ready() -> void:
 	add_to_group("piece")
 
-func can_access(player_id: int) -> bool:
-	if not has_collection() or (has_collection() and get_collection().can_access(player_id)):
+func can_access(player_id: int):
+	if not has_collection():
 		return true
 	else:
-		return false
+		if get_collection().can_access(player_id) is bool:
+			return get_collection().can_access(player_id)
+		return true
 	
-func can_view(player_id: int) -> bool:
+func can_view(player_id: int):
 	if not has_collection():
 		if _state == STATE.SELECTED:
 			return true
 		else:
 			return face_up
-	elif has_collection() and get_collection().can_view(player_id):
-		return true
+	elif has_collection():
+		if get_collection().can_view(player_id) is bool:
+			return get_collection().can_view(player_id)
+		return face_up
 	else:
 		return false
 

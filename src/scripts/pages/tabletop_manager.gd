@@ -259,5 +259,5 @@ func cmd_move_top(cmd: Dictionary) -> bool:
 			return false
 		var piece: Piece = from.get_game_objects()[-1]
 		print("Piece name: ",piece.name)
-		board.stack_objects_to_item([piece], to)
+		board.game_object_manager.stack_objects_to_item([piece], to)
 	return true

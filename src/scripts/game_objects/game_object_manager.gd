@@ -50,6 +50,7 @@ func stack_objects_to_item(objects: Array, item: GameObject) -> void:
 		convert_to_stack([item] + objects)
 
 func convert_to_stack(objects: Array):
+	print("Convert to stack")
 	if objects.is_empty():
 		return
 	var stack = stack_scene.instantiate()
@@ -63,6 +64,7 @@ func convert_to_stack(objects: Array):
 		object.position = stack.position
 	
 func stack_objects_to_collection(objects: Array, collection: GameCollection) -> void:
+	print("Stack objects to collection")
 	for object in objects:
 		if object.has_collection():
 			object.get_collection().remove_game_object(object)

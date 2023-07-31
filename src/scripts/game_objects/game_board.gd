@@ -30,6 +30,8 @@ func _process(_delta):
 	if (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")):
 		if state in [STATE.DOWN, STATE.MULTI_DOWN]:
 			move_selected_items()
+	elif state == STATE.SELECTION_BOX:
+		group_selection_instantiated()
 	if state == STATE.SELECTION_BOX:
 		update_selection_rect()
 	queue_redraw()
@@ -78,7 +80,7 @@ func set_stackable_item(item: GameObject) -> void:
 	if over_item() and stackable_item != item:
 		stackable_item.dehighlight()
 	# If stack is permitted
-	if item and not item.can_access(Player.get_id()):
+	if item and item.can_access(Player.get_id()) == false:
 		pass
 	else:
 		stackable_item = item
@@ -119,7 +121,7 @@ func group_selection_instantiated() -> bool:
 	if state in [STATE.SELECTION_BOX]:
 		var items: Array = []
 		for object in get_tree().get_nodes_in_group("piece"):
-			if not object.can_access(Player.get_id()):
+			if object.can_access(Player.get_id()) == false:
 				continue
 			if _rect_obj_areas_overlap(object, selection_box):
 				items.append(object)
@@ -204,7 +206,7 @@ func process_input(input_actions: Dictionary) -> void:
 	if Utils.just_long_held("game_select", input_actions) or Utils.just_long_held("game_select_stack", input_actions):
 		if state == STATE.MULTI and Utils.just_long_held("game_select", input_actions):
 			check_over_group_selection()
-		elif not has_selected_items():
+		elif state in [STATE.NONE]:
 			check_selecting_obj(input_actions)
 	# RIGHT CLICKING
 	if state in [STATE.NONE, STATE.MULTI] and Utils.just_short_released("game_menu", input_actions):
@@ -215,7 +217,8 @@ func process_input(input_actions: Dictionary) -> void:
 			deselect_objects()
 	# DESELECTING OBJECTS
 	if Utils.just_long_released("game_select", input_actions) or Utils.just_long_released("game_select_stack", input_actions):
-		release_selection()
+		if state in [STATE.MULTI_DOWN, STATE.DOWN]:
+			release_selection()
 	# FLIPPING OBJECTS
 	if Utils.just_released("game_flip", input_actions) and state in [STATE.DOWN, STATE.MULTI, STATE.MULTI_DOWN]:
 		game_object_manager.flip_objects(get_selected_items())
@@ -310,7 +313,7 @@ func get_overlapping_obj(point: Vector2, game_objects: Array) -> Piece:
 	var best: Piece = null
 	for object in game_objects:
 		var g_obj := object as Piece
-		if g_obj.has_collection() and not g_obj.can_access(Player.get_id()):
+		if g_obj.has_collection() and g_obj.can_access(Player.get_id()) == false:
 			continue
 		if (g_obj.get_rect() * g_obj.get_transform().affine_inverse()).has_point(point):
 			if best == null or (g_obj.z_index > best.z_index):
@@ -325,17 +328,14 @@ func get_selected_items() -> Array:
 
 func release_selection() -> void:
 	# If over an item, stack objects to that item, then also deselect
-	if state in [STATE.DOWN, STATE.MULTI_DOWN]:
-		if over_item():
-			game_object_manager.stack_objects_to_item(get_selected_items(), stackable_item)
-			set_stackable_item(null)
-			deselect_objects()
-		elif state == STATE.DOWN:
-			deselect_objects()
-		elif state == STATE.MULTI_DOWN:
-			multi_select_up()
-	elif selection_box:
-		group_selection_instantiated()
+	if over_item():
+		game_object_manager.stack_objects_to_item(get_selected_items(), stackable_item)
+		set_stackable_item(null)
+		deselect_objects()
+	elif state == STATE.DOWN:
+		deselect_objects()
+	elif state == STATE.MULTI_DOWN:
+		multi_select_up()
 
 func deselect_objects() -> void:
 	select_objects([])

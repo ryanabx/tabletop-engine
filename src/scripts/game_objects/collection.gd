@@ -27,19 +27,23 @@ func _ready() -> void:
 	
 	label = Label.new()
 	label.modulate.a = 0.6
-	label.z_index = 500
-	label.z_as_relative = true
+	label.z_index = 1000
+	label.z_as_relative = false
 	# label.set_anchors_and_offsets_preset(label.PRESET_CENTER)
 	add_child(label)
 
 func _update_objects() -> void:
 	pass
 
-func can_access(player_id: int) -> bool:
-	return access_perms.is_empty() or access_perms[player_id]
+func can_access(player_id: int):
+	if access_perms.is_empty():
+		return null
+	return access_perms[player_id]
 
-func can_view(player_id: int) -> bool:
-	return view_perms.is_empty() or view_perms[player_id]
+func can_view(player_id: int):
+	if view_perms.is_empty():
+		return null
+	return view_perms[player_id]
 
 func get_permanence() -> bool:
 	return permanent
@@ -124,7 +128,7 @@ func _process(_delta: float) -> void:
 
 func _draw() -> void:
 	if permanent:
-		if not can_access(Player.get_id()):
+		if can_access(Player.get_id()) == false:
 			draw_rect(get_rect(), Color.from_hsv(0.0, 0.0, 0.0, 0.5), false,N_PADDING)
 			draw_rect(get_rect(), Color.RED * Color(1.0, 1.0, 1.0, 0.1))
 		else:

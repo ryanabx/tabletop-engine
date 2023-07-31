@@ -6,10 +6,10 @@ var highlighted = false
 func get_extents() -> Rect2:
 	return get_rect() * get_transform().affine_inverse()
 
-func can_access(_player_id: int) -> bool:
+func can_access(_player_id: int):
 	return true
 
-func can_view(_player_id: int) -> bool:
+func can_view(_player_id: int):
 	return true
 
 func get_rect() -> Rect2:
