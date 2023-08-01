@@ -1,7 +1,7 @@
 class_name GameCollection
 extends GameObject
 
-var _game_objects: Array = []
+var game_objects: Array[String] = []
 var _scale: Vector2 = Vector2.ZERO
 
 var base_size: Vector2 = Vector2.ZERO
@@ -51,10 +51,10 @@ func get_permanence() -> bool:
 func set_permanence(per: bool) -> void:
 	permanent = per
 
-func get_game_objects() -> Array:
-	return _game_objects
+func get_game_objects() -> Array[Piece]:
+	return Utils.get_game_objects(game_objects)
 
-func _get_max_index() -> int:
+func get_max_index() -> int:
 	var max_index: int = -1
 	for obj in get_game_objects():
 		max_index = max(obj.get_index(), max_index)
@@ -64,19 +64,18 @@ func add_game_object_to_top(obj: Piece) -> void:
 	if obj in get_game_objects():
 		print("Cannot add object when already added")
 		return
-	obj.put_in_collection(self)
-	get_game_objects().push_back(obj)
+	if obj.put_in_collection(self):
+		game_objects.push_back(obj.get_name())
 
 func add_game_object_to_bottom(obj: Piece) -> void:
 	if obj in get_game_objects():
 		print("Cannot add object when already added")
 		return
-	obj.put_in_collection(self)
-	get_game_objects().push_front(obj)
+	if obj.put_in_collection(self):
+		game_objects.push_front(obj.get_name())
 
-func add_game_object_special(_obj: Piece) -> void:
-	print("Not implemented")
-	pass
+func add_game_object_special(obj: Piece) -> void:
+	add_game_object_to_top(obj)
 
 func get_rect() -> Rect2:
 	return Rect2(- _scale / 2.0, _scale)
@@ -87,13 +86,14 @@ func get_top_object() -> Piece:
 	return get_game_objects()[-1]
 
 func remove_game_object(obj: Piece) -> void:
-	var index: int = get_game_objects().find(obj)
+	var index: int = game_objects.find(obj.get_name())
 	if index == -1:
 		return
 	remove_object_at(index)
 
 func remove_object_at(index: int) -> void:
-	var target_object: Piece = get_game_objects().pop_at(index)
+	var target_object: Piece = Utils.get_game_object(game_objects.pop_at(index))
+	if target_object == null: return
 	target_object.remove_from_collection()
 	if not permanent:
 		if get_num_objects() == 1:
@@ -102,8 +102,16 @@ func remove_object_at(index: int) -> void:
 			print("remove stack")
 			queue_free()
 
+func insert_game_object(obj: Piece, index: int) -> void:
+	if obj in get_game_objects():
+		print("Cannot add object when already added")
+		return
+	if obj.put_in_collection(self):
+		game_objects.insert(index, obj.get_name())
+
 func get_num_objects() -> int:
-	return get_game_objects().size()
+	var size: int = get_game_objects().size()
+	return size
 
 func disabled() -> bool:
 	return false

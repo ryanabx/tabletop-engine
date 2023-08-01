@@ -5,9 +5,9 @@ var border: Rect2 = Rect2(-640, -360, 1280, 720)
 const STACK_LERP: float = 0.8
 
 var stackable_item: GameObject = null
-var selected_objects: Array = []
+var selected_objects: Array[String] = []
 var selection_box: Rect2 = Rect2(0.0, 0.0, 0.0, 0.0)
-var highlighted_piece: Piece = null
+var highlighted_piece: String = ""
 
 var board_texture_string: String = ""
 
@@ -23,7 +23,7 @@ func _ready() -> void:
 	SignalManager.game_menu_destroy.connect(removed_game_menu)
 
 func _process(_delta):
-	highlighted_piece = get_overlapping_obj(get_local_mouse_position(), get_tree().get_nodes_in_group("piece"))
+	highlighted_piece = get_overlapping_obj(get_local_mouse_position(), get_tree().get_nodes_in_group("piece")).get_name()
 	if state in [STATE.MULTI, STATE.MULTI_DOWN] and (Input.is_action_just_pressed("game_select") or Input.is_action_just_pressed("game_select_stack")):
 		set_object_grab_offsets()
 	if (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")):
@@ -237,14 +237,17 @@ func selecting_collection(obj_selection: Piece) -> void:
 	if obj_selection.get_collection().get_permanence(): return
 	select_objects(obj_selection.get_collection().get_game_objects())
 
+func get_highlighted_piece() -> Piece:
+	return Utils.get_game_object(highlighted_piece) as Piece
+
 # Game menu
 
 func make_game_menu() -> void:
-	if state == STATE.NONE and highlighted_piece != null:
-		if highlighted_piece.has_collection():
-			SignalManager.game_menu_create.emit(RightClickMenu.TYPE.COLLECTION, [highlighted_piece.get_collection()])
+	if state == STATE.NONE and get_highlighted_piece() != null:
+		if get_highlighted_piece().has_collection():
+			SignalManager.game_menu_create.emit(RightClickMenu.TYPE.COLLECTION, [get_highlighted_piece().get_collection()])
 		else:
-			SignalManager.game_menu_create.emit(RightClickMenu.TYPE.GAME_OBJECT, [highlighted_piece])
+			SignalManager.game_menu_create.emit(RightClickMenu.TYPE.GAME_OBJECT, [get_highlighted_piece()])
 		made_game_menu()
 	elif state == STATE.MULTI:
 		if get_overlapping_obj(get_local_mouse_position(), get_selected_items()) != null:
@@ -278,7 +281,7 @@ func _draw() -> void:
 
 func select_objects(objects: Array) -> void:
 	if objects.is_empty() and objects_deselected():
-		for object in selected_objects:
+		for object in get_selected_items():
 			object.deselect()
 		selected_objects = []
 		return
@@ -312,13 +315,13 @@ func get_overlapping_obj(point: Vector2, game_objects: Array) -> Piece:
 func has_selected_items() -> bool:
 	return not get_selected_items().is_empty()
 
-func get_selected_items() -> Array:
-	return selected_objects
+func get_selected_items() -> Array[Piece]:
+	return Utils.get_game_objects(selected_objects)
 
 func release_selection() -> void:
 	# If over an item, stack objects to that item, then also deselect
 	if over_item():
-		game_object_manager.stack_objects_to_item(get_selected_items(), stackable_item)
+		game_object_manager.rpc("stack_objects_to_item",selected_objects, stackable_item)
 		set_stackable_item(null)
 		deselect_objects()
 	elif state == STATE.DOWN:

@@ -141,3 +141,15 @@ func has_any(arr1: Array, arr2: Array) -> bool:
 			if x == y:
 				return true
 	return false
+
+func get_game_object(obj: String) -> GameObject:
+	if Globals.get_current_tabletop() == null or obj == "": return null
+	return Globals.get_current_tabletop().board.game_object_manager.get_node_or_null(obj)
+
+func get_game_objects(objects: Array) -> Array[GameObject]:
+	var g_objs: Array[GameObject] = []
+	for obj in objects:
+		var g_obj: GameObject = Utils.get_game_object(obj)
+		if g_obj != null:
+			g_objs.append(g_obj)
+	return g_objs

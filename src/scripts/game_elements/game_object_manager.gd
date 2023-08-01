@@ -43,11 +43,18 @@ func move_objects_to_front(objects: Array) -> void:
 
 # Stacking functions
 
-func stack_objects_to_item(objects: Array, item: GameObject) -> void:
-	if item is GameCollection:
-		stack_objects_to_collection(objects, item as GameCollection)
-	elif item is Piece:
-		convert_to_stack([item] + objects)
+@rpc("any_peer", "call_local", "reliable")
+func stack_objects_to_item(objects: Array, item: String) -> void:
+	if not multiplayer.is_server(): return
+	var g_item: GameObject = Utils.get_game_object(item)
+	if g_item == null: return
+	var g_objects: Array[GameObject] = Utils.get_game_objects(objects)
+	
+	print("Stacking object to item")
+	if g_item is GameCollection:
+		stack_objects_to_collection(g_objects, g_item as GameCollection)
+	elif g_item is Piece:
+		convert_to_stack([g_item] + g_objects)
 
 func convert_to_stack(objects: Array):
 	print("Convert to stack")

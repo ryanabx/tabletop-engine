@@ -14,3 +14,7 @@ metadata/_edit_lock_ = true
 [node name="GameObjectManager" type="Node2D" parent="."]
 script = ExtResource("2_8h063")
 metadata/_edit_lock_ = true
+
+[node name="GameObjectSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://src/scenes/game_elements/spawnables/hand.tscn", "res://src/scenes/game_elements/spawnables/piece.tscn", "res://src/scenes/game_elements/spawnables/stack.tscn")
+spawn_path = NodePath("../GameObjectManager")

@@ -20,7 +20,7 @@ func load_game_config(gc: GameConfig) -> void:
 	if multiplayer.is_server():
 		current_game = gc.name
 		print("host_loaded_config")
-		tabletop_spawner.spawn(gc.unpack_data())
+		tabletop_spawner.call_deferred("spawn",gc.unpack_data())
 	
 
 @rpc("any_peer", "call_remote")

@@ -12,7 +12,7 @@ func _process(delta: float) -> void:
 func _update_objects() -> void:
 	super._update_objects()
 	var num_objects: int = get_num_objects()
-	var _max_index = _get_max_index()
+	var _max_index = get_max_index()
 	
 	var larg_x: float = 0
 	var larg_y: float = 0
@@ -45,8 +45,4 @@ func add_game_object_special(obj: Piece) -> void:
 		if to_local(obj.position).x < to_local(get_game_objects()[a].position).x:
 			break
 		i = i + 1
-	get_game_objects().insert(i, obj)
-	obj.put_in_collection(self)
-
-func _draw():
-	super._draw()
+	insert_game_object(obj, i)

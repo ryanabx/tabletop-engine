@@ -11,7 +11,7 @@ enum STATE {
 
 var grab_offset: Vector2 = Vector2.ZERO
 
-var collection: GameCollection = null
+var collection: String = ""
 
 var face_up: bool = true
 
@@ -28,6 +28,7 @@ var _sc: Vector2 = Vector2.ONE
 
 func _ready() -> void:
 	add_to_group("piece")
+	set_piece_texture()
 
 func can_access(player_id: int):
 	if not has_collection():
@@ -68,13 +69,13 @@ func get_stack_rect() -> Rect2:
 	return _sprite.get_rect() * stack_transform
 
 func has_collection() -> bool:
-	return collection != null
+	return collection != "" and get_node(str("../",collection)) != null
 
 func get_collection() -> GameCollection:
-	return collection
-
-func set_collection(coll: GameCollection) -> void:
-	collection = coll
+	var coll: GameCollection = get_node(str("../",collection))
+	if coll == null:
+		remove_from_collection()
+	return coll
 
 func set_state(state: STATE) -> bool:
 	_state = state
@@ -124,17 +125,18 @@ func deselect() -> void:
 		_:
 			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (deselect).")
 
-func put_in_collection(coll: GameCollection) -> void:
+func put_in_collection(coll: GameCollection) -> bool:
 	if not has_collection():
-		set_collection(coll)
+		collection = coll.get_name()
+		return true
 	else:
-		print("Cannot add an object to a collection when a collection already exists")
+		print("Cannot add an object to a collection when a collection already exists. Collection: ",collection)
+		return false
 
-func remove_from_collection() -> void:
-	if has_collection():
-		set_collection(null)
-	else:
-		print("Cannot remove an object from a null collection")
+func remove_from_collection() -> bool:
+	print("removing collection")
+	collection = ""
+	return true
 
 func _process(_delta: float) -> void:
 	state_label.text = state_to_string(get_state())
