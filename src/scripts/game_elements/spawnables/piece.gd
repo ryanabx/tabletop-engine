@@ -13,8 +13,10 @@ var grab_offset: Vector2 = Vector2.ZERO
 
 var collection: GameCollection = null
 
-
 var face_up: bool = true
+
+var image_up_string: String = ""
+var image_down_string: String = ""
 var image_up: Texture2D = null
 var image_down: Texture2D = null
 var _state: STATE = STATE.IDLE
@@ -86,6 +88,14 @@ func unselectable() -> bool:
 
 func flip() -> void:
 	face_up = not face_up
+
+func set_piece_texture() -> void:
+	if image_up_string == "" or image_down_string == "" or Globals.get_current_game() == null:
+		image_up = null
+		image_down = null
+	else:
+		image_up = Globals.get_current_game().images[image_up_string]
+		image_down = Globals.get_current_game().images[image_down_string]
 
 func update_texture() -> void:
 	if not image_up or not image_down:

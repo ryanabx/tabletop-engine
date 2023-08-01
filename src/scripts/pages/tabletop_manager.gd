@@ -14,8 +14,8 @@ func load_game_config(gc: GameConfig) -> void:
 	await remove_tabletop()
 	var tt_new: Tabletop = tt_scene.instantiate()
 	add_child(tt_new)
-	tt_new.init_game(gc)
 	Globals.set_current_tabletop(tt_new)
+	tt_new.init_game(gc)
 
 func remove_tabletop() -> void:
 	if Globals.get_current_tabletop() != null:

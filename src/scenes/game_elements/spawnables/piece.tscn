@@ -1,11 +1,11 @@
 [gd_scene load_steps=3 format=3 uid="uid://dkqkwkwwhdjur"]
 
-[ext_resource type="Script" path="res://src/scripts/game_elements/piece.gd" id="1_oora4"]
+[ext_resource type="Script" path="res://src/scripts/game_elements/spawnables/piece.gd" id="1_1wtuq"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_56jdq"]
 
 [node name="Piece" type="Node2D" groups=["game_object"]]
-script = ExtResource("1_oora4")
+script = ExtResource("1_1wtuq")
 
 [node name="StateLabel" type="Label" parent="."]
 visible = false
@@ -20,3 +20,5 @@ theme_override_constants/outline_size = 2
 position = Vector2(-9.53674e-07, -4.76837e-06)
 scale = Vector2(128, 128)
 texture = SubResource("PlaceholderTexture2D_56jdq")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]

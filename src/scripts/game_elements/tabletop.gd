@@ -9,6 +9,8 @@ extends Node
 var game: GameConfig
 var coordinate_scale: Vector2
 
+var piece_counter: int = 0
+
 @onready var board: GameBoard = $GameBoard
 
 func init_game(_game: GameConfig) -> void:
@@ -32,7 +34,8 @@ func set_up_board_props() -> void:
 		)
 	# Set up game bg
 	if "background_image" in game.board and game.board.background_image != "":
-		board.set_board_texture(game.images[game.board.background_image])
+		board.board_texture_string = game.board.background_image
+		board.set_board_texture()
 
 func _process(_delta: float) -> void:
 	Globals.get_shared_tabletop_manager().camera_controller.camera.position = Globals.get_shared_tabletop_manager().camera_controller.camera.position.clamp(board.get_border().position, board.get_border().end)
@@ -89,20 +92,24 @@ func new_object(obj: Dictionary) -> void:
 				new_collection(obj)
 			_:
 				print("Huh?")
+		piece_counter += 1
 
 func new_piece(obj: Dictionary) -> void:
 	var piece: Piece = piece_scene.instantiate()
 	if "name" in obj:
 		piece.add_to_group(obj.name)
-		piece.set_name(obj.name)
+		piece.set_name(str(obj.name,piece_counter))
+	else:
+		piece.set_name(str("PIECE",piece_counter))
 	# Add child
 	board.game_object_manager.add_child(piece)
 	# Piece transforms
 	piece.position = Vector2(obj.position.x, obj.position.y) * coordinate_scale if "position" in obj else Vector2.ZERO
 	piece.rotation_degrees = obj.rotation if "rotation" in obj else 0.0
 	# Piece exclusives
-	piece.image_up = game.images[obj.image_up]
-	piece.image_down = game.images[obj.image_down]
+	piece.image_up_string = obj.image_up
+	piece.image_down_string = obj.image_down
+	piece.set_piece_texture()
 	piece.set_side(obj.face_up)
 	piece.set_sprite_scale(Vector2(obj.scale.x, obj.scale.y) * coordinate_scale if "scale" in obj else Vector2.ONE)
 	# Collections
@@ -120,6 +127,8 @@ func new_collection(obj: Dictionary) -> void:
 	if "name" in obj:
 		collection.add_to_group(obj.name)
 		collection.set_name(obj.name)
+	else:
+		collection.set_name(str("Collection",piece_counter))
 	# Add child
 	board.game_object_manager.add_child(collection)
 	# Collection transforms

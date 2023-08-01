@@ -9,6 +9,8 @@ var selected_objects: Array = []
 var selection_box: Rect2 = Rect2(0.0, 0.0, 0.0, 0.0)
 var highlighted_piece: Piece = null
 
+var board_texture_string: String = ""
+
 @onready var game_object_manager: Node2D = $GameObjectManager
 @onready var board_texture: Sprite2D = $BoardTexture
 
@@ -32,17 +34,6 @@ func _process(_delta):
 	if state == STATE.SELECTION_BOX:
 		update_selection_rect()
 	queue_redraw()
-
-# Reset board
-
-func reset_board() -> void:
-	# Remove all game objects
-	for item in get_children():
-		item.queue_free()
-	await ready
-	selection_box = Rect2(0.0, 0.0, 0.0, 0.0)
-	selected_objects = []
-	stackable_item = null
 
 # Process functions
 
@@ -273,8 +264,12 @@ func get_border() -> Rect2:
 
 # Board Texture
 
-func set_board_texture(txtur: Texture2D) -> void:
-	board_texture.set_texture(txtur)
+func set_board_texture() -> void:
+	if board_texture_string == "" or Globals.get_current_game() == null:
+		board_texture.set_texture(null)
+		return
+	else:
+		board_texture.set_texture(Globals.get_current_game().images[board_texture_string])
 	board_texture.scale = (get_border().size) / board_texture.get_rect().size
 	board_texture.position = get_border().get_center()
 
