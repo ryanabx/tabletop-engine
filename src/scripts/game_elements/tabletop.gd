@@ -13,12 +13,11 @@ var piece_counter: int = 0
 
 @onready var board: GameBoard = $GameBoard
 
-func init_game(_game: GameConfig) -> void:
-	game = _game
+func _ready() -> void:
 	coordinate_scale = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
 	set_up_board_props()
-	build_board_objects()
 	edit_menu_bar()
+	build_board_objects()
 
 func edit_menu_bar():
 	var menu_bar: MenuBar = Globals.get_shared_tabletop_manager().user_interface.menu_bar

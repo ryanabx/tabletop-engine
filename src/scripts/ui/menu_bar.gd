@@ -8,6 +8,15 @@ func _ready() -> void:
 	file_menu()
 	view_menu()
 	options_menu()
+	multiplayer_menu()
+
+func multiplayer_menu() -> void:
+	var mplay_menu = PopupMenu.new()
+	mplay_menu.name = "Multiplayer"
+	mplay_menu.id_pressed.connect(multiplayer_pressed)
+	mplay_menu.add_item("Create Server", 0)
+	mplay_menu.add_item("Connect to Server", 1)
+	menu.add_child(mplay_menu)
 
 func new_game_loaded(max_players: int, action: Array) -> void:
 	if player != null:
@@ -41,18 +50,18 @@ func file_menu() -> void:
 	file.id_pressed.connect(file_pressed)
 	file.name = "File"
 	menu.add_child(file)
+	if multiplayer.is_server():
+		file.add_item("Load Config", 0)
+		file.add_item("Export Config", 3)
 
-	file.add_item("Load Config", 0)
-	file.add_item("Export Config", 3)
-
-	# Reset submenu
-	var reset_submenu: PopupMenu = PopupMenu.new()
-	reset_submenu.id_pressed.connect(file_pressed)
-	reset_submenu.name = "reset"
-	file.add_child(reset_submenu)
-	file.add_submenu_item("Reset", "reset", 1)
-	reset_submenu.add_item("Reset Tabletop", 10)
-	reset_submenu.add_item("Reset Camera", 11)
+		# Reset submenu
+		var reset_submenu: PopupMenu = PopupMenu.new()
+		reset_submenu.id_pressed.connect(file_pressed)
+		reset_submenu.name = "reset"
+		file.add_child(reset_submenu)
+		file.add_submenu_item("Reset", "reset", 1)
+		reset_submenu.add_item("Reset Tabletop", 10)
+		reset_submenu.add_item("Reset Camera", 11)
 	file.add_item("Exit to Title Screen", 2)
 	file.add_item("Exit Open Boardgame Framework", 4)
 
@@ -87,9 +96,40 @@ func set_player(index: int) -> void:
 func run_action(index: int) -> void:
 	Globals.get_shared_tabletop_manager().run_action(index)
 
+func multiplayer_pressed(id: int) -> void:
+	match id:
+		0: create_server()
+		1: connect_server()
+
+func create_server() -> void:
+	# Start as server.
+	var peer = ENetMultiplayerPeer.new()
+	peer.create_server(Globals.DEFAULT_PORT)
+	if peer.get_connection_status() == MultiplayerPeer.CONNECTION_DISCONNECTED:
+		OS.alert("Failed to start multiplayer server.")
+		return
+	multiplayer.multiplayer_peer = peer
+	OS.alert("Server created successfully!")
+	get_tree().reload_current_scene()
+
+func connect_server() -> void:
+	# Start as client.
+	var txt : String = '127.0.0.1'
+	if txt == "":
+		OS.alert("Need a remote to connect to.")
+		return
+	var peer = ENetMultiplayerPeer.new()
+	peer.create_client(txt, Globals.DEFAULT_PORT)
+	if peer.get_connection_status() == MultiplayerPeer.CONNECTION_DISCONNECTED:
+		OS.alert("Failed to start multiplayer client.")
+		return
+	multiplayer.multiplayer_peer = peer
+	OS.alert("Connected successfully!")
+	get_tree().reload_current_scene()
+
 func file_pressed(id: int) -> void:
 	match id:
-		0: load_config()
+		0: if multiplayer.is_server(): load_config()
 		3: export_config()
 		10: Globals.get_shared_tabletop_manager().load_game_config(Globals.get_current_game())
 		11: Globals.get_shared_tabletop_manager().camera_controller.reset_camera()

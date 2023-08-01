@@ -1,6 +1,6 @@
 extends Node2D
 
-var stack_scene = preload("res://src/scenes/game_elements/stack.tscn")
+var stack_scene = preload("res://src/scenes/game_elements/spawnables/stack.tscn")
 
 func _ready() -> void:
 	SignalManager.convert_to_stack.connect(convert_to_stack)

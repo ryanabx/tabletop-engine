@@ -39,3 +39,34 @@ static func config_validated(game: Dictionary) -> bool:
 		if not x in game:
 			return false
 	return true
+
+# Unpacks the data for sending over rpc
+func unpack_data() -> Dictionary:
+	var gc_d: Dictionary = {}
+	gc_d.name = self.name
+	gc_d.game_version = self.game_version
+	gc_d.board = self.board
+	gc_d.templates = self.templates
+	gc_d.objects = self.objects
+	gc_d.actions = self.actions
+	gc_d.player = self.player
+	gc_d.images = {}
+	for key in self.images.keys():
+		gc_d.images[key] = self.images[key].get_image().save_png_to_buffer()
+	return gc_d
+
+static func repack(gc_d: Dictionary) -> GameConfig:
+	var gc: GameConfig = GameConfig.new()
+	gc.name = gc_d.name
+	gc.game_version = gc_d.game_version
+	gc.board = gc_d.board
+	gc.templates = gc_d.templates
+	gc.objects = gc_d.objects
+	gc.actions = gc_d.actions
+	gc.player = gc_d.player
+	gc.images = {}
+	for key in gc_d.images.keys():
+		var img: Image = Image.new()
+		img.load_png_from_buffer(gc_d.images[key])
+		gc.images[key] = ImageTexture.create_from_image(img)
+	return gc

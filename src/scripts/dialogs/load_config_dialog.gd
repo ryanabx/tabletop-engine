@@ -7,8 +7,10 @@ func _ready() -> void:
 	filters = ["*.obf.res"]
 
 func _on_create_load_config() -> void:
+	dialog_text = "Load a config of your choice!"
 	popup()
 
 func _on_file_decided(fname: String) -> void:
 	Globals.get_shared_tabletop_manager().load_game_config(ResourceLoader.load(fname, ""))
+	dialog_text = ""
 

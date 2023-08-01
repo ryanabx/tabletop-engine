@@ -6,16 +6,29 @@ extends Node
 # Crucial base operation nodes
 @onready var user_interface: UserInterface = $UserInterfaceLayer/UserInterface
 @onready var camera_controller: CameraController = $CameraController
+@onready var dialogs: Node = $UserInterfaceLayer/Dialogs
+@onready var tabletop_spawner = $TabletopSpawner
+
+var current_game: String = ""
+
 
 func _ready() -> void:
 	Globals.set_shared_tabletop_manager(self)
 
 func load_game_config(gc: GameConfig) -> void:
 	await remove_tabletop()
-	var tt_new: Tabletop = tt_scene.instantiate()
-	add_child(tt_new)
-	Globals.set_current_tabletop(tt_new)
-	tt_new.init_game(gc)
+	if multiplayer.is_server():
+		current_game = gc.name
+		print("host_loaded_config")
+		tabletop_spawner.spawn(gc.unpack_data())
+	
+
+@rpc("any_peer", "call_remote")
+func host_loaded_config(game_name: String) -> void:
+	current_game = game_name
+	print("Host loaded config")
+	dialogs.get_node("ImportConfigFileOpen").title = str("Remote user has requested to play ",game_name,". Load the desired config here.")
+	dialogs.get_node("ImportConfigFileOpen").popup()
 
 func remove_tabletop() -> void:
 	if Globals.get_current_tabletop() != null:
@@ -27,7 +40,7 @@ func run_action(index: int) -> void:
 	var action: Array = Globals.get_current_game().actions[index].actions.duplicate(true)
 	for cmd in action:
 		await parse_command(cmd)
-	print("Action ",Globals.get_current_game().actions[index].name, " added to queue.")
+	print("Action ",Globals.get_current_game().actions[index].name, " parsed.")
 
 func parse_command(cmd: Dictionary) -> void:
 	var result: bool = true
