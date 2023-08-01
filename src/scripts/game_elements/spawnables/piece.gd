@@ -139,8 +139,9 @@ func remove_from_collection() -> bool:
 	return true
 
 func _process(_delta: float) -> void:
+	if multiplayer.is_server():
+		z_index = get_index()
 	state_label.text = state_to_string(get_state())
-	z_index = get_index()
 	update_texture()
 	queue_redraw()
 

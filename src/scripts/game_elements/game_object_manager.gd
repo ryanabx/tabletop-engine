@@ -60,9 +60,7 @@ func convert_to_stack(objects: Array):
 	print("Convert to stack")
 	if objects.is_empty():
 		return
-	var stack = stack_scene.instantiate()
-	stack.position = objects[0].position
-	add_child(stack)
+	var stack: ObjectStack = get_parent().get_node("GameObjectSpawner").spawn(GameObjectSpawner.make_stack_config(objects[0].position))
 	for object in objects:
 		if object.has_collection():
 			object.get_collection().remove_game_object(object)

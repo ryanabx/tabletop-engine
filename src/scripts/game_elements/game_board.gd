@@ -4,10 +4,11 @@ extends Node2D
 var border: Rect2 = Rect2(-640, -360, 1280, 720)
 const STACK_LERP: float = 0.8
 
-var stackable_item: GameObject = null
+
 var selected_objects: Array[String] = []
 var selection_box: Rect2 = Rect2(0.0, 0.0, 0.0, 0.0)
 var highlighted_piece: String = ""
+var stackable_item: String = ""
 
 var board_texture_string: String = ""
 
@@ -23,7 +24,8 @@ func _ready() -> void:
 	SignalManager.game_menu_destroy.connect(removed_game_menu)
 
 func _process(_delta):
-	highlighted_piece = get_overlapping_obj(get_local_mouse_position(), get_tree().get_nodes_in_group("piece")).get_name()
+	set_highlighted_piece(get_overlapping_obj(get_local_mouse_position(), get_tree().get_nodes_in_group("piece")))
+
 	if state in [STATE.MULTI, STATE.MULTI_DOWN] and (Input.is_action_just_pressed("game_select") or Input.is_action_just_pressed("game_select_stack")):
 		set_object_grab_offsets()
 	if (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")):
@@ -62,17 +64,23 @@ func move_selected_items() -> void:
 
 func over_item():
 	return stackable_item != null
+
+func get_stackable_item() -> GameObject:
+	return Utils.get_game_object(stackable_item)
 	
 func set_stackable_item(item: GameObject) -> void:
-	if over_item() and stackable_item != item:
-		stackable_item.dehighlight()
+	if over_item() and get_stackable_item() != item and get_stackable_item() != null:
+		get_stackable_item().dehighlight()
 	# If stack is permitted
 	if item and item.can_access(Player.get_id()) == false:
 		pass
 	else:
-		stackable_item = item
-	if over_item():
-		stackable_item.highlight()
+		if item == null:
+			stackable_item = ""
+		else:
+			stackable_item = item.get_name()
+	if over_item() and get_stackable_item() != null:
+		get_stackable_item().highlight()
 
 func find_stackable_object(objects: Array) -> Piece:
 	var game_objs: Array = get_tree().get_nodes_in_group("piece")
@@ -237,6 +245,12 @@ func selecting_collection(obj_selection: Piece) -> void:
 	if obj_selection.get_collection().get_permanence(): return
 	select_objects(obj_selection.get_collection().get_game_objects())
 
+func set_highlighted_piece(pc: Piece) -> void:
+	if pc == null:
+		highlighted_piece = ""
+	else:
+		highlighted_piece = pc.get_name()
+
 func get_highlighted_piece() -> Piece:
 	return Utils.get_game_object(highlighted_piece) as Piece
 
@@ -286,11 +300,12 @@ func select_objects(objects: Array) -> void:
 		selected_objects = []
 		return
 	if objects_selected():
+		selected_objects = []
 		for object in objects:
 			object.select()
 			object.rotation = Globals.get_shared_tabletop_manager().camera_controller.camera.rotation
+			selected_objects.append(object.get_name())
 		game_object_manager.move_objects_to_front(objects)
-		selected_objects = objects.duplicate()
 		set_object_grab_offsets()
 
 func initialize_selection_rect() -> void:
@@ -315,8 +330,8 @@ func get_overlapping_obj(point: Vector2, game_objects: Array) -> Piece:
 func has_selected_items() -> bool:
 	return not get_selected_items().is_empty()
 
-func get_selected_items() -> Array[Piece]:
-	return Utils.get_game_objects(selected_objects)
+func get_selected_items() -> Array:
+	return (Utils.get_game_objects(selected_objects) as Array[Piece])
 
 func release_selection() -> void:
 	# If over an item, stack objects to that item, then also deselect

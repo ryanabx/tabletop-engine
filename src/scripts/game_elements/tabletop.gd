@@ -1,17 +1,11 @@
 class_name Tabletop
 extends Node
 
-@onready var piece_scene: PackedScene = preload("res://src/scenes/game_elements/spawnables/piece.tscn")
-@onready var stack_scene: PackedScene = preload("res://src/scenes/game_elements/spawnables/stack.tscn")
-@onready var hand_scene: PackedScene = preload("res://src/scenes/game_elements/spawnables/hand.tscn")
-
-
 var game: GameConfig
 var coordinate_scale: Vector2
 
-var piece_counter: int = 0
-
 @onready var board: GameBoard = $GameBoard
+@onready var game_object_spawner: MultiplayerSpawner = $GameBoard/GameObjectSpawner
 
 func _ready() -> void:
 	coordinate_scale = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
@@ -59,7 +53,7 @@ func process_object(obj: Dictionary) -> void:
 			var t: int = 1
 			for key in obj["for"].keys():
 				var size = obj["for"][key].size()
-				repls[key] = obj["for"][key][(i/t) % size]
+				repls[key] = obj["for"][key][(floori(i as float/t)) % size]
 				t = t * size
 			var _o: Dictionary = make_object_dict(obj, repls)
 			new_object(_o)
@@ -78,65 +72,6 @@ func make_object_dict(original: Dictionary, repls: Dictionary) -> Dictionary:
 	
 func new_object(obj: Dictionary) -> void:
 	var amount: int = obj.repeat if "repeat" in obj else 1
-
+	obj.coordinate_scale = coordinate_scale
 	for i in range(amount):
-		if "type" not in obj:
-			print("Error: object does not contain a type")
-			break
-		match obj.type:
-			"piece":
-				new_piece(obj)
-			"stack":
-				new_collection(obj)
-			"hand":
-				new_collection(obj)
-			_:
-				print("Huh?")
-		piece_counter += 1
-
-func new_piece(obj: Dictionary) -> void:
-	var piece: Piece = piece_scene.instantiate()
-	if "name" in obj:
-		piece.add_to_group(obj.name)
-	piece.set_name(str("Piece_",piece_counter))
-	# Piece transforms
-	piece.position = Vector2(obj.position.x, obj.position.y) * coordinate_scale if "position" in obj else Vector2.ZERO
-	piece.rotation_degrees = obj.rotation if "rotation" in obj else 0.0
-	# Piece exclusives
-	piece.image_up_string = obj.image_up
-	piece.image_down_string = obj.image_down
-	piece.set_side(obj.face_up)
-	piece.set_sprite_scale(Vector2(obj.scale.x, obj.scale.y) * coordinate_scale if "scale" in obj else Vector2.ONE)
-	# Add child
-	if "collection" in obj:
-		var coll: GameCollection = (get_tree().get_nodes_in_group(obj.collection)[0] as GameCollection)
-		coll.add_game_object_to_top(piece)
-		piece.position = coll.position
-	board.game_object_manager.call_deferred("add_child",piece)
-
-func new_collection(obj: Dictionary) -> void:
-	var collection: GameCollection
-	match obj.type:
-		"hand": collection = hand_scene.instantiate()
-		"stack": collection = stack_scene.instantiate()
-		_: return
-	if "name" in obj:
-		collection.add_to_group(obj.name)
-	collection.set_name(str("Collection_",piece_counter))
-	# Collection transforms
-	collection.position = Vector2(obj.position.x, obj.position.y) * coordinate_scale if "position" in obj else Vector2.ZERO
-	collection.base_size = Vector2(obj.scale.x, obj.scale.y) * coordinate_scale if "scale" in obj else Vector2.ONE
-	collection._scale = Vector2(obj.scale.x, obj.scale.y) * coordinate_scale if "scale" in obj else Vector2.ONE
-	collection.rotation_degrees = obj.rotation if "rotation" in obj else 0.0
-	# Add child
-	board.game_object_manager.add_child(collection)
-	# Collection exclusives
-	if "permanent" in obj:
-		collection.permanent = obj.permanent
-	if "force_state" in obj:
-		collection.force_state = obj.force_state
-	if "view_perms" in obj:
-		collection.view_perms = obj.view_perms
-	if "access_perms" in obj:
-		collection.access_perms = obj.access_perms
-
+		game_object_spawner.spawn(obj)

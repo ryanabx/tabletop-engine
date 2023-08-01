@@ -51,8 +51,8 @@ func get_permanence() -> bool:
 func set_permanence(per: bool) -> void:
 	permanent = per
 
-func get_game_objects() -> Array[Piece]:
-	return Utils.get_game_objects(game_objects)
+func get_game_objects() -> Array:
+	return (Utils.get_game_objects(game_objects) as Array[Piece])
 
 func get_max_index() -> int:
 	var max_index: int = -1
