@@ -1,9 +1,9 @@
 class_name Tabletop
 extends Node
 
-@onready var piece_scene: PackedScene = preload("res://src/scenes/game_elements/piece.tscn")
-@onready var stack_scene: PackedScene = preload("res://src/scenes/game_elements/stack.tscn")
-@onready var hand_scene: PackedScene = preload("res://src/scenes/game_elements/hand.tscn")
+@onready var piece_scene: PackedScene = preload("res://src/scenes/game_elements/spawnables/piece.tscn")
+@onready var stack_scene: PackedScene = preload("res://src/scenes/game_elements/spawnables/stack.tscn")
+@onready var hand_scene: PackedScene = preload("res://src/scenes/game_elements/spawnables/hand.tscn")
 
 
 var game: GameConfig
