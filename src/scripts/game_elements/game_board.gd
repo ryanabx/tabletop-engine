@@ -2,9 +2,6 @@ class_name GameBoard
 extends Node2D
 
 var border: Rect2 = Rect2(-640, -360, 1280, 720)
-
-@onready var label: Label = $Label
-
 const STACK_LERP: float = 0.8
 
 var stackable_item: GameObject = null
@@ -35,7 +32,6 @@ func _process(_delta):
 	if state == STATE.SELECTION_BOX:
 		update_selection_rect()
 	queue_redraw()
-	label.text = str(state)
 
 # Reset board
 
@@ -200,8 +196,6 @@ func multi_select_up() -> bool:
 # Input management
 
 func process_input(input_actions: Dictionary) -> void:
-	if Globals.get_tabletop().camera_controller.in_free_cam():
-		return
 	# SELECTING OBJECTS
 	if Utils.just_long_held("game_select", input_actions) or Utils.just_long_held("game_select_stack", input_actions):
 		if state == STATE.MULTI and Utils.just_long_held("game_select", input_actions):
@@ -296,7 +290,7 @@ func select_objects(objects: Array) -> void:
 	if objects_selected():
 		for object in objects:
 			object.select()
-			object.rotation = Globals.get_tabletop().camera_controller.camera.rotation
+			object.rotation = Globals.get_shared_tabletop_manager().camera_controller.camera.rotation
 		game_object_manager.move_objects_to_front(objects)
 		selected_objects = objects.duplicate()
 		set_object_grab_offsets()

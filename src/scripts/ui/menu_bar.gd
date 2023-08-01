@@ -2,37 +2,38 @@ extends MenuBar
 
 @onready var menu: MenuBar = self
 @onready var player: PopupMenu
+@onready var actions: PopupMenu
 
-
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	file_menu()
 	view_menu()
 	options_menu()
-	player_menu()
-	actions_menu()
 
-func actions_menu() -> void:
-	if Globals.get_tabletop().game != null:
-		var actions: PopupMenu = PopupMenu.new()
-		actions.index_pressed.connect(run_action)
-		actions.name = "Actions"
-		if Globals.get_tabletop().game.actions != null:
-			for i in Globals.get_tabletop().game.actions:
-				actions.add_item(i.name)
-		menu.add_child(actions)
+func new_game_loaded(max_players: int, action: Array) -> void:
+	if player != null:
+		player.queue_free()
+		await player.tree_exited
+	if actions != null:
+		actions.queue_free()
+		await actions.tree_exited
+	player_menu(max_players)
+	actions_menu(action)
 
-func player_menu() -> void:
-	if Globals.get_tabletop().game != null:
-		player = PopupMenu.new()
-		player.index_pressed.connect(set_player)
-		player.name = str("Player ",Player.get_number())
-		if Globals.get_tabletop().game.player != null:
-			for i in range(Globals.get_tabletop().game.player.max):
-				player.add_item(str("Player ",i+1))
-		else:
-			print("Ugh")
-		menu.add_child(player)
+func actions_menu(action: Array) -> void:
+	actions = PopupMenu.new()
+	actions.index_pressed.connect(run_action)
+	actions.name = "Actions"
+	for i in action:
+		actions.add_item(i.name)
+	menu.add_child(actions)
+
+func player_menu(max_players: int) -> void:
+	player = PopupMenu.new()
+	player.index_pressed.connect(set_player)
+	player.name = str("Player ",Player.get_number())
+	for i in range(max_players):
+		player.add_item(str("Player ",i+1))
+	menu.add_child(player)
 		
 
 func file_menu() -> void:
@@ -82,28 +83,27 @@ func options_menu() -> void:
 func set_player(index: int) -> void:
 	Player.set_id(index)
 	player.name = str("Player ",Player.get_number())
-	Globals.get_tabletop().reset_camera()
 
 func run_action(index: int) -> void:
-	Globals.get_tabletop().run_action(index)
+	Globals.get_shared_tabletop_manager().run_action(index)
 
 func file_pressed(id: int) -> void:
 	match id:
 		0: load_config()
 		3: export_config()
-		10: Globals.get_tabletop().reset_tabletop()
-		11: Globals.get_tabletop().reset_camera()
+		10: Globals.get_shared_tabletop_manager().load_game_config(Globals.get_current_game())
+		11: Globals.get_shared_tabletop_manager().camera_controller.reset_camera()
 		2: get_tree().change_scene_to_file("res://src/scenes/pages/title_screen.tscn")
 		4: get_tree().quit()
 
 func view_pressed(id: int) -> void:
 	match id:
-		0: Globals.get_tabletop().reset_camera()
-		2: Globals.get_tabletop().camera_controller.set_camera_orientation(0)
-		3: Globals.get_tabletop().camera_controller.set_camera_orientation(90)
-		4: Globals.get_tabletop().camera_controller.set_camera_orientation(180)
-		5: Globals.get_tabletop().camera_controller.set_camera_orientation(270)
-		6: Globals.get_tabletop().camera_controller.snap_to_nearest_orientation()
+		0: Globals.get_shared_tabletop_manager().camera_controller.reset_camera()
+		2: Globals.get_shared_tabletop_manager().camera_controller.set_camera_orientation(0)
+		3: Globals.get_shared_tabletop_manager().camera_controller.set_camera_orientation(90)
+		4: Globals.get_shared_tabletop_manager().camera_controller.set_camera_orientation(180)
+		5: Globals.get_shared_tabletop_manager().camera_controller.set_camera_orientation(270)
+		6: Globals.get_shared_tabletop_manager().camera_controller.snap_to_nearest_orientation()
 
 func options_pressed(index: int) -> void:
 	match index:

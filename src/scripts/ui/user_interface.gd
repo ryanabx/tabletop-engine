@@ -1,20 +1,23 @@
 class_name UserInterface
 extends Control
 
-var coordinates_label: Label
-@onready var game_name_label: Label = $PanelContainer/MarginContainer/VBoxContainer/GameNameLabel
+var coordinates_labels: Array
+@onready var game_name_label: Label = $VBoxContainer/GameNameLabel
+@onready var menu_bar: MenuBar = $VBoxContainer/PanelContainer/HBoxContainer/MenuBar
 
 func _ready() -> void:
-	coordinates_label = Label.new()
-	add_child(coordinates_label)
+	coordinates_labels.append(Label.new())
+	add_child(coordinates_labels[0])
 
 func _process(_delta: float) -> void:
-	coordinates_label.position = get_local_mouse_position() + Vector2(20.0, -30.0)
-	var coordinates = Globals.get_tabletop().board.get_local_mouse_position()
-	coordinates_label.set_text(str(round(coordinates.x),",", round(coordinates.y)))
+	coordinates_labels[0].position = get_local_mouse_position() + Vector2(20.0, -30.0)
+	if Globals.get_current_tabletop() == null:
+		return
+	var coordinates = Globals.get_current_tabletop().board.get_local_mouse_position()
+	coordinates_labels[0].set_text(str(round(coordinates.x),",", round(coordinates.y)))
 	
-	if Globals.get_tabletop().game != null:
-		game_name_label.text = "Current Game: " + Globals.get_tabletop().game.name
+	if Globals.get_current_game() != null:
+		game_name_label.text = "Current Game: " + Globals.get_current_game().name
 	else:
-		game_name_label.text = "Current Game: Untitled"
+		game_name_label.text = "No Game Loaded"
 	queue_redraw()

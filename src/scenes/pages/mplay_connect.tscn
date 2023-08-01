@@ -32,9 +32,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 50
-theme_override_constants/margin_top = 0
+theme_override_constants/margin_top = 50
 theme_override_constants/margin_right = 50
-theme_override_constants/margin_bottom = 0
+theme_override_constants/margin_bottom = 50
 
 [node name="Columns" type="HBoxContainer" parent="Margins"]
 layout_mode = 2
@@ -79,5 +79,10 @@ layout_mode = 2
 size_flags_vertical = 3
 auto_height = true
 
+[node name="GoButton" type="Button" parent="Margins/Columns/ServerColumn"]
+layout_mode = 2
+text = "Go to Tabletop"
+
 [connection signal="pressed" from="Margins/Columns/ServerColumn/CreateServer" to="." method="_on_create_server_pressed"]
 [connection signal="pressed" from="Margins/Columns/ServerColumn/ConnectRow/ConnectServer" to="." method="_on_connect_server_pressed"]
+[connection signal="pressed" from="Margins/Columns/ServerColumn/GoButton" to="." method="_on_go_button_pressed"]

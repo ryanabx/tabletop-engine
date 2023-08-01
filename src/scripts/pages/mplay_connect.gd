@@ -48,3 +48,6 @@ func _on_connect_server_pressed() -> void:
 		return
 	multiplayer.multiplayer_peer = peer
 	print("Connected successfully!")
+
+func _on_go_button_pressed() -> void:
+	get_tree().change_scene_to_file("res://src/scenes/pages/tabletop_manager.tscn")

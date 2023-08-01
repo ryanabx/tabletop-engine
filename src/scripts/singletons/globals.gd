@@ -6,6 +6,12 @@ extends Node
 const DEFAULT_PORT: int = 23698
 const DEFAULT_MAX_PLAYERS: int = 4
 
+# GAME MODE
+
+enum GAME_MODE {SINGLEPLAYER, MULTIPLAYER}
+
+var game_mode: GAME_MODE = GAME_MODE.SINGLEPLAYER
+
 # THEMING GLOBALS
 
 const BASE_SCALE: float = 1.0
@@ -29,6 +35,10 @@ const OBJECT_HIGHLIGHT_COLOR: Color = Color.WHITE
 const GAME_VERSION: String = "0.0.1"
 const CURRENT_API_VERSION: int = 1
 
+var current_tabletop: Tabletop = null
+
+var tabletop_manager: TabletopManager = null
+
 # COLORS
 
 const COLOR_TRANSPARENT_HIGHLIGHT = Color(1.0, 1.0, 1.0, 0.2)
@@ -41,8 +51,20 @@ const COLOR_SELECTION_BOX: Color = COLOR_SELECTION_BOX_BORDER * COLOR_TRANSPAREN
 func _input(event: InputEvent) -> void:
     if event.is_action_pressed("ui_exit_fullscreen") and DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
         DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+    
+func set_current_tabletop(tabletop: Tabletop) -> void:
+    current_tabletop = tabletop
 
-func get_tabletop() -> TabletopManager:
-    if not has_node("/root/TabletopManager"):
+func get_current_tabletop() -> Tabletop:
+    return current_tabletop
+
+func set_shared_tabletop_manager(tt: TabletopManager) -> void:
+    tabletop_manager = tt
+
+func get_shared_tabletop_manager() -> TabletopManager:
+    return tabletop_manager
+
+func get_current_game():
+    if current_tabletop == null:
         return null
-    return get_node("/root/TabletopManager") as TabletopManager
+    return current_tabletop.game
