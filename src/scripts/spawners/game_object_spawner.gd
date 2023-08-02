@@ -2,8 +2,7 @@ class_name GameObjectSpawner
 extends MultiplayerSpawner
 
 @onready var piece_scene: PackedScene = preload("res://src/scenes/game_elements/spawnables/piece.tscn")
-@onready var stack_scene: PackedScene = preload("res://src/scenes/game_elements/spawnables/stack.tscn")
-@onready var hand_scene: PackedScene = preload("res://src/scenes/game_elements/spawnables/hand.tscn")
+@onready var collection_scene: PackedScene = preload("res://src/scenes/game_elements/spawnables/collection.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -39,16 +38,16 @@ func new_piece(obj: Dictionary, coordinate_scale: Vector2, id: int) -> Piece:
 	piece.set_sprite_scale(Vector2(obj.scale.x, obj.scale.y) * coordinate_scale if "scale" in obj else Vector2.ONE)
 	# Add child
 	if "collection" in obj:
-		var coll: GameCollection = (get_tree().get_nodes_in_group(obj.collection)[0] as GameCollection)
+		var coll: Collection = (get_tree().get_nodes_in_group(obj.collection)[0] as Collection)
 		coll.add_game_object_to_top(piece)
 		piece.position = coll.position
 	return piece
 
-func new_collection(obj: Dictionary, coordinate_scale: Vector2, id: int) -> GameCollection:
-	var collection: GameCollection
+func new_collection(obj: Dictionary, coordinate_scale: Vector2, id: int) -> Collection:
+	var collection: Collection = collection_scene.instantiate()
 	match obj.type:
-		"hand": collection = hand_scene.instantiate()
-		"stack": collection = stack_scene.instantiate()
+		"hand": collection.type = Collection.TYPE.HAND
+		"stack": collection.type = Collection.TYPE.STACK
 		_: return
 	if "name" in obj:
 		collection.add_to_group(obj.name)

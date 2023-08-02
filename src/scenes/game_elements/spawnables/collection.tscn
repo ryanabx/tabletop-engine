@@ -1,8 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://q7dp4mi8d54d"]
+[gd_scene load_steps=2 format=3 uid="uid://4pj1clsajn5t"]
 
-[ext_resource type="Script" path="res://src/scripts/game_elements/spawnables/hand.gd" id="1_8x60w"]
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_qqsng"]
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_t4g10"]
 properties/0/path = NodePath(".:_scale")
 properties/0/spawn = true
 properties/0/sync = false
@@ -44,8 +42,7 @@ properties/9/spawn = true
 properties/9/sync = false
 properties/9/watch = true
 
-[node name="Hand" type="Node2D" groups=["hands"]]
-script = ExtResource("1_8x60w")
+[node name="Collection" type="Node2D"]
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_qqsng")
+replication_config = SubResource("SceneReplicationConfig_t4g10")

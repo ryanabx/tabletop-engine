@@ -1,6 +1,6 @@
 extends Node2D
 
-var stack_scene = preload("res://src/scenes/game_elements/spawnables/stack.tscn")
+var stack_scene = preload("res://src/scenes/game_elements/spawnables/collection.tscn")
 
 func _ready() -> void:
 	SignalManager.convert_to_stack.connect(convert_to_stack)
@@ -24,14 +24,14 @@ func _on_items_to_front(objects: Array) -> void:
 func move_item_to_front(item: GameObject) -> void:
 	if item is Piece:
 		move_objects_to_front([item])
-	elif item is GameCollection:
-		move_objects_to_front((item as GameCollection).get_game_objects())
+	elif item is Collection:
+		move_objects_to_front((item as Collection).get_game_objects())
 
 func move_item_to_back(item: GameObject) -> void:
 	if item is Piece:
 		move_objects_to_back([item])
-	elif item is GameCollection:
-		move_objects_to_back((item as GameCollection).get_game_objects())
+	elif item is Collection:
+		move_objects_to_back((item as Collection).get_game_objects())
 
 func move_objects_to_back(objects: Array) -> void:
 	for object in objects:
@@ -48,8 +48,8 @@ func stack_objects_to_item(objects: Array, item: String) -> void:
 	var g_objects: Array[GameObject] = Utils.get_game_objects(objects)
 	Utils.rpc("gain_control_over_objects", multiplayer.get_unique_id(), objects + [item])
 	print("Stacking object to item")
-	if g_item is GameCollection:
-		stack_objects_to_collection(g_objects, g_item as GameCollection)
+	if g_item is Collection:
+		stack_objects_to_collection(g_objects, g_item as Collection)
 	elif g_item is Piece:
 		convert_to_stack([g_item] + g_objects)
 
@@ -57,7 +57,7 @@ func convert_to_stack(objects: Array):
 	print("Convert to stack")
 	if objects.is_empty():
 		return
-	var stack: ObjectStack = get_parent().get_node("GameObjectSpawner").spawn(GameObjectSpawner.make_stack_config(objects[0].position))
+	var stack: Collection = get_parent().get_node("GameObjectSpawner").spawn(GameObjectSpawner.make_stack_config(objects[0].position))
 	stack.set_permanence(false)
 	for object in objects:
 		if object.has_collection():
@@ -65,7 +65,7 @@ func convert_to_stack(objects: Array):
 		stack.add_game_object_to_top(object)
 		object.position = stack.position
 	
-func stack_objects_to_collection(objects: Array, collection: GameCollection) -> void:
+func stack_objects_to_collection(objects: Array, collection: Collection) -> void:
 	print("Stack objects to collection")
 	for object in objects:
 		if object.has_collection():

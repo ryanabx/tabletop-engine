@@ -55,7 +55,7 @@ func move_selected_items() -> void:
 		object.position = get_local_mouse_position() + object.get_grab_offset()
 		object.position = object.position.clamp(border.position, border.end)
 	# CHECK STACKING
-	var stackable_collection: GameCollection = find_stackable_collection(get_selected_items())
+	var stackable_collection: Collection = find_stackable_collection(get_selected_items())
 	if stackable_collection == null:
 		var stackable_object: Piece = find_stackable_object(get_selected_items())
 		set_stackable_item(stackable_object)
@@ -96,9 +96,9 @@ func find_stackable_object(objects: Array) -> Piece:
 				best_object = object
 	return best_object
 
-func find_stackable_collection(objects: Array) -> GameCollection:
+func find_stackable_collection(objects: Array) -> Collection:
 	var collections: Array = get_tree().get_nodes_in_group("collections")
-	var best_object: GameCollection = null
+	var best_object: Collection = null
 	var best_dist: float = 0.0
 	var ref_position = get_local_mouse_position()
 	for collection in collections:
@@ -354,7 +354,7 @@ func objects_not_in_collection(objects: Array) -> bool:
 			return false
 	return true
 
-func collection_overlaps_point(collection: GameCollection, point: Vector2) -> bool:
+func collection_overlaps_point(collection: Collection, point: Vector2) -> bool:
 	return collection.get_extents().has_point(point)
 
 func object_overlaps_point(object: Piece, point: Vector2):

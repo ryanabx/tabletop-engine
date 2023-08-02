@@ -117,8 +117,8 @@ func _on_clicked_from_object_group(id: int) -> void:
 
 func _shuffle_collection() -> void:
 	for object in object_group:
-		if object is GameCollection:
-			(object as GameCollection).shuffle()
+		if object is Collection:
+			(object as Collection).shuffle()
 
 func _flip_selected_objects() -> void:
 	print("Flip objects")

@@ -73,7 +73,7 @@ func get_stack_rect() -> Rect2:
 func has_collection() -> bool:
 	return collection != ""
 
-func get_collection() -> GameCollection:
+func get_collection() -> Collection:
 	return Utils.get_game_object(collection)
 
 func set_state(state: STATE) -> bool:
@@ -127,7 +127,7 @@ func deselect() -> void:
 		_:
 			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (deselect).")
 
-func put_in_collection(coll: GameCollection) -> bool:
+func put_in_collection(coll: Collection) -> bool:
 	if not has_collection():
 		collection = coll.get_name()
 		return true
