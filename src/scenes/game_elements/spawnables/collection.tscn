@@ -1,4 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://4pj1clsajn5t"]
+[gd_scene load_steps=3 format=3 uid="uid://4pj1clsajn5t"]
+
+[ext_resource type="Script" path="res://src/scripts/game_elements/spawnables/collection.gd" id="1_tmoqe"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_t4g10"]
 properties/0/path = NodePath(".:_scale")
@@ -43,6 +45,7 @@ properties/9/sync = false
 properties/9/watch = true
 
 [node name="Collection" type="Node2D"]
+script = ExtResource("1_tmoqe")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_t4g10")
