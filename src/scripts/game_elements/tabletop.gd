@@ -74,4 +74,6 @@ func new_object(obj: Dictionary) -> void:
 	var amount: int = obj.repeat if "repeat" in obj else 1
 	obj.coordinate_scale = coordinate_scale
 	for i in range(amount):
+		obj.id = Globals.piece_id
 		game_object_spawner.spawn(obj)
+		Globals.piece_id += 1

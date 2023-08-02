@@ -305,6 +305,7 @@ func select_objects(objects: Array) -> void:
 			object.select()
 			object.rotation = Globals.get_shared_tabletop_manager().camera_controller.camera.rotation
 			selected_objects.append(object.get_name())
+		Utils.rpc("gain_control_over_objects", multiplayer.get_unique_id(), selected_objects)
 		game_object_manager.move_objects_to_front(objects)
 		set_object_grab_offsets()
 
@@ -328,7 +329,7 @@ func get_overlapping_obj(point: Vector2, game_objects: Array) -> Piece:
 	return best
 
 func has_selected_items() -> bool:
-	return not get_selected_items().is_empty()
+	return not selected_objects.is_empty()
 
 func get_selected_items() -> Array:
 	return (Utils.get_game_objects(selected_objects) as Array[Piece])
@@ -336,7 +337,7 @@ func get_selected_items() -> Array:
 func release_selection() -> void:
 	# If over an item, stack objects to that item, then also deselect
 	if over_item():
-		game_object_manager.rpc("stack_objects_to_item",selected_objects, stackable_item)
+		game_object_manager.stack_objects_to_item(selected_objects, stackable_item)
 		set_stackable_item(null)
 		deselect_objects()
 	elif state == STATE.DOWN:

@@ -12,6 +12,9 @@ enum GAME_MODE {SINGLEPLAYER, MULTIPLAYER}
 
 var game_mode: GAME_MODE = GAME_MODE.SINGLEPLAYER
 
+var piece_id: int = 0
+var collection_id: int = 0
+
 # THEMING GLOBALS
 
 const BASE_SCALE: float = 1.0
@@ -49,22 +52,22 @@ const COLOR_SELECTION_BOX_BORDER: Color = Color.BLUE
 const COLOR_SELECTION_BOX: Color = COLOR_SELECTION_BOX_BORDER * COLOR_TRANSPARENT_HIGHLIGHT
 
 func _input(event: InputEvent) -> void:
-    if event.is_action_pressed("ui_exit_fullscreen") and DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
-        DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-    
+	if event.is_action_pressed("ui_exit_fullscreen") and DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+	
 func set_current_tabletop(tabletop: Tabletop) -> void:
-    current_tabletop = tabletop
+	current_tabletop = tabletop
 
 func get_current_tabletop() -> Tabletop:
-    return current_tabletop
+	return current_tabletop
 
 func set_shared_tabletop_manager(tt: TabletopManager) -> void:
-    tabletop_manager = tt
+	tabletop_manager = tt
 
 func get_shared_tabletop_manager() -> TabletopManager:
-    return tabletop_manager
+	return tabletop_manager
 
 func get_current_game():
-    if current_tabletop == null:
-        return null
-    return current_tabletop.game
+	if current_tabletop == null:
+		return null
+	return current_tabletop.game

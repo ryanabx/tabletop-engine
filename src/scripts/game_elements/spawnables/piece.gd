@@ -13,6 +13,8 @@ var grab_offset: Vector2 = Vector2.ZERO
 
 var collection: String = ""
 
+@onready var multiplayer_synchronizer: MultiplayerSynchronizer = $PieceSynchronizer
+
 var face_up: bool = true
 
 var image_up_string: String = ""
@@ -69,13 +71,10 @@ func get_stack_rect() -> Rect2:
 	return _sprite.get_rect() * stack_transform
 
 func has_collection() -> bool:
-	return collection != "" and get_node(str("../",collection)) != null
+	return collection != ""
 
 func get_collection() -> GameCollection:
-	var coll: GameCollection = get_node(str("../",collection))
-	if coll == null:
-		remove_from_collection()
-	return coll
+	return Utils.get_game_object(collection)
 
 func set_state(state: STATE) -> bool:
 	_state = state
@@ -111,7 +110,10 @@ func set_side(sd: bool) -> void:
 func get_side() -> bool:
 	return face_up
 
+
 func select() -> void:
+	Utils.rpc("gain_control_over_objects", multiplayer.get_unique_id(), [self.get_name()])
+	print("Selecting object!")
 	match get_state():
 		STATE.IDLE:
 			set_state(STATE.SELECTED)
@@ -139,7 +141,7 @@ func remove_from_collection() -> bool:
 	return true
 
 func _process(_delta: float) -> void:
-	if multiplayer.is_server():
+	if is_multiplayer_authority():
 		z_index = get_index()
 	state_label.text = state_to_string(get_state())
 	update_texture()

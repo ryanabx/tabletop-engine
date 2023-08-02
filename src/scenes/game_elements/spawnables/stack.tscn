@@ -1,16 +1,16 @@
-[gd_scene load_steps=4 format=3 uid="uid://k6m1ejdf3ttb"]
+[gd_scene load_steps=3 format=3 uid="uid://k6m1ejdf3ttb"]
 
 [ext_resource type="Script" path="res://src/scripts/game_elements/spawnables/stack.gd" id="1_b7ey6"]
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_jthx2"]
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_fnl53"]
 properties/0/path = NodePath(".:_scale")
 properties/0/spawn = true
-properties/0/sync = true
-properties/0/watch = false
+properties/0/sync = false
+properties/0/watch = true
 properties/1/path = NodePath(".:base_size")
 properties/1/spawn = true
-properties/1/sync = true
-properties/1/watch = false
+properties/1/sync = false
+properties/1/watch = true
 properties/2/path = NodePath(".:permanent")
 properties/2/spawn = true
 properties/2/sync = false
@@ -39,18 +39,13 @@ properties/8/path = NodePath(".:z_index")
 properties/8/spawn = true
 properties/8/sync = true
 properties/8/watch = false
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_6t4fy"]
-properties/0/path = NodePath(".:game_objects")
-properties/0/spawn = true
-properties/0/sync = false
-properties/0/watch = true
+properties/9/path = NodePath(".:game_objects")
+properties/9/spawn = true
+properties/9/sync = false
+properties/9/watch = true
 
 [node name="ObjectStack" type="Node2D"]
 script = ExtResource("1_b7ey6")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_jthx2")
-
-[node name="MultiplayerSynchronizer2" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_6t4fy")
+replication_config = SubResource("SceneReplicationConfig_fnl53")

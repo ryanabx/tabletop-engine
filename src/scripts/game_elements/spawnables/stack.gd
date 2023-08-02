@@ -2,7 +2,8 @@ class_name ObjectStack
 extends GameCollection
 
 func _update_objects() -> void:
-	super._update_objects()
+	if not is_multiplayer_authority():
+		return
 	var larg_x: float = 0
 	var larg_y: float = 0
 	
@@ -12,6 +13,9 @@ func _update_objects() -> void:
 		position = get_game_objects()[-1].position
 	
 	for obj in get_game_objects():
+		if Utils.get_game_object(obj.collection) != self:
+			remove_game_object(obj)
+			continue
 		if force_state is bool:
 			obj.set_side(force_state as bool)
 		obj.position = position

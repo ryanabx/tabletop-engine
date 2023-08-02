@@ -42,14 +42,11 @@ func move_objects_to_front(objects: Array) -> void:
 		move_child(object, -1)
 
 # Stacking functions
-
-@rpc("any_peer", "call_local", "reliable")
 func stack_objects_to_item(objects: Array, item: String) -> void:
-	if not multiplayer.is_server(): return
 	var g_item: GameObject = Utils.get_game_object(item)
 	if g_item == null: return
 	var g_objects: Array[GameObject] = Utils.get_game_objects(objects)
-	
+	Utils.rpc("gain_control_over_objects", multiplayer.get_unique_id(), objects + [item])
 	print("Stacking object to item")
 	if g_item is GameCollection:
 		stack_objects_to_collection(g_objects, g_item as GameCollection)
@@ -61,11 +58,11 @@ func convert_to_stack(objects: Array):
 	if objects.is_empty():
 		return
 	var stack: ObjectStack = get_parent().get_node("GameObjectSpawner").spawn(GameObjectSpawner.make_stack_config(objects[0].position))
+	stack.set_permanence(false)
 	for object in objects:
 		if object.has_collection():
 			object.get_collection().remove_game_object(object)
-		stack.add_game_object_special(object)
-		stack.set_permanence(false)
+		stack.add_game_object_to_top(object)
 		object.position = stack.position
 	
 func stack_objects_to_collection(objects: Array, collection: GameCollection) -> void:

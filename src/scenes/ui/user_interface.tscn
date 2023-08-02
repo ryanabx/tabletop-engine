@@ -34,5 +34,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_fos3n")
 
+[node name="FPSCounter" type="Label" parent="VBoxContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+
 [node name="GameNameLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2

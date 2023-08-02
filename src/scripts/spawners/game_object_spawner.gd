@@ -5,12 +5,9 @@ extends MultiplayerSpawner
 @onready var stack_scene: PackedScene = preload("res://src/scenes/game_elements/spawnables/stack.tscn")
 @onready var hand_scene: PackedScene = preload("res://src/scenes/game_elements/spawnables/hand.tscn")
 
-var piece_id: int = 0
-var collection_id: int = 0
-
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	set_spawn_function(spawn_game_object)
+	set_spawn_function(Callable(self, "spawn_game_object"))
 
 func spawn_game_object(obj: Dictionary) -> GameObject:
 	if "type" not in obj:
@@ -18,21 +15,20 @@ func spawn_game_object(obj: Dictionary) -> GameObject:
 		return piece_scene.instantiate()
 	match obj.type:
 		"piece":
-			return new_piece(obj, obj.coordinate_scale)
+			return new_piece(obj, obj.coordinate_scale, obj.id)
 		"stack":
-			return new_collection(obj, obj.coordinate_scale)
+			return new_collection(obj, obj.coordinate_scale, obj.id)
 		"hand":
-			return new_collection(obj, obj.coordinate_scale)
+			return new_collection(obj, obj.coordinate_scale, obj.id)
 		_:
 			print("Huh?")
 			return piece_scene.instantiate()
 
-func new_piece(obj: Dictionary, coordinate_scale: Vector2) -> Piece:
+func new_piece(obj: Dictionary, coordinate_scale: Vector2, id: int) -> Piece:
 	var piece: Piece = piece_scene.instantiate()
 	if "name" in obj:
 		piece.add_to_group(obj.name)
-	piece.set_name(str("Piece_",piece_id))
-	piece_id += 1
+	piece.set_name(str("Piece_",id))
 	# Piece transforms
 	piece.position = Vector2(obj.position.x, obj.position.y) * coordinate_scale if "position" in obj else Vector2.ZERO
 	piece.rotation_degrees = obj.rotation if "rotation" in obj else 0.0
@@ -48,7 +44,7 @@ func new_piece(obj: Dictionary, coordinate_scale: Vector2) -> Piece:
 		piece.position = coll.position
 	return piece
 
-func new_collection(obj: Dictionary, coordinate_scale: Vector2) -> GameCollection:
+func new_collection(obj: Dictionary, coordinate_scale: Vector2, id: int) -> GameCollection:
 	var collection: GameCollection
 	match obj.type:
 		"hand": collection = hand_scene.instantiate()
@@ -56,8 +52,7 @@ func new_collection(obj: Dictionary, coordinate_scale: Vector2) -> GameCollectio
 		_: return
 	if "name" in obj:
 		collection.add_to_group(obj.name)
-	collection.set_name(str("Collection_",collection_id))
-	collection_id += 1
+	collection.set_name(str("Collection_",id))
 	# Collection transforms
 	collection.position = Vector2(obj.position.x, obj.position.y) * coordinate_scale if "position" in obj else Vector2.ZERO
 	collection.base_size = Vector2(obj.scale.x, obj.scale.y) * coordinate_scale if "scale" in obj else Vector2.ONE
@@ -76,6 +71,7 @@ func new_collection(obj: Dictionary, coordinate_scale: Vector2) -> GameCollectio
 
 static func make_stack_config(position: Vector2) -> Dictionary:
 	var obj: Dictionary = {
+		"id": Globals.piece_id,
 		"coordinate_scale": Vector2.ONE,
 		"type": "stack",
 		"position": {
@@ -83,4 +79,5 @@ static func make_stack_config(position: Vector2) -> Dictionary:
 			"y": position.y
 		}
 	}
+	Globals.piece_id += 1
 	return obj

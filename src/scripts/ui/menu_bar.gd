@@ -109,7 +109,7 @@ func create_server() -> void:
 		OS.alert("Failed to start multiplayer server.")
 		return
 	multiplayer.multiplayer_peer = peer
-	OS.alert("Server created successfully!")
+	print("Server created successfully!")
 	get_tree().reload_current_scene()
 
 func connect_server() -> void:
@@ -124,7 +124,7 @@ func connect_server() -> void:
 		OS.alert("Failed to start multiplayer client.")
 		return
 	multiplayer.multiplayer_peer = peer
-	OS.alert("Connected successfully!")
+	print("Connected successfully!")
 	get_tree().reload_current_scene()
 
 func file_pressed(id: int) -> void:

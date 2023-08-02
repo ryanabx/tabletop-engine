@@ -1,7 +1,7 @@
 class_name GameCollection
 extends GameObject
 
-var game_objects: Array[String] = []
+var game_objects: Array = []
 var _scale: Vector2 = Vector2.ZERO
 
 var base_size: Vector2 = Vector2.ZERO
@@ -128,7 +128,8 @@ func shuffle() -> void:
 	get_game_objects().shuffle()	
 
 func _process(_delta: float) -> void:
-	_update_objects()
+	if is_multiplayer_authority():
+		_update_objects()
 	label.set_text(str(get_num_objects()))
 	label.position = get_rect().position
 	queue_redraw()
