@@ -50,16 +50,24 @@ func flip_objects(objects: Array) -> void:
 		else:
 			object.flip()
 
-func objects_to_string(objects: Array) -> Array:
+func objects_to_string(arr: Array) -> Array[String]:
 	var res: Array[String] = []
-	for obj in objects:
-		res.append(obj.name)
+
+	for a in arr:
+		res.append(a.get_name())
+	return res
+
+func string_to_objects(arr: Array[String]) -> Array:
+	var res: Array = []
+
+	for a in arr:
+		res.append(get_node(a))
 	return res
 
 @rpc("any_peer", "call_local", "reliable")
 func gain_control_over_objects(id: int, objects: Array) -> void:
 	for obj in objects:
-		get_tree().get_first_node_in_group(obj).set_multiplayer_authority(id)
+		get_node(obj).set_multiplayer_authority(id)
 
 # Stacking functions
 func stack_objects_to_item(objects: Array[GameObject], item: GameObject) -> void:
@@ -74,7 +82,7 @@ func convert_to_stack(objects: Array):
 	print("Convert to stack")
 	if objects.is_empty():
 		return
-	var stack: Collection = get_parent().get_node("GameObjectSpawner").spawn(GameObjectSpawner.make_stack_config(objects[0].position))
+	var stack: Collection = get_node("../GameObjectSpawner").spawn(GameObjectSpawner.make_stack_config(objects[0].position))
 	stack.permanent = false
 	for object in objects:
 		if object.has_collection():

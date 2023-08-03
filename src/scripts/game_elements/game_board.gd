@@ -101,7 +101,7 @@ func find_stackable_collection(objects: Array) -> Collection:
 	var best_object: Collection = null
 	var best_dist: float = 0.0
 	var ref_position = get_local_mouse_position()
-	var objects_str: Array[String] = Utils.objects_to_string(objects)
+	var objects_str: Array[String] = game_object_manager.objects_to_string(objects)
 	for collection in collections:
 		if Utils.has_any(collection.get_game_objects(), objects_str):
 			continue
@@ -223,7 +223,7 @@ func check_selecting_obj(input_actions: Dictionary) -> void:
 
 func selecting_piece(obj_selection: Piece) -> void:
 	if state == STATE.NONE and obj_selection.has_collection():
-		print("Removing object from collection")
+		print("Removing object ", obj_selection.get_name(), " from collection ",obj_selection.get_collection_obj().get_name())
 		obj_selection.get_collection_obj().remove_game_object(obj_selection)
 	select_objects([obj_selection])
 

@@ -10,7 +10,7 @@ var force_state = null
 
 var game_objects: Array[String] = []
 
-var g_objs_changed = false
+var game_objects_changed: bool = false
 
 var prev_list: Array = []
 
@@ -81,7 +81,7 @@ func add_game_object_special(obj: Piece) -> void:
 func add_game_object_special_hand(obj: Piece) -> void:
 	var i: int = 0
 	for a in range(get_num_objects()):
-		var o: Piece = get_tree().get_first_node_in_group(get_game_objects()[a])
+		var o: Piece = get_node(str('../',get_game_objects()[a]))
 		if to_local(obj.position).x < o.position.x:
 			break
 		i = i + 1
@@ -97,6 +97,7 @@ func insert_game_object(obj: Piece, index: int) -> void:
 
 	game_objects.insert(index, obj.get_name())
 	obj.collection = self.get_name()
+	game_objects_changed = true
 
 ## Removes a particular object from the collection
 func remove_game_object(obj: Piece) -> void:
@@ -106,22 +107,23 @@ func remove_game_object(obj: Piece) -> void:
 	print("Removing ",obj.get_name())
 	obj.collection = ""
 	game_objects.erase(obj.get_name())
+	game_objects_changed = true
 	
 	if not permanent:
 		if get_num_objects() == 1:
-			get_tree().get_first_node_in_group(get_game_objects()[0]).collection = ""
+			get_node(str('../',get_game_objects()[0])).collection = ""
 			queue_free()
 		elif get_num_objects() == 0:
 			queue_free()
 
 func flip() -> void:
 	for obj in get_game_objects():
-		var g: Piece = get_tree().get_first_node_in_group(obj)
+		var g: Piece = get_node(str('../',obj))
 		g.flip()
 
 func set_side(side: bool) -> void:
 	for obj in get_game_objects():
-		var g: Piece = get_tree().get_first_node_in_group(obj)
+		var g: Piece = get_node(str('../',obj))
 		g.set_side(side)
 
 func shuffle() -> void:
@@ -130,8 +132,10 @@ func shuffle() -> void:
 func _process(_delta: float) -> void:
 	label.set_text(str(get_num_objects()))
 	label.position = get_rect().position
-	if is_multiplayer_authority():
+	if is_multiplayer_authority() and game_objects_changed:
+		print(get_name())
 		rpc("refresh_game_objects",game_objects)
+		game_objects_changed = false
 	queue_redraw()
 
 func _draw() -> void:

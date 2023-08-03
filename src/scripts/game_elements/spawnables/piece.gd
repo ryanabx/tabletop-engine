@@ -139,7 +139,7 @@ func _process(_delta: float) -> void:
 	queue_redraw()
 
 func get_collection_obj() -> Collection:
-	return get_tree().get_first_node_in_group(get_collection())
+	return get_node(str('../',get_collection()))
 
 func update_position_in_collection() -> void:
 	var c: Collection = get_collection_obj()
