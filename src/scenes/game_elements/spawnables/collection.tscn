@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://4pj1clsajn5t"]
+[gd_scene load_steps=6 format=3 uid="uid://4pj1clsajn5t"]
 
 [ext_resource type="Script" path="res://src/scripts/game_elements/spawnables/collection.gd" id="1_tmoqe"]
 [ext_resource type="Script" path="res://src/scripts/game_elements/spawnables/game_object_list.gd" id="2_gi2hn"]
+[ext_resource type="Script" path="res://src/scripts/spawners/piece_spawner.gd" id="3_rxlsv"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_debqy"]
 properties/0/path = NodePath(".:base_collection_size")
@@ -50,3 +51,7 @@ replication_config = SubResource("SceneReplicationConfig_debqy")
 
 [node name="SyncTransform" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_p0uhy")
+
+[node name="PieceSpawner" type="MultiplayerSpawner" parent="."]
+spawn_path = NodePath("../GameObjects")
+script = ExtResource("3_rxlsv")

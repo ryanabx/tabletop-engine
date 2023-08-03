@@ -9,6 +9,9 @@ var permanent: bool = true
 var force_state = null
 
 @onready var game_objects: GameObjectList = $GameObjects
+@onready var piece_spawner: PieceSpawner = $PieceSpawner
+
+var prev_list: Array = []
 
 enum TYPE {
 	STACK, HAND
@@ -30,6 +33,9 @@ const LABEL_OPACITY = 0.6
 
 func _ready() -> void:
 	add_to_group("collections")
+	_ready_create_number_label()
+
+func _ready_create_number_label() -> void:
 	label = Label.new()
 	label.modulate.a = 0.6
 	label.z_index = 1000
@@ -52,6 +58,10 @@ func get_game_objects() -> Array:
 func get_num_objects() -> int:
 	return game_objects.get_child_count(false)
 
+func get_top_object() -> Piece:
+	if get_num_objects() == 0: return null
+	return get_game_objects()[-1]
+
 func add_game_object_to_top(obj: Piece) -> void:
 	insert_game_object(obj, 0)
 
@@ -63,8 +73,6 @@ func add_game_object_special(obj: Piece) -> void:
 			add_game_object_special_hand(obj)
 
 func add_game_object_special_hand(obj: Piece) -> void:
-	if obj in get_game_objects():
-		return
 	var i: int = 0
 	for a in range(get_num_objects()):
 		if to_local(obj.position).x < get_game_objects()[a].position.x:
@@ -75,33 +83,21 @@ func add_game_object_special_hand(obj: Piece) -> void:
 func get_rect() -> Rect2:
 	return Rect2(- collection_size / 2.0, collection_size)
 
-func get_top_object() -> Piece:
-	if get_num_objects() == 0:
-		return null
-	return get_game_objects()[-1]
+func insert_game_object(obj: Piece, index: int) -> void:
+	if obj in get_game_objects(): return
+	piece_spawner.spawn(obj.get_name())
+	game_objects.move_child(obj, index)
 
 func remove_game_object(obj: Piece) -> void:
-	var index: int = get_game_objects().find(obj)
-	if index == -1:
-		return
-	remove_object_at(index)
-
-func remove_object_at(index: int) -> void:
-	var target_object: Piece = get_game_objects()[index]
-	if target_object == null: return
-	target_object.reparent(get_parent())
+	if get_game_objects().has(obj): # May not need this check at some point
+		obj.reparent(get_parent())
+		Utils.reparenting_requests.append([obj.get_name(), "NONE"])
 	if not permanent:
 		if get_num_objects() == 1:
-			remove_object_at(0)
+			remove_game_object(get_game_objects()[0])
 		elif get_num_objects() == 0:
 			print("remove stack")
 			queue_free()
-
-func insert_game_object(obj: Piece, index: int) -> void:
-	obj.reparent(game_objects)
-	game_objects.move_child(obj, index)
-	obj.position = Vector2.ZERO
-	obj.rotation = 0.0
 
 func disabled() -> bool:
 	return false

@@ -7,6 +7,8 @@ const KEYPRESS_THRESHOLD: float = 0.2
 
 var input_time_dictionary: Dictionary = {}
 
+var reparenting_requests: Array = []
+
 func _ready() -> void:
 	for action in InputMap.get_actions():
 		input_time_dictionary[action] = {"count": 0.0, "passed_threshold": false, "action_was_pressed": false}
@@ -44,6 +46,22 @@ func _input(event: InputEvent):
 func _process(delta: float) -> void:
 	_add_to_input_times(delta, false)
 	_check_inputs()
+	_check_reparenting_necessary()
+
+func _check_reparenting_necessary() -> void:
+	if reparenting_requests.is_empty(): return
+	# If there are open reparenting infos, emit the signal
+	rpc("reparent_nodes", reparenting_requests)
+	reparenting_requests = []
+
+@rpc("any_peer","call_remote", "reliable")
+func reparent_nodes(requests: Array) -> void:
+	var game_object_manager: GameObjectManager = get_tree().get_first_node_in_group("game_object_manager")
+	for request in requests:
+		var node_child: Node = get_tree().get_first_node_in_group(request[0])
+		var node_parent: Node = get_tree().get_first_node_in_group(request[1]).game_objects if request[1] != "NONE" else game_object_manager
+		node_child.reparent(node_parent)
+
 
 func _add_to_input_times(delta: float, mouse_only: bool) -> void:
 	for action in InputMap.get_actions():
