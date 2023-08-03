@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Open Boardgame Framework"
 config/description="A 2-dimensional virtual tabletop for all! Create board game configurations which can be loaded in and played with friends online or in person!"
-run/main_scene="res://src/scenes/pages/tabletop_manager.tscn"
+run/main_scene="res://src/scenes/wip/board_manager.tscn"
 config/features=PackedStringArray("4.1", "GL Compatibility")
 config/icon="res://icon.png"
 config/windows_native_icon="res://icon.ico"

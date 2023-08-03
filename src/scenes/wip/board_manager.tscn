@@ -1,0 +1,26 @@
+[gd_scene load_steps=7 format=3 uid="uid://djo58tnyj3o0n"]
+
+[ext_resource type="Script" path="res://src/scripts/game_elements/wip/board_spawner.gd" id="1_a374n"]
+[ext_resource type="Script" path="res://src/scripts/game_elements/wip/board_manager.gd" id="1_h3gyf"]
+[ext_resource type="PackedScene" uid="uid://3uwharyjlmsp" path="res://src/scenes/ui/right_click_menu.tscn" id="2_ywb68"]
+[ext_resource type="PackedScene" uid="uid://lpw6t5xb1d5i" path="res://src/scenes/dialogs/dialogs.tscn" id="3_3512o"]
+[ext_resource type="PackedScene" uid="uid://ma7a666pl2us" path="res://src/scenes/ui/user_interface.tscn" id="4_dvdi8"]
+[ext_resource type="PackedScene" uid="uid://uing22je8p0x" path="res://src/scenes/game_elements/camera_controller.tscn" id="5_5q5a6"]
+
+[node name="BoardManager" type="Node"]
+script = ExtResource("1_h3gyf")
+
+[node name="UserInterfaceLayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="RightClickMenu" parent="UserInterfaceLayer" instance=ExtResource("2_ywb68")]
+
+[node name="Dialogs" parent="UserInterfaceLayer" instance=ExtResource("3_3512o")]
+
+[node name="UserInterface" parent="UserInterfaceLayer" instance=ExtResource("4_dvdi8")]
+
+[node name="CameraController" parent="." instance=ExtResource("5_5q5a6")]
+
+[node name="BoardSpawner" type="MultiplayerSpawner" parent="."]
+spawn_path = NodePath("..")
+script = ExtResource("1_a374n")

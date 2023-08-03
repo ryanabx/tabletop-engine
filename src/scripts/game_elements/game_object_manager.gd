@@ -3,6 +3,7 @@ extends Node2D
 
 var stack_scene = preload("res://src/scenes/game_elements/spawnables/collection.tscn")
 
+
 func _ready() -> void:
 	add_to_group("game_object_manager")
 	SignalManager.move_items_to_back.connect(_on_items_to_back)

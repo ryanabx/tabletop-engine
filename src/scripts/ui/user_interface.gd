@@ -15,7 +15,7 @@ func _process(_delta: float) -> void:
 	coordinates_labels[0].position = get_local_mouse_position() + Vector2(20.0, -30.0)
 	if Globals.get_current_tabletop() == null:
 		return
-	var coordinates = Globals.get_current_tabletop().board.get_local_mouse_position()
+	var coordinates = Globals.get_current_tabletop().get_local_mouse_position()
 	coordinates_labels[0].set_text(str(round(coordinates.x),",", round(coordinates.y)))
 	
 	if Globals.get_current_game() != null:
