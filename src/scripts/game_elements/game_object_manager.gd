@@ -78,7 +78,7 @@ func convert_to_stack(objects: Array):
 	stack.permanent = false
 	for object in objects:
 		if object.has_collection():
-			object.get_collection().remove_game_object(object)
+			object.get_collection_obj().remove_game_object(object)
 		stack.add_game_object_to_top(object)
 		object.position = stack.position
 	
@@ -86,7 +86,7 @@ func stack_objects_to_collection(objects: Array, collection: Collection) -> void
 	print("Stack objects to collection")
 	for object in objects:
 		if object.has_collection():
-			object.get_collection().remove_game_object(object)
+			object.get_collection_obj().remove_game_object(object)
 		collection.add_game_object_special(object)
 		object.position = collection.position
 	collection.dehighlight()

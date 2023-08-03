@@ -10,7 +10,7 @@ var force_state = null
 
 var game_objects: Array[String] = []
 
-@onready var piece_spawner: PieceSpawner = $PieceSpawner
+var g_objs_changed = false
 
 var prev_list: Array = []
 
@@ -35,6 +35,11 @@ const LABEL_OPACITY = 0.6
 func _ready() -> void:
 	add_to_group("collections")
 	_ready_create_number_label()
+
+@rpc("any_peer", "call_remote", "unreliable")
+func refresh_game_objects(g_objs: Array[String]) -> void:
+	print("Refreshing game objects")
+	game_objects = g_objs
 
 func _ready_create_number_label() -> void:
 	label = Label.new()
@@ -87,13 +92,21 @@ func get_rect() -> Rect2:
 
 ## Inserts a game object at the given index
 func insert_game_object(obj: Piece, index: int) -> void:
-	if obj.get_name() not in get_game_objects():
-		game_objects.insert(index, obj)
+	if get_game_objects().has(obj.get_name()):
+		return
+
+	game_objects.insert(index, obj.get_name())
+	obj.collection = self.get_name()
 
 ## Removes a particular object from the collection
 func remove_game_object(obj: Piece) -> void:
-	if get_game_objects().has(obj): # May not need this check at some point
-		obj.reparent(get_parent())
+	if not get_game_objects().has(obj.get_name()): # May not need this check at some point
+		print(get_game_objects(), " : ", obj.get_name())
+		return
+	print("Removing ",obj.get_name())
+	obj.collection = ""
+	game_objects.erase(obj.get_name())
+	
 	if not permanent:
 		if get_num_objects() == 1:
 			get_tree().get_first_node_in_group(get_game_objects()[0]).collection = ""
@@ -117,6 +130,8 @@ func shuffle() -> void:
 func _process(_delta: float) -> void:
 	label.set_text(str(get_num_objects()))
 	label.position = get_rect().position
+	if is_multiplayer_authority():
+		rpc("refresh_game_objects",game_objects)
 	queue_redraw()
 
 func _draw() -> void:

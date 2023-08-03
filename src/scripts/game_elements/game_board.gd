@@ -51,8 +51,10 @@ func update_selection_rect() -> void:
 
 func move_selected_items() -> void:
 	for object in get_selected_items():
-		if object.has_collection() and object.get_collection().permanent:
-			object.get_collection().remove_game_object(object)
+		if object.has_collection():
+			var c: Collection = object.get_collection_obj()
+			if c.permanent:
+				c.remove_game_object(object)
 		object.position = get_local_mouse_position() + object.get_grab_offset()
 		object.position = object.position.clamp(border.position, border.end)
 	# CHECK STACKING
@@ -99,8 +101,9 @@ func find_stackable_collection(objects: Array) -> Collection:
 	var best_object: Collection = null
 	var best_dist: float = 0.0
 	var ref_position = get_local_mouse_position()
+	var objects_str: Array[String] = Utils.objects_to_string(objects)
 	for collection in collections:
-		if Utils.has_any(collection.get_game_objects(), objects):
+		if Utils.has_any(collection.get_game_objects(), objects_str):
 			continue
 		elif collection_overlaps_point(collection, ref_position):
 			if best_object == null or ref_position.distance_to(collection.position) < best_dist:
@@ -220,7 +223,8 @@ func check_selecting_obj(input_actions: Dictionary) -> void:
 
 func selecting_piece(obj_selection: Piece) -> void:
 	if state == STATE.NONE and obj_selection.has_collection():
-		get_tree().get_first_node_in_group(obj_selection.get_collection()).remove_game_object(obj_selection)
+		print("Removing object from collection")
+		obj_selection.get_collection_obj().remove_game_object(obj_selection)
 	select_objects([obj_selection])
 
 func selecting_collection(obj_selection: Piece) -> void:
@@ -259,7 +263,7 @@ func get_highlighted_piece() -> Piece:
 func make_game_menu() -> void:
 	if state == STATE.NONE and get_highlighted_piece() != null:
 		if get_highlighted_piece().has_collection():
-			SignalManager.game_menu_create.emit(RightClickMenu.TYPE.COLLECTION, [get_highlighted_piece().get_collection()])
+			SignalManager.game_menu_create.emit(RightClickMenu.TYPE.COLLECTION, [get_highlighted_piece().get_collection_obj()])
 		else:
 			SignalManager.game_menu_create.emit(RightClickMenu.TYPE.GAME_OBJECT, [get_highlighted_piece()])
 		made_game_menu()

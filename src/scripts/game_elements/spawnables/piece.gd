@@ -13,8 +13,6 @@ var collection: String = ""
 
 var grab_offset: Vector2 = Vector2.ZERO
 
-@onready var multiplayer_synchronizer: MultiplayerSynchronizer = $PieceSynchronizer
-
 var face_up: bool = true
 
 var image_up_string: String = ""
@@ -36,7 +34,10 @@ func can_access(player_id: int):
 	if not has_collection():
 		return true
 	else:
-		var c: Collection = get_tree().get_first_node_in_group(get_collection())
+		var c: Collection = get_collection_obj()
+		if c == null:
+			print("Collection was null")
+			return true
 		if c.can_access(player_id) is bool:
 			return c.can_access(player_id)
 		return true
@@ -48,7 +49,10 @@ func can_view(player_id: int):
 		else:
 			return face_up
 	elif has_collection():
-		var c: Collection = get_tree().get_first_node_in_group(get_collection())
+		var c: Collection = get_collection_obj()
+		if c == null:
+			print("Collection was null")
+			return true
 		if c.can_view(player_id) is bool:
 			return c.can_view(player_id)
 		return face_up
@@ -139,9 +143,12 @@ func get_collection_obj() -> Collection:
 
 func update_position_in_collection() -> void:
 	var c: Collection = get_collection_obj()
+	if c == null:
+		print("Collection was null")
+		return
 	match c.type:
 		Collection.TYPE.STACK:
-			position = Vector2.ZERO
+			position = c.position
 			c.collection_size.x = maxf(get_rect().size.x, c.collection_size.x)
 			c.collection_size.y = maxf(get_rect().size.y, c.collection_size.y)
 		Collection.TYPE.HAND:

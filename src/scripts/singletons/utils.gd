@@ -159,3 +159,20 @@ func has_any(arr1: Array, arr2: Array) -> bool:
 			if x == y:
 				return true
 	return false
+
+func objects_to_string(arr: Array) -> Array[String]:
+	var res: Array[String] = []
+
+	for a in arr:
+		res.append(a.get_name())
+	return res
+
+
+
+func string_to_objects(arr: Array[String]) -> Array:
+	var res: Array = []
+
+	for a in arr:
+		res.append(get_tree().get_first_node_in_group(a))
+	return res
+	

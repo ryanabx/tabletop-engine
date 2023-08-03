@@ -28,6 +28,7 @@ func new_piece(obj: Dictionary, coordinate_scale: Vector2, id: int) -> Piece:
 	if "name" in obj:
 		piece.add_to_group(obj.name)
 	piece.set_name(str("Piece_",id))
+	Globals.piece_id = id + 1
 	piece.add_to_group(piece.get_name())
 	# Piece transforms
 	piece.position = Vector2(obj.position.x, obj.position.y) * coordinate_scale if "position" in obj else Vector2.ZERO
@@ -39,7 +40,8 @@ func new_piece(obj: Dictionary, coordinate_scale: Vector2, id: int) -> Piece:
 	piece.set_sprite_scale(Vector2(obj.scale.x, obj.scale.y) * coordinate_scale if "scale" in obj else Vector2.ONE)
 	# Add child
 	if "collection" in obj:
-		piece.start_collection = obj.collection
+		var c: Collection = get_tree().get_first_node_in_group(obj.collection)
+		c.add_game_object_to_top(piece)
 	return piece
 
 func new_collection(obj: Dictionary, coordinate_scale: Vector2, id: int) -> Collection:
@@ -52,6 +54,7 @@ func new_collection(obj: Dictionary, coordinate_scale: Vector2, id: int) -> Coll
 		collection.add_to_group(obj.name)
 		
 	collection.set_name(str("Collection_",id))
+	Globals.piece_id = id + 1
 	collection.add_to_group(collection.get_name())
 	# Collection transforms
 	collection.position = Vector2(obj.position.x, obj.position.y) * coordinate_scale if "position" in obj else Vector2.ZERO
