@@ -5,14 +5,15 @@ var border: Rect2 = Rect2(-640, -360, 1280, 720)
 const STACK_LERP: float = 0.8
 
 
-var selected_objects: Array[String] = []
+var selected_objects: Array[GameObject] = []
 var selection_box: Rect2 = Rect2(0.0, 0.0, 0.0, 0.0)
-var highlighted_piece: String = ""
-var stackable_item: String = ""
+var highlighted_piece: Piece = null
+var stackable_item: GameObject = null
 
 var board_texture_string: String = ""
 
-@onready var game_object_manager: Node2D = $GameObjectManager
+@onready var game_object_manager: GameObjectManager = $GameObjectManager
+@onready var game_object_spawner: GameObjectSpawner = $GameObjectSpawner
 @onready var board_texture: Sprite2D = $BoardTexture
 
 enum STATE {NONE, DOWN, MULTI, MULTI_DOWN, MENU, MENU_MULTI, SELECTION_BOX}
@@ -50,7 +51,7 @@ func update_selection_rect() -> void:
 
 func move_selected_items() -> void:
 	for object in get_selected_items():
-		if object.has_collection() and object.get_collection().get_permanence():
+		if object.has_collection() and object.get_collection().permanent:
 			object.get_collection().remove_game_object(object)
 		object.position = get_local_mouse_position() + object.get_grab_offset()
 		object.position = object.position.clamp(border.position, border.end)
@@ -66,7 +67,7 @@ func over_item():
 	return stackable_item != null
 
 func get_stackable_item() -> GameObject:
-	return Utils.get_game_object(stackable_item)
+	return stackable_item
 	
 func set_stackable_item(item: GameObject) -> void:
 	if over_item() and get_stackable_item() != item and get_stackable_item() != null:
@@ -75,10 +76,7 @@ func set_stackable_item(item: GameObject) -> void:
 	if item and item.can_access(Player.get_id()) == false:
 		pass
 	else:
-		if item == null:
-			stackable_item = ""
-		else:
-			stackable_item = item.get_name()
+		stackable_item = item
 	if over_item() and get_stackable_item() != null:
 		get_stackable_item().highlight()
 
@@ -242,18 +240,14 @@ func selecting_piece(obj_selection: Piece) -> void:
 	select_objects([obj_selection])
 
 func selecting_collection(obj_selection: Piece) -> void:
-	if obj_selection.get_collection().get_permanence(): return
+	if obj_selection.get_collection().permanent: return
 	select_objects(obj_selection.get_collection().get_game_objects())
 
 func set_highlighted_piece(pc: Piece) -> void:
-	if pc == null:
-		highlighted_piece = ""
-	else:
-		highlighted_piece = pc.get_name()
+	highlighted_piece = pc
 
 func get_highlighted_piece() -> Piece:
-	return Utils.get_game_object(highlighted_piece) as Piece
-
+	return highlighted_piece
 # Game menu
 
 func make_game_menu() -> void:
@@ -304,8 +298,8 @@ func select_objects(objects: Array) -> void:
 		for object in objects:
 			object.select()
 			object.rotation = Globals.get_shared_tabletop_manager().camera_controller.camera.rotation
-			selected_objects.append(object.get_name())
-		Utils.rpc("gain_control_over_objects", multiplayer.get_unique_id(), selected_objects)
+			selected_objects.append(object)
+		game_object_manager.rpc("gain_control_over_objects", multiplayer.get_unique_id(), game_object_manager.objects_to_string(objects))
 		game_object_manager.move_objects_to_front(objects)
 		set_object_grab_offsets()
 
@@ -323,7 +317,7 @@ func get_overlapping_obj(point: Vector2, game_objects: Array) -> Piece:
 		var g_obj := object as Piece
 		if g_obj.has_collection() and g_obj.can_access(Player.get_id()) == false:
 			continue
-		if (g_obj.get_rect() * g_obj.get_transform().affine_inverse()).has_point(point):
+		if object_overlaps_point(g_obj, point):
 			if best == null or (g_obj.z_index > best.z_index):
 				best = g_obj
 	return best
@@ -331,8 +325,8 @@ func get_overlapping_obj(point: Vector2, game_objects: Array) -> Piece:
 func has_selected_items() -> bool:
 	return not selected_objects.is_empty()
 
-func get_selected_items() -> Array:
-	return (Utils.get_game_objects(selected_objects) as Array[Piece])
+func get_selected_items() -> Array[GameObject]:
+	return selected_objects
 
 func release_selection() -> void:
 	# If over an item, stack objects to that item, then also deselect
@@ -360,5 +354,5 @@ func collection_overlaps_point(collection: Collection, point: Vector2) -> bool:
 func object_overlaps_point(object: Piece, point: Vector2):
 	return object.get_extents().has_point(point)
 
-func _rect_obj_areas_overlap(obj1: Piece, _rect: Rect2):
-	return (obj1.get_rect() * obj1.get_transform().affine_inverse()).intersects(_rect.abs())
+func _rect_obj_areas_overlap(object: Piece, _rect: Rect2):
+	return object.get_extents().intersects(_rect.abs())

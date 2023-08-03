@@ -28,6 +28,7 @@ func new_piece(obj: Dictionary, coordinate_scale: Vector2, id: int) -> Piece:
 	if "name" in obj:
 		piece.add_to_group(obj.name)
 	piece.set_name(str("Piece_",id))
+	piece.add_to_group(piece.get_name())
 	# Piece transforms
 	piece.position = Vector2(obj.position.x, obj.position.y) * coordinate_scale if "position" in obj else Vector2.ZERO
 	piece.rotation_degrees = obj.rotation if "rotation" in obj else 0.0
@@ -38,9 +39,7 @@ func new_piece(obj: Dictionary, coordinate_scale: Vector2, id: int) -> Piece:
 	piece.set_sprite_scale(Vector2(obj.scale.x, obj.scale.y) * coordinate_scale if "scale" in obj else Vector2.ONE)
 	# Add child
 	if "collection" in obj:
-		var coll: Collection = (get_tree().get_nodes_in_group(obj.collection)[0] as Collection)
-		coll.add_game_object_to_top(piece)
-		piece.position = coll.position
+		piece.start_collection = obj.collection
 	return piece
 
 func new_collection(obj: Dictionary, coordinate_scale: Vector2, id: int) -> Collection:
@@ -51,11 +50,13 @@ func new_collection(obj: Dictionary, coordinate_scale: Vector2, id: int) -> Coll
 		_: return
 	if "name" in obj:
 		collection.add_to_group(obj.name)
+		
 	collection.set_name(str("Collection_",id))
+	collection.add_to_group(collection.get_name())
 	# Collection transforms
 	collection.position = Vector2(obj.position.x, obj.position.y) * coordinate_scale if "position" in obj else Vector2.ZERO
-	collection.base_size = Vector2(obj.scale.x, obj.scale.y) * coordinate_scale if "scale" in obj else Vector2.ONE
-	collection._scale = Vector2(obj.scale.x, obj.scale.y) * coordinate_scale if "scale" in obj else Vector2.ONE
+	collection.base_collection_size = Vector2(obj.scale.x, obj.scale.y) * coordinate_scale if "scale" in obj else Vector2.ONE
+	collection.collection_size = Vector2(obj.scale.x, obj.scale.y) * coordinate_scale if "scale" in obj else Vector2.ONE
 	collection.rotation_degrees = obj.rotation if "rotation" in obj else 0.0
 	# Collection exclusives
 	if "permanent" in obj:

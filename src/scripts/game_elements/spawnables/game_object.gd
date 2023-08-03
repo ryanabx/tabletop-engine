@@ -4,7 +4,7 @@ extends Node2D
 var highlighted = false
 
 func get_extents() -> Rect2:
-	return get_rect() * get_transform().affine_inverse()
+	return get_rect() * get_global_transform().affine_inverse()
 
 func can_access(_player_id: int):
 	return true

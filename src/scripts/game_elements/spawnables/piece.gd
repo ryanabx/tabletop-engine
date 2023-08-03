@@ -9,9 +9,9 @@ enum STATE {
 	LOCKED
 }
 
-var grab_offset: Vector2 = Vector2.ZERO
+var start_collection: String = ""
 
-var collection: String = ""
+var grab_offset: Vector2 = Vector2.ZERO
 
 @onready var multiplayer_synchronizer: MultiplayerSynchronizer = $PieceSynchronizer
 
@@ -21,9 +21,9 @@ var image_up_string: String = ""
 var image_down_string: String = ""
 var image_up: Texture2D = null
 var image_down: Texture2D = null
-var _state: STATE = STATE.IDLE
+var state: STATE = STATE.IDLE
 
-var _sc: Vector2 = Vector2.ONE
+var sprite_scale: Vector2 = Vector2.ONE
 
 @onready var state_label: Label = $StateLabel
 @onready var _sprite: Sprite2D = $ObjectSprite
@@ -42,7 +42,7 @@ func can_access(player_id: int):
 	
 func can_view(player_id: int):
 	if not has_collection():
-		if _state == STATE.SELECTED:
+		if state == STATE.SELECTED:
 			return true
 		else:
 			return face_up
@@ -60,7 +60,7 @@ func set_grab_offset(offset: Vector2) -> void:
 	grab_offset = offset
 
 func set_sprite_scale(sc: Vector2) -> void:
-	_sc = sc
+	sprite_scale = sc
 
 func get_rect() -> Rect2:
 	return _sprite.get_rect() * _sprite.get_transform()
@@ -71,17 +71,17 @@ func get_stack_rect() -> Rect2:
 	return _sprite.get_rect() * stack_transform
 
 func has_collection() -> bool:
-	return collection != ""
+	return get_parent() is GameObjectList
 
 func get_collection() -> Collection:
-	return Utils.get_game_object(collection)
+	return get_parent().get_parent() if has_collection() else null
 
-func set_state(state: STATE) -> bool:
-	_state = state
+func set_state(st: STATE) -> bool:
+	state = st
 	return true
 
 func get_state() -> STATE:
-	return _state
+	return state
 
 func unselectable() -> bool:
 	return false
@@ -101,7 +101,7 @@ func update_texture() -> void:
 	if not image_up or not image_down:
 		return
 	_sprite.texture = image_up if can_view(Player.get_id()) else image_down
-	_sprite.scale = (_sc) / _sprite.texture.get_size()
+	_sprite.scale = (sprite_scale) / _sprite.texture.get_size()
 	scale = Vector2.ONE
 
 func set_side(sd: bool) -> void:
@@ -112,7 +112,6 @@ func get_side() -> bool:
 
 
 func select() -> void:
-	Utils.rpc("gain_control_over_objects", multiplayer.get_unique_id(), [self.get_name()])
 	print("Selecting object!")
 	match get_state():
 		STATE.IDLE:
@@ -127,28 +126,37 @@ func deselect() -> void:
 		_:
 			print("Attempted transition from ", state_to_string(get_state()), " to idle failed (deselect).")
 
-func put_in_collection(coll: Collection) -> bool:
-	if not has_collection():
-		collection = coll.get_name()
-		return true
-	else:
-		print("Cannot add an object to a collection when a collection already exists. Collection: ",collection)
-		return false
-
-func remove_from_collection() -> bool:
-	print("removing collection")
-	collection = ""
-	return true
-
 func _process(_delta: float) -> void:
 	if is_multiplayer_authority():
+		if start_collection != "":
+			var coll: Collection = (get_tree().get_first_node_in_group(start_collection) as Collection)
+			coll.add_game_object_to_top(self)
+			start_collection = ""
 		z_index = get_index()
+		if has_collection():
+			update_position_in_collection()
 	state_label.text = state_to_string(get_state())
 	update_texture()
 	queue_redraw()
 
-func state_to_string(state: STATE) -> String:
-	match state:
+func update_position_in_collection() -> void:
+	var collection: Collection = get_collection()
+	match collection.type:
+		Collection.TYPE.STACK:
+			position = Vector2.ZERO
+			collection.collection_size.x = maxf(get_rect().size.x, collection.collection_size.x)
+			collection.collection_size.y = maxf(get_rect().size.y, collection.collection_size.y)
+		Collection.TYPE.HAND:
+			var _lerp_amt: float = (get_index() + 1.0) / (collection.get_child_count() + 1.0)
+			var _pos: Vector2 = collection.to_global(Vector2(collection.get_rect().position.x, collection.get_rect().get_center().y)).lerp(collection.to_global(Vector2(collection.get_rect().end.x, collection.get_rect().get_center().y)), _lerp_amt)
+			global_position = _pos
+			collection.collection_size.y = maxf(get_rect().size.y, collection.collection_size.y)
+	rotation = 0.0
+	if collection.force_state is bool:
+		set_side(collection.force_state as bool)
+
+func state_to_string(st: STATE) -> String:
+	match st:
 		STATE.IDLE:
 			return "idle"
 		STATE.SELECTED:

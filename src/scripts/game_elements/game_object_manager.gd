@@ -1,11 +1,12 @@
+class_name GameObjectManager
 extends Node2D
 
 var stack_scene = preload("res://src/scenes/game_elements/spawnables/collection.tscn")
 
 func _ready() -> void:
-	SignalManager.convert_to_stack.connect(convert_to_stack)
 	SignalManager.move_items_to_back.connect(_on_items_to_back)
 	SignalManager.move_items_to_front.connect(_on_items_to_front)
+	SignalManager.convert_to_stack.connect(convert_to_stack)
 
 # Ordering functions
 
@@ -35,30 +36,46 @@ func move_item_to_back(item: GameObject) -> void:
 
 func move_objects_to_back(objects: Array) -> void:
 	for object in objects:
-		move_child(object, 0)
+		object.get_parent().move_child(object, 0)
 
 func move_objects_to_front(objects: Array) -> void:
 	for object in objects:
-		move_child(object, -1)
+		object.get_parent().move_child(object, -1)
+
+func flip_objects(objects: Array) -> void:
+	for object in objects:
+		if object.has_collection():
+			object.get_collection().flip()
+		else:
+			object.flip()
+
+func objects_to_string(objects: Array) -> Array:
+	var res: Array[String] = []
+	for obj in objects:
+		res.append(obj.name)
+	return res
+
+@rpc("any_peer", "call_local", "reliable")
+func gain_control_over_objects(id: int, objects: Array) -> void:
+	for obj in objects:
+		get_tree().get_first_node_in_group(obj).set_multiplayer_authority(id)
 
 # Stacking functions
-func stack_objects_to_item(objects: Array, item: String) -> void:
-	var g_item: GameObject = Utils.get_game_object(item)
-	if g_item == null: return
-	var g_objects: Array[GameObject] = Utils.get_game_objects(objects)
-	Utils.rpc("gain_control_over_objects", multiplayer.get_unique_id(), objects + [item])
+func stack_objects_to_item(objects: Array[GameObject], item: GameObject) -> void:
+	print("%",item.get_name(),", ",objects, ", ",item.unique_name_in_owner)
+	rpc("gain_control_over_objects", multiplayer.get_unique_id(), objects_to_string([item] + objects))
 	print("Stacking object to item")
-	if g_item is Collection:
-		stack_objects_to_collection(g_objects, g_item as Collection)
-	elif g_item is Piece:
-		convert_to_stack([g_item] + g_objects)
+	if item is Collection:
+		stack_objects_to_collection(objects, item)
+	elif item is Piece:
+		convert_to_stack([item] + objects)
 
 func convert_to_stack(objects: Array):
 	print("Convert to stack")
 	if objects.is_empty():
 		return
 	var stack: Collection = get_parent().get_node("GameObjectSpawner").spawn(GameObjectSpawner.make_stack_config(objects[0].position))
-	stack.set_permanence(false)
+	stack.permanent = false
 	for object in objects:
 		if object.has_collection():
 			object.get_collection().remove_game_object(object)
@@ -73,10 +90,3 @@ func stack_objects_to_collection(objects: Array, collection: Collection) -> void
 		collection.add_game_object_special(object)
 		object.position = collection.position
 	collection.dehighlight()
-
-func flip_objects(objects: Array) -> void:
-	for object in objects:
-		if object.has_collection():
-			object.get_collection().flip()
-		else:
-			object.flip()

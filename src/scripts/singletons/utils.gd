@@ -141,28 +141,3 @@ func has_any(arr1: Array, arr2: Array) -> bool:
 			if x == y:
 				return true
 	return false
-
-func get_game_object(object: String) -> GameObject:
-	return null if Globals.get_current_tabletop() == null or object == "" else Globals.get_current_tabletop().board.game_object_manager.get_node_or_null(object)
-
-func get_game_objects(objects: Array) -> Array[GameObject]:
-	var _tt: Tabletop = Globals.get_current_tabletop()
-	if _tt == null:
-		return []
-	var game_object_manager: Node2D = _tt.board.game_object_manager
-	var g_objs: Array[GameObject] = []
-	for obj in objects:
-		if obj == "":
-			continue
-		var g_obj: GameObject = game_object_manager.get_node_or_null(str(obj))
-		if g_obj != null:
-			g_objs.append(g_obj)
-	return g_objs
-
-@rpc("any_peer", "call_local")
-func gain_control_over_objects(id: int, objects: Array) -> void:
-	var game_objects: Array[GameObject] = Utils.get_game_objects(objects)
-	for g_obj in game_objects:
-		g_obj.set_multiplayer_authority(id, true)
-		if g_obj is Piece and g_obj.has_collection():
-			g_obj.get_collection().set_multiplayer_authority(id, true)
