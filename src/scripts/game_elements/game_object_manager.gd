@@ -63,7 +63,6 @@ func gain_control_over_objects(id: int, objects: Array) -> void:
 
 # Stacking functions
 func stack_objects_to_item(objects: Array[GameObject], item: GameObject) -> void:
-	print("%",item.get_name(),", ",objects, ", ",item.unique_name_in_owner)
 	rpc("gain_control_over_objects", multiplayer.get_unique_id(), objects_to_string([item] + objects))
 	print("Stacking object to item")
 	if item is Collection:

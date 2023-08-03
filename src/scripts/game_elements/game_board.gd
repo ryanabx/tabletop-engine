@@ -21,7 +21,7 @@ enum STATE {NONE, DOWN, MULTI, MULTI_DOWN, MENU, MENU_MULTI, SELECTION_BOX}
 var state: STATE = STATE.NONE
 
 func _ready() -> void:
-	Utils.enhanced_inputs.connect(process_input)
+	Utils.enhanced_inputs.connect(parse_input)
 	SignalManager.game_menu_destroy.connect(removed_game_menu)
 
 func _process(_delta):
@@ -33,7 +33,7 @@ func _process(_delta):
 		if state in [STATE.DOWN, STATE.MULTI_DOWN]:
 			move_selected_items()
 	elif state == STATE.SELECTION_BOX:
-		group_selection_instantiated()
+		rectangle_select()
 	if state == STATE.SELECTION_BOX:
 		update_selection_rect()
 	queue_redraw()
@@ -100,7 +100,7 @@ func find_stackable_collection(objects: Array) -> Collection:
 	var best_dist: float = 0.0
 	var ref_position = get_local_mouse_position()
 	for collection in collections:
-		if collection.disabled() or Utils.has_any(collection.get_game_objects(), objects):
+		if Utils.has_any(collection.get_game_objects(), objects):
 			continue
 		elif collection_overlaps_point(collection, ref_position):
 			if best_object == null or ref_position.distance_to(collection.position) < best_dist:
@@ -109,21 +109,6 @@ func find_stackable_collection(objects: Array) -> Collection:
 	return best_object
 
 # State management
-
-func group_selection_instantiated() -> bool:
-	if state in [STATE.SELECTION_BOX]:
-		var items: Array = []
-		for object in get_tree().get_nodes_in_group("piece"):
-			if object.can_access(Player.get_id()) == false:
-				continue
-			if _rect_obj_areas_overlap(object, selection_box):
-				items.append(object)
-		select_objects(items)
-		selection_box = Rect2(0.0, 0.0, 0.0, 0.0)
-		return true
-	else:
-		print("Cannot change from ",state," in group_selection_instantiated")
-		return false
 
 func group_selection_released() -> bool:
 	if state in [STATE.MULTI]:
@@ -190,21 +175,20 @@ func multi_select_up() -> bool:
 		print("Cannot change from ",state," in multi_select_down")
 		return false
 
-# Input management
-
-func process_input(input_actions: Dictionary) -> void:
+## Input management. Parses a list of input actions
+func parse_input(input_actions: Dictionary) -> void:
 	# SELECTING OBJECTS
 	if Utils.just_long_held("game_select", input_actions) or Utils.just_long_held("game_select_stack", input_actions):
-		if state == STATE.MULTI and Utils.just_long_held("game_select", input_actions):
-			check_over_group_selection()
-		elif state in [STATE.NONE]:
+		if state == STATE.NONE:
 			check_selecting_obj(input_actions)
+		elif state == STATE.MULTI and Utils.just_long_held("game_select", input_actions):
+			check_over_group_selection()
 	# RIGHT CLICKING
 	if state in [STATE.NONE, STATE.MULTI] and Utils.just_short_released("game_menu", input_actions):
 		make_game_menu()
 	# DESELECTING GROUP SELECTED OBJECTS
 	if Utils.just_released("game_select", input_actions) or Utils.just_released("game_select_stack", input_actions) or Utils.just_released("end_group_select", input_actions):
-		if state in [STATE.MULTI] and not Utils.just_short_released("game_menu", input_actions):
+		if state == STATE.MULTI and not Utils.just_short_released("game_menu", input_actions):
 			deselect_objects()
 	# DESELECTING OBJECTS
 	if Utils.just_long_released("game_select", input_actions) or Utils.just_long_released("game_select_stack", input_actions):
@@ -243,11 +227,33 @@ func selecting_collection(obj_selection: Piece) -> void:
 	if obj_selection.get_collection().permanent: return
 	select_objects(obj_selection.get_collection().get_game_objects())
 
+func rectangle_select() -> bool:
+	if state == STATE.SELECTION_BOX:
+		var items: Array = []
+		for object in get_tree().get_nodes_in_group("piece"):
+			if object.can_access(Player.get_id()) == false:
+				continue
+			if object_overlaps_rectangle(object, selection_box):
+				items.append(object)
+		select_objects(items)
+		selection_box = Rect2(0.0, 0.0, 0.0, 0.0)
+		return true
+	else:
+		print("Cannot change from ",state," in rectangle_select")
+		return false
+
+func has_selected_items() -> bool:
+	return not selected_objects.is_empty()
+
+func get_selected_items() -> Array[GameObject]:
+	return selected_objects
+
 func set_highlighted_piece(pc: Piece) -> void:
 	highlighted_piece = pc
 
 func get_highlighted_piece() -> Piece:
 	return highlighted_piece
+
 # Game menu
 
 func make_game_menu() -> void:
@@ -288,11 +294,6 @@ func _draw() -> void:
 	draw_rect(border, Color.from_hsv(0.0, 0.0, 1.0, 1.0), false, Globals.OUTLINE_THICKNESS * 3.0)
 
 func select_objects(objects: Array) -> void:
-	if objects.is_empty() and objects_deselected():
-		for object in get_selected_items():
-			object.deselect()
-		selected_objects = []
-		return
 	if objects_selected():
 		selected_objects = []
 		for object in objects:
@@ -322,12 +323,6 @@ func get_overlapping_obj(point: Vector2, game_objects: Array) -> Piece:
 				best = g_obj
 	return best
 
-func has_selected_items() -> bool:
-	return not selected_objects.is_empty()
-
-func get_selected_items() -> Array[GameObject]:
-	return selected_objects
-
 func release_selection() -> void:
 	# If over an item, stack objects to that item, then also deselect
 	if over_item():
@@ -340,13 +335,10 @@ func release_selection() -> void:
 		multi_select_up()
 
 func deselect_objects() -> void:
-	select_objects([])
-
-func objects_not_in_collection(objects: Array) -> bool:
-	for obj in objects:
-		if obj.has_collection():
-			return false
-	return true
+	if objects_deselected():
+		for object in get_selected_items():
+			object.deselect()
+		selected_objects = []
 
 func collection_overlaps_point(collection: Collection, point: Vector2) -> bool:
 	return collection.get_extents().has_point(point)
@@ -354,5 +346,5 @@ func collection_overlaps_point(collection: Collection, point: Vector2) -> bool:
 func object_overlaps_point(object: Piece, point: Vector2):
 	return object.get_extents().has_point(point)
 
-func _rect_obj_areas_overlap(object: Piece, _rect: Rect2):
+func object_overlaps_rectangle(object: Piece, _rect: Rect2):
 	return object.get_extents().intersects(_rect.abs())
