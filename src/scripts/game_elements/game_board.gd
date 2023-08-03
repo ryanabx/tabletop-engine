@@ -220,7 +220,7 @@ func check_selecting_obj(input_actions: Dictionary) -> void:
 
 func selecting_piece(obj_selection: Piece) -> void:
 	if state == STATE.NONE and obj_selection.has_collection():
-		obj_selection.get_collection().remove_game_object(obj_selection)
+		get_tree().get_first_node_in_group(obj_selection.get_collection()).remove_game_object(obj_selection)
 	select_objects([obj_selection])
 
 func selecting_collection(obj_selection: Piece) -> void:
