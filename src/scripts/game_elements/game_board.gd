@@ -224,8 +224,8 @@ func selecting_piece(obj_selection: Piece) -> void:
 	select_objects([obj_selection])
 
 func selecting_collection(obj_selection: Piece) -> void:
-	if obj_selection.get_collection().permanent: return
-	select_objects(obj_selection.get_collection().get_game_objects())
+	if obj_selection.get_collection_obj().permanent: return
+	select_objects(obj_selection.get_collection_obj().get_game_objects())
 
 func rectangle_select() -> bool:
 	if state == STATE.SELECTION_BOX:

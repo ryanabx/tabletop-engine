@@ -134,8 +134,11 @@ func _process(_delta: float) -> void:
 	update_texture()
 	queue_redraw()
 
+func get_collection_obj() -> Collection:
+	return get_tree().get_first_node_in_group(get_collection())
+
 func update_position_in_collection() -> void:
-	var c: Collection = get_tree().get_first_node_in_group(get_collection())
+	var c: Collection = get_collection_obj()
 	match c.type:
 		Collection.TYPE.STACK:
 			position = Vector2.ZERO
