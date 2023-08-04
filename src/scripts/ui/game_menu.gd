@@ -1,8 +1,6 @@
 class_name RightClickMenu
 extends PopupMenu
 
-enum TYPE {NONE,GAME_OBJECT,OBJECT_GROUP,COLLECTION}
-
 var object_group: Array = []
 
 func _ready() -> void:
@@ -10,35 +8,28 @@ func _ready() -> void:
 	hide()
 	popup_hide.connect(_on_popup_hide)
 
-func _reset_popup_menu() -> void:
+func reset_menu() -> void:
 	set_position(Vector2.ZERO)
 	# Disconnect previously connected signals
 	if id_pressed.is_connected(_on_clicked_from_object):
 		id_pressed.disconnect(_on_clicked_from_object)
-	if id_pressed.is_connected(_on_clicked_from_collection):
-		id_pressed.disconnect(_on_clicked_from_collection)
 	if id_pressed.is_connected(_on_clicked_from_object_group):
 		id_pressed.disconnect(_on_clicked_from_object_group)
 	clear()
 	set_position(get_viewport().get_mouse_position())
 
-func _on_menu_created(type: RightClickMenu.TYPE, objects: Array):
-	_reset_popup_menu()
+func _on_menu_created(objects: Array):
+	reset_menu()
 	print("Menu created. Position: ",position)
-	object_group = objects
-	match type:
-		TYPE.GAME_OBJECT:
-			init_game_object_menu()
-		TYPE.COLLECTION:
-			init_collection_menu()
-		TYPE.OBJECT_GROUP:
-			init_object_group_menu()
-		_:
-			print("None")
+	object_group = objects.duplicate(false)
+	if object_group.size() > 1:
+		init_group_menu()
+	else:
+		init_piece_menu()
 	reset_size()
 	popup()
 
-func init_game_object_menu() -> void:
+func init_piece_menu() -> void:
 	add_item("Flip object", 0)
 	var ordering_menu = PopupMenu.new()
 	ordering_menu.name = "ordering"
@@ -48,29 +39,8 @@ func init_game_object_menu() -> void:
 	ordering_menu.add_item("Send to back", 3)
 	id_pressed.connect(_on_clicked_from_object)
 	ordering_menu.id_pressed.connect(_on_clicked_from_object)
-	
-# TODO: FIX RIGHT CLICK MENU
-func init_collection_menu():
-	add_item("Shuffle collection", 0)
-	
-	var ordering_menu = PopupMenu.new()
-	ordering_menu.name = "ordering"
-	add_child(ordering_menu)
-	add_submenu_item("Ordering", "ordering", 2)
-	ordering_menu.add_item("Go to front", 3)
-	ordering_menu.add_item("Send to back", 4)
-	var orientation_menu = PopupMenu.new()
-	orientation_menu.name = "orientation"
-	orientation_menu.add_item("Face up", 5)
-	orientation_menu.add_item("Face down", 6)
-	orientation_menu.add_item("Flip collection", 1)
-	add_child(orientation_menu)
-	add_submenu_item("Set Orientation", "orientation", 7)
-	id_pressed.connect(_on_clicked_from_collection)
-	ordering_menu.id_pressed.connect(_on_clicked_from_collection)
-	orientation_menu.id_pressed.connect(_on_clicked_from_collection)
 
-func init_object_group_menu():
+func init_group_menu():
 	add_item("Convert to stack", 0)
 	var orientation_menu = PopupMenu.new()
 	orientation_menu.add_item("Face up", 5)

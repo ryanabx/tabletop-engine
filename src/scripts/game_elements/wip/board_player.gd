@@ -81,6 +81,7 @@ func check_for_overlapping_obj(pos: Vector2) -> Dictionary:
 
 func removed_game_menu() -> void:
 	if state in [STATE.MENU]:
+		print("Menu state to idle state")
 		state = STATE.IDLE
 
 ####################
@@ -170,6 +171,9 @@ func deselect_objects() -> void:
 			stack_to_collection(selected_pieces, highlighted_item)
 	
 	selected_pieces = []
+	
+	if state in [STATE.SELECT]:
+		state = STATE.IDLE
 
 ## Flip any available objects
 func flip_objects() -> void:
@@ -185,7 +189,9 @@ func game_menu() -> void:
 	if selectable_piece != "":
 		var piece: Dictionary = board.get_piece(selectable_piece)
 		if piece.collection != "":
-			pass # TODO: Continue here, making right click menu depending on setup
+			var collection: Dictionary = board.get_collection(piece.collection)
+			SignalManager.game_menu_create.emit(collection.inside)
+		
 	pass
 
 func convert_to_stack(objs: Array) -> void:

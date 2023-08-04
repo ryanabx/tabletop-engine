@@ -1,7 +1,7 @@
 extends Node
 
 # Right click menu creation
-signal game_menu_create(type: RightClickMenu.TYPE, objects: Array)
+signal game_menu_create(objects: Array)
 signal game_menu_destroy()
 
 # Right click menu commands
