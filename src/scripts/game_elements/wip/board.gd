@@ -5,6 +5,8 @@ extends Node2D
 var game: GameConfig
 var coordinate_scale: Vector2 = Vector2.ONE
 
+var def_font: Font
+
 # Board properties
 var board_bg: String = ""
 var border: Rect2 = Rect2(0,0,0,0)
@@ -12,12 +14,7 @@ var border: Rect2 = Rect2(0,0,0,0)
 var pieces: Dictionary = {}
 var collections: Dictionary = {}
 
-## The state of a given piece
-enum PIECE_STATE {
-	IDLE,
-	SELECTED,
-	LOCKED
-}
+var draw_order: PackedStringArray = PackedStringArray([])
 
 ## The type of object contained
 enum TYPE {
@@ -41,7 +38,7 @@ var REFERENCE_PIECE: Dictionary = {
 	# Name of collection attached to
 	"collection": "",
 	# Starting state
-	"state": PIECE_STATE.IDLE,
+	"state": -1,
 	"face_up": false,
 	"z": 0
 }
@@ -64,7 +61,7 @@ func construct_piece(config: Dictionary) -> Dictionary:
 		# Name of collection attached to
 		"collection": config.collection,
 		# Starting state
-		"state": PIECE_STATE.IDLE,
+		"state": -1,
 		"face_up": config.face_up,
 		"z": config.z
 	}
@@ -73,6 +70,7 @@ var REFERENCE_COLLECTION: Dictionary = {
 	# Collection name and type
 	"name": "COLLECTION",
 	"type": TYPE.COLLECTION,
+	"state": -1,
 	# Transform
 	"position": Vector2.ZERO,
 	"rotation": 0.0,
@@ -98,6 +96,7 @@ func construct_collection(config: Dictionary) -> Dictionary:
 		# Collection name and type
 		"name": config.name,
 		"type": TYPE.COLLECTION,
+		"state": -1,
 		# Transform
 		"position": Vector2(config.position.x, config.position.y) * coordinate_scale,
 		"rotation": config.rotation,
@@ -118,33 +117,40 @@ func construct_collection(config: Dictionary) -> Dictionary:
 	}
 
 ## Creates a new object on the board
-func spawn_object(obj: Dictionary) -> void:
+func spawn_object(obj: Dictionary) -> Dictionary:
 	match obj.type:
-		TYPE.PIECE: spawn_piece(obj)
-		TYPE.COLLECTION: spawn_collection(obj)
+		TYPE.PIECE: return spawn_piece(obj)
+		TYPE.COLLECTION: return spawn_collection(obj)
+	return {}
 
 ## Inserts a piece into the pieces list
-func spawn_piece(piece: Dictionary) -> void:
+func spawn_piece(piece: Dictionary) -> Dictionary:
 	var i: int = 0
 	while pieces.has(str(piece.name,"_",i)):
 		i += 1
 	pieces[str(piece.name,"_",i)] = piece
 	piece.name = str(piece.name,"_",i)
+	# Add the piece to the draw order array
+	draw_order.append(piece.name)
+	return piece
 
 ## Inserts a collection into the collections list
-func spawn_collection(collection: Dictionary) -> void:
+func spawn_collection(collection: Dictionary) -> Dictionary:
 	var i: int = 0
 	while collections.has(str(collection.name,"_",i)):
 		i += 1
 	collections[str(collection.name,"_",i)] = collection
 	collection.name = str(collection.name,"_",i)
+	return collection
 
 func _draw() -> void:
 	draw_board_bg()
-	for obj in collections:
-		draw_collection(collections[obj])
-	for obj in pieces:
+	for key in collections.keys():
+		draw_collection(collections[key])
+	for obj in draw_order:
 		draw_piece(pieces[obj])
+	for key in collections.keys():
+		draw_string(def_font,get_obj_extents(collections[key])[0], str(collections[key].inside.size()))
 		
 ## Draw the background specified
 func draw_board_bg() -> void:
@@ -155,24 +161,29 @@ func draw_board_bg() -> void:
 
 ## Draws a game piece
 func draw_piece(obj: Dictionary) -> void:
-	draw_texture_rect(
-		game.images[obj.image_up if obj.face_up else obj.image_down],
-		Rect2(obj.position - obj.scale / 2, obj.scale),
-		false
+	var extents: PackedVector2Array = get_obj_extents(obj)
+	draw_colored_polygon(extents, Color.WHITE,PackedVector2Array([Vector2(0,0), Vector2(0,1), Vector2(1,1), Vector2(1,0)]),
+		game.images[obj.image_up if obj.face_up else obj.image_down]
 		)
 	draw_polyline(
-		get_obj_extents(obj),
-		Color.BLACK,
+		extents + PackedVector2Array([extents[0]]),
+		Color.WHITE,
 		Globals.OBJECT_HIGHLIGHT_BORDER
 		)
+	if obj.collection != "":
+		var collection: Dictionary = get_collection(obj.collection)
+		collection.scale.x = maxf(obj.scale.x, collection.scale.x)
+		collection.scale.y = maxf(obj.scale.y, collection.scale.y)
 
 ## Draws a collection
 func draw_collection(obj: Dictionary) -> void:
-	var extents = get_obj_extents(obj)
+	var extents: PackedVector2Array = get_obj_extents(obj)
 	draw_colored_polygon(
 		extents,
 		Color.from_hsv(0.0, 1.0, 0.0, 0.4)
 		)
+	obj.scale.x = obj.base_size.x
+	obj.scale.y = obj.base_size.y
 
 func get_piece(n: String) -> Dictionary:
 	return pieces[n]
@@ -189,6 +200,72 @@ func get_obj_transform(obj: Dictionary) -> Transform2D:
 func obj_overlaps_point(obj: Dictionary, point: Vector2) -> bool:
 	var shape: PackedVector2Array = get_obj_extents(obj)
 	return Geometry2D.is_point_in_polygon(point, shape)
+
+#################
+### Utilities ###
+#################
+
+# Adding and removing from collections
+
+## Adds a piece to the collection specified. Removes a piece from current collection if it exists
+func add_piece_to_collection(piece: Dictionary, collection: Dictionary) -> void:
+	if piece.collection != "": remove_piece_from_collection(piece)
+	piece.collection = collection.name
+	collection.inside.append(piece.name)
+
+## Removes a piece from a collection, if it has any
+func remove_piece_from_collection(piece: Dictionary) -> void:
+	if piece.collection == "": return
+	var c: Dictionary = get_collection(piece.collection)
+	var index: int = c.inside.find(piece.name)
+	if index != -1:
+		c.inside.remove_at(index)
+		if not c.permanent:
+			if c.inside.size() == 1:
+				remove_piece_from_collection(get_piece(c.inside[0]))
+			elif c.inside.is_empty():
+				# Essentially queue free
+				collections.erase(c.name)
+				print("Removing collection ", c.name)
+	piece.collection = ""
+
+# Draw order of objects
+
+## Brings an object to the front
+func move_object_to_top(piece: Dictionary) -> void:
+	draw_order.remove_at(draw_order.find(piece.name))
+	draw_order.push_back(piece.name)
+
+## Brings an object to the back
+func move_object_to_back(piece: Dictionary) -> void:
+	draw_order.remove_at(draw_order.find(piece.name))
+	draw_order.insert(0, piece.name)
+
+## Flips an object
+func flip_object(piece: Dictionary) -> void:
+	piece.face_up = not piece.face_up
+
+## Shuffles objects
+func shuffle(pieces: Array) -> void:
+	# TODO: Implement this
+	pass
+
+# Checking if player can select
+
+## True if the current player can select this piece, false otherwise
+func can_access_piece(piece: Dictionary) -> bool:
+	if piece.collection != "":
+		var collection = get_collection(piece.collection)
+		return can_access_collection(collection)
+	return true
+
+## Returns true if the current player can access this collection, false otherwise
+func can_access_collection(collection: Dictionary) -> bool:
+	if collection.access_perms.size() <= Player.get_id():
+		return true # Default to true if there's no access perms
+	elif collection.access_perms[Player.get_id()] == false:
+		return false
+	return true
 
 ####################
 ### Main process ###
@@ -218,11 +295,13 @@ func update_positions_in_collection() -> void:
 
 ## Called when the board is initialized
 func _ready() -> void:
+	def_font = ThemeDB.fallback_font
 	coordinate_scale = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
 	init_brd_prps()
 	updt_mnu_bar()
 	brd_objs_frm_cnfg()
 	cll_fll_ins()
+	coordinate_scale = Vector2.ONE
 
 ## Ran during startup, initializes the board's background and border
 func init_brd_prps() -> void:

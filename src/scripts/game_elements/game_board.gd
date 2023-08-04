@@ -181,20 +181,20 @@ func multi_select_up() -> bool:
 ## Input management. Parses a list of input actions
 func parse_input(input_actions: Dictionary) -> void:
 	# SELECTING OBJECTS
-	if Utils.just_long_held("game_select", input_actions) or Utils.just_long_held("game_select_stack", input_actions):
+	if InputManager.is_select_pressed(input_actions):
 		if state == STATE.NONE:
 			check_selecting_obj(input_actions)
 		elif state == STATE.MULTI and Utils.just_long_held("game_select", input_actions):
 			check_over_group_selection()
 	# RIGHT CLICKING
-	if state in [STATE.NONE, STATE.MULTI] and Utils.just_short_released("game_menu", input_actions):
+	if state in [STATE.NONE, STATE.MULTI] and InputManager.is_menu_pressed(input_actions):
 		make_game_menu()
 	# DESELECTING GROUP SELECTED OBJECTS
 	if Utils.just_released("game_select", input_actions) or Utils.just_released("game_select_stack", input_actions) or Utils.just_released("end_group_select", input_actions):
 		if state == STATE.MULTI and not Utils.just_short_released("game_menu", input_actions):
 			deselect_objects()
 	# DESELECTING OBJECTS
-	if Utils.just_long_released("game_select", input_actions) or Utils.just_long_released("game_select_stack", input_actions):
+	if InputManager.is_deselect_pressed(input_actions):
 		if state in [STATE.MULTI_DOWN, STATE.DOWN]:
 			release_selection()
 	# FLIPPING OBJECTS
