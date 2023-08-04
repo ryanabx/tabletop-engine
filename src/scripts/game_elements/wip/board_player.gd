@@ -124,7 +124,11 @@ func parse_input(input_actions: Dictionary) -> void:
 		if not selected_pieces.is_empty():
 			print("Flipping object")
 			flip_objects()
-
+	# Game menu
+	if InputManager.is_menu_pressed(input_actions):
+		if can_menu():
+			print("Attempting to make a game menu")
+			game_menu()
 
 ########################
 ### Useful Functions ###
@@ -175,6 +179,14 @@ func flip_objects() -> void:
 	for key in selected_pieces:
 		var piece: Dictionary = board.get_piece(key)
 		board.flip_object(piece)
+
+## Makes a game menu
+func game_menu() -> void:
+	if selectable_piece != "":
+		var piece: Dictionary = board.get_piece(selectable_piece)
+		if piece.collection != "":
+			pass # TODO: Continue here, making right click menu depending on setup
+	pass
 
 func convert_to_stack(objs: Array) -> void:
 	var c: Dictionary = board.spawn_object(
