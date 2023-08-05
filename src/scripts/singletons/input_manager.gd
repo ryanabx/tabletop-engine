@@ -88,7 +88,11 @@ func just_released(action: String, input_actions: Dictionary) -> bool:
 
 ## Fired as true when inputs to select are pressed
 func is_select_pressed(input_actions: Dictionary) -> bool:
-	return just_long_held("game_select", input_actions) or just_long_held("game_select_stack", input_actions)
+	return just_long_held("game_select", input_actions)
+
+## Fired as true when inputs to stack select are pressed
+func is_stack_select_pressed(input_actions: Dictionary) -> bool:
+	return just_long_held("game_select_stack", input_actions)
 
 ## Fired as true when menu button is pressed
 func is_menu_pressed(input_actions: Dictionary) -> bool:

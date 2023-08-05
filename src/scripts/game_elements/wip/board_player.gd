@@ -1,9 +1,11 @@
 class_name BoardPlayer
 extends Node2D
 
-var selected_pieces: Array[String] = []
-var selectable_piece: String = ""
-var highlighted_item: Dictionary = {}
+var selected_pieces: Array[Board.Gpiece] = []
+var selected_collections: Array[Board.Gcollection] = []
+
+var selectable_piece: Board.Gpiece = null
+var highlighted_item: Board.Gobject = null
 
 var selection_box: Rect2 = Rect2(0,0,0,0)
 
@@ -27,53 +29,53 @@ func _process(_delta: float) -> void:
 
 func move_selected_objects() -> void:
 	for obj in selected_pieces:
-		board.get_piece(obj).position = get_local_mouse_position()
+		obj.position = get_local_mouse_position()
+	for obj in selected_collections:
+		obj.position = get_local_mouse_position()
 
 ## Ran every process frame. Checks all the pieces for one that can be highlighted
 func check_for_overlapping_piece() -> void:
 	if selected_pieces.is_empty():
-		var best_piece: String = ""
-		for key in board.pieces.keys():
-			if selected_pieces.has(key): continue
-			var piece: Dictionary = board.get_piece(key)
-			if not board.can_access_piece(piece): continue
-			if board.obj_overlaps_point(piece, get_local_mouse_position()):
-				if best_piece == "" or board.draw_order.find(key) > board.draw_order.find(best_piece):
-					best_piece = key
+		var best_piece: Board.Gpiece = check_overlapping_piece(get_local_mouse_position())
 		selectable_piece = best_piece
-		highlighted_item = board.get_piece(best_piece) if best_piece != "" else {}
-		return
+		highlighted_item = best_piece
 	else:
-		var best_obj: Dictionary = check_for_overlapping_obj(get_local_mouse_position())
-		if best_obj.is_empty():
-			selectable_piece = ""
-			highlighted_item = {}
+		var best_obj: Board.Gobject = check_for_overlapping_obj(get_local_mouse_position())
+		if best_obj == null:
+			selectable_piece = null
+			highlighted_item = null
 		else:
-			selectable_piece = ""
+			selectable_piece = null
 			highlighted_item = best_obj
 
 ## Ran every frame, used for highlighting items and checking deselection stacking
-func check_for_overlapping_obj(pos: Vector2) -> Dictionary:
-	# First check collections for overlap
-	var best_collection: String = ""
-	for key in board.collections.keys():
-		var collection: Dictionary = board.get_collection(key)
+func check_for_overlapping_obj(pos: Vector2) -> Board.Gobject:
+	var coll: Board.Gcollection = check_overlapping_collections(pos)
+	if coll != null: return coll
+	var piece: Board.Gpiece = check_overlapping_piece(pos)
+	return piece
+
+## Checks if an overlapping collection exists
+func check_overlapping_collections(pos: Vector2) -> Board.Gcollection:
+	var best_collection: Board.Gcollection = null
+	for collection in board.collections.values():
+		if selected_collections.has(collection): continue
 		if not board.can_access_collection(collection): continue
 		if board.obj_overlaps_point(collection, pos):
-			if best_collection == "" or collection.position.distance_to(pos) < board.get_collection(best_collection).position.distance_to(pos):
-				best_collection = key
-	if best_collection != "": return board.get_collection(best_collection)
-	# If collection wasn't found, check pieces
-	var best_piece: String = ""
-	for key in board.pieces.keys():
-		if selected_pieces.has(key): continue
-		var piece: Dictionary = board.get_piece(key)
+			if best_collection == null or collection.position.distance_to(pos) < best_collection.position.distance_to(pos):
+				best_collection = collection
+	return best_collection
+
+## Checks if an overlapping piece exists
+func check_overlapping_piece(pos: Vector2) -> Board.Gpiece:
+	var best_piece: Board.Gpiece = null
+	for piece in board.pieces.values():
+		if selected_pieces.has(piece): continue
 		if not board.can_access_piece(piece): continue
 		if board.obj_overlaps_point(piece, pos):
-			if best_piece == "" or board.draw_order.find(key) > board.draw_order.find(best_piece):
-				best_piece = key
-	if best_piece != "": return board.get_piece(best_piece)
-	return {}
+			if best_piece == null or board.draw_order.find(piece.name) > board.draw_order.find(best_piece.name):
+				best_piece = piece
+	return best_piece
 
 #####################
 ### State changes ###
@@ -99,7 +101,7 @@ func can_menu() -> bool:
 ##########################
 
 func _draw() -> void:
-	if not highlighted_item.is_empty():
+	if highlighted_item != null:
 		draw_colored_polygon(
 			board.get_obj_extents(highlighted_item),
 			Color.from_hsv(0.4, 0.2, 1, 0.3)
@@ -110,11 +112,23 @@ func _draw() -> void:
 ########################
 
 func parse_input(input_actions: Dictionary) -> void:
-	# Selection
+	# Individual selection
 	if InputManager.is_select_pressed(input_actions):
-		if selectable_piece != "":
+		if selectable_piece != null:
 			print("Selecting object")
-			select_objects([board.get_piece(selectable_piece)])
+			select_pieces([selectable_piece])
+	# Stack selection (or regular if no collection exists)
+	if InputManager.is_stack_select_pressed(input_actions):
+		if selectable_piece != null:
+			if selectable_piece.collection != null:
+				var c: Board.Gcollection = selectable_piece.collection
+				if not c.permanent:
+					print("Stack selecting")
+					select_pieces(c.inside, false, false)
+					select_collection(c)
+			else:
+				print("Selecting object")
+				select_pieces([selectable_piece])
 	# Deselection
 	if InputManager.is_deselect_pressed(input_actions):
 		if not selected_pieces.is_empty():
@@ -136,37 +150,42 @@ func parse_input(input_actions: Dictionary) -> void:
 ########################
 
 ## Select objects
-func select_objects(objs: Array, append: bool = false) -> void:
+func select_pieces(objs: Array, append: bool = false, remove_from_collection = true) -> void:
 	if not append:
 		deselect_objects()
 	for obj in objs:
-		_select_object(obj, true)
+		_sel_piece(obj, true, remove_from_collection)
 	
 	if state in [STATE.IDLE]:
 		state = STATE.SELECT
 
 ## Select one object
-func _select_object(obj: Dictionary, append: bool = false) -> void:
-	obj.state = multiplayer.get_unique_id()
+func _sel_piece(obj: Board.Gpiece, append: bool = false, remove_from_collection = true) -> void:
 	# Piece exclusive stuff
-	if obj.type == Board.TYPE.PIECE:
+	if obj is Board.Gpiece and remove_from_collection:
 		board.remove_piece_from_collection(obj)
 		board.move_object_to_top(obj)
 	if append:
-		selected_pieces.append(obj.name)
+		selected_pieces.append(obj)
 	else:
-		selected_pieces = [obj.name]
+		selected_pieces = [obj]
+
+func select_collection(coll: Board.Gcollection) -> void:
+	selected_collections = [coll]
 
 ## Deselect any available objects
 func deselect_objects() -> void:
+	selected_collections = []
 	if selected_pieces.is_empty():
 		return
 
-	if not highlighted_item.is_empty():
-		if highlighted_item.type == Board.TYPE.PIECE:
+	if highlighted_item != null:
+		if highlighted_item is Board.Gpiece:
 			print("Stacking objects to piece")
-			convert_to_stack(selected_pieces + [highlighted_item.name])
-		elif highlighted_item.type == Board.TYPE.COLLECTION:
+			var objects: Array[Board.Gpiece] = []
+			objects.assign(selected_pieces + [highlighted_item])
+			convert_to_stack(objects)
+		elif highlighted_item is Board.Gcollection:
 			print("Stacking objects to collection")
 			stack_to_collection(selected_pieces, highlighted_item)
 	
@@ -179,38 +198,35 @@ func deselect_objects() -> void:
 func flip_objects() -> void:
 	if selected_pieces.is_empty():
 		return
-	
-	for key in selected_pieces:
-		var piece: Dictionary = board.get_piece(key)
+	for piece in selected_pieces:
 		board.flip_object(piece)
 
 ## Makes a game menu
 func game_menu() -> void:
-	if selectable_piece != "":
-		var piece: Dictionary = board.get_piece(selectable_piece)
-		if piece.collection != "":
-			var collection: Dictionary = board.get_collection(piece.collection)
-			SignalManager.game_menu_create.emit(collection.inside)
+	if selectable_piece != null:
+		if selectable_piece.collection != null:
+			SignalManager.game_menu_create.emit(selectable_piece.collection.inside)
 		
 	pass
 
-func convert_to_stack(objs: Array) -> void:
-	var c: Dictionary = board.spawn_object(
-		board.construct_collection({
-			"position": board.get_piece(objs[-1]).position,
-			"permanent": false
+## Converts game objects to stack
+func convert_to_stack(objs: Array[Board.Gpiece]) -> void:
+	var c: Board.Gcollection = board.construct_collection(
+		{
+		"position": objs[-1].position,
+		"permanent": false
 		}
-		)
 	)
-	if not c.is_empty():
-		for key in objs:
-			var piece = board.get_piece(key)
+	if c != null:
+		board.make_name_exclusive(c)
+		board.spawn_object(c)
+		for piece in objs:
 			board.add_piece_to_collection(piece, c)
 
-func stack_to_collection(objs: Array, item: Dictionary) -> void:
-	for key in objs:
-		var piece = board.get_piece(key)
-		board.add_piece_to_collection(piece, item)
+## Stacks an object to a collection
+func stack_to_collection(objs: Array[Board.Gpiece], item: Board.Gcollection) -> void:
+	for obj in objs:
+		board.add_piece_to_collection(obj, item)
 
 #####################
 ### Instantiation ###
