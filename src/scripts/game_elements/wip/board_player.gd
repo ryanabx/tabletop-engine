@@ -186,7 +186,6 @@ func parse_input(input_actions: Dictionary) -> void:
 				release_grab_offsets()
 		if selection_boxing:
 			select_pieces(get_within_selection_box(), false, false)
-			select_collections_from_pieces()
 			selection_box = Rect2(0,0,0,0)
 			selection_boxing = false
 	# Flipping object
@@ -249,6 +248,9 @@ func select_pieces(objs: Array, append: bool = false, remove_from_collection = t
 	
 	if state in [STATE.IDLE]:
 		state = STATE.SELECT
+	
+	if not remove_from_collection:
+		select_collections_from_pieces()
 
 ## Select one object
 func _sel_piece(obj: Board.Gpiece, append: bool = false, remove_from_collection = true) -> void:
