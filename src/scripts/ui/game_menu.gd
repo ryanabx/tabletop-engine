@@ -57,7 +57,7 @@ func init_group_menu():
 	ordering_menu.add_item("Send to back", 4)
 	id_pressed.connect(_on_clicked_from_object_group)
 	ordering_menu.id_pressed.connect(_on_clicked_from_object_group)
-	orientation_menu.id_pressed.connect(_on_clicked_from_collection)
+	orientation_menu.id_pressed.connect(_on_clicked_from_object_group)
 
 # RIGHT CLICK MENU FUNCIONALITIES
 
@@ -67,15 +67,6 @@ func _on_clicked_from_object(id: int) -> void:
 		2: _move_objects_to_front()
 		3: _move_objects_to_back()
 
-func _on_clicked_from_collection(id: int) -> void:
-	match id:
-		0: _shuffle_collection()
-		1: _flip_selected_objects()
-		3: _move_objects_to_front()
-		4: _move_objects_to_back()
-		5: _set_objects_orientation(true)
-		6: _set_objects_orientation(false)
-
 func _on_clicked_from_object_group(id: int) -> void:
 	match id:
 		0: _stack_selected_objects()
@@ -84,11 +75,6 @@ func _on_clicked_from_object_group(id: int) -> void:
 		4: _move_objects_to_back()
 		5: _set_objects_orientation(true)
 		6: _set_objects_orientation(false)
-
-func _shuffle_collection() -> void:
-	for object in object_group:
-		if object is Collection:
-			(object as Collection).shuffle()
 
 func _flip_selected_objects() -> void:
 	print("Flip objects")
