@@ -1,7 +1,7 @@
 class_name RightClickMenu
 extends PopupMenu
 
-var object_group: Array = []
+var object_group: Array[Board.Gpiece] = []
 
 func _ready() -> void:
 	SignalManager.game_menu_create.connect(_on_menu_created)
@@ -42,6 +42,7 @@ func init_piece_menu() -> void:
 
 func init_group_menu():
 	add_item("Convert to stack", 0)
+	add_item("Shuffle", 8)
 	var orientation_menu = PopupMenu.new()
 	orientation_menu.add_item("Face up", 5)
 	orientation_menu.add_item("Face down", 6)
@@ -75,6 +76,7 @@ func _on_clicked_from_object_group(id: int) -> void:
 		4: _move_objects_to_back()
 		5: _set_objects_orientation(true)
 		6: _set_objects_orientation(false)
+		8: _shuffle_selection()
 
 func _flip_selected_objects() -> void:
 	print("Flip objects")
@@ -93,6 +95,9 @@ func _move_objects_to_back() -> void:
 
 func _stack_selected_objects() -> void:
 	SignalManager.convert_to_stack.emit(object_group)
+
+func _shuffle_selection() -> void:
+	SignalManager.shuffle_selection.emit(object_group)
 
 func _on_popup_hide() -> void:
 	SignalManager.game_menu_destroy.emit()

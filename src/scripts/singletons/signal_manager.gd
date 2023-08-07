@@ -7,7 +7,7 @@ signal game_menu_destroy()
 # Right click menu commands
 signal move_items_to_front(objects: Array)
 signal move_items_to_back(objects: Array)
-signal shuffle_items(objects: Array)
+signal shuffle_selection(objects: Array)
 signal convert_to_stack(objects: Array)
 
 # Menubar Signals

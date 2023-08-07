@@ -13,11 +13,11 @@ var border: Rect2 = Rect2(0,0,0,0)
 # Game objects
 var pieces: Dictionary = {}
 var collections: Dictionary = {}
-# Property updates
-var deltas: Dictionary = {"collections": {}, "pieces": {}}
-var u_deltas: Dictionary = {"collections": {}, "pieces": {}}
+# Object deltas
+var changed_objects: Array[Gobject] = []
 
-var draw_order: PackedStringArray = PackedStringArray([])
+var max_z_index: float = 0.001
+var min_z_index: float = -0.001
 
 ## Game object
 class Gobject extends Object:
@@ -26,7 +26,7 @@ class Gobject extends Object:
 	var scale: Vector2 = Vector2.ONE
 	var name: String = ""
 	var shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)])
-	var z_index: int = 0
+	var z_index: float = 0.0
 
 ## Game piece object
 class Gpiece extends Gobject:
@@ -36,12 +36,12 @@ class Gpiece extends Gobject:
 	var face_up: bool = false
 
 	func _init(
+		_name: String = "",
+		_z_index: float = 0.0,
 		_position: Vector2 = Vector2.ZERO,
 		_rotation: float = 0.0,
 		_scale: Vector2 = Vector2.ONE,
-		_name: String = "",
 		_shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)]),
-		_z_index: int = 0,
 		_image_up: String = "",
 		_image_down: String = "",
 		_collection: Gcollection = null,
@@ -72,18 +72,18 @@ class Gcollection extends Gobject:
 
 	func _init(
 		_name: String = "",
+		_z_index: float = 0.0,
 		_position: Vector2 = Vector2.ZERO,
 		_rotation: float = 0.0,
 		_scale: Vector2 = Vector2.ONE,
 		_shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)]),
-		_z_index: int = 0,
 		_base_size: Vector2 = Vector2.ONE,
 		_inside: Array[Gpiece] = [],
 		_view_perms: Array = [],
 		_access_perms: Array = [],
 		_permanent: bool = false,
 		_force_state: bool = false,
-		_type: Gcollection.Type = Gcollection.Type.STACK
+		_type: Gcollection.Type = Gcollection.Type.STACK,
 	) -> void:
 		self.position = _position
 		self.rotation = _rotation
@@ -103,6 +103,7 @@ class Gcollection extends Gobject:
 func construct_piece(config: Dictionary) -> Gpiece:
 	var piece: Gpiece = Gpiece.new()
 	piece.name = config.name if "name" in config else piece.name
+	piece.z_index = 0.0
 	piece.position = Vector2(config.position.x, config.position.y) * coordinate_scale if "position" in config else piece.position
 	piece.rotation = config.rotation if "rotation" in config else piece.rotation
 	piece.scale = Vector2(config.scale.x, config.scale.y) * coordinate_scale if "scale" in config else piece.scale
@@ -111,19 +112,18 @@ func construct_piece(config: Dictionary) -> Gpiece:
 	piece.shape = config.shape if "shape" in config else piece.shape
 	piece.collection = Gcollection.new(config.collection) if "collection" in config else piece.collection
 	piece.face_up = config.face_up if "face_up" in config else piece.face_up
-	piece.z_index = config.z_index if "z" in config else piece.z_index
 	return piece
 
 ## Construct a new collection from a config
 func construct_collection(config: Dictionary) -> Gcollection:
 	var collection: Gcollection = Gcollection.new()
 	collection.name = config.name if "name" in config else collection.name
+	collection.z_index = -10.0
 	collection.type = Gcollection.Type.HAND if "coll_type" in config and config.coll_type == "hand" else Gcollection.Type.STACK
 	collection.position = Vector2(config.position.x, config.position.y) * coordinate_scale if "position" in config else collection.position
 	collection.rotation = config.rotation if "rotation" in config else collection.rotation
 	collection.scale = Vector2(config.scale.x, config.scale.y) * coordinate_scale if "scale" in config else collection.scale
 	collection.base_size = Vector2(config.scale.x, config.scale.y) * coordinate_scale if "scale" in config else collection.base_size
-	collection.z_index = config.z_index if "z" in config else collection.z_index
 	collection.view_perms = config.view_perms if "view_perms" in config else collection.view_perms
 	collection.access_perms = config.access_perms if "access_perms" in config else collection.access_perms
 	collection.permanent = config.permanent if "permanent" in config else collection.permanent
@@ -149,9 +149,9 @@ func make_name_exclusive(obj: Gobject) -> Gobject:
 		while collections.has(str(obj.name,"_",i)):
 			i += 1
 	obj.name = str(obj.name,"_",i)
+	obj.z_index = max_z_index
+	max_z_index += 0.001
 	# Add the piece to the draw order array
-	if obj is Gpiece:
-		draw_order.append(obj.name)
 	return obj
 
 func _draw() -> void:
@@ -159,8 +159,7 @@ func _draw() -> void:
 	for key in collections.keys():
 		var collection: Gcollection = collections[key]
 		draw_collection(collection)
-	for key in draw_order:
-		var piece: Gpiece = pieces[key]
+	for piece in get_sorted_pieces():
 		draw_piece(piece)
 	for key in collections.keys():
 		var collection: Gcollection = collections[key]
@@ -229,54 +228,23 @@ func obj_overlaps_point(obj: Gobject, point: Vector2) -> bool:
 	var shape: PackedVector2Array = get_obj_extents(obj)
 	return Geometry2D.is_point_in_polygon(point, shape)
 
+func obj_overlaps_polygon(obj: Gobject, rect: PackedVector2Array) -> bool:
+	var shape: PackedVector2Array = get_obj_extents(obj)
+	return not Geometry2D.intersect_polygons(shape, rect).is_empty()
+
 
 ########################
 ### Property updates ###
 ########################
 
 ## Updates properties on the remote
-@rpc("any_peer","call_remote","reliable")
-func update_deltas(delta: Dictionary) -> void:
-	for key in delta.pieces.keys():
-		pieces[key].merge(delta.pieces[key], true)
-	for key in delta.collections.keys():
-		if not collections.has(key):
-			collections[key] = {}
-		collections[key].merge(delta.collections[key], true)
-	# print("Remote called update deltas reliable")
-
-## Updates properties on the remote
 @rpc("any_peer","call_remote","unreliable")
-func update_u_deltas(u_delta: Dictionary) -> void:
-	for key in u_delta.pieces.keys():
-		pieces[key].merge(u_delta.pieces[key], true)
-	for key in u_delta.collections.keys():
-		collections[key].merge(u_delta.collections[key], true)
-	# print("Remote called update deltas unreliable")
-
-## Edits values inside a piece
-func edit_piece_reliable(piece: Dictionary, changes: Dictionary) -> void:
-	piece.merge(changes, true)
-	if not deltas.pieces.has(piece.name): deltas.pieces[piece.name] = {}
-	deltas.pieces[piece.name].merge(changes, true)
-
-## Edits values inside a collection
-func edit_collection_reliable(collection: Dictionary, changes: Dictionary) -> void:
-	collection.merge(changes, true)
-	if not deltas.collections.has(collection.name): deltas.collections[collection.name] = {}
-	deltas.collections[collection.name].merge(changes, true)
-
-## Edits values inside a piece
-func edit_piece_unreliable(piece: Dictionary, changes: Dictionary) -> void:
-	piece.merge(changes, true)
-	if not u_deltas.pieces.has(piece.name): u_deltas.pieces[piece.name] = {}
-	u_deltas.pieces[piece.name].merge(changes, true)
-
-## Edits values inside a collection
-func edit_collection_unreliable(collection: Dictionary, changes: Dictionary) -> void:
-	collection.merge(changes, true)
-	if not u_deltas.collections.has(collection.name): u_deltas.collections[collection.name] = {}
-	u_deltas.collections[collection.name].merge(changes, true)
+func update_deltas(_changed_objects: Array[Gobject]) -> void:
+	for obj in _changed_objects:
+		if obj is Gpiece:
+			pieces[obj.name] = obj
+		elif obj is Gcollection:
+			collections[obj.name] = obj
 
 #################
 ### Utilities ###
@@ -313,28 +281,62 @@ func erase_piece(piece_name: String) -> void:
 
 # Draw order of objects
 
+func get_sorted_pieces() -> Array[Gpiece]:
+	var pcs: Array[Gpiece] = []
+	pcs.assign(pieces.values())
+	pcs.sort_custom(sort_by_draw_order)
+	return pcs
+
 func sort_by_draw_order(obj1: Gpiece, obj2: Gpiece) -> bool:
-	return draw_order.find(obj1.name) < draw_order.find(obj2.name)
+	return obj1.z_index < obj2.z_index
 
 ## Brings an object to the front
 func move_object_to_top(piece: Gpiece) -> void:
-	draw_order.remove_at(draw_order.find(piece.name))
-	draw_order.push_back(piece.name)
+	piece.z_index = max_z_index
+	max_z_index += 0.001
 
 ## Brings an object to the back
 func move_object_to_back(piece: Gpiece) -> void:
-	draw_order.remove_at(draw_order.find(piece.name))
-	draw_order.insert(0, piece.name)
+	piece.z_index = min_z_index
+	min_z_index -= 0.001
 
 ## Flips an object
 func flip_object(piece: Gpiece) -> void:
 	piece.face_up = not piece.face_up
 
 ## Shuffles objects
-func shuffle(pcs: Array[Gobject]) -> void:
-	for obj in pcs:
-		var index = draw_order.find(obj.name)
-		draw_order.remove_at(index)
+func shuffle(pcs: Array[Gpiece]) -> void:
+	var pcs_shuffled: Array[Gpiece] = pcs.duplicate(false)
+	pcs_shuffled.shuffle()
+	for i in range(pcs.size()):
+		var pc1: Gpiece = pcs[i]
+		var pc2: Gpiece = pcs_shuffled[i]
+		var contents1: Dictionary = {
+			"position": pc1.position,
+			"rotation": pc1.rotation,
+			"z_index": pc1.z_index,
+			"collection": pc1.collection
+		}
+		var contents2: Dictionary = {
+			"position": pc2.position,
+			"rotation": pc2.rotation,
+			"z_index": pc2.z_index,
+			"collection": pc2.collection
+		}
+		_swap(pc1, contents2)
+		_swap(pc2, contents1)
+
+func _swap(pc1: Gpiece, contents: Dictionary) -> void:
+	pc1.position = contents.position
+	pc1.rotation = contents.rotation
+	pc1.z_index = contents.z_index
+	if pc1.collection != contents.collection:
+		add_piece_to_collection(pc1, collections[contents.collection])
+
+func pieces_by_name(objects: Array[String]) -> Array[Gpiece]:
+	var result: Array[Gpiece] = []
+	result.assign(objects.map(func (value: String) -> Gpiece: return pieces[value]))
+	return result
 
 # Checking if player can select
 
@@ -364,15 +366,9 @@ func _process(_delta: float) -> void:
 
 ## Updates the peers if deltas exist
 func update_peers() -> void:
-	if not deltas.collections.is_empty() or not deltas.pieces.is_empty():
-		rpc("update_deltas",deltas)
-		# print("Updating deltas!")
-		deltas = {"collections": {}, "pieces": {}}
-	
-	if not u_deltas.collections.is_empty() or not u_deltas.pieces.is_empty():
-		rpc("update_u_deltas",u_deltas)
-		# print("Updating u_deltas!")
-		u_deltas = {"collections": {}, "pieces": {}}
+	if not changed_objects.is_empty():
+		rpc("update_deltas", changed_objects)
+		changed_objects = []
 
 ## Self explanatory
 func clamp_camera() -> void:
@@ -393,12 +389,16 @@ func update_positions_in_collection() -> void:
 func _ready() -> void:
 	def_font = ThemeDB.fallback_font
 	coordinate_scale = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
+	connect_signals()
 	init_brd_prps()
 	updt_mnu_bar()
 	if is_multiplayer_authority():
 		brd_objs_frm_cnfg()
 		cll_fll_ins()
 	coordinate_scale = Vector2.ONE
+
+func connect_signals() -> void:
+	SignalManager.shuffle_selection.connect(shuffle)
 
 ## Ran during startup, initializes the board's background and border
 func init_brd_prps() -> void:
