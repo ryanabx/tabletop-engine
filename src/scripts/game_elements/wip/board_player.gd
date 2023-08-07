@@ -227,8 +227,17 @@ func position_overlaps_selected_pieces(pos: Vector2) -> bool:
 
 func select_collections_from_pieces() -> void:
 	for pc in selected_pieces:
-		if pc.collection != null and not pc.collection.permanent:
-			select_collection(pc.collection)
+		if pc.collection != null:
+			if not pc.collection.permanent:
+				select_collection(pc.collection)
+			else:
+				if pc.collection.inside.all(func(val: Board.Gpiece) -> bool: return selected_pieces.has(val)):
+					convert_to_stack(pc.collection.inside)
+					select_collection(pc.collection)
+				else:
+					board.remove_piece_from_collection(pc)
+
+		
 
 ## Select objects
 func select_pieces(objs: Array, append: bool = false, remove_from_collection = true) -> void:
@@ -311,12 +320,18 @@ func convert_to_stack(objs: Array[Board.Gpiece]) -> void:
 	if c != null:
 		board.make_name_exclusive(c)
 		board.spawn_object(c)
-		for piece in objs:
+		var sorted_objs: Array[Board.Gpiece] = []
+		sorted_objs.assign(objs)
+		sorted_objs.sort_custom(board.sort_by_draw_order)
+		for piece in sorted_objs:
 			board.add_piece_to_collection(piece, c)
 
 ## Stacks an object to a collection
 func stack_to_collection(objs: Array[Board.Gpiece], item: Board.Gcollection) -> void:
-	for obj in objs:
+	var sorted_objs: Array[Board.Gpiece] = []
+	sorted_objs.assign(objs)
+	sorted_objs.sort_custom(board.sort_by_draw_order)
+	for obj in sorted_objs:
 		board.add_piece_to_collection(obj, item)
 
 #####################
