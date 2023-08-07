@@ -112,7 +112,6 @@ func construct_piece(config: Dictionary) -> Gpiece:
 	piece.collection = Gcollection.new(config.collection) if "collection" in config else piece.collection
 	piece.face_up = config.face_up if "face_up" in config else piece.face_up
 	piece.z_index = config.z_index if "z" in config else piece.z_index
-
 	return piece
 
 ## Construct a new collection from a config

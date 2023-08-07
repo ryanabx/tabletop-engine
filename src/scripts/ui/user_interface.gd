@@ -3,8 +3,8 @@ extends Control
 
 var coordinates_labels: Array
 @onready var game_name_label: Label = $VBoxContainer/GameNameLabel
-@onready var menu_bar: MenuBar = $VBoxContainer/PanelContainer/HBoxContainer/MenuBar
-@onready var fps_counter: Label = $VBoxContainer/PanelContainer/HBoxContainer/FPSCounter
+@onready var menu_bar: MenuBar = $VBoxContainer/TitleBar/HBoxContainer/MenuBar
+@onready var fps_counter: Label = $VBoxContainer/TitleBar/HBoxContainer/FPSCounter
 
 func _ready() -> void:
 	coordinates_labels.append(Label.new())
@@ -23,3 +23,22 @@ func _process(_delta: float) -> void:
 	else:
 		game_name_label.text = "No Game Loaded"
 	queue_redraw()
+
+var drag_window: bool = false
+var start_position: Vector2 = Vector2.ZERO
+	
+	
+# func _input(event: InputEvent) -> void:
+# 	if event is InputEventMouseButton and not event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+# 		var screen_position = get_viewport().get_screen_transform() * get_viewport().get_mouse_position()
+# 		print("Mouse released at ",screen_position)
+# 		drag_window = false
+# 	elif event is InputEventMouseMotion and drag_window:
+# 		DisplayServer.window_set_position(DisplayServer.window_get_position() + Vector2i(get_global_mouse_position() - start_position))
+
+# func _on_title_bar_gui_input(event:InputEvent) -> void:
+# 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+# 		var screen_position = get_viewport().get_screen_transform() * get_viewport().get_mouse_position()
+# 		print("Mouse clicked at ",screen_position)
+# 		drag_window = true
+# 		start_position = get_global_mouse_position()
