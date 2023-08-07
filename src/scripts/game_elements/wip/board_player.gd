@@ -153,6 +153,7 @@ func parse_input(input_actions: Dictionary) -> void:
 func select_pieces(objs: Array, append: bool = false, remove_from_collection = true) -> void:
 	if not append:
 		deselect_objects()
+	objs.sort_custom(board.sort_by_draw_order)
 	for obj in objs:
 		_sel_piece(obj, true, remove_from_collection)
 	
@@ -162,8 +163,9 @@ func select_pieces(objs: Array, append: bool = false, remove_from_collection = t
 ## Select one object
 func _sel_piece(obj: Board.Gpiece, append: bool = false, remove_from_collection = true) -> void:
 	# Piece exclusive stuff
-	if obj is Board.Gpiece and remove_from_collection:
-		board.remove_piece_from_collection(obj)
+	if obj is Board.Gpiece:
+		if remove_from_collection:
+			board.remove_piece_from_collection(obj)
 		board.move_object_to_top(obj)
 	if append:
 		selected_pieces.append(obj)

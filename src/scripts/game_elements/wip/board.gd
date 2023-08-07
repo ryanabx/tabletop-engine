@@ -313,6 +313,9 @@ func erase_piece(piece_name: String) -> void:
 
 # Draw order of objects
 
+func sort_by_draw_order(obj1: Gpiece, obj2: Gpiece) -> bool:
+	return draw_order.find(obj1.name) < draw_order.find(obj2.name)
+
 ## Brings an object to the front
 func move_object_to_top(piece: Gpiece) -> void:
 	draw_order.remove_at(draw_order.find(piece.name))

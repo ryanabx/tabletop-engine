@@ -79,11 +79,11 @@ func _on_clicked_from_object_group(id: int) -> void:
 func _flip_selected_objects() -> void:
 	print("Flip objects")
 	for object in object_group:
-		object.flip()
+		object.face_up = not object.face_up
 
 func _set_objects_orientation(flipped: bool) -> void:
 	for object in object_group:
-		object.set_side(flipped)
+		object.face_up = flipped
 
 func _move_objects_to_front() -> void:
 	SignalManager.move_items_to_front.emit(object_group)
