@@ -17,6 +17,8 @@ var collections: Dictionary = {}
 var piece_properties_deferred: Dictionary = {}
 var collection_properties_deferred: Dictionary = {}
 
+var counter: int = 0
+
 var max_z_index: float = 0.001
 var min_z_index: float = -0.001
 
@@ -50,11 +52,10 @@ class Gobject extends Object:
 class Gpiece extends Gobject:
 	var image_up: String = ""
 	var image_down: String = ""
-	var collection: Gcollection = null
+	var collection: String = ""
 	var face_up: bool = false
 
 	func _init(
-		_placeholder: bool = false,
 		_name: String = "",
 		_z_index: float = 0.0,
 		_position: Vector2 = Vector2.ZERO,
@@ -63,7 +64,7 @@ class Gpiece extends Gobject:
 		_shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)]),
 		_image_up: String = "",
 		_image_down: String = "",
-		_collection: Gcollection = null,
+		_collection: String = "",
 		_face_up: bool = false
 	) -> void:
 		self.position = _position
@@ -80,7 +81,7 @@ class Gpiece extends Gobject:
 ## Collection type
 class Gcollection extends Gobject:
 	var base_size: Vector2 = Vector2.ONE
-	var inside: Array[Gpiece] = []
+	var inside: Array[String] = []
 	var view_perms: Array = []
 	var access_perms: Array = []
 	var permanent: bool = false
@@ -90,7 +91,6 @@ class Gcollection extends Gobject:
 	enum Type {STACK, HAND}
 
 	func _init(
-		_placeholder: bool = false,
 		_name: String = "",
 		_z_index: float = 0.0,
 		_position: Vector2 = Vector2.ZERO,
@@ -98,7 +98,7 @@ class Gcollection extends Gobject:
 		_scale: Vector2 = Vector2.ONE,
 		_shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)]),
 		_base_size: Vector2 = Vector2.ONE,
-		_inside: Array[Gpiece] = [],
+		_inside: Array[String] = [],
 		_view_perms: Array = [],
 		_access_perms: Array = [],
 		_permanent: bool = false,
@@ -122,85 +122,38 @@ class Gcollection extends Gobject:
 @rpc("any_peer","call_local", "unreliable")
 func _set_gobject_property_unreliable(data: PackedByteArray) -> void:
 	var args: Dictionary = bytes_to_var(data)
-	var val: Variant
-	# Deserialization
-	if args.prop == "collection":
-		val = collections[args.val] if args.val in collections else null
-	else:
-		val = args.val
-	
-	_set_gobject_property(args, val)
+	_set_gobject_property(args)
 
 @rpc("any_peer","call_local", "reliable")
 func _set_gobject_property_reliable(data: PackedByteArray) -> void:
 	var args: Dictionary = bytes_to_var(data)
-	var val: Variant
-	# Deserialization
-	if args.prop == "collection":
-		if args.val != null:
-			val = collections[args.val] if args.val in collections else null
-		else:
-			val = null
-	else:
-		val = args.val
-	_set_gobject_property(args, val)
+	_set_gobject_property(args)
 
-func _set_gobject_property(args: Dictionary, val: Variant) -> void:
+func _set_gobject_property(args: Dictionary) -> void:
 	if args.is_collection:
 		if args.obj in collections:
-			collections[args.obj].set(args.prop, val)
+			if args.val is Array:
+				var val: Array[String] = []
+				val.assign(args.val)
+				collections[args.obj].set(args.prop, val)
+			else:
+				collections[args.obj].set(args.prop, args.val)
 		else:
 			if not args.obj in collection_properties_deferred:
 				collection_properties_deferred[args.obj] = {}
-			collection_properties_deferred[args.obj][args.prop] = val
+			collection_properties_deferred[args.obj][args.prop] = args.val
 	else:
 		if args.obj in pieces:
-			pieces[args.obj].set(args.prop, val)
+			pieces[args.obj].set(args.prop, args.val)
 		else:
 			if not args.obj in piece_properties_deferred:
 				piece_properties_deferred[args.obj] = {}
-			piece_properties_deferred[args.obj][args.prop] = val
-
-@rpc("any_peer","call_local", "reliable")
-func _modify_gobject_property(data: PackedByteArray) -> void:
-	var args: Dictionary = bytes_to_var(data)
-	var val: Variant
-
-	if args.prop == "inside":
-		val = pieces[args.val] if args.val in pieces else null
-	else:
-		val = args.val
-	
-	if val == null:
-		return
-	
-	if args.is_collection:
-		if args.obj in collections:
-			if args.append:
-				collections[args.obj].get(args.prop).append(val)
-			else:
-				collections[args.obj].get(args.prop).erase(val)
-			print("Modifying ",val," from ", args.obj)
-		else:
-			if not args.obj in collection_properties_deferred:
-				collection_properties_deferred[args.obj] = {}
-			if not args.prop in collection_properties_deferred[args.obj]:
-				collection_properties_deferred[args.obj][args.prop] = []
-			if args.append:
-				collection_properties_deferred[args.obj][args.prop].append(val)
-			else:
-				collection_properties_deferred[args.obj][args.prop].erase(val)
+			piece_properties_deferred[args.obj][args.prop] = args.val
 			
 
 func set_gobject_property(obj: Gobject, prop: StringName, v: Variant) -> void:
 	var val: Variant
-	# Serializing objects
-	if prop == "inside":
-		val = v.map(func(p: Gpiece) -> String: return p.name)
-	elif prop == "collection" and val != null:
-		val = v.name
-	else:
-		val = v
+	val = v
 	
 	var is_collection = obj is Gcollection
 	
@@ -222,8 +175,6 @@ func modify_gobject_property(obj: Gobject, prop: StringName, v: Variant, append:
 	
 	var data: PackedByteArray = var_to_bytes({"obj": obj.name, "prop": prop, "val": val, "is_collection": is_collection, "append": append})
 	rpc("_modify_gobject_property",data)
-	
-
 
 ## Construct a new piece from a config
 @rpc("any_peer","call_local","reliable")
@@ -234,53 +185,22 @@ func construct_piece_rpc(cfg: PackedByteArray) -> void:
 
 func construct_piece(config: Dictionary) -> Gpiece:
 	var piece: Gpiece = Gpiece.new()
-	piece.placeholder = config.placeholder if "placeholder" in config else piece.placeholder
-	piece.name = config.name if "name" in config else piece.name
+	for prop in config.keys():
+		piece.set(prop, config[prop])
+	if "collection" in config:
+		if collections.has(config.collection) and not collections[config.collection].inside.has(config.name):
+			collections[config.collection].inside.append(config.name)
 	piece.z_index = max_z_index
 	max_z_index += 0.001
-	piece.position = Vector2(config.position.x, config.position.y) * coordinate_scale if "position" in config else piece.position
-	piece.rotation = config.rotation if "rotation" in config else piece.rotation
-	piece.scale = Vector2(config.scale.x, config.scale.y) * coordinate_scale if "scale" in config else piece.scale
-	piece.image_up = config.image_up if "image_up" in config else piece.image_up
-	piece.image_down = config.image_down if "image_down" in config else piece.image_down
-	piece.shape = config.shape if "shape" in config else piece.shape
-	if "collection" in config:
-		if collections.has(config.collection):
-			piece.collection = collections[config.collection]
-		else:
-			piece.collection = construct_collection_placeholder({"name": config.collection})
-	piece.collection = Gcollection.new(true, config.collection) if "collection" in config else piece.collection
-	piece.face_up = config.face_up if "face_up" in config else piece.face_up
 	return piece
 
 func add_piece(piece: Gpiece) -> void:
-	if not pieces.has(piece.name):
-		pieces[piece.name] = piece # Added object
-	elif pieces[piece.name].placeholder == true:
-		merge_pieces(pieces[piece.name], piece)
+	pieces[piece.name] = piece # Added object
+	if piece_properties_deferred.has(piece.name):
+		for prop in piece_properties_deferred[piece.name].keys():
+			piece.set(prop, piece_properties_deferred[piece.name][prop])
+		piece_properties_deferred.erase(piece.name)
 	gobject_created.emit(piece)
-
-func merge_pieces(pc1: Gpiece, pc2: Gpiece) -> void:
-	pc1.name = pc2.name
-	pc1.z_index = pc2.z_index
-	pc1.position = pc2.position
-	pc1.rotation = pc2.rotation
-	pc1.scale = pc2.scale
-	pc1.image_up = pc2.image_up
-	pc1.image_down = pc2.image_down
-	pc1.shape = pc2.shape
-	pc1.collection = pc2.collection
-	pc1.face_up = pc2.face_up
-	pc1.placeholder = false
-	if piece_properties_deferred.has(pc1.name):
-		for props in piece_properties_deferred[pc1.name].keys():
-			var val: Variant = piece_properties_deferred[pc1.name][props]
-			pc1.set(props, val)
-
-
-func construct_piece_placeholder(config: Dictionary) -> Gpiece:
-	config.placeholder = true
-	return construct_piece(config)
 
 ## Construct a new collection from a config
 @rpc("any_peer","call_local","reliable")
@@ -291,69 +211,30 @@ func construct_collection_rpc(cfg: PackedByteArray) -> void:
 
 func construct_collection(config: Dictionary) -> Gcollection:
 	var collection: Gcollection = Gcollection.new()
-	for 
-	collection.name = config.name if "name" in config else collection.name
-	collection.z_index = -10.0
-	collection.type = Gcollection.Type.HAND if "coll_type" in config and config.coll_type == "hand" else Gcollection.Type.STACK
-	collection.position = Vector2(config.position.x, config.position.y) * coordinate_scale if "position" in config else collection.position
-	collection.rotation = config.rotation if "rotation" in config else collection.rotation
-	collection.scale = Vector2(config.scale.x, config.scale.y) * coordinate_scale if "scale" in config else collection.scale
-	collection.base_size = Vector2(config.scale.x, config.scale.y) * coordinate_scale if "scale" in config else collection.base_size
-	collection.view_perms = config.view_perms if "view_perms" in config else collection.view_perms
-	collection.access_perms = config.access_perms if "access_perms" in config else collection.access_perms
-	collection.permanent = config.permanent if "permanent" in config else collection.permanent
-	collection.force_state = config.force_state if "force_state" in config else collection.force_state
-	collection.shape = config.shape if "shape" in config else collection.shape
-	if "inside" in config:
-		var inside: Array[Gpiece] = []
-		inside.assign(config.inside.map(func(val: String) -> Gpiece: return pieces[val] if pieces.has(val) else construct_piece_placeholder({"name": val})))
-		collection.inside = inside
+	for prop in config.keys():
+		if prop == "inside":
+			var val: Array[String] = []
+			val.assign(config[prop])
+			collection.set(prop, val)
+		else:
+			collection.set(prop, config[prop])
+	print("Collection inside side: ",collection.inside.size())
+	
+	for obj in get_pieces(collection.inside):
+		if obj != null:
+			obj.collection = collection.name
+			print("Set obj ",obj.name," collection to ",collection.name)
+	# Add all currently made objects that reference this collection into the inside list
+	collection.inside.append_array(pieces.values().filter(func(val: Gpiece) -> bool: return val.collection == collection.name and not collection.inside.has(val.name)).map(func(v: Gobject) -> String: return v.name))
 	return collection
 
 func add_collection(collection: Gcollection) -> void:
-	if not collections.has(collection.name):
-		collections[collection.name] = collection # Added object
-	elif collections[collection.name].placeholder == true:
-		merge_collections(collections[collection.name], collection)
+	collections[collection.name] = collection # Added object
+	if collection_properties_deferred.has(collection.name):
+		for prop in collection_properties_deferred[collection.name].keys():
+			collection.set(prop, collection_properties_deferred[collection.name][prop])
+		collection_properties_deferred.erase(collection.name)
 	gobject_created.emit(collection)
-
-func merge_collections(c1: Gcollection, c2: Gcollection) -> void:
-	c1.name = c2.name
-	c1.z_index = c2.z_index
-	c1.type = c2.type
-	c1.position = c2.position
-	c1.rotation = c2.rotation
-	c1.scale = c2.scale
-	c1.base_size = c2.base_size
-	c1.view_perms = c2.view_perms
-	c1.access_perms = c2.access_perms
-	c1.permanent = c2.permanent
-	c1.force_state = c2.force_state
-	c1.shape = c2.shape
-	c1.inside.append_array(c2.inside)
-	c1.placeholder = false
-	if collection_properties_deferred.has(c1.name):
-		for props in collection_properties_deferred[c1.name].keys():
-			var val: Variant = collection_properties_deferred[c1.name][props]
-			c1.set(props, val)
-
-func construct_collection_placeholder(config: Dictionary) -> Gcollection:
-	config.placeholder = true
-	return construct_collection(config)
-	
-
-## Makes the object's name exclusive
-func _make_name_exclusive(name: String, type: String) -> String:
-	var i: int = 0
-	match type:
-		"piece":
-			while pieces.has(str(name,"_",i)):
-				i += 1
-		"collection":
-			while collections.has(str(name,"_",i)):
-				i += 1
-	# Add the piece to the draw order array
-	return str(name,"_",i)
 
 func _draw() -> void:
 	draw_board_bg()
@@ -384,10 +265,11 @@ func draw_piece(obj: Gpiece) -> void:
 		Color.WHITE,
 		Globals.OBJECT_HIGHLIGHT_BORDER
 		)
-	if obj.collection != null:
-		var collection: Gcollection = obj.collection
-		collection.scale.x = maxf(obj.scale.x, collection.scale.x)
-		collection.scale.y = maxf(obj.scale.y, collection.scale.y)
+	var collection: Gcollection = get_collection(obj.collection)
+	if collection == null:
+		return
+	collection.scale.x = maxf(obj.scale.x, collection.scale.x)
+	collection.scale.y = maxf(obj.scale.y, collection.scale.y)
 
 ## Draws a collection
 func draw_collection(obj: Gcollection) -> void:
@@ -404,20 +286,18 @@ func get_piece(n: String) -> Gpiece:
 	return pieces[n]
 
 func get_pieces(a: Array) -> Array[Gpiece]:
-	var res: Array[Gpiece] = []
-	for _a in a:
-		res.append(get_piece(_a))
-	return res
+	var pcs: Array[Gpiece] = []
+	pcs.assign(a.map(func(v: String) -> Gpiece: return pieces[v] if pieces.has(v) else null))
+	return pcs
 
 func get_collection(n: String) -> Gcollection:
 	if n == "" or not collections.has(n): return null
 	return collections[n]
 
 func get_collections(a: Array) -> Array[Gcollection]:
-	var res: Array[Gcollection] = []
-	for _a in a:
-		res.append(get_collection(_a))
-	return res
+	var clls: Array[Gcollection] = []
+	clls.assign(a.map(func(v: String) -> Gcollection: return collections[v] if collections.has(v) else null))
+	return clls
 
 func get_obj_extents(obj: Gobject) -> PackedVector2Array:
 	return get_obj_transform(obj) * obj.shape
@@ -436,11 +316,18 @@ func obj_overlaps_polygon(obj: Gobject, rect: PackedVector2Array) -> bool:
 func move_collection(obj: Gcollection, pos: Vector2) -> void:
 	set_gobject_property(obj, "position", pos)
 	for pc in obj.inside:
-		set_gobject_property(pc, "position", pos)
-		set_gobject_property(pc, "rotation", obj.rotation)
+		var piece: Gpiece = get_piece(pc)
+		if piece == null: continue
+		set_gobject_property(piece, "position", pos)
+		set_gobject_property(piece, "rotation", obj.rotation)
 
 func move_piece(obj: Gpiece, pos: Vector2) -> void:
 	set_gobject_property(obj, "position", pos)
+
+func unique_name(s: String) -> String:
+	var n: String = str(multiplayer.get_unique_id(),s,counter)
+	counter += 1
+	return n
 
 #################
 ### Utilities ###
@@ -449,21 +336,34 @@ func move_piece(obj: Gpiece, pos: Vector2) -> void:
 # Adding and removing from collections
 
 ## Adds a piece to the collection specified. Removes a piece from current collection if it exists
-func add_piece_to_collection(piece: Board.Gpiece, collection: Board.Gcollection) -> void:
-	if piece.collection != null: remove_piece_from_collection(piece)
-	set_gobject_property(piece, "collection", collection)
-	modify_gobject_property(collection, "inside", piece, true)
+func add_piece_to_collection(piece: Board.Gpiece, c_name: String) -> void:
+	if piece.collection != "": remove_piece_from_collection(piece)
+	set_gobject_property(piece, "collection", c_name)
+	var collection = get_collection(c_name)
+	var new_inside: Array[String] = []
+	new_inside.assign(collection.inside)
+	new_inside.append(piece.name)
+	set_gobject_property(collection, "inside", new_inside)
 	set_gobject_property(piece, "position", collection.position)
 
 ## Removes a piece from a collection, if it has any
 func remove_piece_from_collection(piece: Gpiece) -> void:
-	if piece.collection == null: return
-	var c: Gcollection = piece.collection
-	modify_gobject_property(c, "inside", piece, false)
-	set_gobject_property(piece, "collection", null)
+	if piece == null:
+		print("Piece was null")
+		return
+	var c: Gcollection = get_collection(piece.collection)
+	set_gobject_property(piece, "collection", "")
+	if c == null:
+		print("Collection ",c," was null")
+		return
+	print("Setting new inside")
+	var new_inside: Array[String] = []
+	new_inside.assign(c.inside)
+	new_inside.erase(piece.name)
+	set_gobject_property(c, "inside", new_inside)
 	if not c.permanent:
 		if c.inside.size() == 1:
-			remove_piece_from_collection(c.inside[0])
+			remove_piece_from_collection(get_piece(c.inside[0]))
 		elif c.inside.is_empty():
 			# Essentially queue free
 			rpc("erase_collection",c.name)
@@ -540,8 +440,10 @@ func pieces_by_name(objects: Array[String]) -> Array[Gpiece]:
 
 ## True if the current player can select this piece, false otherwise
 func can_access_piece(piece: Gpiece) -> bool:
-	if piece.collection != null:
-		return can_access_collection(piece.collection)
+	if piece == null: return false
+	var collection: Gcollection = get_collection(piece.collection)
+	if collection != null:
+		return can_access_collection(collection)
 	return true
 
 ## Returns true if the current player can access this collection, false otherwise
@@ -559,10 +461,22 @@ func can_access_collection(collection: Gcollection) -> bool:
 func _process(_delta: float) -> void:
 	clamp_camera()
 	queue_redraw()
+	update_objects_position()
 
 ## Self explanatory
 func clamp_camera() -> void:
 	get_parent().camera_controller.camera.position = get_parent().camera_controller.camera.position.clamp(border.position, border.end)
+
+## Updates objects position to their collections
+func update_objects_position():
+	for collection in collections.values():
+		var pcs: Array[Gpiece] = get_pieces(collection.inside)
+		for pc in pcs:
+			if pc == null:
+				continue
+			pc.position = collection.position
+			pc.rotation = collection.rotation
+
 
 ####################
 ### Config stuff ###
@@ -636,11 +550,23 @@ func mk_obj_dct(original: Dictionary, repls: Dictionary) -> Dictionary:
 
 ## Ran during startup whenever a new config object is ready to be
 ## inserted into the board.
-func nw_cnf_obj(obj: Dictionary) -> void:
-	var amount: int = obj.repeat if "repeat" in obj else 1
+func nw_cnf_obj(o: Dictionary) -> void:
+	var amount: int = o.repeat if "repeat" in o else 1
 	for i in range(amount):
+		var obj: Dictionary = o.duplicate(true)
+		if "position" in obj:
+			obj.position = Vector2(obj.position.x * coordinate_scale.x, obj.position.y * coordinate_scale.y)
+		if "scale" in obj:
+			obj.scale = Vector2(obj.scale.x * coordinate_scale.x, obj.scale.y * coordinate_scale.y)
+		print(coordinate_scale)
 		match obj.type:
 			"collection":
+				if "scale" in obj:
+					obj.base_size = obj.scale
+				if not obj.has("name"):
+					obj.name = unique_name("collection")
 				rpc("construct_collection_rpc",(var_to_bytes(obj)))
 			"piece":
+				if not obj.has("name"):
+					obj.name = unique_name("piece")
 				rpc("construct_piece_rpc",(var_to_bytes(obj)))
