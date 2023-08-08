@@ -27,34 +27,51 @@ var state: STATE = STATE.IDLE
 ######################
 
 func _process(_delta: float) -> void:
-	if not Input.is_action_pressed("game_select") and not Input.is_action_pressed("game_select_stack"):
-		release_grab_offsets()
-	if Input.is_action_just_pressed("game_select") or Input.is_action_just_pressed("game_select_stack"):
-		if position_overlaps_selected_pieces(get_local_mouse_position()):
-			set_grab_offsets()
+	# if not (Input.is_action_pressed("game_select_stack") or Input.is_action_pressed("game_select_stack")) and currently_moving_selection:
+	# 	release_grab_offsets()
 	check_for_overlapping_piece()
 	update_selection_box()
 	queue_redraw()
-	if currently_moving_selection:
+	if currently_moving_selection and (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")):
 		move_selected_objects()
 
 func set_grab_offsets() -> void:
 	grab_offsets = {"pieces": {}, "collections": {}}
 	for obj in selected_pieces:
+		if not grab_offsets.pieces.has(obj.name):
+			grab_offsets.pieces[obj.name] = Vector2.ZERO
+		
+		if obj == null:
+			print("Uh oh 2")
+			continue
+		
 		grab_offsets.pieces[obj.name] = obj.position - get_local_mouse_position()
 	for obj in selected_collections:
+		if not grab_offsets.collections.has(obj.name):
+			grab_offsets.collections[obj.name] = Vector2.ZERO
+		
+		if obj == null:
+			print("Uh oh 2")
+			continue
+		
 		grab_offsets.collections[obj.name] = obj.position - get_local_mouse_position()
 	currently_moving_selection = true
+	print("Set grab offsets!")
 
 func release_grab_offsets() -> void:
 	currently_moving_selection = false
 	grab_offsets = {"pieces": {}, "collections": {}}
+	print("Release grab offsets!")
 
 func move_selected_objects() -> void:
 	for obj in selected_pieces:
-		obj.position = get_local_mouse_position() + grab_offsets.pieces[obj.name]
+		if not grab_offsets.pieces.has(obj.name):
+			grab_offsets.pieces[obj.name] = obj.position - get_local_mouse_position()
+		board.move_piece(obj, get_local_mouse_position() + grab_offsets.pieces[obj.name])
 	for obj in selected_collections:
-		obj.position = get_local_mouse_position() + grab_offsets.collections[obj.name]
+		if not grab_offsets.pieces.has(obj.name):
+			grab_offsets.pieces[obj.name] = obj.position - get_local_mouse_position()
+		board.move_collection(obj, get_local_mouse_position() + grab_offsets.collections[obj.name])
 
 func update_selection_box() -> void:
 	if selection_boxing:
@@ -120,7 +137,7 @@ func removed_game_menu() -> void:
 
 func can_select() -> bool:
 	return (state == STATE.IDLE
-	or state == STATE.SELECT and not position_overlaps_selected_pieces(get_local_mouse_position()))
+	or state == STATE.SELECT)
 
 func can_deselect() -> bool:
 	return (state in [STATE.SELECT] and
@@ -155,15 +172,21 @@ func _draw() -> void:
 func parse_input(input_actions: Dictionary) -> void:
 	# Individual selection
 	if InputManager.is_select_pressed(input_actions) and can_select():
-		if selectable_piece != null:
-			print("Selecting object")
-			select_pieces([selectable_piece])
-			set_grab_offsets()
+		var over_piece = position_overlaps_selected_pieces(get_local_mouse_position())
+		if not over_piece:
+			print("Not over piece!")
+			if selectable_piece != null:
+				print("Selecting object")
+				select_pieces([selectable_piece], false, true)
+				print(selected_pieces.size())
+				set_grab_offsets()
+			else:
+				print("Starting selection rectangle")
+				deselect_objects()
+				selection_box.position = get_local_mouse_position()
+				selection_boxing = true
 		else:
-			print("Starting selection rectangle")
-			deselect_objects()
-			selection_box.position = get_local_mouse_position()
-			selection_boxing = true
+			set_grab_offsets()
 	# Stack selection (or regular if no collection exists)
 	if InputManager.is_stack_select_pressed(input_actions) and can_select():
 		if selectable_piece != null:
@@ -173,21 +196,23 @@ func parse_input(input_actions: Dictionary) -> void:
 					print("Stack selecting")
 					select_pieces(c.inside, false, false)
 					select_collection(c)
+					set_grab_offsets()
 			else:
 				print("Selecting object")
 				select_pieces([selectable_piece])
-			set_grab_offsets()
+				set_grab_offsets()
 	# Deselection
 	if InputManager.is_deselect_pressed(input_actions):
 		if not selected_pieces.is_empty():
+			release_grab_offsets()
 			if can_deselect():
 				print("Deselecting objects")
 				deselect_objects()
-				release_grab_offsets()
 		if selection_boxing:
 			select_pieces(get_within_selection_box(), false, false)
 			selection_box = Rect2(0,0,0,0)
 			selection_boxing = false
+			
 	# Flipping object
 	if InputManager.is_flip_pressed(input_actions):
 		if not selected_pieces.is_empty():
@@ -227,20 +252,24 @@ func position_overlaps_selected_pieces(pos: Vector2) -> bool:
 func select_collections_from_pieces() -> void:
 	for pc in selected_pieces:
 		if pc.collection != null:
-			if not pc.collection.permanent:
-				select_collection(pc.collection)
-			else:
+			if pc.collection.permanent:
 				if pc.collection.inside.all(func(val: Board.Gpiece) -> bool: return selected_pieces.has(val)):
+					print("Option 3")
 					convert_to_stack(pc.collection.inside)
 					select_collection(pc.collection)
 				else:
+					print("Option 2")
 					board.remove_piece_from_collection(pc)
+			else:
+				print("Option 1")
+				select_collection(pc.collection)
 
 		
 
 ## Select objects
 func select_pieces(objs: Array, append: bool = false, remove_from_collection = true) -> void:
 	if not append:
+		print("Deselecting objects")
 		deselect_objects()
 	objs.sort_custom(board.sort_by_draw_order)
 	for obj in objs:
@@ -259,13 +288,17 @@ func _sel_piece(obj: Board.Gpiece, append: bool = false, remove_from_collection 
 		if remove_from_collection:
 			board.remove_piece_from_collection(obj)
 		board.move_object_to_top(obj)
-	if append:
+	if append and not selected_pieces.has(obj):
 		selected_pieces.append(obj)
 	else:
 		selected_pieces = [obj]
 
-func select_collection(coll: Board.Gcollection) -> void:
-	selected_collections = [coll]
+func select_collection(coll: Board.Gcollection, append = true) -> void:
+	if append and not selected_collections.has(coll):
+		print("adding collection to selected")
+		selected_collections.append(coll)
+	else:
+		selected_collections = [coll]
 
 ## Deselect any available objects
 func deselect_objects() -> void:
@@ -313,20 +346,16 @@ func game_menu() -> void:
 
 ## Converts game objects to stack
 func convert_to_stack(objs: Array[Board.Gpiece]) -> void:
-	var c: Board.Gcollection = board.construct_collection(
-		{
+	var sorted_objs: Array[Board.Gpiece] = []
+	sorted_objs.assign(objs)
+	sorted_objs.sort_custom(board.sort_by_draw_order)
+	board.rpc("construct_collection_rpc",(var_to_bytes({
+		"name": "new_stacked_collection",
 		"position": objs[-1].position,
-		"permanent": false
-		}
-	)
-	if c != null:
-		board.make_name_exclusive(c)
-		board.spawn_object(c)
-		var sorted_objs: Array[Board.Gpiece] = []
-		sorted_objs.assign(objs)
-		sorted_objs.sort_custom(board.sort_by_draw_order)
-		for piece in sorted_objs:
-			board.add_piece_to_collection(piece, c)
+		"permanent": false,
+		"inside": sorted_objs.map(func(val: Board.Gpiece) -> String: return val.name)
+		})))
+		
 
 ## Stacks an object to a collection
 func stack_to_collection(objs: Array[Board.Gpiece], item: Board.Gcollection) -> void:
