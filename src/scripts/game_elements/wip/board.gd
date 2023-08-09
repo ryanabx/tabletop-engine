@@ -421,7 +421,7 @@ func is_ready(id: int) -> void:
 			_init_board_objs()
 			coordinate_scale = Vector2.ONE
 			print("Made board objs!")
-			multiplayer.ser
+			
 
 ####################
 ### Config stuff ###
