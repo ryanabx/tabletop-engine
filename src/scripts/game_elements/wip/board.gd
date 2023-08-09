@@ -38,87 +38,6 @@ const RELIABLE_PROPS: Array[String] = [
 	"inside"
 ]
 
-## Game object
-class Gobject extends Object:
-	var position: Vector2 = Vector2.ZERO
-	var rotation: float = 0.0
-	var scale: Vector2 = Vector2.ONE
-	var name: String = ""
-	var shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)])
-	var z_index: float = 0.0
-	var placeholder: bool = false
-
-## Game piece object
-class Gpiece extends Gobject:
-	var image_up: String = ""
-	var image_down: String = ""
-	var collection: String = ""
-	var face_up: bool = false
-
-	func _init(
-		_name: String = "",
-		_z_index: float = 0.0,
-		_position: Vector2 = Vector2.ZERO,
-		_rotation: float = 0.0,
-		_scale: Vector2 = Vector2.ONE,
-		_shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)]),
-		_image_up: String = "",
-		_image_down: String = "",
-		_collection: String = "",
-		_face_up: bool = false
-	) -> void:
-		self.position = _position
-		self.rotation = _rotation
-		self.scale = _scale
-		self.name = _name
-		self.shape = _shape
-		self.z_index = _z_index
-		self.image_up = _image_up
-		self.image_down = _image_down
-		self.collection = _collection
-		self.face_up = _face_up
-
-## Collection type
-class Gcollection extends Gobject:
-	var base_size: Vector2 = Vector2.ONE
-	var inside: Array[String] = []
-	var view_perms: Array = []
-	var access_perms: Array = []
-	var permanent: bool = false
-	var force_state: bool = false
-	var type: Type = Type.STACK
-
-	enum Type {STACK, HAND}
-
-	func _init(
-		_name: String = "",
-		_z_index: float = 0.0,
-		_position: Vector2 = Vector2.ZERO,
-		_rotation: float = 0.0,
-		_scale: Vector2 = Vector2.ONE,
-		_shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)]),
-		_base_size: Vector2 = Vector2.ONE,
-		_inside: Array[String] = [],
-		_view_perms: Array = [],
-		_access_perms: Array = [],
-		_permanent: bool = false,
-		_force_state: bool = false,
-		_type: Gcollection.Type = Gcollection.Type.STACK,
-	) -> void:
-		self.position = _position
-		self.rotation = _rotation
-		self.scale = _scale
-		self.name = _name
-		self.shape = _shape
-		self.z_index = _z_index
-		self.base_size = _base_size
-		self.inside = _inside
-		self.view_perms = _view_perms
-		self.access_perms = _access_perms
-		self.permanent = _permanent
-		self.force_state = _force_state
-		self.type = _type
-
 @rpc("any_peer","call_local", "unreliable")
 func _set_gobject_property_unreliable(data: PackedByteArray) -> void:
 	var args: Dictionary = bytes_to_var(data)
@@ -132,7 +51,7 @@ func _set_gobject_property_reliable(data: PackedByteArray) -> void:
 func _set_gobject_property(args: Dictionary) -> void:
 	if args.is_collection:
 		if args.obj in collections:
-			if args.val is Array:
+			if args.val is Array and args.prop == "inside":
 				var val: Array[String] = []
 				val.assign(args.val)
 				collections[args.obj].set(args.prop, val)
@@ -149,13 +68,28 @@ func _set_gobject_property(args: Dictionary) -> void:
 			if not args.obj in piece_properties_deferred:
 				piece_properties_deferred[args.obj] = {}
 			piece_properties_deferred[args.obj][args.prop] = args.val
-			
+
+@rpc("any_peer","call_remote","reliable")
+func requested_all_information() -> void:
+	if not is_multiplayer_authority():
+		return
+	var data: Dictionary = {
+		"pieces": pieces,
+		"collections": collections
+	}
+	rpc("full_sync_state", var_to_bytes_with_objects(data))
+
+@rpc("authority", "call_remote", "reliable")
+func full_sync_state(dt: PackedByteArray) -> void:
+	var data: Dictionary = bytes_to_var_with_objects(dt)
+	pieces = data.pieces
+	collections = data.collections
 
 func set_gobject_property(obj: Gobject, prop: StringName, v: Variant) -> void:
 	var val: Variant
 	val = v
 	
-	var is_collection = obj is Gcollection
+	var is_collection = obj is Collection
 	
 	var data: PackedByteArray = var_to_bytes({"obj": obj.name, "prop": prop, "val": val, "is_collection": is_collection})
 	if prop in RELIABLE_PROPS:
@@ -163,28 +97,16 @@ func set_gobject_property(obj: Gobject, prop: StringName, v: Variant) -> void:
 	else:
 		rpc("_set_gobject_property_unreliable",data)
 
-func modify_gobject_property(obj: Gobject, prop: StringName, v: Variant, append: bool = true) -> void:
-	var val: Variant
-	# Serializing objects
-	if prop == "inside":
-		val = v.name
-	else:
-		val = v
-	
-	var is_collection = obj is Gcollection
-	
-	var data: PackedByteArray = var_to_bytes({"obj": obj.name, "prop": prop, "val": val, "is_collection": is_collection, "append": append})
-	rpc("_modify_gobject_property",data)
-
 ## Construct a new piece from a config
 @rpc("any_peer","call_local","reliable")
 func construct_piece_rpc(cfg: PackedByteArray) -> void:
+	print("Construct piece")
 	var config: Dictionary = bytes_to_var(cfg)
-	var piece: Gpiece = construct_piece(config)
+	var piece: Piece = construct_piece(config)
 	add_piece(piece)
 
-func construct_piece(config: Dictionary) -> Gpiece:
-	var piece: Gpiece = Gpiece.new()
+func construct_piece(config: Dictionary) -> Piece:
+	var piece: Piece = Piece.new()
 	for prop in config.keys():
 		piece.set(prop, config[prop])
 	if "collection" in config:
@@ -194,7 +116,7 @@ func construct_piece(config: Dictionary) -> Gpiece:
 	max_z_index += 0.001
 	return piece
 
-func add_piece(piece: Gpiece) -> void:
+func add_piece(piece: Piece) -> void:
 	pieces[piece.name] = piece # Added object
 	if piece_properties_deferred.has(piece.name):
 		for prop in piece_properties_deferred[piece.name].keys():
@@ -206,11 +128,11 @@ func add_piece(piece: Gpiece) -> void:
 @rpc("any_peer","call_local","reliable")
 func construct_collection_rpc(cfg: PackedByteArray) -> void:
 	var config: Dictionary = bytes_to_var(cfg)
-	var collection: Gcollection = construct_collection(config)
+	var collection: Collection = construct_collection(config)
 	add_collection(collection)
 
-func construct_collection(config: Dictionary) -> Gcollection:
-	var collection: Gcollection = Gcollection.new()
+func construct_collection(config: Dictionary) -> Collection:
+	var collection: Collection = Collection.new()
 	for prop in config.keys():
 		if prop == "inside":
 			var val: Array[String] = []
@@ -225,10 +147,10 @@ func construct_collection(config: Dictionary) -> Gcollection:
 			obj.collection = collection.name
 			print("Set obj ",obj.name," collection to ",collection.name)
 	# Add all currently made objects that reference this collection into the inside list
-	collection.inside.append_array(pieces.values().filter(func(val: Gpiece) -> bool: return val.collection == collection.name and not collection.inside.has(val.name)).map(func(v: Gobject) -> String: return v.name))
+	collection.inside.append_array(pieces.values().filter(func(val: Piece) -> bool: return val.collection == collection.name and not collection.inside.has(val.name)).map(func(v: Gobject) -> String: return v.name))
 	return collection
 
-func add_collection(collection: Gcollection) -> void:
+func add_collection(collection: Collection) -> void:
 	collections[collection.name] = collection # Added object
 	if collection_properties_deferred.has(collection.name):
 		for prop in collection_properties_deferred[collection.name].keys():
@@ -239,12 +161,12 @@ func add_collection(collection: Gcollection) -> void:
 func _draw() -> void:
 	draw_board_bg()
 	for key in collections.keys():
-		var collection: Gcollection = collections[key]
+		var collection: Collection = collections[key]
 		draw_collection(collection)
 	for piece in get_sorted_pieces():
 		draw_piece(piece)
 	for key in collections.keys():
-		var collection: Gcollection = collections[key]
+		var collection: Collection = collections[key]
 		draw_string(def_font,get_obj_extents(collection)[0], str(collection.inside.size()))
 		
 ## Draw the background specified
@@ -255,7 +177,7 @@ func draw_board_bg() -> void:
 	draw_rect(border, Color.WHITE, false, Globals.OUTLINE_THICKNESS)
 
 ## Draws a game piece
-func draw_piece(obj: Gpiece) -> void:
+func draw_piece(obj: Piece) -> void:
 	var extents: PackedVector2Array = get_obj_extents(obj)
 	draw_colored_polygon(extents, Color.WHITE,PackedVector2Array([Vector2(0,0), Vector2(0,1), Vector2(1,1), Vector2(1,0)]),
 		game.images[obj.image_up if obj.face_up else obj.image_down]
@@ -265,14 +187,14 @@ func draw_piece(obj: Gpiece) -> void:
 		Color.WHITE,
 		Globals.OBJECT_HIGHLIGHT_BORDER
 		)
-	var collection: Gcollection = get_collection(obj.collection)
+	var collection: Collection = get_collection(obj.collection)
 	if collection == null:
 		return
 	collection.scale.x = maxf(obj.scale.x, collection.scale.x)
 	collection.scale.y = maxf(obj.scale.y, collection.scale.y)
 
 ## Draws a collection
-func draw_collection(obj: Gcollection) -> void:
+func draw_collection(obj: Collection) -> void:
 	var extents: PackedVector2Array = get_obj_extents(obj)
 	draw_colored_polygon(
 		extents,
@@ -281,22 +203,22 @@ func draw_collection(obj: Gcollection) -> void:
 	obj.scale.x = obj.base_size.x
 	obj.scale.y = obj.base_size.y
 
-func get_piece(n: String) -> Gpiece:
+func get_piece(n: String) -> Piece:
 	if n == "" or not pieces.has(n): return null
 	return pieces[n]
 
-func get_pieces(a: Array) -> Array[Gpiece]:
-	var pcs: Array[Gpiece] = []
-	pcs.assign(a.map(func(v: String) -> Gpiece: return pieces[v] if pieces.has(v) else null))
+func get_pieces(a: Array) -> Array[Piece]:
+	var pcs: Array[Piece] = []
+	pcs.assign(a.map(func(v: String) -> Piece: return pieces[v] if pieces.has(v) else null))
 	return pcs
 
-func get_collection(n: String) -> Gcollection:
+func get_collection(n: String) -> Collection:
 	if n == "" or not collections.has(n): return null
 	return collections[n]
 
-func get_collections(a: Array) -> Array[Gcollection]:
-	var clls: Array[Gcollection] = []
-	clls.assign(a.map(func(v: String) -> Gcollection: return collections[v] if collections.has(v) else null))
+func get_collections(a: Array) -> Array[Collection]:
+	var clls: Array[Collection] = []
+	clls.assign(a.map(func(v: String) -> Collection: return collections[v] if collections.has(v) else null))
 	return clls
 
 func get_obj_extents(obj: Gobject) -> PackedVector2Array:
@@ -313,15 +235,15 @@ func obj_overlaps_polygon(obj: Gobject, rect: PackedVector2Array) -> bool:
 	var shape: PackedVector2Array = get_obj_extents(obj)
 	return not Geometry2D.intersect_polygons(shape, rect).is_empty()
 
-func move_collection(obj: Gcollection, pos: Vector2) -> void:
+func move_collection(obj: Collection, pos: Vector2) -> void:
 	set_gobject_property(obj, "position", pos)
 	for pc in obj.inside:
-		var piece: Gpiece = get_piece(pc)
+		var piece: Piece = get_piece(pc)
 		if piece == null: continue
 		set_gobject_property(piece, "position", pos)
 		set_gobject_property(piece, "rotation", obj.rotation)
 
-func move_piece(obj: Gpiece, pos: Vector2) -> void:
+func move_piece(obj: Piece, pos: Vector2) -> void:
 	set_gobject_property(obj, "position", pos)
 
 func unique_name(s: String) -> String:
@@ -336,7 +258,7 @@ func unique_name(s: String) -> String:
 # Adding and removing from collections
 
 ## Adds a piece to the collection specified. Removes a piece from current collection if it exists
-func add_piece_to_collection(piece: Board.Gpiece, c_name: String) -> void:
+func add_piece_to_collection(piece: Piece, c_name: String) -> void:
 	if piece.collection != "": remove_piece_from_collection(piece)
 	set_gobject_property(piece, "collection", c_name)
 	var collection = get_collection(c_name)
@@ -347,11 +269,11 @@ func add_piece_to_collection(piece: Board.Gpiece, c_name: String) -> void:
 	set_gobject_property(piece, "position", collection.position)
 
 ## Removes a piece from a collection, if it has any
-func remove_piece_from_collection(piece: Gpiece) -> void:
+func remove_piece_from_collection(piece: Piece) -> void:
 	if piece == null:
 		print("Piece was null")
 		return
-	var c: Gcollection = get_collection(piece.collection)
+	var c: Collection = get_collection(piece.collection)
 	set_gobject_property(piece, "collection", "")
 	if c == null:
 		print("Collection ",c," was null")
@@ -379,36 +301,36 @@ func erase_piece(piece_name: String) -> void:
 
 # Draw order of objects
 
-func get_sorted_pieces() -> Array[Gpiece]:
-	var pcs: Array[Gpiece] = []
+func get_sorted_pieces() -> Array[Piece]:
+	var pcs: Array[Piece] = []
 	pcs.assign(pieces.values())
 	pcs.sort_custom(sort_by_draw_order)
 	return pcs
 
-func sort_by_draw_order(obj1: Gpiece, obj2: Gpiece) -> bool:
+func sort_by_draw_order(obj1: Piece, obj2: Piece) -> bool:
 	return obj1.z_index < obj2.z_index
 
 ## Brings an object to the front
-func move_object_to_top(piece: Gpiece) -> void:
+func move_object_to_top(piece: Piece) -> void:
 	piece.z_index = max_z_index
 	max_z_index += 0.001
 
 ## Brings an object to the back
-func move_object_to_back(piece: Gpiece) -> void:
+func move_object_to_back(piece: Piece) -> void:
 	piece.z_index = min_z_index
 	min_z_index -= 0.001
 
 ## Flips an object
-func flip_object(piece: Gpiece) -> void:
+func flip_object(piece: Piece) -> void:
 	piece.face_up = not piece.face_up
 
 ## Shuffles objects
-func shuffle(pcs: Array[Gpiece]) -> void:
-	var pcs_shuffled: Array[Gpiece] = pcs.duplicate(false)
+func shuffle(pcs: Array[Piece]) -> void:
+	var pcs_shuffled: Array[Piece] = pcs.duplicate(false)
 	pcs_shuffled.shuffle()
 	for i in range(pcs.size()):
-		var pc1: Gpiece = pcs[i]
-		var pc2: Gpiece = pcs_shuffled[i]
+		var pc1: Piece = pcs[i]
+		var pc2: Piece = pcs_shuffled[i]
 		var contents1: Dictionary = {
 			"position": pc1.position,
 			"rotation": pc1.rotation,
@@ -424,30 +346,30 @@ func shuffle(pcs: Array[Gpiece]) -> void:
 		_swap(pc1, contents2)
 		_swap(pc2, contents1)
 
-func _swap(pc1: Gpiece, contents: Dictionary) -> void:
+func _swap(pc1: Piece, contents: Dictionary) -> void:
 	set_gobject_property(pc1, "position", contents.position)
 	set_gobject_property(pc1, "rotation", contents.rotation)
 	set_gobject_property(pc1, "z_index", contents.z_index)
 	if pc1.collection != contents.collection:
 		add_piece_to_collection(pc1, collections[contents.collection])
 
-func pieces_by_name(objects: Array[String]) -> Array[Gpiece]:
-	var result: Array[Gpiece] = []
-	result.assign(objects.map(func (value: String) -> Gpiece: return pieces[value]))
+func pieces_by_name(objects: Array[String]) -> Array[Piece]:
+	var result: Array[Piece] = []
+	result.assign(objects.map(func (value: String) -> Piece: return pieces[value]))
 	return result
 
 # Checking if player can select
 
 ## True if the current player can select this piece, false otherwise
-func can_access_piece(piece: Gpiece) -> bool:
+func can_access_piece(piece: Piece) -> bool:
 	if piece == null: return false
-	var collection: Gcollection = get_collection(piece.collection)
+	var collection: Collection = get_collection(piece.collection)
 	if collection != null:
 		return can_access_collection(collection)
 	return true
 
 ## Returns true if the current player can access this collection, false otherwise
-func can_access_collection(collection: Gcollection) -> bool:
+func can_access_collection(collection: Collection) -> bool:
 	if collection.access_perms.size() <= Player.get_id():
 		return true # Default to true if there's no access perms
 	elif collection.access_perms[Player.get_id()] == false:
@@ -470,7 +392,8 @@ func clamp_camera() -> void:
 ## Updates objects position to their collections
 func update_objects_position():
 	for collection in collections.values():
-		var pcs: Array[Gpiece] = get_pieces(collection.inside)
+		if collection == null: continue
+		var pcs: Array[Piece] = get_pieces(collection.inside)
 		for pc in pcs:
 			if pc == null:
 				continue
@@ -491,6 +414,8 @@ func _ready() -> void:
 	updt_mnu_bar()
 	if is_multiplayer_authority():
 		brd_objs_frm_cnfg()
+	else:
+		rpc("requested_all_information")
 	coordinate_scale = Vector2.ONE
 
 func connect_signals() -> void:
