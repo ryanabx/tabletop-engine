@@ -47,9 +47,9 @@ func set_gobject_property(obj: Gobject, prop: StringName, val: Variant) -> void:
 		"is_collection": obj is Collection
 	})
 	if prop in RELIABLE_PROPS:
-		rpc("_set_gobject_property_reliable",data)
+		_set_gobject_property_reliable.rpc(data)
 	else:
-		rpc("_set_gobject_property_unreliable",data)
+		_set_gobject_property_unreliable.rpc(data)
 
 @rpc("any_peer","call_local", "unreliable")
 func _set_gobject_property_unreliable(data: PackedByteArray) -> void:
@@ -94,7 +94,7 @@ func requested_all_information() -> void:
 		"pieces": pieces,
 		"collections": collections
 	}
-	rpc("full_sync_state", var_to_bytes_with_objects(data))
+	full_sync_state.rpc(var_to_bytes_with_objects(data))
 
 @rpc("authority", "call_remote", "reliable")
 func full_sync_state(dt: PackedByteArray) -> void:
@@ -292,7 +292,7 @@ func remove_piece_from_collection(piece: Piece) -> void:
 			remove_piece_from_collection(get_piece(c.inside.keys()[0]))
 		elif c.inside.is_empty():
 			# Essentially queue free
-			rpc("erase_collection",c.name)
+			erase_collection.rpc(c.name)
 
 @rpc("any_peer","call_local","reliable")
 func erase_collection(collection_name: String) -> void:
@@ -421,6 +421,7 @@ func is_ready(id: int) -> void:
 			_init_board_objs()
 			coordinate_scale = Vector2.ONE
 			print("Made board objs!")
+			multiplayer.ser
 
 ####################
 ### Config stuff ###
@@ -434,7 +435,7 @@ func _ready() -> void:
 	_init_board_props()
 	_update_menu_bar()
 	coordinate_scale = Vector2.ONE
-	rpc("is_ready", multiplayer.get_unique_id())
+	is_ready.rpc_id(1, multiplayer.get_unique_id())
 	
 func connect_signals() -> void:
 	SignalManager.shuffle_selection.connect(shuffle)
@@ -508,8 +509,8 @@ func _new_conf_obj(o: Dictionary) -> void:
 					obj.base_size = obj.scale
 				if not obj.has("name"):
 					obj.name = unique_name("collection")
-				rpc("construct_collection_rpc",(var_to_bytes(obj)))
+				construct_collection_rpc.rpc(var_to_bytes(obj))
 			"piece":
 				if not obj.has("name"):
 					obj.name = unique_name("piece")
-				rpc("construct_piece_rpc",(var_to_bytes(obj)))
+				construct_piece_rpc.rpc(var_to_bytes(obj))

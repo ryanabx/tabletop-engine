@@ -389,12 +389,12 @@ func convert_to_stack(objs: Array[Piece]) -> void:
 	var sorted_objs: Dictionary = {}
 	for obj in objs:
 		sorted_objs[obj.name] = true
-	board.rpc("construct_collection_rpc",(var_to_bytes({
+	board.construct_collection_rpc.rpc(var_to_bytes({
 		"name": board.unique_name("collection"),
 		"position": objs[-1].position,
 		"permanent": false,
 		"inside": sorted_objs
-		})))
+		}))
 		
 
 ## Stacks an object to a collection
