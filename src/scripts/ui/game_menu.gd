@@ -1,7 +1,7 @@
 class_name RightClickMenu
 extends PopupMenu
 
-var object_group: Array[Board.Gpiece] = []
+var object_group: Array[Piece] = []
 
 func _ready() -> void:
 	SignalManager.game_menu_create.connect(_on_menu_created)

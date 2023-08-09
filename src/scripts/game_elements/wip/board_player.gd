@@ -225,7 +225,7 @@ func parse_input(input_actions: Dictionary) -> void:
 				if c == null: return
 				if not c.permanent:
 					print("Stack selecting")
-					select_pieces(board.get_pieces(c.inside), false, false)
+					select_pieces(board.get_pieces(c.inside.keys()), false, false)
 					select_collection(c)
 					set_grab_offsets()
 			else:
@@ -288,12 +288,12 @@ func select_collections_from_pieces() -> void:
 			var collection: Collection = board.get_collection(pc.collection)
 			if collection == null: continue
 			if collection.permanent:
-				if collection.inside.all(func(val: String) -> bool:
+				if collection.inside.keys().all(func(val: String) -> bool:
 					var p = board.get_piece(val)
 					return p != null and get_selected_pieces().has(p)
 					):
 					# print("Option 3")
-					convert_to_stack(board.get_pieces(collection.inside))
+					convert_to_stack(board.get_pieces(collection.inside.keys()))
 					select_collection(collection)
 				else:
 					# print("Option 2")
@@ -375,7 +375,7 @@ func game_menu() -> void:
 			if get_selectable_piece().collection != "":
 				var collection: Collection = board.get_collection(get_selectable_piece().collection)
 				if collection != null:
-					SignalManager.game_menu_create.emit(board.get_pieces(collection.inside))
+					SignalManager.game_menu_create.emit(board.get_pieces(collection.inside.keys()))
 			else:
 				var s: Array[Piece] = []
 				s.assign([selectable_piece])
@@ -386,14 +386,14 @@ func game_menu() -> void:
 
 ## Converts game objects to stack
 func convert_to_stack(objs: Array[Piece]) -> void:
-	var sorted_objs: Array[Piece] = []
-	sorted_objs.assign(objs)
-	sorted_objs.sort_custom(board.sort_by_draw_order)
+	var sorted_objs: Dictionary = {}
+	for obj in objs:
+		sorted_objs[obj.name] = true
 	board.rpc("construct_collection_rpc",(var_to_bytes({
 		"name": board.unique_name("collection"),
 		"position": objs[-1].position,
 		"permanent": false,
-		"inside": sorted_objs.map(func(val: Piece) -> String: return val.name)
+		"inside": sorted_objs
 		})))
 		
 

@@ -38,36 +38,53 @@ const RELIABLE_PROPS: Array[String] = [
 	"inside"
 ]
 
+
+func set_gobject_property(obj: Gobject, prop: StringName, val: Variant) -> void:
+	var data: PackedByteArray = var_to_bytes({
+		"obj": obj.name,
+		"prop": prop,
+		"val": val,
+		"is_collection": obj is Collection
+	})
+	if prop in RELIABLE_PROPS:
+		rpc("_set_gobject_property_reliable",data)
+	else:
+		rpc("_set_gobject_property_unreliable",data)
+
 @rpc("any_peer","call_local", "unreliable")
 func _set_gobject_property_unreliable(data: PackedByteArray) -> void:
 	var args: Dictionary = bytes_to_var(data)
+	# print("_set_gobject_property_unreliable: obj:", args.obj, ",prop:",args.prop,",val:",args.val)
 	_set_gobject_property(args)
 
 @rpc("any_peer","call_local", "reliable")
 func _set_gobject_property_reliable(data: PackedByteArray) -> void:
 	var args: Dictionary = bytes_to_var(data)
+	# print("_set_gobject_property_reliable: obj:", args.obj, ",prop:",args.prop,",val:",args.val)
 	_set_gobject_property(args)
 
 func _set_gobject_property(args: Dictionary) -> void:
 	if args.is_collection:
-		if args.obj in collections:
-			if args.val is Array and args.prop == "inside":
-				var val: Array[String] = []
-				val.assign(args.val)
-				collections[args.obj].set(args.prop, val)
-			else:
-				collections[args.obj].set(args.prop, args.val)
+		if not args.obj in collections:
+			add_collection(
+				construct_collection({
+					"name": args.obj
+				})
+			)
+		if args.val is Array and args.prop == "inside":
+			var val: Array[String] = []
+			val.assign(args.val)
+			collections[args.obj].set(args.prop, val)
 		else:
-			if not args.obj in collection_properties_deferred:
-				collection_properties_deferred[args.obj] = {}
-			collection_properties_deferred[args.obj][args.prop] = args.val
+			collections[args.obj].set(args.prop, args.val)
 	else:
-		if args.obj in pieces:
-			pieces[args.obj].set(args.prop, args.val)
-		else:
-			if not args.obj in piece_properties_deferred:
-				piece_properties_deferred[args.obj] = {}
-			piece_properties_deferred[args.obj][args.prop] = args.val
+		if not args.obj in pieces:
+			add_piece(
+				construct_piece({
+					"name": args.obj
+				})
+			)
+		pieces[args.obj].set(args.prop, args.val)
 
 @rpc("any_peer","call_remote","reliable")
 func requested_all_information() -> void:
@@ -85,17 +102,6 @@ func full_sync_state(dt: PackedByteArray) -> void:
 	pieces = data.pieces
 	collections = data.collections
 
-func set_gobject_property(obj: Gobject, prop: StringName, v: Variant) -> void:
-	var val: Variant
-	val = v
-	
-	var is_collection = obj is Collection
-	
-	var data: PackedByteArray = var_to_bytes({"obj": obj.name, "prop": prop, "val": val, "is_collection": is_collection})
-	if prop in RELIABLE_PROPS:
-		rpc("_set_gobject_property_reliable",data)
-	else:
-		rpc("_set_gobject_property_unreliable",data)
 
 ## Construct a new piece from a config
 @rpc("any_peer","call_local","reliable")
@@ -111,7 +117,7 @@ func construct_piece(config: Dictionary) -> Piece:
 		piece.set(prop, config[prop])
 	if "collection" in config:
 		if collections.has(config.collection) and not collections[config.collection].inside.has(config.name):
-			collections[config.collection].inside.append(config.name)
+			collections[config.collection].inside[config.name] = true
 	piece.z_index = max_z_index
 	max_z_index += 0.001
 	return piece
@@ -134,20 +140,16 @@ func construct_collection_rpc(cfg: PackedByteArray) -> void:
 func construct_collection(config: Dictionary) -> Collection:
 	var collection: Collection = Collection.new()
 	for prop in config.keys():
-		if prop == "inside":
-			var val: Array[String] = []
-			val.assign(config[prop])
-			collection.set(prop, val)
-		else:
-			collection.set(prop, config[prop])
-	print("Collection inside side: ",collection.inside.size())
+		collection.set(prop, config[prop])
 	
-	for obj in get_pieces(collection.inside):
+	for obj in get_pieces(collection.inside.keys()):
 		if obj != null:
 			obj.collection = collection.name
 			print("Set obj ",obj.name," collection to ",collection.name)
 	# Add all currently made objects that reference this collection into the inside list
-	collection.inside.append_array(pieces.values().filter(func(val: Piece) -> bool: return val.collection == collection.name and not collection.inside.has(val.name)).map(func(v: Gobject) -> String: return v.name))
+	for obj in pieces.values():
+		if obj.collection == collection.name:
+			collection.inside[obj.name] = true
 	return collection
 
 func add_collection(collection: Collection) -> void:
@@ -259,12 +261,15 @@ func unique_name(s: String) -> String:
 
 ## Adds a piece to the collection specified. Removes a piece from current collection if it exists
 func add_piece_to_collection(piece: Piece, c_name: String) -> void:
+	print("add piece to collection")
 	if piece.collection != "": remove_piece_from_collection(piece)
 	set_gobject_property(piece, "collection", c_name)
 	var collection = get_collection(c_name)
-	var new_inside: Array[String] = []
-	new_inside.assign(collection.inside)
-	new_inside.append(piece.name)
+	if collection == null:
+		print("Collection cannot be found when adding piece")
+		return
+	var new_inside: Dictionary = collection.inside.duplicate(false)
+	new_inside[piece.name] = true
 	set_gobject_property(collection, "inside", new_inside)
 	set_gobject_property(piece, "position", collection.position)
 
@@ -279,13 +284,12 @@ func remove_piece_from_collection(piece: Piece) -> void:
 		print("Collection ",c," was null")
 		return
 	print("Setting new inside")
-	var new_inside: Array[String] = []
-	new_inside.assign(c.inside)
+	var new_inside: Dictionary = c.inside.duplicate(false)
 	new_inside.erase(piece.name)
 	set_gobject_property(c, "inside", new_inside)
 	if not c.permanent:
 		if c.inside.size() == 1:
-			remove_piece_from_collection(get_piece(c.inside[0]))
+			remove_piece_from_collection(get_piece(c.inside.keys()[0]))
 		elif c.inside.is_empty():
 			# Essentially queue free
 			rpc("erase_collection",c.name)
@@ -393,13 +397,30 @@ func clamp_camera() -> void:
 func update_objects_position():
 	for collection in collections.values():
 		if collection == null: continue
-		var pcs: Array[Piece] = get_pieces(collection.inside)
+		var pcs: Array[Piece] = get_pieces(collection.inside.keys())
 		for pc in pcs:
 			if pc == null:
 				continue
 			pc.position = collection.position
 			pc.rotation = collection.rotation
 
+
+########################
+### Multiplayer sync ###
+########################
+
+var ready_players: Array = []
+
+@rpc("any_peer","call_local","reliable")
+func is_ready(id: int) -> void:
+	if multiplayer.is_server():
+		ready_players.append(id)
+		if ready_players.size() == multiplayer.get_peers().size() + 1:
+			print("Size of ", ready_players, " is equal to ",multiplayer.get_peers())
+			coordinate_scale = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
+			_init_board_objs()
+			coordinate_scale = Vector2.ONE
+			print("Made board objs!")
 
 ####################
 ### Config stuff ###
@@ -410,19 +431,16 @@ func _ready() -> void:
 	def_font = ThemeDB.fallback_font
 	coordinate_scale = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
 	connect_signals()
-	init_brd_prps()
-	updt_mnu_bar()
-	if is_multiplayer_authority():
-		brd_objs_frm_cnfg()
-	else:
-		rpc("requested_all_information")
+	_init_board_props()
+	_update_menu_bar()
 	coordinate_scale = Vector2.ONE
-
+	rpc("is_ready", multiplayer.get_unique_id())
+	
 func connect_signals() -> void:
 	SignalManager.shuffle_selection.connect(shuffle)
 
 ## Ran during startup, initializes the board's background and border
-func init_brd_prps() -> void:
+func _init_board_props() -> void:
 	if "border" in game.board:
 		border = Rect2(
 				(Vector2(game.board.border.position.x, game.board.border.position.y) - Vector2(game.board.border.scale.x, game.board.border.scale.y) / 2) * coordinate_scale,
@@ -433,16 +451,16 @@ func init_brd_prps() -> void:
 		board_bg = game.board.background_image
 
 ## Ran during startup, notifies the menu bar that a new game is loaded
-func updt_mnu_bar() -> void:
+func _update_menu_bar() -> void:
 	get_parent().user_interface.menu_bar.new_game_loaded(game.player.max, game.actions)
 
 ## Ran during startup, initializes the board's objects
-func brd_objs_frm_cnfg() -> void:
+func _init_board_objs() -> void:
 	for item in game.objects:
-		prcs_cnfg_obj(item)
+		_process_cnfg_obj(item)
 
 ## Ran during startup, processes one object in the game config
-func prcs_cnfg_obj(obj: Dictionary) -> void:
+func _process_cnfg_obj(obj: Dictionary) -> void:
 	# Use templates if they exist
 	if "template" in obj:
 		obj.merge(game.templates[obj.template])
@@ -459,13 +477,13 @@ func prcs_cnfg_obj(obj: Dictionary) -> void:
 				var size = obj["for"][key].size()
 				repls[key] = obj["for"][key][(floori(i as float/t)) % size]
 				t = t * size
-			var _o: Dictionary = mk_obj_dct(obj, repls)
-			nw_cnf_obj(_o)
+			var _o: Dictionary = _make_obj_dict(obj, repls)
+			_new_conf_obj(_o)
 	else:
-		nw_cnf_obj(obj)
+		_new_conf_obj(obj)
 
 ## Ran during startup, makes an object dictionary from repls
-func mk_obj_dct(original: Dictionary, repls: Dictionary) -> Dictionary:
+func _make_obj_dict(original: Dictionary, repls: Dictionary) -> Dictionary:
 	var obj: Dictionary = original.duplicate(true)
 	for key in obj.keys():
 		for repl in repls.keys():
@@ -475,7 +493,7 @@ func mk_obj_dct(original: Dictionary, repls: Dictionary) -> Dictionary:
 
 ## Ran during startup whenever a new config object is ready to be
 ## inserted into the board.
-func nw_cnf_obj(o: Dictionary) -> void:
+func _new_conf_obj(o: Dictionary) -> void:
 	var amount: int = o.repeat if "repeat" in o else 1
 	for i in range(amount):
 		var obj: Dictionary = o.duplicate(true)

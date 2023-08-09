@@ -6,7 +6,6 @@ extends Gobject
 @export var collection: String = ""
 @export var face_up: bool = false
 
-
 func serialize() -> Dictionary:
     var result: Dictionary = {}
     for prop in get_property_list():
@@ -19,3 +18,7 @@ static func deserialize(_d: Dictionary) -> Piece:
     for prop in _d.keys():
         piece.set(prop, _d[prop])
     return piece
+
+func load_data(data: Dictionary) -> void:
+    for prop in data.keys():
+        set(prop, data[prop])

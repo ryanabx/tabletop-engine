@@ -2,7 +2,7 @@ class_name Collection
 extends Gobject
 
 @export var base_size: Vector2 = Vector2.ONE
-@export var inside: Array = []
+@export var inside: Dictionary = {}
 @export var view_perms: Array = []
 @export var access_perms: Array = []
 @export var permanent: bool = false
@@ -23,3 +23,7 @@ static func deserialize(_d: Dictionary) -> Collection:
     for prop in _d.keys():
         piece.set(prop, _d[prop])
     return piece
+
+func load_data(data: Dictionary) -> void:
+    for prop in data.keys():
+        set(prop, data[prop])
