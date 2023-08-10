@@ -286,21 +286,14 @@ func select_collections_from_pieces() -> void:
 	for pc in get_selected_pieces():
 		if pc.collection != "":
 			var collection: Collection = board.get_collection(pc.collection)
-			if collection == null: continue
-			if collection.permanent:
-				if collection.inside.keys().all(func(val: String) -> bool:
-					var p = board.get_piece(val)
-					return p != null and get_selected_pieces().has(p)
-					):
-					# print("Option 3")
-					convert_to_stack(board.get_pieces(collection.inside.keys()))
-					select_collection(collection)
+			if collection != null:
+				if collection.permanent == true:
+					var pcs: Array[Piece] = []
+					pcs.assign(board.get_pieces(collection.inside.keys().filter(func(val: String) -> bool: return selected_pieces.has(val))))
+					convert_to_stack(pcs)
 				else:
-					# print("Option 2")
-					board.remove_piece_from_collection(pc)
-			else:
-				# print("Option 1")
-				select_collection(collection)
+					# print("Option 1")
+					select_collection(collection)
 
 		
 
@@ -389,12 +382,12 @@ func convert_to_stack(objs: Array[Piece]) -> void:
 	var sorted_objs: Dictionary = {}
 	for obj in objs:
 		sorted_objs[obj.name] = true
-	board.construct_collection_rpc.rpc(var_to_bytes({
+	board.create_collection_bcast({
 		"name": board.unique_name("collection"),
 		"position": objs[-1].position,
 		"permanent": false,
 		"inside": sorted_objs
-		}))
+		})
 		
 
 ## Stacks an object to a collection

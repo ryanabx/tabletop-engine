@@ -7,8 +7,22 @@ var coordinates_labels: Array
 @onready var fps_counter: Label = $VBoxContainer/TitleBar/HBoxContainer/FPSCounter
 
 func _ready() -> void:
+	multiplayer.peer_connected.connect(peer_connected)
+	update_bar_color()
 	coordinates_labels.append(Label.new())
 	add_child(coordinates_labels[0])
+
+func peer_connected(_id: int) -> void:
+	update_bar_color()
+
+func update_bar_color() -> void:
+	if multiplayer != null and multiplayer.is_server() and multiplayer.multiplayer_peer is WebSocketMultiplayerPeer:
+		if multiplayer.get_peers().size() > 0:
+			$VBoxContainer/TitleBar.get_theme_stylebox("panel").bg_color = Color8(39, 61, 42)
+		else:
+			$VBoxContainer/TitleBar.get_theme_stylebox("panel").bg_color = Color8(62, 99, 67)
+	elif not multiplayer.is_server():
+		$VBoxContainer/TitleBar.get_theme_stylebox("panel").bg_color = Color8(39, 47, 61)
 
 func _process(_delta: float) -> void:
 	fps_counter.text = str(Engine.get_frames_per_second(), "fps")
@@ -42,3 +56,7 @@ var start_position: Vector2 = Vector2.ZERO
 # 		print("Mouse clicked at ",screen_position)
 # 		drag_window = true
 # 		start_position = get_global_mouse_position()
+
+
+func _on_multiplayer_button_pressed() -> void:
+	SignalManager.open_multiplayer_menu.emit()

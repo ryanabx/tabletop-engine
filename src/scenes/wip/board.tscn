@@ -8,3 +8,9 @@ script = ExtResource("1_860dr")
 
 [node name="BoardPlayer" type="Node2D" parent="."]
 script = ExtResource("2_amgji")
+
+[node name="SendDataTimer" type="Timer" parent="."]
+wait_time = 0.075
+autostart = true
+
+[connection signal="timeout" from="SendDataTimer" to="." method="_on_send_data_timer_timeout"]

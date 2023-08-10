@@ -41,5 +41,11 @@ script = ExtResource("2_fos3n")
 [node name="FPSCounter" type="Label" parent="VBoxContainer/TitleBar/HBoxContainer"]
 layout_mode = 2
 
+[node name="MultiplayerButton" type="Button" parent="VBoxContainer/TitleBar/HBoxContainer"]
+layout_mode = 2
+text = "Multiplayer"
+
 [node name="GameNameLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+
+[connection signal="pressed" from="VBoxContainer/TitleBar/HBoxContainer/MultiplayerButton" to="." method="_on_multiplayer_button_pressed"]
