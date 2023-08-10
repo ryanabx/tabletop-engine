@@ -1,6 +1,9 @@
 class_name Board
 extends Node2D
 
+@onready var piece_scene: PackedScene = preload("res://src/scenes/game_elements/gobjects/piece.tscn")
+@onready var collection_scene: PackedScene = preload("res://src/scenes/game_elements/gobjects/collection.tscn")
+
 # Game
 var game: GameConfig
 
@@ -84,7 +87,8 @@ func _extra_property_edits(obj: Gobject, prop: String, val: Variant) -> void:
 			obj.rotation = c.rotation
 
 func construct_piece(config: Dictionary, send_to_peer: bool) -> Piece:
-	var piece: Piece = Piece.new()
+	var piece: Piece = piece_scene.instantiate()
+	add_child(piece)
 	pieces[config.name] = piece
 	for prop in config.keys():
 		set_gobject_property(config.name, true, prop, config[prop], send_to_peer)
@@ -98,7 +102,8 @@ func construct_piece(config: Dictionary, send_to_peer: bool) -> Piece:
 	return piece
 
 func construct_collection(config: Dictionary, send_to_peer: bool = true) -> Collection:
-	var collection: Collection = Collection.new()
+	var collection: Collection = collection_scene.instantiate()
+	add_child(collection)
 	collections[config.name] = collection
 	for prop in config.keys():
 		set_gobject_property(config.name, false, prop, config[prop], send_to_peer)
