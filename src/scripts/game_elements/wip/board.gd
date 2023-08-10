@@ -9,6 +9,9 @@ var force_redraw: bool = false
 
 var def_font: Font
 
+# Children
+var board_utilities: BoardUtilities
+
 # Board properties
 var board_bg: String = ""
 var border: Rect2 = Rect2(0,0,0,0)
@@ -22,14 +25,6 @@ var max_z_index: float = 0.001
 var min_z_index: float = -0.001
 
 var property_updates: Dictionary = {"pieces": {}, "collections": {}}
-
-var board_canvas: RID
-
-signal gobject_created(obj: Gobject)
-
-const INTERPOLATE_PROPS: Array[String] = [
-	
-]
 
 const REDRAW_PROPS: Array[String] = [
 	"position", "rotation", "scale", "face_up"
@@ -80,8 +75,7 @@ func _extra_property_edits(obj: Gobject, prop: StringName, val: Variant) -> void
 
 func construct_piece(config: Dictionary, send_to_peer: bool = true) -> Piece:
 	var piece: Piece = Piece.new()
-	piece.name = config.name
-	add_piece(piece)
+	pieces[config.name] = piece
 	piece.canvas_item = RenderingServer.canvas_item_create()
 	RenderingServer.canvas_item_set_parent(piece.canvas_item, get_canvas_item())
 	for prop in config.keys():
@@ -112,31 +106,21 @@ func set_collection_drawing(collection: Collection) -> void:
 func set_obj_canvas_transform(obj: Gobject) -> void:
 	RenderingServer.canvas_item_set_transform(obj.canvas_item, get_obj_transform(obj))
 
-func add_piece(piece: Piece) -> void:
-	pieces[piece.name] = piece # Added object
-	gobject_created.emit(piece)
-
 func construct_collection(config: Dictionary, send_to_peer: bool = true) -> Collection:
 	var collection: Collection = Collection.new()
-	collection.name = config.name
+	collections[config.name] = collection
 	collection.canvas_item = RenderingServer.canvas_item_create()
 	RenderingServer.canvas_item_set_parent(collection.canvas_item, get_canvas_item())
-
-	add_collection(collection)
 	for prop in config.keys():
 		set_gobject_property(collection.name, false, prop, config[prop], send_to_peer)
 	for obj in collection.inside.keys():
 		var piece: Piece = get_piece(obj)
 		if piece != null:
-			remove_piece_from_collection(piece)
+			board_utilities.remove_piece_from_collection(piece)
 		set_gobject_property(obj, true, "collection", collection.name, send_to_peer)
 	# Piece getting resource
 	set_collection_drawing(collection)
 	return collection
-
-func add_collection(collection: Collection) -> void:
-	collections[collection.name] = collection # Added object
-	gobject_created.emit(collection)
 
 func _draw() -> void:
 	draw_board_bg()
@@ -214,39 +198,6 @@ func unique_name(s: String) -> String:
 ### Utilities ###
 #################
 
-# Adding and removing from collections
-
-## Adds a piece to the collection specified. Removes a piece from current collection if it exists
-func add_piece_to_collection(piece: Piece, c_name: String) -> void:
-	if piece.collection != "": remove_piece_from_collection(piece)
-	set_gobject_property(piece.name, true, "collection", c_name)
-	var collection = get_collection(c_name)
-	if collection == null:
-		return
-	var new_inside: Dictionary = collection.inside.duplicate(false)
-	new_inside[piece.name] = true
-	set_gobject_property(collection.name, false, "inside", new_inside)
-	set_gobject_property(collection.name, false, "top", piece.name)
-	set_gobject_property(piece.name, true, "position", collection.position)
-
-## Removes a piece from a collection, if it has any
-func remove_piece_from_collection(piece: Piece) -> void:
-	if piece == null:
-		return
-	var c: Collection = get_collection(piece.collection)
-	set_gobject_property(piece.name, true, "collection", "")
-	if c == null:
-		return
-	var new_inside: Dictionary = c.inside.duplicate(false)
-	new_inside.erase(piece.name)
-	set_gobject_property(c.name, false, "inside", new_inside)
-	if not c.permanent:
-		if c.inside.size() == 1:
-			remove_piece_from_collection(get_piece(c.inside.keys()[0]))
-		elif c.inside.is_empty():
-			# Essentially queue free
-			set_gobject_property(c.name, false, "erased", true)
-
 # Draw order of objects
 
 func get_sorted_pieces() -> Array[Piece]:
@@ -257,49 +208,6 @@ func get_sorted_pieces() -> Array[Piece]:
 
 func sort_by_draw_order(obj1: Piece, obj2: Piece) -> bool:
 	return obj1.z_index < obj2.z_index
-
-## Brings an object to the front
-func move_object_to_top(piece: Piece) -> void:
-	set_gobject_property(piece.name, true, "z_index", max_z_index)
-	max_z_index += 0.001
-
-## Brings an object to the back
-func move_object_to_back(piece: Piece) -> void:
-	set_gobject_property(piece.name, true, "z_index", min_z_index)
-	min_z_index -= 0.001
-
-## Flips an object
-func flip_object(piece: Piece) -> void:
-	piece.face_up = not piece.face_up
-
-## Shuffles objects
-func shuffle(pcs: Array[Piece]) -> void:
-	var pcs_shuffled: Array[Piece] = pcs.duplicate(false)
-	pcs_shuffled.shuffle()
-	for i in range(pcs.size()):
-		var pc1: Piece = pcs[i]
-		var pc2: Piece = pcs_shuffled[i]
-		var contents1: Dictionary = {
-			"position": pc1.position,
-			"rotation": pc1.rotation,
-			"z_index": pc1.z_index,
-			"collection": pc1.collection
-		}
-		var contents2: Dictionary = {
-			"position": pc2.position,
-			"rotation": pc2.rotation,
-			"z_index": pc2.z_index,
-			"collection": pc2.collection
-		}
-		_swap(pc1, contents2)
-		_swap(pc2, contents1)
-
-func _swap(pc1: Piece, contents: Dictionary) -> void:
-	set_gobject_property(pc1.name, true, "position", contents.position)
-	set_gobject_property(pc1.name, true, "rotation", contents.rotation)
-	set_gobject_property(pc1.name, true, "z_index", contents.z_index)
-	if pc1.collection != contents.collection:
-		add_piece_to_collection(pc1, collections[contents.collection])
 
 func pieces_by_name(objects: Array[String]) -> Array[Piece]:
 	var result: Array[Piece] = []
@@ -359,9 +267,6 @@ func is_ready(id: int) -> void:
 		ready_players.append(id)
 		if ready_players.size() == multiplayer.get_peers().size() + 1:
 			coordinate_scale = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
-			# # Thread stuff (test)
-			# load_game_thread = Thread.new()
-			# load_game_thread.start(_init_board_objs)
 			_init_board_objs()
 
 @rpc("authority", "call_local", "unreliable")
@@ -382,22 +287,12 @@ func game_load_started() -> void:
 
 ## Called when the board is initialized
 func _ready() -> void:
-	# Create board canvas
-	board_canvas = RenderingServer.canvas_item_create()
-	RenderingServer.canvas_item_set_parent(board_canvas, get_canvas_item())
-
-	SignalManager.game_load_started.emit()
+	board_utilities = BoardUtilities.new(self) # New boardutilities
 	def_font = ThemeDB.fallback_font
-	coordinate_scale = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
-	connect_signals()
+	SignalManager.game_load_started.emit()
 	_init_board_props()
 	_update_menu_bar()
-	coordinate_scale = Vector2.ONE
 	is_ready.rpc_id(1, multiplayer.get_unique_id())
-	
-	
-func connect_signals() -> void:
-	SignalManager.shuffle_selection.connect(shuffle)
 
 ## Ran during startup, initializes the board's background and border
 func _init_board_props() -> void:
@@ -480,14 +375,7 @@ func _new_conf_obj(o: Dictionary) -> void:
 					obj.name = unique_name("piece")
 				construct_piece(obj, true)
 
-
 func _on_send_data_timer_timeout() -> void:
 	if not (property_updates.pieces.is_empty() and property_updates.collections.is_empty()):
 		receive_property_updates.rpc(var_to_bytes(property_updates))
 		property_updates = {"collections": {}, "pieces": {}}
-
-var load_game_thread: Thread
-
-func _exit_tree() -> void:
-	if load_game_thread != null:
-		load_game_thread.wait_to_finish()
