@@ -178,11 +178,11 @@ func can_menu() -> bool:
 ##########################
 
 func _draw() -> void:
-	# if get_highlighted_item() != null:
-	# 	draw_colored_polygon(
-	# 		board.get_obj_extents(get_highlighted_item()),
-	# 		Color.from_hsv(0.4, 0.2, 1, 0.3)
-	# 		)
+	if get_highlighted_item() != null:
+		draw_colored_polygon(
+			board.get_obj_extents(get_highlighted_item()),
+			Color.from_hsv(0.4, 0.2, 1, 0.3)
+			)
 	if selection_boxing:
 		draw_rect(selection_box, Color.BLUE * Color(1,1,1,0.3))
 	for obj in get_selected_pieces():
@@ -202,7 +202,6 @@ func parse_input(input_actions: Dictionary) -> void:
 	if InputManager.is_select_pressed(input_actions) and can_select():
 		var over_piece = position_overlaps_selected_pieces(grab_start)
 		if not over_piece:
-			check_for_overlapping_piece(grab_start)
 			print("Not over piece!")
 			if get_selectable_piece() != null:
 				print("Selecting object")
@@ -220,7 +219,6 @@ func parse_input(input_actions: Dictionary) -> void:
 			set_grab_offsets()
 	# Stack selection (or regular if no collection exists)
 	if InputManager.is_stack_select_pressed(input_actions) and can_select():
-		check_for_overlapping_piece(grab_start)
 		if get_selectable_piece() != null:
 			if get_selectable_piece().collection != "":
 				var c: Collection = board.get_collection(get_selectable_piece().collection)
@@ -241,7 +239,6 @@ func parse_input(input_actions: Dictionary) -> void:
 		if not selected_pieces.is_empty():
 			release_grab_offsets()
 			if can_deselect():
-				check_for_overlapping_piece(get_local_mouse_position())
 				print("Deselecting objects")
 				deselect_objects()
 		if selection_boxing:
@@ -293,12 +290,10 @@ func select_collections_from_pieces() -> void:
 				if collection.permanent == true:
 					var pcs: Array[Piece] = []
 					pcs.assign(board.get_pieces(collection.inside.keys().filter(func(val: String) -> bool: return selected_pieces.has(val))))
-					convert_to_stack(pcs)
+					board.board_utilities.convert_to_stack(pcs)
 				else:
 					# print("Option 1")
 					select_collection(collection)
-
-		
 
 ## Select objects
 func select_pieces(objs: Array[Piece], append: bool = false, remove_from_collection = true) -> void:
@@ -320,8 +315,8 @@ func _sel_piece(obj: Piece, append: bool = false, remove_from_collection = true)
 	# Piece exclusive stuff
 	if obj is Piece:
 		if remove_from_collection:
-			board.remove_piece_from_collection(obj)
-		board.move_object_to_top(obj)
+			board.board_utilities.remove_piece_from_collection(obj)
+		board.board_utilities.move_object_to_top(obj)
 	if append and not selected_pieces.has(obj.name):
 		selected_pieces.append(obj.name)
 	else:
@@ -346,10 +341,10 @@ func deselect_objects() -> void:
 			print("Stacking objects to piece")
 			var objects: Array[Piece] = []
 			objects.assign(get_selected_pieces() + [get_highlighted_item()])
-			convert_to_stack(objects)
+			board.board_utilities.convert_to_stack(objects)
 		elif get_highlighted_item() is Collection:
 			print("Stacking objects to collection")
-			stack_to_collection(get_selected_pieces(), get_highlighted_item())
+			board.board_utilities.stack_to_collection(get_selected_pieces(), get_highlighted_item())
 	
 	selected_pieces = []
 	
@@ -361,7 +356,7 @@ func flip_objects() -> void:
 	if selected_pieces.is_empty():
 		return
 	for piece in get_selected_pieces():
-		board.flip_object(piece)
+		board.board_utilities.flip_object(piece)
 
 ## Makes a game menu
 func game_menu() -> void:
@@ -380,27 +375,6 @@ func game_menu() -> void:
 		print("State is here")
 		SignalManager.game_menu_create.emit(selected_pieces)
 
-## Converts game objects to stack
-func convert_to_stack(objs: Array[Piece]) -> void:
-	var sorted_objs: Dictionary = {}
-	for obj in objs:
-		sorted_objs[obj.name] = true
-	board.construct_collection({
-		"name": board.unique_name("collection"),
-		"position": objs[-1].position,
-		"permanent": false,
-		"inside": sorted_objs
-		})
-		
-
-## Stacks an object to a collection
-func stack_to_collection(objs: Array[Piece], item: Collection) -> void:
-	var sorted_objs: Array[Piece] = []
-	sorted_objs.assign(objs)
-	sorted_objs.sort_custom(board.sort_by_draw_order)
-	for obj in sorted_objs:
-		board.add_piece_to_collection(obj, item.name)
-
 #####################
 ### Instantiation ###
 #####################
@@ -409,4 +383,3 @@ func _ready() -> void:
 	z_index = 1000
 	InputManager.enhanced_inputs.connect(parse_input)
 	SignalManager.game_menu_destroy.connect(removed_game_menu)
-	SignalManager.convert_to_stack.connect(convert_to_stack)

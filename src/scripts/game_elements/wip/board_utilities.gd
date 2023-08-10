@@ -6,6 +6,7 @@ var board: Board
 func _init(_board: Board) -> void:
 	board = _board
 	SignalManager.shuffle_selection.connect(shuffle)
+	SignalManager.convert_to_stack.connect(convert_to_stack)
 
 ## Brings an object to the front
 func move_object_to_top(piece: Piece) -> void:
@@ -53,7 +54,8 @@ func _swap(pc1: Piece, contents: Dictionary) -> void:
 
 ## Adds a piece to the collection specified. Removes a piece from current collection if it exists
 func add_piece_to_collection(piece: Piece, c_name: String) -> void:
-	if piece.collection != "": remove_piece_from_collection(piece)
+	if piece.collection != "":
+		remove_piece_from_collection(piece)
 	board.set_gobject_property(piece.name, true, "collection", c_name)
 	var collection = board.get_collection(c_name)
 	if collection == null:
@@ -77,7 +79,27 @@ func remove_piece_from_collection(piece: Piece) -> void:
 	board.set_gobject_property(c.name, false, "inside", new_inside)
 	if not c.permanent:
 		if c.inside.size() == 1:
-			board.remove_piece_from_collection(board.get_piece(c.inside.keys()[0]))
+			remove_piece_from_collection(board.get_piece(c.inside.keys()[0]))
 		elif c.inside.is_empty():
 			# Essentially queue free
 			board.set_gobject_property(c.name, false, "erased", true)
+
+## Converts game objects to stack
+func convert_to_stack(objs: Array[Piece]) -> void:
+	var sorted_objs: Dictionary = {}
+	for obj in objs:
+		sorted_objs[obj.name] = true
+	board.construct_collection({
+		"name": board.unique_name("collection"),
+		"position": objs[-1].position,
+		"permanent": false,
+		"inside": sorted_objs
+		})
+
+## Stacks an object to a collection
+func stack_to_collection(objs: Array[Piece], item: Collection) -> void:
+	var sorted_objs: Array[Piece] = []
+	sorted_objs.assign(objs)
+	sorted_objs.sort_custom(board.sort_by_draw_order)
+	for obj in sorted_objs:
+		add_piece_to_collection(obj, item.name)

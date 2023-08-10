@@ -3,9 +3,6 @@ extends Node2D
 
 # Game
 var game: GameConfig
-var coordinate_scale: Vector2 = Vector2.ONE
-
-var force_redraw: bool = false
 
 var def_font: Font
 
@@ -72,6 +69,13 @@ func _extra_property_edits(obj: Gobject, prop: StringName, val: Variant) -> void
 		pieces.erase(obj.name)
 	if prop in REDRAW_PROPS:
 		set_obj_canvas_transform(obj)
+	if obj is Collection and prop in ["inside", "position", "rotation"]:
+		update_piece_positions(obj)
+	elif obj is Piece and prop == "collection":
+		var c: Collection = get_collection(val)
+		if c != null:
+			obj.position = c.position
+			obj.rotation = c.rotation
 
 func construct_piece(config: Dictionary, send_to_peer: bool = true) -> Piece:
 	var piece: Piece = Piece.new()
@@ -79,7 +83,7 @@ func construct_piece(config: Dictionary, send_to_peer: bool = true) -> Piece:
 	piece.canvas_item = RenderingServer.canvas_item_create()
 	RenderingServer.canvas_item_set_parent(piece.canvas_item, get_canvas_item())
 	for prop in config.keys():
-		set_gobject_property(piece.name, true, prop, config[prop], send_to_peer)
+		set_gobject_property(config.name, true, prop, config[prop], send_to_peer)
 	if "collection" in config:
 		var new_inside: Dictionary = collections[config.collection].inside.duplicate(false)
 		new_inside[config.name] = true
@@ -92,8 +96,13 @@ func construct_piece(config: Dictionary, send_to_peer: bool = true) -> Piece:
 
 func set_piece_texture(piece: Piece) -> void:
 	RenderingServer.canvas_item_add_texture_rect(
-		piece.canvas_item, Rect2(-Vector2.ONE /2, Vector2.ONE),
+		piece.canvas_item, Rect2(-piece.scale /2, piece.scale),
 		game.images[piece.image_up if piece.face_up else piece.image_down].get_rid()
+		)
+	RenderingServer.canvas_item_add_polyline(
+		piece.canvas_item, Transform2D().scaled(piece.scale) * piece.shape + PackedVector2Array([piece.scale * piece.shape[0]]),
+		PackedColorArray([Color.WHITE]),
+		Globals.OUTLINE_THICKNESS / 3
 		)
 
 func set_collection_drawing(collection: Collection) -> void:
@@ -104,7 +113,7 @@ func set_collection_drawing(collection: Collection) -> void:
 	)
 
 func set_obj_canvas_transform(obj: Gobject) -> void:
-	RenderingServer.canvas_item_set_transform(obj.canvas_item, get_obj_transform(obj))
+	RenderingServer.canvas_item_set_transform(obj.canvas_item, get_obj_transform_without_scale(obj))
 
 func construct_collection(config: Dictionary, send_to_peer: bool = true) -> Collection:
 	var collection: Collection = Collection.new()
@@ -112,7 +121,7 @@ func construct_collection(config: Dictionary, send_to_peer: bool = true) -> Coll
 	collection.canvas_item = RenderingServer.canvas_item_create()
 	RenderingServer.canvas_item_set_parent(collection.canvas_item, get_canvas_item())
 	for prop in config.keys():
-		set_gobject_property(collection.name, false, prop, config[prop], send_to_peer)
+		set_gobject_property(config.name, false, prop, config[prop], send_to_peer)
 	for obj in collection.inside.keys():
 		var piece: Piece = get_piece(obj)
 		if piece != null:
@@ -127,7 +136,6 @@ func _draw() -> void:
 	for key in collections.keys():
 		var collection: Collection = collections[key]
 		draw_string(def_font,get_obj_extents(collection)[0], str(collection.inside.size()))
-	force_redraw = false
 		
 ## Draw the background specified
 func draw_board_bg() -> void:
@@ -158,6 +166,9 @@ func get_obj_extents(obj: Gobject) -> PackedVector2Array:
 	
 func get_obj_transform(obj: Gobject) -> Transform2D:
 	return Transform2D(deg_to_rad(obj.rotation), obj.scale, 0.0, obj.position)
+
+func get_obj_transform_without_scale(obj: Gobject) -> Transform2D:
+	return Transform2D(deg_to_rad(obj.rotation), obj.position)
 
 func obj_rect_overlaps_point(obj: Gobject, point: Vector2) -> bool:
 	var rect: Rect2 = get_obj_rect_extents(obj)
@@ -238,21 +249,18 @@ func can_access_collection(collection: Collection) -> bool:
 
 func _process(_delta: float) -> void:
 	clamp_camera()
-	if force_redraw:
-		queue_redraw()
+	queue_redraw()
 
 ## Self explanatory
 func clamp_camera() -> void:
 	get_parent().camera_controller.camera.position = get_parent().camera_controller.camera.position.clamp(border.position, border.end)
 
 ## Updates objects position to their collections
-func update_objects_position(collection: Collection):
-	var pcs: Array[Piece] = get_pieces(collection.inside.keys())
+func update_piece_positions(collection: Collection):
+	var pcs: Array = collection.inside.keys()
 	for pc in pcs:
-		if pc == null:
-			continue
-		pc.position = collection.position
-		pc.rotation = collection.rotation
+		set_gobject_property(pc, true, "position", collection.position, false)
+		set_gobject_property(pc, true, "rotation", collection.rotation, false)
 
 
 ########################
@@ -261,13 +269,25 @@ func update_objects_position(collection: Collection):
 
 var ready_players: Array = []
 
+####################
+### Config stuff ###
+####################
+
+## Called when the board is initialized
+func _ready() -> void:
+	board_utilities = BoardUtilities.new(self) # New boardutilities
+	var coordinate_scale: Vector2 = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
+	BoardSetup.setup_initial_board_state(self, coordinate_scale)
+	is_ready.rpc_id(1, multiplayer.get_unique_id())
+	def_font = ThemeDB.fallback_font
+
 @rpc("any_peer","call_local","reliable")
 func is_ready(id: int) -> void:
 	if multiplayer.is_server():
 		ready_players.append(id)
 		if ready_players.size() == multiplayer.get_peers().size() + 1:
-			coordinate_scale = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
-			_init_board_objs()
+			var coordinate_scale: Vector2 = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
+			BoardSetup.init_board_objs(self, coordinate_scale)
 
 @rpc("authority", "call_local", "unreliable")
 func game_percent_loaded(pc: float) -> void:
@@ -280,100 +300,6 @@ func game_load_finished() -> void:
 @rpc("authority", "call_local", "reliable")			
 func game_load_started() -> void:
 	SignalManager.game_load_started.emit()
-
-####################
-### Config stuff ###
-####################
-
-## Called when the board is initialized
-func _ready() -> void:
-	board_utilities = BoardUtilities.new(self) # New boardutilities
-	def_font = ThemeDB.fallback_font
-	SignalManager.game_load_started.emit()
-	_init_board_props()
-	_update_menu_bar()
-	is_ready.rpc_id(1, multiplayer.get_unique_id())
-
-## Ran during startup, initializes the board's background and border
-func _init_board_props() -> void:
-	if "border" in game.board:
-		border = Rect2(
-				(Vector2(game.board.border.position.x, game.board.border.position.y) - Vector2(game.board.border.scale.x, game.board.border.scale.y) / 2) * coordinate_scale,
-				Vector2(game.board.border.scale.x, game.board.border.scale.y) * coordinate_scale
-			)
-	# Set up game bg
-	if "background_image" in game.board and game.board.background_image != "":
-		board_bg = game.board.background_image
-
-## Ran during startup, notifies the menu bar that a new game is loaded
-func _update_menu_bar() -> void:
-	get_parent().user_interface.menu_bar.new_game_loaded(game.player.max, game.actions)
-
-## Ran during startup, initializes the board's objects
-func _init_board_objs() -> void:
-	var x: float = 0
-	for item in game.objects:
-		await get_tree().create_timer(0.01).timeout
-		game_percent_loaded.rpc(x / game.objects.size())
-		_process_cnfg_obj(item)
-		x += 1
-	await get_tree().create_timer(0.01).timeout
-	coordinate_scale = Vector2.ONE
-	game_load_finished.rpc()
-
-## Ran during startup, processes one object in the game config
-func _process_cnfg_obj(obj: Dictionary) -> void:
-	# Use templates if they exist
-	if "template" in obj:
-		obj.merge(game.templates[obj.template])
-	
-	# Handle for loops
-	if "for" in obj:
-		var total_objs: int = 1
-		for x in obj["for"].keys():
-			total_objs = total_objs * obj["for"][x].size()
-		for i in range(total_objs):
-			var repls: Dictionary = {}
-			var t: int = 1
-			for key in obj["for"].keys():
-				var size = obj["for"][key].size()
-				repls[key] = obj["for"][key][(floori(i as float/t)) % size]
-				t = t * size
-			var _o: Dictionary = _make_obj_dict(obj, repls)
-			_new_conf_obj(_o)
-	else:
-		_new_conf_obj(obj)
-
-## Ran during startup, makes an object dictionary from repls
-func _make_obj_dict(original: Dictionary, repls: Dictionary) -> Dictionary:
-	var obj: Dictionary = original.duplicate(true)
-	for key in obj.keys():
-		for repl in repls.keys():
-			if typeof(obj[key]) == TYPE_STRING:
-				obj[key] = obj[key].replacen(repl, repls[repl])
-	return obj
-
-## Ran during startup whenever a new config object is ready to be
-## inserted into the board.
-func _new_conf_obj(o: Dictionary) -> void:
-	var amount: int = o.repeat if "repeat" in o else 1
-	for i in range(amount):
-		var obj: Dictionary = o.duplicate(true)
-		if "position" in obj:
-			obj.position = Vector2(obj.position.x * coordinate_scale.x, obj.position.y * coordinate_scale.y)
-		if "scale" in obj:
-			obj.scale = Vector2(obj.scale.x * coordinate_scale.x, obj.scale.y * coordinate_scale.y)
-		match obj.type:
-			"collection":
-				if "scale" in obj:
-					obj.base_size = obj.scale
-				if not obj.has("name"):
-					obj.name = unique_name("collection")
-				construct_collection(obj, true)
-			"piece":
-				if not obj.has("name"):
-					obj.name = unique_name("piece")
-				construct_piece(obj, true)
 
 func _on_send_data_timer_timeout() -> void:
 	if not (property_updates.pieces.is_empty() and property_updates.collections.is_empty()):
