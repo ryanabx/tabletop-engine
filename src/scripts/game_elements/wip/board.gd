@@ -88,13 +88,13 @@ func construct_piece(config: Dictionary, send_to_peer: bool = true) -> Piece:
 		var new_inside: Dictionary = collections[config.collection].inside.duplicate(false)
 		new_inside[config.name] = true
 		set_gobject_property(config.collection, false, "inside", new_inside, send_to_peer)
-	set_piece_texture(piece)
+	_set_piece_drawing(piece)
 	set_gobject_property(piece.name, true, "z_index", max_z_index, send_to_peer)
 	max_z_index += 0.001
 	# Piece getting resource
 	return piece
 
-func set_piece_texture(piece: Piece) -> void:
+func _set_piece_drawing(piece: Piece) -> void:
 	RenderingServer.canvas_item_add_texture_rect(
 		piece.canvas_item, Rect2(-piece.scale /2, piece.scale),
 		game.images[piece.image_up if piece.face_up else piece.image_down].get_rid()
@@ -105,10 +105,10 @@ func set_piece_texture(piece: Piece) -> void:
 		Globals.OUTLINE_THICKNESS / 3
 		)
 
-func set_collection_drawing(collection: Collection) -> void:
+func _set_collection_drawing(collection: Collection) -> void:
 	RenderingServer.canvas_item_add_polygon(
 		collection.canvas_item,
-		collection.shape,
+		Transform2D().scaled(collection.scale) * collection.shape,
 		PackedColorArray([Color.from_hsv(0.0, 1.0, 0.0, 0.4)])
 	)
 
@@ -128,7 +128,7 @@ func construct_collection(config: Dictionary, send_to_peer: bool = true) -> Coll
 			board_utilities.remove_piece_from_collection(piece)
 		set_gobject_property(obj, true, "collection", collection.name, send_to_peer)
 	# Piece getting resource
-	set_collection_drawing(collection)
+	_set_collection_drawing(collection)
 	return collection
 
 func _draw() -> void:
