@@ -65,12 +65,8 @@ func set_gobject_property(n: String, piece: bool, prop: StringName, val: Variant
 	_extra_property_edits(obj, prop, val)
 
 func _extra_property_edits(obj: Gobject, prop: StringName, val: Variant) -> void:
-	if prop == "z_index":
-		RenderingServer.canvas_item_set_z_index(obj.canvas_item, int(val * 100))
 	if prop == "erased" and val == true:
 		pieces.erase(obj.name)
-	if prop in REDRAW_PROPS:
-		set_obj_canvas_transform(obj)
 	if obj is Collection and prop in ["position", "rotation"]:
 		update_piece_positions(obj)
 	elif obj is Piece and prop == "collection":
@@ -82,46 +78,20 @@ func _extra_property_edits(obj: Gobject, prop: StringName, val: Variant) -> void
 func construct_piece(config: Dictionary, send_to_peer: bool = true) -> Piece:
 	var piece: Piece = Piece.new()
 	pieces[config.name] = piece
-	piece.canvas_item = RenderingServer.canvas_item_create()
-	RenderingServer.canvas_item_set_parent(piece.canvas_item, get_canvas_item())
 	for prop in config.keys():
 		set_gobject_property(config.name, true, prop, config[prop], send_to_peer)
 	if "collection" in config:
 		var new_inside: Dictionary = collections[config.collection].inside.duplicate(false)
 		new_inside[config.name] = true
 		set_gobject_property(config.collection, false, "inside", new_inside, send_to_peer)
-	_set_piece_drawing(piece)
 	set_gobject_property(piece.name, true, "z_index", max_z_index, send_to_peer)
 	max_z_index += 0.001
 	# Piece getting resource
 	return piece
 
-func _set_piece_drawing(piece: Piece) -> void:
-	RenderingServer.canvas_item_add_texture_rect(
-		piece.canvas_item, Rect2(-piece.scale /2, piece.scale),
-		game.images[piece.image_up if piece.face_up else piece.image_down].get_rid()
-		)
-	RenderingServer.canvas_item_add_polyline(
-		piece.canvas_item, Transform2D().scaled(piece.scale) * piece.shape + PackedVector2Array([piece.scale * piece.shape[0]]),
-		PackedColorArray([Color.WHITE]),
-		Globals.OUTLINE_THICKNESS / 3
-		)
-
-func _set_collection_drawing(collection: Collection) -> void:
-	RenderingServer.canvas_item_add_polygon(
-		collection.canvas_item,
-		Transform2D().scaled(collection.scale) * collection.shape,
-		PackedColorArray([Color.from_hsv(0.0, 1.0, 0.0, 0.4)])
-	)
-
-func set_obj_canvas_transform(obj: Gobject) -> void:
-	RenderingServer.canvas_item_set_transform(obj.canvas_item, get_obj_transform_without_scale(obj))
-
 func construct_collection(config: Dictionary, send_to_peer: bool = true) -> Collection:
 	var collection: Collection = Collection.new()
 	collections[config.name] = collection
-	collection.canvas_item = RenderingServer.canvas_item_create()
-	RenderingServer.canvas_item_set_parent(collection.canvas_item, get_canvas_item())
 	for prop in config.keys():
 		set_gobject_property(config.name, false, prop, config[prop], send_to_peer)
 	for obj in collection.inside.keys():
@@ -129,16 +99,34 @@ func construct_collection(config: Dictionary, send_to_peer: bool = true) -> Coll
 		if piece != null:
 			board_utilities.remove_piece_from_collection(piece)
 		set_gobject_property(obj, true, "collection", collection.name, send_to_peer)
-	# Piece getting resource
-	_set_collection_drawing(collection)
 	return collection
 
 func _draw() -> void:
 	draw_board_bg()
-	for key in collections.keys():
-		var collection: Collection = collections[key]
-		draw_string(def_font,get_obj_extents(collection)[0], str(collection.inside.size()))
-		
+	_draw_collections()
+	_draw_pieces()
+	_draw_collection_amounts()
+
+func _draw_pieces() -> void:
+	var pcs: Array[Piece] = []
+	pcs.assign(pieces.values())
+	pcs.sort_custom(sort_by_draw_order)
+	for piece in pcs:
+		var texture: Texture2D = game.images[piece.image_up if piece.face_up else piece.image_down]
+		var extents: PackedVector2Array = board_utilities.get_obj_extents(piece)
+		draw_texture_rect(texture, board_utilities.get_obj_rect_extents(piece), false)
+		draw_polyline(extents + PackedVector2Array([extents[0]]), Color.WHITE, 2, false)
+
+func _draw_collections() -> void:
+	for collection in collections.values():
+		var extents: PackedVector2Array = board_utilities.get_obj_extents(collection)
+		draw_colored_polygon(extents, Color.BLACK * Color(1,1,1,0.3))
+		draw_polyline(extents + PackedVector2Array([extents[0]]), Color.WHITE, 2, false)
+
+func _draw_collection_amounts() -> void:
+	for collection in collections.values():
+		draw_string(def_font,board_utilities.get_obj_extents(collection)[0], str(collection.name, ":",collection.inside.size()))
+
 ## Draw the background specified
 func draw_board_bg() -> void:
 	if board_bg != "":
@@ -162,33 +150,6 @@ func get_collections(a: Array) -> Array[Collection]:
 	var clls: Array[Collection] = []
 	clls.assign(a.map(func(v: String) -> Collection: return collections[v] if collections.has(v) else null))
 	return clls
-
-func get_obj_extents(obj: Gobject) -> PackedVector2Array:
-	return get_obj_transform(obj) * obj.shape
-	
-func get_obj_transform(obj: Gobject) -> Transform2D:
-	return Transform2D(deg_to_rad(obj.rotation), obj.scale, 0.0, obj.position)
-
-func get_obj_transform_without_scale(obj: Gobject) -> Transform2D:
-	return Transform2D(deg_to_rad(obj.rotation), obj.position)
-
-func obj_rect_overlaps_point(obj: Gobject, point: Vector2) -> bool:
-	var rect: Rect2 = get_obj_rect_extents(obj)
-	return rect.has_point(point)
-
-func obj_overlaps_point(obj: Gobject, point: Vector2) -> bool:
-	var shape: PackedVector2Array = get_obj_extents(obj)
-	return Geometry2D.is_point_in_polygon(point, shape)
-
-func obj_overlaps_polygon(obj: Gobject, rect: PackedVector2Array) -> bool:
-	var shape: PackedVector2Array = get_obj_extents(obj)
-	return not Geometry2D.intersect_polygons(shape, rect).is_empty()
-
-func get_obj_rect_extents(obj: Gobject) -> Rect2:
-	return get_obj_transform(obj) * get_obj_rect(obj)
-
-func get_obj_rect(_obj: Gobject) -> Rect2:
-	return Rect2(- Vector2.ONE / 2, Vector2.ONE)
 
 func move_collection(obj: Collection, pos: Vector2) -> void:
 	set_gobject_property(obj.name, false, "position", pos)
@@ -233,7 +194,7 @@ func pieces_by_name(objects: Array[String]) -> Array[Piece]:
 
 func _process(_delta: float) -> void:
 	clamp_camera()
-	# queue_redraw()
+	queue_redraw()
 
 ## Self explanatory
 func clamp_camera() -> void:

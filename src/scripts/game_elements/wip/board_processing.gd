@@ -16,15 +16,15 @@ func _process(_delta: float) -> void:
 	# Piece operations
 	var best_piece: Piece = null
 	for piece in board.pieces.values():
-		if board.can_access_piece(piece) and not board_player.selected_pieces.has(piece.name):
-			if board.obj_overlaps_point(piece, pos):
+		if board_utilities.can_access_piece(piece) and not board_player.selected_pieces.has(piece.name):
+			if board_utilities.obj_overlaps_point(piece, pos):
 				if best_piece == null or piece.z_index > best_piece.z_index:
 					best_piece = piece
 	# Collection operations
 	var best_collection: Collection = null
 	for collection in board.collections.values():
-		if board.can_access_collection(collection) and not board_player.selected_collections.has(collection.name):
-			if board.obj_overlaps_point(collection, pos):
+		if board_utilities.can_access_collection(collection) and not board_player.selected_collections.has(collection.name):
+			if board_utilities.obj_overlaps_point(collection, pos):
 				if best_collection == null or collection.z_index > best_collection.z_index:
 					best_collection = collection
 	

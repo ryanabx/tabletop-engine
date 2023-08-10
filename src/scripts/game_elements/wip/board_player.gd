@@ -132,14 +132,14 @@ func can_menu() -> bool:
 func _draw() -> void:
 	if get_highlighted_item() != null:
 		draw_colored_polygon(
-			board.get_obj_extents(get_highlighted_item()),
+			board.board_utilities.get_obj_extents(get_highlighted_item()),
 			Color.from_hsv(0.4, 0.2, 1, 0.3)
 			)
 	if selection_boxing:
 		draw_rect(selection_box, Color.BLUE * Color(1,1,1,0.3))
 	for obj in get_selected_pieces():
 		draw_colored_polygon(
-			board.get_obj_extents(obj),
+			board.board_utilities.get_obj_extents(obj),
 			Color.GREEN * Color(1,1,1,0.2)
 			)
 
@@ -223,14 +223,14 @@ func get_within_selection_box() -> Array[Piece]:
 		Vector2(selection_box.position.x, selection_box.end.y)
 	])
 	for piece in board.pieces.values():
-		if board.obj_overlaps_polygon(piece, selection_polygon):
+		if board.board_utilities.obj_overlaps_polygon(piece, selection_polygon):
 			res.append(piece)
 	return res
 
 ## True if a position overlaps any selected piece
 func position_overlaps_selected_pieces(pos: Vector2) -> bool:
 	for piece in get_selected_pieces():
-		if board.obj_overlaps_point(piece, pos):
+		if board.board_utilities.obj_overlaps_point(piece, pos):
 			return true
 	return false
 
@@ -332,6 +332,6 @@ func game_menu() -> void:
 #####################
 
 func _ready() -> void:
-	z_index = 1000
+	z_index = 4096
 	InputManager.enhanced_inputs.connect(parse_input)
 	SignalManager.game_menu_destroy.connect(removed_game_menu)

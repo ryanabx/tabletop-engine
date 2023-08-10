@@ -107,7 +107,6 @@ func stack_to_collection(objs: Array[Piece], item: Collection) -> void:
 
 ## True if the current player can select this piece, false otherwise
 func can_access_piece(piece: Piece) -> bool:
-	if piece == null: return false
 	if piece.collection == "":
 		return true
 	var collection: Collection = board.get_collection(piece.collection)
@@ -122,3 +121,30 @@ func can_access_collection(collection: Collection) -> bool:
 	elif collection.access_perms[Player.get_id()] == false:
 		return false
 	return true
+
+func obj_rect_overlaps_point(obj: Gobject, point: Vector2) -> bool:
+	var rect: Rect2 = get_obj_rect_extents(obj)
+	return rect.has_point(point)
+
+func obj_overlaps_point(obj: Gobject, point: Vector2) -> bool:
+	var shape: PackedVector2Array = get_obj_extents(obj)
+	return Geometry2D.is_point_in_polygon(point, shape)
+
+func get_obj_extents(obj: Gobject) -> PackedVector2Array:
+	return get_obj_transform(obj) * obj.shape
+	
+func get_obj_transform(obj: Gobject) -> Transform2D:
+	return Transform2D(deg_to_rad(obj.rotation), obj.scale, 0.0, obj.position)
+
+func get_obj_transform_without_scale(obj: Gobject) -> Transform2D:
+	return Transform2D(deg_to_rad(obj.rotation), obj.position)
+
+func obj_overlaps_polygon(obj: Gobject, rect: PackedVector2Array) -> bool:
+	var shape: PackedVector2Array = get_obj_extents(obj)
+	return not Geometry2D.intersect_polygons(shape, rect).is_empty()
+
+func get_obj_rect_extents(obj: Gobject) -> Rect2:
+	return get_obj_transform(obj) * get_obj_rect(obj)
+
+func get_obj_rect(_obj: Gobject) -> Rect2:
+	return Rect2(- Vector2.ONE / 2, Vector2.ONE)
