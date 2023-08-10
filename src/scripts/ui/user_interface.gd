@@ -8,9 +8,24 @@ var coordinates_labels: Array
 
 func _ready() -> void:
 	multiplayer.peer_connected.connect(peer_connected)
+	SignalManager.game_percent_loaded.connect(update_loading_percent)
+	SignalManager.game_load_started.connect(show_loading)
+	SignalManager.game_load_finished.connect(hide_loading)
 	update_bar_color()
 	coordinates_labels.append(Label.new())
 	add_child(coordinates_labels[0])
+
+func show_loading() -> void:
+	print("Game load started")
+	$LoadingBarContainer.show()
+
+func hide_loading() -> void:
+	print("Game load finished")
+	$LoadingBarContainer.hide()
+
+func update_loading_percent(pc: float) -> void:
+	print("Game load at ",pc)
+	$LoadingBarContainer/VBoxContainer/LoadingBar.value = pc * 100.0
 
 func peer_connected(_id: int) -> void:
 	update_bar_color()

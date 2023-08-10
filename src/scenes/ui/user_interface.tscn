@@ -48,4 +48,25 @@ text = "Multiplayer"
 [node name="GameNameLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 
+[node name="LoadingBarContainer" type="CenterContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LoadingBarContainer"]
+layout_mode = 2
+
+[node name="LoadingLabel" type="Label" parent="LoadingBarContainer/VBoxContainer"]
+layout_mode = 2
+text = "Loading"
+horizontal_alignment = 1
+
+[node name="LoadingBar" type="ProgressBar" parent="LoadingBarContainer/VBoxContainer"]
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+
 [connection signal="pressed" from="VBoxContainer/TitleBar/HBoxContainer/MultiplayerButton" to="." method="_on_multiplayer_button_pressed"]

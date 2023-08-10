@@ -23,6 +23,8 @@ var min_z_index: float = -0.001
 
 var property_updates: Dictionary = {"pieces": {}, "collections": {}}
 
+var board_canvas: RID
+
 signal gobject_created(obj: Gobject)
 
 const INTERPOLATE_PROPS: Array[String] = [
@@ -47,17 +49,18 @@ func receive_property_updates(data: PackedByteArray) -> void:
 			pieces.erase(p_name)
 			continue
 		for prop in updates.pieces[p_name].keys():
-			if prop in REDRAW_PROPS:
-				force_redraw = true
 			if prop == "z_index":
 				max_z_index = maxf(max_z_index, updates.pieces[p_name][prop] + 0.001)
 				min_z_index = minf(min_z_index, updates.pieces[p_name][prop] - 0.001)
+				RenderingServer.canvas_item_set_z_index(piece.canvas_item, int(updates.pieces[p_name][prop] * 100))
 			if INTERPOLATE_PROPS.has(prop):
 				if tween == null:
 					tween = get_tree().create_tween().set_trans(Tween.TRANS_CIRC)
 				tween.tween_property(piece, prop, updates.pieces[p_name][prop],0.1)
 			else:
 				piece.set(prop, updates.pieces[p_name][prop])
+				if prop in REDRAW_PROPS:
+					set_obj_canvas_transform(piece)
 	# Update properties on collections
 	for c_name in updates.collections.keys():
 		if not collections.has(c_name):
@@ -72,59 +75,87 @@ func receive_property_updates(data: PackedByteArray) -> void:
 			if prop == "z_index":
 				max_z_index = maxf(max_z_index, updates.pieces[c_name][prop] + 0.001)
 				min_z_index = minf(min_z_index, updates.pieces[c_name][prop] - 0.001)
+				RenderingServer.canvas_item_set_z_index(collection.canvas_item, int(updates.pieces[c_name][prop] * 100))
 			if INTERPOLATE_PROPS.has(prop):
 				if tween == null:
 					tween = get_tree().create_tween().set_trans(Tween.TRANS_CIRC)
 				tween.tween_property(collection, prop, updates.collections[c_name][prop],0.1)
 			else:
 				collection.set(prop, updates.collections[c_name][prop])
+				if prop in REDRAW_PROPS:
+					set_obj_canvas_transform(collection)
 
 ## Sets a gobject's property to a certain value
-func set_gobject_property(n: String, piece: bool, prop: StringName, val: Variant) -> void:
-	if prop in REDRAW_PROPS:
-		force_redraw = true
-	if piece == true:
-		if not pieces.has(n):
-			add_piece(construct_piece({"name": n}))
-		var obj: Piece = get_piece(n)
-		obj.set(prop, val)
-		if prop == "erased" and val == true:
-			pieces.erase(n)
+func set_gobject_property(n: String, piece: bool, prop: StringName, val: Variant, send_to_peer: bool = true) -> void:
+	# Create the object if the object with the specified name does not exist
+	if piece and not pieces.has(n):
+		add_piece(construct_piece({"name": n}))
+	if not piece and not collections.has(n):
+		add_collection(construct_collection({"name": n}))
+	# Assign our object and set the property
+	var obj: Gobject
+	if piece:
+		obj = get_piece(n)
+	else:
+		obj = get_collection(n)
+	obj.set(prop, val) # This is where we set the actual property
+	# If we are to send to peer, add to our property updates reference
+	if send_to_peer:
 		if not n in property_updates.pieces:
 			property_updates.pieces[n] = {}
 		property_updates.pieces[n][prop] = val
-	else:
-		if not collections.has(n):
-			add_collection(construct_collection({"name": n}))
-		var obj: Collection = get_collection(n)
-		obj.set(prop, val)
-		if prop == "erased" and val == true:
-			collections.erase(n)
-		if not n in property_updates.collections:
-			property_updates.collections[n] = {}
-		property_updates.collections[n][prop] = val
+	# Extra edits
+	if prop == "z_index":
+		RenderingServer.canvas_item_set_z_index(obj.canvas_item, int(val * 100))
+	if prop == "erased" and val == true:
+		pieces.erase(n)
+	if prop in REDRAW_PROPS:
+		set_obj_canvas_transform(obj)
 
-func create_piece_bcast(config: Dictionary) -> Piece:
+func create_piece_bcast(config: Dictionary, send_to_peer: bool = true) -> Piece:
 	var piece: Piece = Piece.new()
 	piece.name = config.name
 	add_piece(piece)
+	piece.canvas_item = RenderingServer.canvas_item_create()
+	RenderingServer.canvas_item_set_parent(piece.canvas_item, get_canvas_item())
 	for prop in config.keys():
-		set_gobject_property(piece.name, true, prop, config[prop])
+		set_gobject_property(piece.name, true, prop, config[prop], send_to_peer)
 	if "collection" in config:
 		var new_inside: Dictionary = collections[config.collection].inside.duplicate(false)
 		new_inside[config.name] = true
-		set_gobject_property(config.collection, false, "inside", new_inside)
-	set_gobject_property(piece.name, true, "z_index", max_z_index)
+		set_gobject_property(config.collection, false, "inside", new_inside, send_to_peer)
+	set_piece_texture(piece)
+	set_gobject_property(piece.name, true, "z_index", max_z_index, send_to_peer)
 	max_z_index += 0.001
+	# Piece getting resource
 	return piece
+
+func set_piece_texture(piece: Piece) -> void:
+	RenderingServer.canvas_item_add_texture_rect(
+		piece.canvas_item, Rect2(-Vector2.ONE /2, Vector2.ONE),
+		game.images[piece.image_up if piece.face_up else piece.image_down].get_rid()
+		)
+
+func set_collection_drawing(collection: Collection) -> void:
+	RenderingServer.canvas_item_add_polygon(
+		collection.canvas_item,
+		collection.shape,
+		PackedColorArray([Color.from_hsv(0.0, 1.0, 0.0, 0.4)])
+	)
+
+func set_obj_canvas_transform(obj: Gobject) -> void:
+	RenderingServer.canvas_item_set_transform(obj.canvas_item, get_obj_transform(obj))
 
 func construct_piece(config: Dictionary) -> Piece:
 	var piece: Piece = Piece.new()
+	piece.canvas_item = RenderingServer.canvas_item_create()
+	RenderingServer.canvas_item_set_parent(piece.canvas_item, get_canvas_item())
 	for prop in config.keys():
 		piece.set(prop, config[prop])
 	if "collection" in config:
 		if collections.has(config.collection):
 			collections[config.collection].inside[config.name] = true
+	set_piece_texture(piece)
 	piece.z_index = max_z_index
 	max_z_index += 0.001
 	return piece
@@ -133,21 +164,28 @@ func add_piece(piece: Piece) -> void:
 	pieces[piece.name] = piece # Added object
 	gobject_created.emit(piece)
 
-func create_collection_bcast(config: Dictionary) -> Collection:
+func create_collection_bcast(config: Dictionary, send_to_peer: bool = true) -> Collection:
 	var collection: Collection = Collection.new()
 	collection.name = config.name
+	collection.canvas_item = RenderingServer.canvas_item_create()
+	RenderingServer.canvas_item_set_parent(collection.canvas_item, get_canvas_item())
+
 	add_collection(collection)
 	for prop in config.keys():
-		set_gobject_property(collection.name, false, prop, config[prop])
+		set_gobject_property(collection.name, false, prop, config[prop], send_to_peer)
 	for obj in collection.inside.keys():
 		var piece: Piece = get_piece(obj)
 		if piece != null:
 			remove_piece_from_collection(piece)
-		set_gobject_property(obj, true, "collection", collection.name)
+		set_gobject_property(obj, true, "collection", collection.name, send_to_peer)
+	# Piece getting resource
+	set_collection_drawing(collection)
 	return collection
 
 func construct_collection(config: Dictionary) -> Collection:
 	var collection: Collection = Collection.new()
+	collection.canvas_item = RenderingServer.canvas_item_create()
+	RenderingServer.canvas_item_set_parent(collection.canvas_item, get_canvas_item())
 	for prop in config.keys():
 		collection.set(prop, config[prop])
 	
@@ -158,6 +196,8 @@ func construct_collection(config: Dictionary) -> Collection:
 	for obj in pieces.values():
 		if obj.collection == collection.name:
 			collection.inside[obj.name] = true
+	# Piece getting resource
+	set_collection_drawing(collection)
 	return collection
 
 func add_collection(collection: Collection) -> void:
@@ -168,12 +208,6 @@ func _draw() -> void:
 	draw_board_bg()
 	for key in collections.keys():
 		var collection: Collection = collections[key]
-		draw_collection(collection)
-	for piece in get_sorted_pieces():
-		# if piece.collection == "":
-		draw_piece(piece)
-	for key in collections.keys():
-		var collection: Collection = collections[key]
 		draw_string(def_font,get_obj_extents(collection)[0], str(collection.inside.size()))
 	force_redraw = false
 		
@@ -181,33 +215,7 @@ func _draw() -> void:
 func draw_board_bg() -> void:
 	if board_bg != "":
 		draw_texture_rect(game.images[board_bg], border, false)
-	
 	draw_rect(border, Color.WHITE, false, Globals.OUTLINE_THICKNESS)
-
-## Draws a game piece
-func draw_piece(obj: Piece) -> void:
-	# var extents: PackedVector2Array = get_obj_extents(obj)
-	draw_texture_rect(game.images[obj.image_up if obj.face_up else obj.image_down], Rect2(obj.position - obj.scale / 2, obj.scale), false)
-	# draw_polyline(
-	# 	extents + PackedVector2Array([extents[0]]),
-	# 	Color.WHITE,
-	# 	Globals.OBJECT_HIGHLIGHT_BORDER
-	# 	)
-	var collection: Collection = get_collection(obj.collection)
-	if collection == null:
-		return
-	collection.scale.x = maxf(obj.scale.x, collection.scale.x)
-	collection.scale.y = maxf(obj.scale.y, collection.scale.y)
-
-## Draws a collection
-func draw_collection(obj: Collection) -> void:
-	var extents: PackedVector2Array = get_obj_extents(obj)
-	draw_colored_polygon(
-		extents,
-		Color.from_hsv(0.0, 1.0, 0.0, 0.4)
-		)
-	obj.scale.x = obj.base_size.x
-	obj.scale.y = obj.base_size.y
 
 func get_piece(n: String) -> Piece:
 	if n == "" or not pieces.has(n): return null
@@ -233,6 +241,10 @@ func get_obj_extents(obj: Gobject) -> PackedVector2Array:
 func get_obj_transform(obj: Gobject) -> Transform2D:
 	return Transform2D(deg_to_rad(obj.rotation), obj.scale, 0.0, obj.position)
 
+func obj_rect_overlaps_point(obj: Gobject, point: Vector2) -> bool:
+	var rect: Rect2 = get_obj_rect_extents(obj)
+	return rect.has_point(point)
+
 func obj_overlaps_point(obj: Gobject, point: Vector2) -> bool:
 	var shape: PackedVector2Array = get_obj_extents(obj)
 	return Geometry2D.is_point_in_polygon(point, shape)
@@ -240,6 +252,12 @@ func obj_overlaps_point(obj: Gobject, point: Vector2) -> bool:
 func obj_overlaps_polygon(obj: Gobject, rect: PackedVector2Array) -> bool:
 	var shape: PackedVector2Array = get_obj_extents(obj)
 	return not Geometry2D.intersect_polygons(shape, rect).is_empty()
+
+func get_obj_rect_extents(obj: Gobject) -> Rect2:
+	return get_obj_transform(obj) * get_obj_rect(obj)
+
+func get_obj_rect(_obj: Gobject) -> Rect2:
+	return Rect2(- Vector2.ONE / 2, Vector2.ONE)
 
 func move_collection(obj: Collection, pos: Vector2) -> void:
 	set_gobject_property(obj.name, false, "position", pos)
@@ -274,6 +292,7 @@ func add_piece_to_collection(piece: Piece, c_name: String) -> void:
 	var new_inside: Dictionary = collection.inside.duplicate(false)
 	new_inside[piece.name] = true
 	set_gobject_property(collection.name, false, "inside", new_inside)
+	set_gobject_property(collection.name, false, "top", piece.name)
 	set_gobject_property(piece.name, true, "position", collection.position)
 
 ## Removes a piece from a collection, if it has any
@@ -379,22 +398,19 @@ func _process(_delta: float) -> void:
 	clamp_camera()
 	if force_redraw:
 		queue_redraw()
-	update_objects_position()
 
 ## Self explanatory
 func clamp_camera() -> void:
 	get_parent().camera_controller.camera.position = get_parent().camera_controller.camera.position.clamp(border.position, border.end)
 
 ## Updates objects position to their collections
-func update_objects_position():
-	for collection in collections.values():
-		if collection == null: continue
-		var pcs: Array[Piece] = get_pieces(collection.inside.keys())
-		for pc in pcs:
-			if pc == null:
-				continue
-			pc.position = collection.position
-			pc.rotation = collection.rotation
+func update_objects_position(collection: Collection):
+	var pcs: Array[Piece] = get_pieces(collection.inside.keys())
+	for pc in pcs:
+		if pc == null:
+			continue
+		pc.position = collection.position
+		pc.rotation = collection.rotation
 
 
 ########################
@@ -409,9 +425,22 @@ func is_ready(id: int) -> void:
 		ready_players.append(id)
 		if ready_players.size() == multiplayer.get_peers().size() + 1:
 			coordinate_scale = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
+			# # Thread stuff (test)
+			# load_game_thread = Thread.new()
+			# load_game_thread.start(_init_board_objs)
 			_init_board_objs()
-			coordinate_scale = Vector2.ONE
-			
+
+@rpc("authority", "call_local", "unreliable")
+func game_percent_loaded(pc: float) -> void:
+	SignalManager.game_percent_loaded.emit(pc)
+
+@rpc("authority", "call_local", "reliable")
+func game_load_finished() -> void:
+	SignalManager.game_load_finished.emit()
+
+@rpc("authority", "call_local", "reliable")			
+func game_load_started() -> void:
+	SignalManager.game_load_started.emit()
 
 ####################
 ### Config stuff ###
@@ -419,6 +448,11 @@ func is_ready(id: int) -> void:
 
 ## Called when the board is initialized
 func _ready() -> void:
+	# Create board canvas
+	board_canvas = RenderingServer.canvas_item_create()
+	RenderingServer.canvas_item_set_parent(board_canvas, get_canvas_item())
+
+	SignalManager.game_load_started.emit()
 	def_font = ThemeDB.fallback_font
 	coordinate_scale = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
 	connect_signals()
@@ -448,8 +482,15 @@ func _update_menu_bar() -> void:
 
 ## Ran during startup, initializes the board's objects
 func _init_board_objs() -> void:
+	var x: float = 0
 	for item in game.objects:
+		await get_tree().create_timer(0.01).timeout
+		game_percent_loaded.rpc(x / game.objects.size())
 		_process_cnfg_obj(item)
+		x += 1
+	await get_tree().create_timer(0.01).timeout
+	coordinate_scale = Vector2.ONE
+	game_load_finished.rpc()
 
 ## Ran during startup, processes one object in the game config
 func _process_cnfg_obj(obj: Dictionary) -> void:
@@ -510,3 +551,9 @@ func _on_send_data_timer_timeout() -> void:
 	if not (property_updates.pieces.is_empty() and property_updates.collections.is_empty()):
 		receive_property_updates.rpc(var_to_bytes(property_updates))
 		property_updates = {"collections": {}, "pieces": {}}
+
+var load_game_thread: Thread
+
+func _exit_tree() -> void:
+	if load_game_thread != null:
+		load_game_thread.wait_to_finish()

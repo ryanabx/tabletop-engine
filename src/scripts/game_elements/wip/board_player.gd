@@ -13,6 +13,7 @@ var selection_boxing: bool = false
 var currently_moving_selection: bool = false
 
 var grab_offsets: Dictionary = {"pieces": {}, "collections": {}}
+var grab_start: Vector2 = Vector2.ZERO
 
 enum STATE {
 	IDLE, SELECT, MENU
@@ -53,7 +54,7 @@ func get_highlighted_item() -> Gobject:
 func _process(_delta: float) -> void:
 	# if not (Input.is_action_pressed("game_select_stack") or Input.is_action_pressed("game_select_stack")) and currently_moving_selection:
 	# 	release_grab_offsets()
-	check_for_overlapping_piece()
+	check_for_overlapping_piece(get_local_mouse_position())
 	update_selection_box()
 	queue_redraw()
 	if currently_moving_selection and (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")):
@@ -66,7 +67,6 @@ func set_grab_offsets() -> void:
 			grab_offsets.pieces[obj.name] = Vector2.ZERO
 		
 		if obj == null:
-			print("Uh oh 2")
 			continue
 		
 		grab_offsets.pieces[obj.name] = obj.position - get_local_mouse_position()
@@ -75,7 +75,6 @@ func set_grab_offsets() -> void:
 			grab_offsets.collections[obj.name] = Vector2.ZERO
 		
 		if obj == null:
-			print("Uh oh 2")
 			continue
 		
 		grab_offsets.collections[obj.name] = obj.position - get_local_mouse_position()
@@ -85,7 +84,6 @@ func set_grab_offsets() -> void:
 func release_grab_offsets() -> void:
 	currently_moving_selection = false
 	grab_offsets = {"pieces": {}, "collections": {}}
-	print("Release grab offsets!")
 
 func move_selected_objects() -> void:
 	for obj in get_selected_pieces():
@@ -102,9 +100,9 @@ func update_selection_box() -> void:
 		selection_box.end = get_local_mouse_position()
 
 ## Ran every process frame. Checks all the pieces for one that can be highlighted
-func check_for_overlapping_piece() -> void:
+func check_for_overlapping_piece(pos: Vector2) -> void:
 	if not selected_pieces.is_empty() and currently_moving_selection:
-		var best_obj: Gobject = check_for_overlapping_obj(get_local_mouse_position())
+		var best_obj: Gobject = check_for_overlapping_obj(pos)
 		if best_obj == null:
 			selectable_piece = ""
 			highlighted_item = ""
@@ -112,7 +110,7 @@ func check_for_overlapping_piece() -> void:
 			selectable_piece = ""
 			highlighted_item = best_obj.name
 	else:
-		var best_piece: Piece = check_overlapping_piece(get_local_mouse_position())
+		var best_piece: Piece = check_overlapping_piece(pos)
 		if best_piece == null:
 			selectable_piece = ""
 			highlighted_item = ""
@@ -132,8 +130,8 @@ func check_for_overlapping_obj(pos: Vector2) -> Gobject:
 func check_overlapping_collections(pos: Vector2) -> Collection:
 	var best_collection: Collection = null
 	for collection in board.collections.values():
-		if selected_collections.has(collection.name): continue
-		if not board.can_access_collection(collection): continue
+		if selected_collections.has(collection.name) or not board.can_access_collection(collection):
+			continue
 		if board.obj_overlaps_point(collection, pos):
 			if best_collection == null or collection.position.distance_to(pos) < best_collection.position.distance_to(pos):
 				best_collection = collection
@@ -143,8 +141,8 @@ func check_overlapping_collections(pos: Vector2) -> Collection:
 func check_overlapping_piece(pos: Vector2) -> Piece:
 	var best_piece: Piece = null
 	for piece in board.pieces.values():
-		if selected_pieces.has(piece.name): continue
-		if not board.can_access_piece(piece): continue
+		if selected_pieces.has(piece.name) or not board.can_access_piece(piece):
+			continue
 		if board.obj_overlaps_point(piece, pos):
 			if best_piece == null or piece.z_index > best_piece.z_index:
 				best_piece = piece
@@ -180,11 +178,11 @@ func can_menu() -> bool:
 ##########################
 
 func _draw() -> void:
-	if get_highlighted_item() != null:
-		draw_colored_polygon(
-			board.get_obj_extents(get_highlighted_item()),
-			Color.from_hsv(0.4, 0.2, 1, 0.3)
-			)
+	# if get_highlighted_item() != null:
+	# 	draw_colored_polygon(
+	# 		board.get_obj_extents(get_highlighted_item()),
+	# 		Color.from_hsv(0.4, 0.2, 1, 0.3)
+	# 		)
 	if selection_boxing:
 		draw_rect(selection_box, Color.BLUE * Color(1,1,1,0.3))
 	for obj in get_selected_pieces():
@@ -199,9 +197,12 @@ func _draw() -> void:
 
 func parse_input(input_actions: Dictionary) -> void:
 	# Individual selection
+	if InputManager.is_set_grab_offsets_pressed(input_actions):
+		grab_start = get_local_mouse_position()
 	if InputManager.is_select_pressed(input_actions) and can_select():
-		var over_piece = position_overlaps_selected_pieces(get_local_mouse_position())
+		var over_piece = position_overlaps_selected_pieces(grab_start)
 		if not over_piece:
+			check_for_overlapping_piece(grab_start)
 			print("Not over piece!")
 			if get_selectable_piece() != null:
 				print("Selecting object")
@@ -219,6 +220,7 @@ func parse_input(input_actions: Dictionary) -> void:
 			set_grab_offsets()
 	# Stack selection (or regular if no collection exists)
 	if InputManager.is_stack_select_pressed(input_actions) and can_select():
+		check_for_overlapping_piece(grab_start)
 		if get_selectable_piece() != null:
 			if get_selectable_piece().collection != "":
 				var c: Collection = board.get_collection(get_selectable_piece().collection)
@@ -239,6 +241,7 @@ func parse_input(input_actions: Dictionary) -> void:
 		if not selected_pieces.is_empty():
 			release_grab_offsets()
 			if can_deselect():
+				check_for_overlapping_piece(get_local_mouse_position())
 				print("Deselecting objects")
 				deselect_objects()
 		if selection_boxing:

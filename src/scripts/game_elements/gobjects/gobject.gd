@@ -9,3 +9,4 @@ extends RefCounted
 @export var z_index: float = 0.0
 @export var placeholder: bool = false
 @export var erased: bool = false
+var canvas_item: RID

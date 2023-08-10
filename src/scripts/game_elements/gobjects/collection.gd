@@ -8,6 +8,7 @@ extends Gobject
 @export var permanent: bool = false
 @export var force_state: bool = false
 @export var type: Type = Type.STACK
+@export var top_obj: String = ""
 
 enum Type {STACK, HAND}
 
