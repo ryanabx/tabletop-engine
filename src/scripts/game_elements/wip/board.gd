@@ -8,6 +8,8 @@ var def_font: Font
 
 # Children
 var board_utilities: BoardUtilities
+var board_processing: BoardProcessing
+@onready var board_player: BoardPlayer = $"BoardPlayer"
 
 # Board properties
 var board_bg: String = ""
@@ -69,7 +71,7 @@ func _extra_property_edits(obj: Gobject, prop: StringName, val: Variant) -> void
 		pieces.erase(obj.name)
 	if prop in REDRAW_PROPS:
 		set_obj_canvas_transform(obj)
-	if obj is Collection and prop in ["inside", "position", "rotation"]:
+	if obj is Collection and prop in ["position", "rotation"]:
 		update_piece_positions(obj)
 	elif obj is Piece and prop == "collection":
 		var c: Collection = get_collection(val)
@@ -225,31 +227,13 @@ func pieces_by_name(objects: Array[String]) -> Array[Piece]:
 	result.assign(objects.map(func (value: String) -> Piece: return pieces[value]))
 	return result
 
-# Checking if player can select
-
-## True if the current player can select this piece, false otherwise
-func can_access_piece(piece: Piece) -> bool:
-	if piece == null: return false
-	var collection: Collection = get_collection(piece.collection)
-	if collection != null:
-		return can_access_collection(collection)
-	return true
-
-## Returns true if the current player can access this collection, false otherwise
-func can_access_collection(collection: Collection) -> bool:
-	if collection.access_perms.size() <= Player.get_id():
-		return true # Default to true if there's no access perms
-	elif collection.access_perms[Player.get_id()] == false:
-		return false
-	return true
-
 ####################
 ### Main process ###
 ####################
 
 func _process(_delta: float) -> void:
 	clamp_camera()
-	queue_redraw()
+	# queue_redraw()
 
 ## Self explanatory
 func clamp_camera() -> void:
@@ -276,6 +260,8 @@ var ready_players: Array = []
 ## Called when the board is initialized
 func _ready() -> void:
 	board_utilities = BoardUtilities.new(self) # New boardutilities
+	board_processing = BoardProcessing.new(self, board_player, board_utilities)
+	add_child(board_processing)
 	var coordinate_scale: Vector2 = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
 	BoardSetup.setup_initial_board_state(self, coordinate_scale)
 	is_ready.rpc_id(1, multiplayer.get_unique_id())

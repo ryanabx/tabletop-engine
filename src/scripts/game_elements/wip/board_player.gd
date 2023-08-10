@@ -54,11 +54,12 @@ func get_highlighted_item() -> Gobject:
 func _process(_delta: float) -> void:
 	# if not (Input.is_action_pressed("game_select_stack") or Input.is_action_pressed("game_select_stack")) and currently_moving_selection:
 	# 	release_grab_offsets()
-	check_for_overlapping_piece(get_local_mouse_position())
 	update_selection_box()
 	queue_redraw()
+
 	if currently_moving_selection and (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")):
 		move_selected_objects()
+	
 
 func set_grab_offsets() -> void:
 	grab_offsets = {"pieces": {}, "collections": {}}
@@ -98,55 +99,6 @@ func move_selected_objects() -> void:
 func update_selection_box() -> void:
 	if selection_boxing:
 		selection_box.end = get_local_mouse_position()
-
-## Ran every process frame. Checks all the pieces for one that can be highlighted
-func check_for_overlapping_piece(pos: Vector2) -> void:
-	if not selected_pieces.is_empty() and currently_moving_selection:
-		var best_obj: Gobject = check_for_overlapping_obj(pos)
-		if best_obj == null:
-			selectable_piece = ""
-			highlighted_item = ""
-		else:
-			selectable_piece = ""
-			highlighted_item = best_obj.name
-	else:
-		var best_piece: Piece = check_overlapping_piece(pos)
-		if best_piece == null:
-			selectable_piece = ""
-			highlighted_item = ""
-		else:
-			selectable_piece = best_piece.name
-			highlighted_item = best_piece.name
-	
-
-## Ran every frame, used for highlighting items and checking deselection stacking
-func check_for_overlapping_obj(pos: Vector2) -> Gobject:
-	var coll: Collection = check_overlapping_collections(pos)
-	if coll != null: return coll
-	var piece: Piece = check_overlapping_piece(pos)
-	return piece
-
-## Checks if an overlapping collection exists
-func check_overlapping_collections(pos: Vector2) -> Collection:
-	var best_collection: Collection = null
-	for collection in board.collections.values():
-		if selected_collections.has(collection.name) or not board.can_access_collection(collection):
-			continue
-		if board.obj_overlaps_point(collection, pos):
-			if best_collection == null or collection.position.distance_to(pos) < best_collection.position.distance_to(pos):
-				best_collection = collection
-	return best_collection
-
-## Checks if an overlapping piece exists
-func check_overlapping_piece(pos: Vector2) -> Piece:
-	var best_piece: Piece = null
-	for piece in board.pieces.values():
-		if selected_pieces.has(piece.name) or not board.can_access_piece(piece):
-			continue
-		if board.obj_overlaps_point(piece, pos):
-			if best_piece == null or piece.z_index > best_piece.z_index:
-				best_piece = piece
-	return best_piece
 
 #####################
 ### State changes ###

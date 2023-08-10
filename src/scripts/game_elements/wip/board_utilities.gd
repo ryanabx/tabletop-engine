@@ -51,7 +51,6 @@ func _swap(pc1: Piece, contents: Dictionary) -> void:
 	if pc1.collection != contents.collection:
 		add_piece_to_collection(pc1, board.collections[contents.collection])
 
-
 ## Adds a piece to the collection specified. Removes a piece from current collection if it exists
 func add_piece_to_collection(piece: Piece, c_name: String) -> void:
 	if piece.collection != "":
@@ -63,7 +62,7 @@ func add_piece_to_collection(piece: Piece, c_name: String) -> void:
 	var new_inside: Dictionary = collection.inside.duplicate(false)
 	new_inside[piece.name] = true
 	board.set_gobject_property(collection.name, false, "inside", new_inside)
-	board.set_gobject_property(collection.name, false, "top", piece.name)
+	board.set_gobject_property(collection.name, false, "top_obj", piece.name)
 	board.set_gobject_property(piece.name, true, "position", collection.position)
 
 ## Removes a piece from a collection, if it has any
@@ -103,3 +102,23 @@ func stack_to_collection(objs: Array[Piece], item: Collection) -> void:
 	sorted_objs.sort_custom(board.sort_by_draw_order)
 	for obj in sorted_objs:
 		add_piece_to_collection(obj, item.name)
+
+# Checking if player can select
+
+## True if the current player can select this piece, false otherwise
+func can_access_piece(piece: Piece) -> bool:
+	if piece == null: return false
+	if piece.collection == "":
+		return true
+	var collection: Collection = board.get_collection(piece.collection)
+	if collection != null:
+		return can_access_collection(collection)
+	return true
+
+## Returns true if the current player can access this collection, false otherwise
+func can_access_collection(collection: Collection) -> bool:
+	if collection.access_perms.size() <= Player.get_id():
+		return true # Default to true if there's no access perms
+	elif collection.access_perms[Player.get_id()] == false:
+		return false
+	return true
