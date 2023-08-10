@@ -9,6 +9,8 @@ signal move_items_to_front(objects: Array)
 signal move_items_to_back(objects: Array)
 signal shuffle_selection(objects: Array)
 signal convert_to_stack(objects: Array)
+signal set_object_face(objects: Array, face_up: bool)
+signal flip_objects(objects: Array)
 
 # Menubar Signals
 signal create_load_config_dialog()

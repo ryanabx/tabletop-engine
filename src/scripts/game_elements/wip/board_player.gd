@@ -13,7 +13,6 @@ var selection_boxing: bool = false
 var currently_moving_selection: bool = false
 
 var grab_offsets: Dictionary = {"pieces": {}, "collections": {}}
-var grab_start: Vector2 = Vector2.ZERO
 
 enum STATE {
 	IDLE, SELECT, MENU
@@ -149,10 +148,8 @@ func _draw() -> void:
 
 func parse_input(input_actions: Dictionary) -> void:
 	# Individual selection
-	if InputManager.is_set_grab_offsets_pressed(input_actions):
-		grab_start = get_local_mouse_position()
 	if InputManager.is_select_pressed(input_actions) and can_select():
-		var over_piece = position_overlaps_selected_pieces(grab_start)
+		var over_piece = position_overlaps_selected_pieces(get_local_mouse_position())
 		if not over_piece:
 			print("Not over piece!")
 			if get_selectable_piece() != null:
@@ -171,21 +168,25 @@ func parse_input(input_actions: Dictionary) -> void:
 			set_grab_offsets()
 	# Stack selection (or regular if no collection exists)
 	if InputManager.is_stack_select_pressed(input_actions) and can_select():
-		if get_selectable_piece() != null:
-			if get_selectable_piece().collection != "":
+		var over_piece = position_overlaps_selected_pieces(get_local_mouse_position())
+		if not over_piece:
+			print("Not over piece!")
+			if get_selectable_piece() != null:
 				var c: Collection = board.get_collection(get_selectable_piece().collection)
-				if c == null: return
-				if not c.permanent:
-					print("Stack selecting")
-					select_pieces(board.get_pieces(c.inside.keys()), false, false)
+				if c != null:
+					print("Stack selecting object")
+					var selection: Array[Piece] = []
+					selection.assign(board.get_pieces(c.inside.keys()))
+					select_pieces(selection, false, false)
 					select_collection(c)
 					set_grab_offsets()
 			else:
-				print("Selecting object")
-				var selection: Array[Piece] = []
-				selection.assign([get_selectable_piece()])
-				select_pieces(selection)
-				set_grab_offsets()
+				print("Starting selection rectangle")
+				deselect_objects()
+				selection_box.position = get_local_mouse_position()
+				selection_boxing = true
+		else:
+			set_grab_offsets()
 	# Deselection
 	if InputManager.is_deselect_pressed(input_actions):
 		if not selected_pieces.is_empty():
@@ -197,12 +198,14 @@ func parse_input(input_actions: Dictionary) -> void:
 			select_pieces(get_within_selection_box(), false, false)
 			selection_box = Rect2(0,0,0,0)
 			selection_boxing = false
-			
+		else:
+			state = STATE.IDLE
 	# Flipping object
 	if InputManager.is_flip_pressed(input_actions):
 		if not selected_pieces.is_empty():
 			print("Flipping object")
-			flip_objects()
+			
+			board.board_utilities.flip_objects(get_selected_pieces())
 	# Game menu
 	if InputManager.is_menu_pressed(input_actions):
 		if can_menu():
@@ -256,7 +259,7 @@ func select_pieces(objs: Array[Piece], append: bool = false, remove_from_collect
 	for obj in objs:
 		_sel_piece(obj, true, remove_from_collection)
 	
-	if state in [STATE.IDLE]:
+	if state == STATE.IDLE and not objs.is_empty():
 		state = STATE.SELECT
 	
 	if not remove_from_collection:
@@ -284,9 +287,9 @@ func select_collection(coll: Collection, append = true) -> void:
 ## Deselect any available objects
 func deselect_objects() -> void:
 	selected_collections = []
+	state = STATE.IDLE
 	if selected_pieces.is_empty():
 		return
-	state = STATE.IDLE
 
 	if highlighted_item != null:
 		if get_highlighted_item() is Piece:
@@ -299,16 +302,13 @@ func deselect_objects() -> void:
 			board.board_utilities.stack_to_collection(get_selected_pieces(), get_highlighted_item())
 	
 	selected_pieces = []
-	
-	if state in [STATE.SELECT]:
-		state = STATE.IDLE
 
-## Flip any available objects
-func flip_objects() -> void:
-	if selected_pieces.is_empty():
-		return
-	for piece in get_selected_pieces():
-		board.board_utilities.flip_object(piece)
+# ## Flip any available objects
+# func flip_objects() -> void:
+# 	if selected_pieces.is_empty():
+# 		return
+# 	for piece in get_selected_pieces():
+# 		board.board_utilities.flip_object(piece)
 
 ## Makes a game menu
 func game_menu() -> void:
@@ -316,16 +316,21 @@ func game_menu() -> void:
 	if state == STATE.IDLE:
 		if get_selectable_piece() != null:
 			if get_selectable_piece().collection != "":
+				print("Game menu for collection ",get_selectable_piece().collection)
 				var collection: Collection = board.get_collection(get_selectable_piece().collection)
 				if collection != null:
 					SignalManager.game_menu_create.emit(board.get_pieces(collection.inside.keys()))
 			else:
+				print("Game menu for piece")
 				var s: Array[Piece] = []
 				s.assign([selectable_piece])
 				SignalManager.game_menu_create.emit(s)
+		else:
+			print("Selected pieces size: ", selected_pieces.size(), " not greater than zero and selectable piece == null")
 	elif state == STATE.SELECT:
-		print("State is here")
-		SignalManager.game_menu_create.emit(selected_pieces)
+		if selected_pieces.size() > 0:
+			print("Game menu for object group")
+			SignalManager.game_menu_create.emit(get_selected_pieces())
 
 #####################
 ### Instantiation ###

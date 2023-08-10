@@ -51,22 +51,30 @@ func set_gobject_property(n: String, piece: bool, prop: StringName, val: Variant
 		construct_collection({"name": n}, false)
 	# Assign our object and set the property
 	var obj: Gobject
-	if piece:
+	if piece == true:
 		obj = get_piece(n)
 	else:
 		obj = get_collection(n)
 	obj.set(prop, val) # This is where we set the actual property
 	# If we are to send to peer, add to our property updates reference
-	if send_to_peer:
-		if not n in property_updates.pieces:
-			property_updates.pieces[n] = {}
-		property_updates.pieces[n][prop] = val
 	# Extra edits
 	_extra_property_edits(obj, prop, val)
+	if send_to_peer == true:
+		if piece == true:
+			if not n in property_updates.pieces:
+				property_updates.pieces[n] = {}
+			property_updates.pieces[n][prop] = val
+		else:
+			if not n in property_updates.collections:
+				property_updates.collections[n] = {}
+			property_updates.collections[n][prop] = val
 
-func _extra_property_edits(obj: Gobject, prop: StringName, val: Variant) -> void:
+func _extra_property_edits(obj: Gobject, prop: String, val: Variant) -> void:
 	if prop == "erased" and val == true:
-		pieces.erase(obj.name)
+		if obj is Collection:
+			collections.erase(obj.name)
+		elif obj is Piece:
+			pieces.erase(obj.name)
 	if obj is Collection and prop in ["position", "rotation"]:
 		update_piece_positions(obj)
 	elif obj is Piece and prop == "collection":
@@ -75,7 +83,7 @@ func _extra_property_edits(obj: Gobject, prop: StringName, val: Variant) -> void
 			obj.position = c.position
 			obj.rotation = c.rotation
 
-func construct_piece(config: Dictionary, send_to_peer: bool = true) -> Piece:
+func construct_piece(config: Dictionary, send_to_peer: bool) -> Piece:
 	var piece: Piece = Piece.new()
 	pieces[config.name] = piece
 	for prop in config.keys():
@@ -112,9 +120,10 @@ func _draw_pieces() -> void:
 	pcs.assign(pieces.values())
 	pcs.sort_custom(sort_by_draw_order)
 	for piece in pcs:
-		var texture: Texture2D = game.images[piece.image_up if piece.face_up else piece.image_down]
+		if piece.image_up in game.images and piece.image_down in game.images:
+			var texture: Texture2D = game.images[piece.image_up if piece.face_up else piece.image_down]
+			draw_texture_rect(texture, board_utilities.get_obj_rect_extents(piece), false)
 		var extents: PackedVector2Array = board_utilities.get_obj_extents(piece)
-		draw_texture_rect(texture, board_utilities.get_obj_rect_extents(piece), false)
 		draw_polyline(extents + PackedVector2Array([extents[0]]), Color.WHITE, 2, false)
 
 func _draw_collections() -> void:

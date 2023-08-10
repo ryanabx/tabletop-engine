@@ -94,15 +94,12 @@ func is_select_pressed(input_actions: Dictionary) -> bool:
 func is_stack_select_pressed(input_actions: Dictionary) -> bool:
 	return just_long_held("game_select_stack", input_actions)
 
-func is_set_grab_offsets_pressed(input_actions: Dictionary) -> bool:
-	return just_short_held("game_select", input_actions) or just_short_held("game_select_stack", input_actions)
-
 ## Fired as true when menu button is pressed
 func is_menu_pressed(input_actions: Dictionary) -> bool:
 	return just_short_released("game_menu", input_actions)
 
 func is_deselect_pressed(input_actions: Dictionary) -> bool:
-	return just_released("game_select", input_actions) or just_released("game_select_stack", input_actions)
+	return just_released("game_select", input_actions) or just_long_released("game_select_stack", input_actions)
 
 func is_flip_pressed(input_actions: Dictionary) -> bool:
 	return just_released("game_flip", input_actions)

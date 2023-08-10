@@ -1,10 +1,10 @@
 class_name Piece
 extends Gobject
 
-@export var image_up: String = ""
-@export var image_down: String = ""
-@export var collection: String = ""
-@export var face_up: bool = false
+var image_up: String = ""
+var image_down: String = ""
+var collection: String = ""
+var face_up: bool = false
 
 func serialize() -> Dictionary:
     var result: Dictionary = {}

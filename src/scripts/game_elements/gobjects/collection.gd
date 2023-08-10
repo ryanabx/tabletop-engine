@@ -1,13 +1,13 @@
 class_name Collection
 extends Gobject
 
-@export var base_size: Vector2 = Vector2.ONE
-@export var inside: Dictionary = {}
-@export var view_perms: Array = []
-@export var access_perms: Array = []
-@export var permanent: bool = false
-@export var force_state: bool = false
-@export var type: Type = Type.STACK
+var base_size: Vector2 = Vector2.ONE
+var inside: Dictionary = {}
+var view_perms: Array = []
+var access_perms: Array = []
+var permanent: bool = false
+var force_state = null
+var type: Type = Type.STACK
 
 enum Type {STACK, HAND}
 

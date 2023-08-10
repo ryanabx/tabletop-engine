@@ -7,6 +7,8 @@ func _init(_board: Board) -> void:
 	board = _board
 	SignalManager.shuffle_selection.connect(shuffle)
 	SignalManager.convert_to_stack.connect(convert_to_stack)
+	SignalManager.set_object_face.connect(set_object_face)
+	SignalManager.flip_objects.connect(flip_objects)
 
 ## Brings an object to the front
 func move_object_to_top(piece: Piece) -> void:
@@ -17,6 +19,14 @@ func move_object_to_top(piece: Piece) -> void:
 func move_object_to_back(piece: Piece) -> void:
 	board.set_gobject_property(piece.name, true, "z_index", board.min_z_index)
 	board.min_z_index -= 0.001
+
+func set_object_face(pieces: Array, face_up: bool) -> void:
+	for pc in pieces:
+		board.set_gobject_property(pc.name, true, "face_up", face_up, true)
+
+func flip_objects(pieces: Array) -> void:
+	for pc in pieces:
+		flip_object(pc)
 
 ## Flips an object
 func flip_object(piece: Piece) -> void:
@@ -49,7 +59,7 @@ func _swap(pc1: Piece, contents: Dictionary) -> void:
 	board.set_gobject_property(pc1.name, true, "rotation", contents.rotation)
 	board.set_gobject_property(pc1.name, true, "z_index", contents.z_index)
 	if pc1.collection != contents.collection:
-		add_piece_to_collection(pc1, board.collections[contents.collection])
+		add_piece_to_collection(pc1, contents.collection)
 
 ## Adds a piece to the collection specified. Removes a piece from current collection if it exists
 func add_piece_to_collection(piece: Piece, c_name: String) -> void:
@@ -70,18 +80,12 @@ func remove_piece_from_collection(piece: Piece) -> void:
 	if piece == null:
 		return
 	var c: Collection = board.get_collection(piece.collection)
-	board.set_gobject_property(piece.name, true, "collection", "")
 	if c == null:
 		return
 	var new_inside: Dictionary = c.inside.duplicate(false)
 	new_inside.erase(piece.name)
 	board.set_gobject_property(c.name, false, "inside", new_inside)
-	if not c.permanent:
-		if c.inside.size() == 1:
-			remove_piece_from_collection(board.get_piece(c.inside.keys()[0]))
-		elif c.inside.is_empty():
-			# Essentially queue free
-			board.set_gobject_property(c.name, false, "erased", true)
+	board.set_gobject_property(piece.name, true, "collection", "")
 
 ## Converts game objects to stack
 func convert_to_stack(objs: Array[Piece]) -> void:
