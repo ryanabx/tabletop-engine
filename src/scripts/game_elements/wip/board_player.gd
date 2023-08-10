@@ -385,7 +385,7 @@ func convert_to_stack(objs: Array[Piece]) -> void:
 	var sorted_objs: Dictionary = {}
 	for obj in objs:
 		sorted_objs[obj.name] = true
-	board.create_collection_bcast({
+	board.construct_collection({
 		"name": board.unique_name("collection"),
 		"position": objs[-1].position,
 		"permanent": false,

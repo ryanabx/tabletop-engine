@@ -37,61 +37,24 @@ const REDRAW_PROPS: Array[String] = [
 
 @rpc("any_peer","call_remote","reliable")
 func receive_property_updates(data: PackedByteArray) -> void:
-	var tween: Tween = null
 	# Parse bytes received into dictionary
 	var updates: Dictionary = bytes_to_var(data)
 	# Update properties on pieces
 	for p_name in updates.pieces.keys():
-		if not pieces.has(p_name):
-			add_piece(construct_piece({"name": p_name}))
-		var piece: Piece = get_piece(p_name)
-		if updates.pieces[p_name].has("erased") and updates.pieces[p_name]["erased"] == true:
-			pieces.erase(p_name)
-			continue
 		for prop in updates.pieces[p_name].keys():
-			if prop == "z_index":
-				max_z_index = maxf(max_z_index, updates.pieces[p_name][prop] + 0.001)
-				min_z_index = minf(min_z_index, updates.pieces[p_name][prop] - 0.001)
-				RenderingServer.canvas_item_set_z_index(piece.canvas_item, int(updates.pieces[p_name][prop] * 100))
-			if INTERPOLATE_PROPS.has(prop):
-				if tween == null:
-					tween = get_tree().create_tween().set_trans(Tween.TRANS_CIRC)
-				tween.tween_property(piece, prop, updates.pieces[p_name][prop],0.1)
-			else:
-				piece.set(prop, updates.pieces[p_name][prop])
-				if prop in REDRAW_PROPS:
-					set_obj_canvas_transform(piece)
+			set_gobject_property(p_name, true, prop, updates.pieces[p_name][prop], false)
 	# Update properties on collections
 	for c_name in updates.collections.keys():
-		if not collections.has(c_name):
-			add_collection(construct_collection({"name": c_name}))
-		if updates.collections[c_name].has("erased") and updates.collections[c_name]["erased"] == true:
-			collections.erase(c_name)
-			continue
-		var collection: Collection = get_collection(c_name)
 		for prop in updates.collections[c_name].keys():
-			if prop in REDRAW_PROPS:
-				force_redraw = true
-			if prop == "z_index":
-				max_z_index = maxf(max_z_index, updates.pieces[c_name][prop] + 0.001)
-				min_z_index = minf(min_z_index, updates.pieces[c_name][prop] - 0.001)
-				RenderingServer.canvas_item_set_z_index(collection.canvas_item, int(updates.pieces[c_name][prop] * 100))
-			if INTERPOLATE_PROPS.has(prop):
-				if tween == null:
-					tween = get_tree().create_tween().set_trans(Tween.TRANS_CIRC)
-				tween.tween_property(collection, prop, updates.collections[c_name][prop],0.1)
-			else:
-				collection.set(prop, updates.collections[c_name][prop])
-				if prop in REDRAW_PROPS:
-					set_obj_canvas_transform(collection)
+			set_gobject_property(c_name, false, prop, updates.collections[c_name][prop], false)
 
 ## Sets a gobject's property to a certain value
 func set_gobject_property(n: String, piece: bool, prop: StringName, val: Variant, send_to_peer: bool = true) -> void:
 	# Create the object if the object with the specified name does not exist
 	if piece and not pieces.has(n):
-		add_piece(construct_piece({"name": n}))
+		construct_piece({"name": n}, false)
 	if not piece and not collections.has(n):
-		add_collection(construct_collection({"name": n}))
+		construct_collection({"name": n}, false)
 	# Assign our object and set the property
 	var obj: Gobject
 	if piece:
@@ -105,14 +68,17 @@ func set_gobject_property(n: String, piece: bool, prop: StringName, val: Variant
 			property_updates.pieces[n] = {}
 		property_updates.pieces[n][prop] = val
 	# Extra edits
+	_extra_property_edits(obj, prop, val)
+
+func _extra_property_edits(obj: Gobject, prop: StringName, val: Variant) -> void:
 	if prop == "z_index":
 		RenderingServer.canvas_item_set_z_index(obj.canvas_item, int(val * 100))
 	if prop == "erased" and val == true:
-		pieces.erase(n)
+		pieces.erase(obj.name)
 	if prop in REDRAW_PROPS:
 		set_obj_canvas_transform(obj)
 
-func create_piece_bcast(config: Dictionary, send_to_peer: bool = true) -> Piece:
+func construct_piece(config: Dictionary, send_to_peer: bool = true) -> Piece:
 	var piece: Piece = Piece.new()
 	piece.name = config.name
 	add_piece(piece)
@@ -146,25 +112,11 @@ func set_collection_drawing(collection: Collection) -> void:
 func set_obj_canvas_transform(obj: Gobject) -> void:
 	RenderingServer.canvas_item_set_transform(obj.canvas_item, get_obj_transform(obj))
 
-func construct_piece(config: Dictionary) -> Piece:
-	var piece: Piece = Piece.new()
-	piece.canvas_item = RenderingServer.canvas_item_create()
-	RenderingServer.canvas_item_set_parent(piece.canvas_item, get_canvas_item())
-	for prop in config.keys():
-		piece.set(prop, config[prop])
-	if "collection" in config:
-		if collections.has(config.collection):
-			collections[config.collection].inside[config.name] = true
-	set_piece_texture(piece)
-	piece.z_index = max_z_index
-	max_z_index += 0.001
-	return piece
-
 func add_piece(piece: Piece) -> void:
 	pieces[piece.name] = piece # Added object
 	gobject_created.emit(piece)
 
-func create_collection_bcast(config: Dictionary, send_to_peer: bool = true) -> Collection:
+func construct_collection(config: Dictionary, send_to_peer: bool = true) -> Collection:
 	var collection: Collection = Collection.new()
 	collection.name = config.name
 	collection.canvas_item = RenderingServer.canvas_item_create()
@@ -178,24 +130,6 @@ func create_collection_bcast(config: Dictionary, send_to_peer: bool = true) -> C
 		if piece != null:
 			remove_piece_from_collection(piece)
 		set_gobject_property(obj, true, "collection", collection.name, send_to_peer)
-	# Piece getting resource
-	set_collection_drawing(collection)
-	return collection
-
-func construct_collection(config: Dictionary) -> Collection:
-	var collection: Collection = Collection.new()
-	collection.canvas_item = RenderingServer.canvas_item_create()
-	RenderingServer.canvas_item_set_parent(collection.canvas_item, get_canvas_item())
-	for prop in config.keys():
-		collection.set(prop, config[prop])
-	
-	for obj in get_pieces(collection.inside.keys()):
-		if obj != null:
-			obj.collection = collection.name
-	# Add all currently made objects that reference this collection into the inside list
-	for obj in pieces.values():
-		if obj.collection == collection.name:
-			collection.inside[obj.name] = true
 	# Piece getting resource
 	set_collection_drawing(collection)
 	return collection
@@ -540,11 +474,11 @@ func _new_conf_obj(o: Dictionary) -> void:
 					obj.base_size = obj.scale
 				if not obj.has("name"):
 					obj.name = unique_name("collection")
-				create_collection_bcast(obj)
+				construct_collection(obj, true)
 			"piece":
 				if not obj.has("name"):
 					obj.name = unique_name("piece")
-				create_piece_bcast(obj)
+				construct_piece(obj, true)
 
 
 func _on_send_data_timer_timeout() -> void:
