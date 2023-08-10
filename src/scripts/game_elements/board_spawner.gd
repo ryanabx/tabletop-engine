@@ -1,7 +1,7 @@
 class_name BoardSpawner
 extends MultiplayerSpawner
 
-@onready var board_scene: PackedScene = preload("res://src/scenes/wip/board.tscn")
+@onready var board_scene: PackedScene = preload("res://src/scenes/game_elements/board.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
