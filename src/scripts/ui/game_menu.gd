@@ -1,44 +1,35 @@
 class_name RightClickMenu
 extends PopupMenu
 
-enum TYPE {NONE,GAME_OBJECT,OBJECT_GROUP,COLLECTION}
-
-var object_group: Array = []
+var object_group: Array[Piece] = []
 
 func _ready() -> void:
 	SignalManager.game_menu_create.connect(_on_menu_created)
 	hide()
 	popup_hide.connect(_on_popup_hide)
 
-func _reset_popup_menu() -> void:
+func reset_menu() -> void:
 	set_position(Vector2.ZERO)
 	# Disconnect previously connected signals
 	if id_pressed.is_connected(_on_clicked_from_object):
 		id_pressed.disconnect(_on_clicked_from_object)
-	if id_pressed.is_connected(_on_clicked_from_collection):
-		id_pressed.disconnect(_on_clicked_from_collection)
 	if id_pressed.is_connected(_on_clicked_from_object_group):
 		id_pressed.disconnect(_on_clicked_from_object_group)
 	clear()
 	set_position(get_viewport().get_mouse_position())
 
-func _on_menu_created(type: RightClickMenu.TYPE, objects: Array):
-	_reset_popup_menu()
+func _on_menu_created(objects: Array):
+	reset_menu()
 	print("Menu created. Position: ",position)
-	object_group = objects
-	match type:
-		TYPE.GAME_OBJECT:
-			init_game_object_menu()
-		TYPE.COLLECTION:
-			init_collection_menu()
-		TYPE.OBJECT_GROUP:
-			init_object_group_menu()
-		_:
-			print("None")
+	object_group = objects.duplicate(false)
+	if object_group.size() > 1:
+		init_group_menu()
+	else:
+		init_piece_menu()
 	reset_size()
 	popup()
 
-func init_game_object_menu() -> void:
+func init_piece_menu() -> void:
 	add_item("Flip object", 0)
 	var ordering_menu = PopupMenu.new()
 	ordering_menu.name = "ordering"
@@ -48,30 +39,10 @@ func init_game_object_menu() -> void:
 	ordering_menu.add_item("Send to back", 3)
 	id_pressed.connect(_on_clicked_from_object)
 	ordering_menu.id_pressed.connect(_on_clicked_from_object)
-	
-# TODO: FIX RIGHT CLICK MENU
-func init_collection_menu():
-	add_item("Shuffle collection", 0)
-	
-	var ordering_menu = PopupMenu.new()
-	ordering_menu.name = "ordering"
-	add_child(ordering_menu)
-	add_submenu_item("Ordering", "ordering", 2)
-	ordering_menu.add_item("Go to front", 3)
-	ordering_menu.add_item("Send to back", 4)
-	var orientation_menu = PopupMenu.new()
-	orientation_menu.name = "orientation"
-	orientation_menu.add_item("Face up", 5)
-	orientation_menu.add_item("Face down", 6)
-	orientation_menu.add_item("Flip collection", 1)
-	add_child(orientation_menu)
-	add_submenu_item("Set Orientation", "orientation", 7)
-	id_pressed.connect(_on_clicked_from_collection)
-	ordering_menu.id_pressed.connect(_on_clicked_from_collection)
-	orientation_menu.id_pressed.connect(_on_clicked_from_collection)
 
-func init_object_group_menu():
+func init_group_menu():
 	add_item("Convert to stack", 0)
+	add_item("Shuffle", 8)
 	var orientation_menu = PopupMenu.new()
 	orientation_menu.add_item("Face up", 5)
 	orientation_menu.add_item("Face down", 6)
@@ -87,7 +58,7 @@ func init_object_group_menu():
 	ordering_menu.add_item("Send to back", 4)
 	id_pressed.connect(_on_clicked_from_object_group)
 	ordering_menu.id_pressed.connect(_on_clicked_from_object_group)
-	orientation_menu.id_pressed.connect(_on_clicked_from_collection)
+	orientation_menu.id_pressed.connect(_on_clicked_from_object_group)
 
 # RIGHT CLICK MENU FUNCIONALITIES
 
@@ -97,15 +68,6 @@ func _on_clicked_from_object(id: int) -> void:
 		2: _move_objects_to_front()
 		3: _move_objects_to_back()
 
-func _on_clicked_from_collection(id: int) -> void:
-	match id:
-		0: _shuffle_collection()
-		1: _flip_selected_objects()
-		3: _move_objects_to_front()
-		4: _move_objects_to_back()
-		5: _set_objects_orientation(true)
-		6: _set_objects_orientation(false)
-
 func _on_clicked_from_object_group(id: int) -> void:
 	match id:
 		0: _stack_selected_objects()
@@ -114,20 +76,13 @@ func _on_clicked_from_object_group(id: int) -> void:
 		4: _move_objects_to_back()
 		5: _set_objects_orientation(true)
 		6: _set_objects_orientation(false)
-
-func _shuffle_collection() -> void:
-	for object in object_group:
-		if object is Collection:
-			(object as Collection).shuffle()
+		8: _shuffle_selection()
 
 func _flip_selected_objects() -> void:
-	print("Flip objects")
-	for object in object_group:
-		object.flip()
+	SignalManager.flip_objects.emit(object_group)
 
 func _set_objects_orientation(flipped: bool) -> void:
-	for object in object_group:
-		object.set_side(flipped)
+	SignalManager.set_object_face.emit(object_group, flipped)
 
 func _move_objects_to_front() -> void:
 	SignalManager.move_items_to_front.emit(object_group)
@@ -137,6 +92,9 @@ func _move_objects_to_back() -> void:
 
 func _stack_selected_objects() -> void:
 	SignalManager.convert_to_stack.emit(object_group)
+
+func _shuffle_selection() -> void:
+	SignalManager.shuffle_selection.emit(object_group)
 
 func _on_popup_hide() -> void:
 	SignalManager.game_menu_destroy.emit()
