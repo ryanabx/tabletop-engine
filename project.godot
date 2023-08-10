@@ -23,6 +23,8 @@ Utils="*res://src/scripts/singletons/utils.gd"
 Globals="*res://src/scripts/singletons/globals.gd"
 SignalManager="*res://src/scripts/singletons/signal_manager.gd"
 Player="*res://src/scripts/singletons/player.gd"
+InputManager="*res://src/scripts/singletons/input_manager.gd"
+MultiplayerManager="*res://src/scripts/singletons/multiplayer_manager.gd"
 
 [display]
 

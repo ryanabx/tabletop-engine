@@ -7,7 +7,7 @@ func _ready() -> void:
 	filters = ["*.obf.res"]
 
 func _on_create_load_config() -> void:
-	dialog_text = "Load a config of your choice!"
+	title = "Load a config of your choice!"
 	popup()
 
 func _on_file_decided(fname: String) -> void:

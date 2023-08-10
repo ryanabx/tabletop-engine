@@ -2,8 +2,6 @@
 extends Node
 
 # MULTIPLAYER
-
-const DEFAULT_PORT: int = 23698
 const DEFAULT_MAX_PLAYERS: int = 4
 
 # GAME MODE
@@ -38,9 +36,9 @@ const OBJECT_HIGHLIGHT_COLOR: Color = Color.WHITE
 const GAME_VERSION: String = "0.0.1"
 const CURRENT_API_VERSION: int = 1
 
-var current_tabletop: Tabletop = null
+var current_tabletop: Board = null
 
-var tabletop_manager: TabletopManager = null
+var tabletop_manager: BoardManager = null
 
 # COLORS
 
@@ -55,16 +53,16 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_exit_fullscreen") and DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 	
-func set_current_tabletop(tabletop: Tabletop) -> void:
+func set_current_tabletop(tabletop: Board) -> void:
 	current_tabletop = tabletop
 
-func get_current_tabletop() -> Tabletop:
+func get_current_tabletop() -> Board:
 	return current_tabletop
 
-func set_shared_tabletop_manager(tt: TabletopManager) -> void:
+func set_shared_tabletop_manager(tt: BoardManager) -> void:
 	tabletop_manager = tt
 
-func get_shared_tabletop_manager() -> TabletopManager:
+func get_shared_tabletop_manager() -> BoardManager:
 	return tabletop_manager
 
 func get_current_game():
