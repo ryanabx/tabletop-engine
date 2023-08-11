@@ -53,7 +53,7 @@ static func construct(brd: Board, config: Dictionary) -> Collection:
 	for key in collection.inside.keys():
 		var piece: Piece = brd.get_piece(key)
 		if piece != null:
-			piece.add_to_collection(collection.name)
+			piece.add_to_collection(collection)
 	return collection
 
 func can_access() -> bool:
@@ -62,3 +62,15 @@ func can_access() -> bool:
 	elif access_perms[Player.get_id()] == false:
 		return false
 	return true
+
+
+func _on_area_2d_mouse_entered() -> void:
+	pass # Replace with function body.
+
+
+func _on_area_2d_mouse_exited() -> void:
+	pass # Replace with function body.
+
+
+func _on_area_2d_input_event(viewport:Node, event:InputEvent, shape_idx:int) -> void:
+	pass # Replace with function body.

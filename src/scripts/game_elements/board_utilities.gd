@@ -1,5 +1,5 @@
 class_name BoardUtilities
-extends RefCounted
+extends Node2D
 
 var board: Board
 
@@ -76,4 +76,4 @@ func convert_to_stack(objs: Array[Piece]) -> void:
 ## Stacks an object to a collection
 func stack_to_collection(objs: Array[Piece], item: Collection) -> void:
 	for obj in objs:
-		obj.add_to_collection(item.name)
+		obj.add_to_collection(item)

@@ -10,9 +10,7 @@ var game: GameConfig
 var def_font: Font
 
 # Children
-var board_utilities: BoardUtilities
-var board_processing: BoardProcessing
-var board_player: BoardPlayer
+@onready var board_player: BoardPlayer = $BoardPlayer
 @onready var board_objects: Node2D = $BoardObjects
 @onready var highlights: Node2D = $Highlights
 
@@ -75,8 +73,6 @@ func unique_name(s: String) -> String:
 
 func _process(_delta: float) -> void:
 	clamp_camera()
-	board_processing.board_process()
-	board_player.player_process()
 	queue_redraw()
 
 ## Self explanatory
@@ -95,9 +91,7 @@ var ready_players: Array = []
 
 ## Called when the board is initialized
 func _ready() -> void:
-	board_player = BoardPlayer.new(self) # New boardplayer
-	board_utilities = BoardUtilities.new(self) # New boardutilities
-	board_processing = BoardProcessing.new(self, board_player, board_utilities)
+	board_player.board = self
 	highlights.board = self
 
 	var coordinate_scale: Vector2 = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)

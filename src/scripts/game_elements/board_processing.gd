@@ -1,5 +1,5 @@
 class_name BoardProcessing
-extends RefCounted
+extends Node2D
 
 var board: Board
 var board_player: BoardPlayer
@@ -11,7 +11,7 @@ func _init(_board: Board, _board_player: BoardPlayer, _board_utilities: BoardUti
 	board_utilities = _board_utilities
 
 ## Where all the magic happens
-func board_process() -> void:
+func _process(delta: float) -> void:
 	pass # Testing
 	# var pos: Vector2 = board.get_local_mouse_position()
 	# # Collection operations

@@ -17,6 +17,19 @@ func _ready() -> void:
 	_refresh_image()
 	collision_polygon.polygon = get_gobject_transform() * self.shape
 
+func _process(_delta: float) -> void:
+	update_position()
+
+func update_position() -> void:
+	if selected:
+		position = board.get_local_mouse_position().clamp(board.border.position, board.border.end)
+		if collection != "":
+			get_collection().position = position
+
+func get_collection() -> Collection:
+	if collection == "":
+		return null
+	return board.get_collection(collection)
 
 func update_position_in_collection() -> void:
 	if collection != "":
@@ -40,12 +53,11 @@ func flip() -> void:
 	_refresh_image()
 
 ## Adds this piece to a collection with the name c_name
-func add_to_collection(c_name: String) -> void:
-	remove_from_collection()
-	var coll: Collection = self.board.get_collection(c_name)
+func add_to_collection(coll: Collection) -> void:
 	if coll != null:
+		remove_from_collection()
 		coll.add_piece(self)
-		collection = c_name
+		collection = coll.name
 		coll.gobject_scale.x = maxf(gobject_scale.x, coll.gobject_scale.x)
 		coll.gobject_scale.y = maxf(gobject_scale.y, coll.gobject_scale.y)
 		update_position_in_collection()
@@ -68,7 +80,7 @@ static func construct(brd: Board, config: Dictionary) -> Piece:
 	if "collection" in config:
 		var c: Collection = brd.get_collection(config.collection)
 		if c != null:
-			piece.add_to_collection(c.name)
+			piece.add_to_collection(c)
 	brd.board_objects.add_child(piece)
 	return piece
 
@@ -113,71 +125,38 @@ func _on_area_2d_mouse_exited() -> void:
 
 var selected: bool = false
 
-# func _unhandled_input(event: InputEvent) -> void:
-# 	if selectable == true and not selected == true and board.board_player.selected_pieces.is_empty():
-# 		get_viewport().set_input_as_handled()
-# 		if not selected and event.is_action_pressed("game_select"):
-# 			remove_from_collection()
-# 			print(name," clicked ",amount, " index ",get_index())
-# 			board.board_player.select_pieces([self])
-# 	elif selected == true:
-# 		get_viewport().set_input_as_handled()
-# 		if event.is_action_released("game_select"):
-# 			board.board_player.deselect_pieces()
-# 		elif event is InputEventMouseMotion:
-# 			position = board.get_local_mouse_position().clamp(board.border.position, board.border.end)
-# 			if collection != "":
-# 				var c: Collection = board.get_collection(collection)
-# 				if c != null:
-# 					c.position = position
-
-func _input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion and selected == true:
-		position = board.get_local_mouse_position().clamp(board.border.position, board.border.end)
-		if collection != "":
-			var c: Collection = board.get_collection(collection)
-			if c != null:
-				c.position = position
-
-
 var amount: int = 0
 
 
 func _on_area_2d_input_event(_viewport:Node, event:InputEvent, _shape_idx:int) -> void:
-	if board.board_player.input_state == board.board_player.InputState.HANDLED:
-		return
-	
 	match board.board_player.input_state:
 		board.board_player.InputState.HANDLED:
 			return
 		board.board_player.InputState.UNHANDLED:
 			input_unhandled(event)
-		board.board_player.InputState.STACKABLE:
-			input_stackable(event)
 
 func input_unhandled(event: InputEvent) -> void:
 	if board.board_player.selected_pieces.is_empty():
 		if event.is_action_pressed("game_select") or (event.is_action_pressed("game_select_stack") and collection == ""):
 			remove_from_collection()
-			print(name," clicked ",amount, " index ",get_index())
+			# print(name," clicked ",amount, " index ",get_index())
 			board.board_player.select_pieces([self])
 			board.board_player.input_state = board.board_player.InputState.HANDLED
 		elif event.is_action_pressed("game_select_stack"):
 			var coll: Collection = board.get_collection(collection)
 			if coll != null:
-				print(name," clicked ",amount, " index ", get_index())
+				# print(name," clicked ",amount, " index ", get_index())
 				board.board_player.select_collections([coll])
 			board.board_player.input_state = board.board_player.InputState.HANDLED
 	if not event is InputEventMouseMotion:
-		print("Event: ", event)
+		pass
+		# print("Event: ", event)
 
 
-	if event.is_action_released("game_select") and selected == true:
-		print("RELEASED")
-		board.board_player.deselect_pieces()
-		board.board_player.input_state = board.board_player.InputState.STACKABLE
-
-func input_stackable(event: InputEvent) -> void:
-	if event.is_action_released("game_select") and selected == false:
-		print("STACKABLE OBJECT FOUND")
-		board.board_player.input_state = board.board_player.InputState.HANDLED
+	if (event.is_action_released("game_select") or event.is_action_released("game_select_stack")):
+		if selected == true:
+			board.board_player.queue_for_deselection()
+			return
+		else:
+			print("RELEASED AND STACKABLE OBJECT FOUND")
+			board.board_player.stack_selection_to_item(self)
