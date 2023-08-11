@@ -11,3 +11,36 @@ var type: Type = Type.STACK
 
 enum Type {STACK, HAND}
 
+func _process(_delta: float) -> void:
+	queue_redraw()
+
+func _draw() -> void:
+	draw_colored_polygon(get_gobject_transform() * self.shape, Color.BLACK * Color(1,1,1,0.3))
+
+func add_piece(piece: Piece) -> void:
+	print("Piece added")
+	inside[piece.name] = true
+
+func remove_piece(piece: Piece) -> void:
+	inside.erase(piece.name)
+
+static var collection_scene = preload("res://src/scenes/game_elements/gobjects/collection.tscn")
+## Constructor
+static func construct(brd: Board, config: Dictionary) -> Collection:
+	var collection: Collection = collection_scene.instantiate()
+	collection.board = brd
+	for prop in config.keys():
+		collection.set(prop, config[prop])
+	for key in collection.inside.keys():
+		var piece: Piece = brd.get_piece(key)
+		if piece != null:
+			piece.add_to_collection(collection.name)
+	brd.board_objects.add_child(collection)
+	return collection
+
+func can_access() -> bool:
+	if access_perms.size() <= Player.get_id():
+		return true # Default to true if there's no access perms
+	elif access_perms[Player.get_id()] == false:
+		return false
+	return true

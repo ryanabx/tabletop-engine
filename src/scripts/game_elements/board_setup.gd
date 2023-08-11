@@ -72,16 +72,18 @@ static func _new_conf_obj(o: Dictionary, board: Board, coordinate_scale: Vector2
 		var obj: Dictionary = o.duplicate(true)
 		if "position" in obj:
 			obj.position = Vector2(obj.position.x * coordinate_scale.x, obj.position.y * coordinate_scale.y)
-		if "scale" in obj:
-			obj.scale = Vector2(obj.scale.x * coordinate_scale.x, obj.scale.y * coordinate_scale.y)
+		if "gobject_scale" in obj:
+			obj.gobject_scale = Vector2(obj.gobject_scale.x * coordinate_scale.x, obj.gobject_scale.y * coordinate_scale.y)
 		match obj.type:
 			"collection":
-				if "scale" in obj:
-					obj.base_size = obj.scale
+				if "gobject_scale" in obj:
+					obj.base_size = obj.gobject_scale
 				if not obj.has("name"):
 					obj.name = board.unique_name("collection")
-				board.construct_collection(obj, true)
+				print("Constructing collection ", obj.name)
+				Collection.construct(board, obj)
 			"piece":
 				if not obj.has("name"):
 					obj.name = board.unique_name("piece")
-				board.construct_piece(obj, true)
+				print("Constructing piece ",obj.name)
+				Piece.construct(board, obj)

@@ -5,4 +5,6 @@
 [node name="Piece" type="Node2D"]
 script = ExtResource("1_w74q3")
 
-[node name="Image" type="Sprite2D" parent="."]
+[node name="Up" type="Sprite2D" parent="."]
+
+[node name="Down" type="Sprite2D" parent="."]

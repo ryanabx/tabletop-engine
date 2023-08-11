@@ -1,5 +1,5 @@
 class_name BoardPlayer
-extends Node2D
+extends RefCounted
 
 var selected_pieces: Array[String] = []
 var selected_collections: Array[String] = []
@@ -20,7 +20,12 @@ enum STATE {
 
 var state: STATE = STATE.IDLE
 
-@onready var board: Board = $'..'
+var board: Board
+
+func _init(_board: Board) -> void:
+	board = _board
+	InputManager.enhanced_inputs.connect(parse_input)
+	SignalManager.game_menu_destroy.connect(removed_game_menu)
 
 ######################
 ### Getter Methods ###
@@ -40,11 +45,7 @@ func get_selectable_piece() -> Piece:
 	return board.get_piece(selectable_piece)
 
 func get_highlighted_item() -> Gobject:
-	var result: Gobject = null
-	result = board.get_collection(highlighted_item)
-	if result == null:
-		result = board.get_piece(highlighted_item)
-	return result
+	return board.get_gobject(highlighted_item)
 
 ######################
 ### Main Processes ###
@@ -54,7 +55,6 @@ func _process(_delta: float) -> void:
 	# if not (Input.is_action_pressed("game_select_stack") or Input.is_action_pressed("game_select_stack")) and currently_moving_selection:
 	# 	release_grab_offsets()
 	update_selection_box()
-	queue_redraw()
 
 	if currently_moving_selection and (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")):
 		move_selected_objects()
@@ -69,7 +69,7 @@ func set_grab_offsets() -> void:
 		if obj == null:
 			continue
 		
-		grab_offsets.pieces[obj.name] = obj.position - get_local_mouse_position()
+		grab_offsets.pieces[obj.name] = obj.position - board.get_local_mouse_position()
 	for obj in get_selected_collections():
 		if not grab_offsets.collections.has(obj.name):
 			grab_offsets.collections[obj.name] = Vector2.ZERO
@@ -77,7 +77,7 @@ func set_grab_offsets() -> void:
 		if obj == null:
 			continue
 		
-		grab_offsets.collections[obj.name] = obj.position - get_local_mouse_position()
+		grab_offsets.collections[obj.name] = obj.position - board.get_local_mouse_position()
 	currently_moving_selection = true
 	print("Set grab offsets!")
 
@@ -88,16 +88,16 @@ func release_grab_offsets() -> void:
 func move_selected_objects() -> void:
 	for obj in get_selected_pieces():
 		if not grab_offsets.pieces.has(obj.name):
-			grab_offsets.pieces[obj.name] = obj.position - get_local_mouse_position()
-		board.move_piece(obj, get_local_mouse_position() + grab_offsets.pieces[obj.name])
+			grab_offsets.pieces[obj.name] = obj.position - board.get_local_mouse_position()
+		board.move_piece(obj, board.get_local_mouse_position() + grab_offsets.pieces[obj.name])
 	for obj in get_selected_collections():
 		if not grab_offsets.pieces.has(obj.name):
-			grab_offsets.pieces[obj.name] = obj.position - get_local_mouse_position()
-		board.move_collection(obj, get_local_mouse_position() + grab_offsets.collections[obj.name])
+			grab_offsets.pieces[obj.name] = obj.position - board.get_local_mouse_position()
+		board.move_collection(obj, board.get_local_mouse_position() + grab_offsets.collections[obj.name])
 
 func update_selection_box() -> void:
 	if selection_boxing:
-		selection_box.end = get_local_mouse_position()
+		selection_box.end = board.get_local_mouse_position()
 
 #####################
 ### State changes ###
@@ -118,7 +118,7 @@ func can_select() -> bool:
 
 func can_deselect() -> bool:
 	return (state in [STATE.SELECT] and
-	(not position_overlaps_selected_pieces(get_local_mouse_position()) or highlighted_item != null)
+	(not position_overlaps_selected_pieces(board.get_local_mouse_position()) or highlighted_item != null)
 	)
 
 func can_menu() -> bool:
@@ -128,28 +128,15 @@ func can_menu() -> bool:
 ### Drawing Highlights ###
 ##########################
 
-func _draw() -> void:
-	if get_highlighted_item() != null:
-		draw_colored_polygon(
-			board.board_utilities.get_obj_extents(get_highlighted_item()),
-			Color.from_hsv(0.4, 0.2, 1, 0.3)
-			)
-	if selection_boxing:
-		draw_rect(selection_box, Color.BLUE * Color(1,1,1,0.3))
-	for obj in get_selected_pieces():
-		draw_colored_polygon(
-			board.board_utilities.get_obj_extents(obj),
-			Color.GREEN * Color(1,1,1,0.2)
-			)
-
 ########################
 ### Input Management ###
 ########################
 
 func parse_input(input_actions: Dictionary) -> void:
+	print("Input!")
 	# Individual selection
 	if InputManager.is_select_pressed(input_actions) and can_select():
-		var over_piece = position_overlaps_selected_pieces(get_local_mouse_position())
+		var over_piece = position_overlaps_selected_pieces(board.get_local_mouse_position())
 		if not over_piece:
 			print("Not over piece!")
 			if get_selectable_piece() != null:
@@ -162,13 +149,13 @@ func parse_input(input_actions: Dictionary) -> void:
 			else:
 				print("Starting selection rectangle")
 				deselect_objects()
-				selection_box.position = get_local_mouse_position()
+				selection_box.position = board.get_local_mouse_position()
 				selection_boxing = true
 		else:
 			set_grab_offsets()
 	# Stack selection (or regular if no collection exists)
 	if InputManager.is_stack_select_pressed(input_actions) and can_select():
-		var over_piece = position_overlaps_selected_pieces(get_local_mouse_position())
+		var over_piece = position_overlaps_selected_pieces(board.get_local_mouse_position())
 		if not over_piece:
 			print("Not over piece!")
 			if get_selectable_piece() != null:
@@ -183,7 +170,7 @@ func parse_input(input_actions: Dictionary) -> void:
 			else:
 				print("Starting selection rectangle")
 				deselect_objects()
-				selection_box.position = get_local_mouse_position()
+				selection_box.position = board.get_local_mouse_position()
 				selection_boxing = true
 		else:
 			set_grab_offsets()
@@ -225,15 +212,15 @@ func get_within_selection_box() -> Array[Piece]:
 		Vector2(selection_box.end.x, selection_box.end.y),
 		Vector2(selection_box.position.x, selection_box.end.y)
 	])
-	for piece in board.pieces.values():
-		if board.board_utilities.obj_overlaps_polygon(piece, selection_polygon):
+	for piece in board.get_game_objects():
+		if piece is Piece and piece.overlaps_polygon(selection_polygon):
 			res.append(piece)
 	return res
 
 ## True if a position overlaps any selected piece
 func position_overlaps_selected_pieces(pos: Vector2) -> bool:
 	for piece in get_selected_pieces():
-		if board.board_utilities.obj_overlaps_point(piece, pos):
+		if piece.overlaps_point(pos):
 			return true
 	return false
 
@@ -255,7 +242,6 @@ func select_pieces(objs: Array[Piece], append: bool = false, remove_from_collect
 	if not append:
 		print("Deselecting objects")
 		deselect_objects()
-	objs.sort_custom(board.sort_by_draw_order)
 	for obj in objs:
 		_sel_piece(obj, true, remove_from_collection)
 	
@@ -270,8 +256,8 @@ func _sel_piece(obj: Piece, append: bool = false, remove_from_collection = true)
 	# Piece exclusive stuff
 	if obj is Piece:
 		if remove_from_collection:
-			board.board_utilities.remove_piece_from_collection(obj)
-		board.board_utilities.move_object_to_top(obj)
+			obj.remove_from_collection()
+		obj.move_self_to_top()
 	if append and not selected_pieces.has(obj.name):
 		selected_pieces.append(obj.name)
 	else:
@@ -331,12 +317,3 @@ func game_menu() -> void:
 		if selected_pieces.size() > 0:
 			print("Game menu for object group")
 			SignalManager.game_menu_create.emit(get_selected_pieces())
-
-#####################
-### Instantiation ###
-#####################
-
-func _ready() -> void:
-	z_index = 4096
-	InputManager.enhanced_inputs.connect(parse_input)
-	SignalManager.game_menu_destroy.connect(removed_game_menu)

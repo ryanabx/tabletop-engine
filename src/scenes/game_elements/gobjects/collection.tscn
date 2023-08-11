@@ -1,6 +1,21 @@
-[gd_scene load_steps=2 format=3 uid="uid://cqs76613c04on"]
+[gd_scene load_steps=3 format=3 uid="uid://cqs76613c04on"]
 
 [ext_resource type="Script" path="res://src/scripts/game_elements/gobjects/collection.gd" id="1_u0s07"]
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_1cbsf"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/sync = true
+properties/0/watch = false
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/sync = true
+properties/1/watch = false
+
 [node name="Collection" type="Node2D"]
 script = ExtResource("1_u0s07")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_1cbsf")
+
+[node name="CollectionScale" type="Node2D" parent="."]
