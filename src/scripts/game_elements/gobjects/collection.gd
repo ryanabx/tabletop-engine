@@ -30,6 +30,9 @@ func remove_piece(piece: Piece) -> void:
 		if is_multiplayer_authority():
 			erase_self.rpc()
 
+func get_pieces() -> Array[Piece]:
+	return board.get_pieces(inside.keys())
+
 @rpc("authority","call_local","reliable")
 func erase_self() -> void:
 	for obj in inside:

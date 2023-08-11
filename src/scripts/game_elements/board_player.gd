@@ -14,6 +14,12 @@ var currently_moving_selection: bool = false
 
 var grab_offsets: Dictionary = {"pieces": {}, "collections": {}}
 
+enum InputState {
+	UNHANDLED, STACKABLE, HANDLED
+}
+
+var input_state: InputState = InputState.UNHANDLED
+
 enum STATE {
 	IDLE, SELECT, MENU
 }
@@ -52,6 +58,7 @@ func get_highlighted_item() -> Gobject:
 ######################
 
 func player_process() -> void:
+	input_state = InputState.UNHANDLED
 	pass
 # 	# if not (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")) and currently_moving_selection:
 # 	# 	release_grab_offsets()
@@ -241,8 +248,17 @@ func player_process() -> void:
 func select_pieces(objs: Array[Piece]) -> void:
 	selected_pieces = []
 	for obj in objs:
+		obj.move_self_to_top()
 		selected_pieces.append(obj.name)
 		obj.selected = true
+
+func select_collections(objs: Array[Collection]) -> void:
+	selected_pieces = []
+	for obj in objs:
+		for pc in obj.get_pieces():
+			obj.move_self_to_top()
+			selected_pieces.append(obj.name)
+			obj.selected = true
 
 func deselect_pieces() -> void:
 	for obj in get_selected_pieces():

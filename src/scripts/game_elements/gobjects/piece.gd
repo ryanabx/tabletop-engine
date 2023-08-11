@@ -113,23 +113,71 @@ func _on_area_2d_mouse_exited() -> void:
 
 var selected: bool = false
 
-func _unhandled_input(event: InputEvent) -> void:
-	if selectable == true and not selected == true and board.board_player.selected_pieces.is_empty():
-		get_viewport().set_input_as_handled()
-		if not selected and event.is_action_pressed("game_select"):
-			remove_from_collection()
-			print(name," clicked ",amount, " index ",get_index())
-			board.board_player.select_pieces([self])
-	elif selected == true:
-		get_viewport().set_input_as_handled()
-		if event.is_action_released("game_select"):
-			board.board_player.deselect_pieces()
-		elif event is InputEventMouseMotion:
-			position = board.get_local_mouse_position().clamp(board.border.position, board.border.end)
-			if collection != "":
-				var c: Collection = board.get_collection(collection)
-				if c != null:
-					c.position = position
+# func _unhandled_input(event: InputEvent) -> void:
+# 	if selectable == true and not selected == true and board.board_player.selected_pieces.is_empty():
+# 		get_viewport().set_input_as_handled()
+# 		if not selected and event.is_action_pressed("game_select"):
+# 			remove_from_collection()
+# 			print(name," clicked ",amount, " index ",get_index())
+# 			board.board_player.select_pieces([self])
+# 	elif selected == true:
+# 		get_viewport().set_input_as_handled()
+# 		if event.is_action_released("game_select"):
+# 			board.board_player.deselect_pieces()
+# 		elif event is InputEventMouseMotion:
+# 			position = board.get_local_mouse_position().clamp(board.border.position, board.border.end)
+# 			if collection != "":
+# 				var c: Collection = board.get_collection(collection)
+# 				if c != null:
+# 					c.position = position
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion and selected == true:
+		position = board.get_local_mouse_position().clamp(board.border.position, board.border.end)
+		if collection != "":
+			var c: Collection = board.get_collection(collection)
+			if c != null:
+				c.position = position
 
 
 var amount: int = 0
+
+
+func _on_area_2d_input_event(_viewport:Node, event:InputEvent, _shape_idx:int) -> void:
+	if board.board_player.input_state == board.board_player.InputState.HANDLED:
+		return
+	
+	match board.board_player.input_state:
+		board.board_player.InputState.HANDLED:
+			return
+		board.board_player.InputState.UNHANDLED:
+			input_unhandled(event)
+		board.board_player.InputState.STACKABLE:
+			input_stackable(event)
+
+func input_unhandled(event: InputEvent) -> void:
+	if board.board_player.selected_pieces.is_empty():
+		if event.is_action_pressed("game_select") or (event.is_action_pressed("game_select_stack") and collection == ""):
+			remove_from_collection()
+			print(name," clicked ",amount, " index ",get_index())
+			board.board_player.select_pieces([self])
+			board.board_player.input_state = board.board_player.InputState.HANDLED
+		elif event.is_action_pressed("game_select_stack"):
+			var coll: Collection = board.get_collection(collection)
+			if coll != null:
+				print(name," clicked ",amount, " index ", get_index())
+				board.board_player.select_collections([coll])
+			board.board_player.input_state = board.board_player.InputState.HANDLED
+	if not event is InputEventMouseMotion:
+		print("Event: ", event)
+
+
+	if event.is_action_released("game_select") and selected == true:
+		print("RELEASED")
+		board.board_player.deselect_pieces()
+		board.board_player.input_state = board.board_player.InputState.STACKABLE
+
+func input_stackable(event: InputEvent) -> void:
+	if event.is_action_released("game_select") and selected == false:
+		print("STACKABLE OBJECT FOUND")
+		board.board_player.input_state = board.board_player.InputState.HANDLED

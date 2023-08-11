@@ -9,7 +9,8 @@ var input_time_dictionary: Dictionary = {}
 
 func _ready() -> void:
 	for action in InputMap.get_actions():
-		input_time_dictionary[action] = {"count": 0.0, "passed_threshold": false, "action_was_pressed": false}	
+		input_time_dictionary[action] = {"count": 0.0, "passed_threshold": false, "action_was_pressed": false}
+	get_viewport().physics_object_picking_sort = true	
 
 func _input(event: InputEvent):
 	if event is InputEventMouseMotion:
