@@ -9,3 +9,13 @@ script = ExtResource("1_w74q3")
 [node name="Up" type="Sprite2D" parent="."]
 
 [node name="Down" type="Sprite2D" parent="."]
+
+[node name="Area2D" type="Area2D" parent="."]
+monitoring = false
+monitorable = false
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D"]
+polygon = PackedVector2Array(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5)
+
+[connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Area2D" to="." method="_on_area_2d_mouse_exited"]

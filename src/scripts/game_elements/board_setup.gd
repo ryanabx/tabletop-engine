@@ -80,10 +80,10 @@ static func _new_conf_obj(o: Dictionary, board: Board, coordinate_scale: Vector2
 					obj.base_size = obj.gobject_scale
 				if not obj.has("name"):
 					obj.name = board.unique_name("collection")
-				print("Constructing collection ", obj.name)
+				# print("Constructing collection ", obj.name)
 				Collection.construct(board, obj)
 			"piece":
 				if not obj.has("name"):
 					obj.name = board.unique_name("piece")
-				print("Constructing piece ",obj.name)
+				# print("Constructing piece ",obj.name)
 				Piece.construct(board, obj)

@@ -22,7 +22,6 @@ func _draw() -> void:
 	draw_colored_polygon(get_gobject_transform() * self.shape, Color.BLACK * Color(1,1,1,0.3))
 
 func add_piece(piece: Piece) -> void:
-	print("Piece added")
 	inside[piece.name] = true
 
 func remove_piece(piece: Piece) -> void:
