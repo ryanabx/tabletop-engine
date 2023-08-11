@@ -20,3 +20,7 @@ func _on_create_client_pressed() -> void:
 	if MultiplayerManager.create_client(int(port), ip):
 		hide()
 		get_tree().reload_current_scene()
+
+
+func _on_close_requested() -> void:
+	hide()

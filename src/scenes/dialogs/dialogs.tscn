@@ -35,10 +35,9 @@ script = ExtResource("3_spydn")
 [node name="MplayConfigWindow" type="Window" parent="."]
 title = "Multiplayer Connections"
 initial_position = 2
-size = Vector2i(480, 120)
+size = Vector2i(720, 200)
 visible = false
 transient = true
-exclusive = true
 popup_window = true
 script = ExtResource("4_1kg71")
 
@@ -107,5 +106,6 @@ max_length = 5
 layout_mode = 2
 text = "Connect"
 
+[connection signal="close_requested" from="MplayConfigWindow" to="MplayConfigWindow" method="_on_close_requested"]
 [connection signal="pressed" from="MplayConfigWindow/Container/VBoxContainer/HBoxContainer2/CreateServer" to="MplayConfigWindow" method="_on_create_server_pressed"]
 [connection signal="pressed" from="MplayConfigWindow/Container/VBoxContainer/HBoxContainer/CreateClient" to="MplayConfigWindow" method="_on_create_client_pressed"]
