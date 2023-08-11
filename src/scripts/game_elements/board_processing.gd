@@ -16,7 +16,7 @@ func board_process() -> void:
 	# Collection operations
 	var best_collection: Collection = null
 	var best_piece: Piece = null
-	for obj in board.get_children():
+	for obj in board.get_game_objects():
 		if obj is Collection: # Collections
 			if obj.can_access() and not board_player.selected_collections.has(obj.name):
 				if obj.overlaps_point(pos):

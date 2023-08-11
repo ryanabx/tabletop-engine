@@ -133,7 +133,7 @@ func can_menu() -> bool:
 ########################
 
 func parse_input(input_actions: Dictionary) -> void:
-	print("Input!")
+	# print("Input!")
 	# Individual selection
 	if InputManager.is_select_pressed(input_actions) and can_select():
 		var over_piece = position_overlaps_selected_pieces(board.get_local_mouse_position())

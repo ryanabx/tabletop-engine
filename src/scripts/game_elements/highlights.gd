@@ -2,12 +2,15 @@ extends Node2D
 
 var board: Board
 
+func _process(_delta: float) -> void:
+	queue_redraw()
+
 func _draw() -> void:
 	draw_player_stuff()
 
 func draw_player_stuff() -> void:
 	if board.board_player.get_highlighted_item() != null:
-		print("Highlighted item")
+		# print("Highlighted item")
 		draw_colored_polygon(
 			board.board_player.get_highlighted_item().get_extents(),
 			Color.from_hsv(0.4, 0.2, 1, 0.3)

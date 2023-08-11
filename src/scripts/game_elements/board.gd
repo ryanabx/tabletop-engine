@@ -32,7 +32,7 @@ func draw_board_bg() -> void:
 	draw_rect(border, Color.WHITE, false, Globals.OUTLINE_THICKNESS)
 
 func get_piece(n: String) -> Piece:
-	var pc: Piece = get_node_or_null(n)
+	var pc: Piece = board_objects.get_node_or_null(n)
 	return pc
 
 func get_pieces(a: Array) -> Array[Piece]:
@@ -44,7 +44,7 @@ func get_pieces(a: Array) -> Array[Piece]:
 	return pcs
 
 func get_collection(n: String) -> Collection:
-	var c: Collection = get_node_or_null(n)
+	var c: Collection = board_objects.get_node_or_null(n)
 	return c
 
 func get_collections(a: Array) -> Array[Collection]:
@@ -56,7 +56,7 @@ func get_collections(a: Array) -> Array[Collection]:
 	return cs
 
 func get_gobject(n: String) -> Gobject:
-	var o: Gobject = get_node_or_null(n)
+	var o: Gobject = board_objects.get_node_or_null(n)
 	return o
 
 func get_game_objects() -> Array[Gobject]:
