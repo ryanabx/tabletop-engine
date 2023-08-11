@@ -9,11 +9,11 @@ var board: Board
 
 ## Moves this object to the top of the draw order
 func move_self_to_top() -> void:
-    get_parent().move_child(self, 0)
+    get_parent().move_child(self, -1)
 
 ## Moves this object to the back of the draw order
 func move_self_to_back() -> void:
-    get_parent().move_child(self, -1)
+    get_parent().move_child(self, 0)
 
 func move_to_index(index: int) -> void:
     get_parent().move_child(self, index)

@@ -11,7 +11,11 @@ var type: Type = Type.STACK
 
 enum Type {STACK, HAND}
 
+@onready var count: Label = $Count
+
 func _process(_delta: float) -> void:
+	count.position = (get_gobject_transform() * self.shape)[0]
+	count.text = str(name,"[",inside.size(),"]")
 	queue_redraw()
 
 func _draw() -> void:
@@ -23,6 +27,18 @@ func add_piece(piece: Piece) -> void:
 
 func remove_piece(piece: Piece) -> void:
 	inside.erase(piece.name)
+	if inside.is_empty() and not permanent:
+		if is_multiplayer_authority():
+			erase_self.rpc()
+
+@rpc("authority","call_local","reliable")
+func erase_self() -> void:
+	for obj in inside:
+		var piece: Piece = self.board.get_piece(obj)
+		if piece != null:
+			piece.collection = ""
+
+	queue_free()
 
 static var collection_scene = preload("res://src/scenes/game_elements/gobjects/collection.tscn")
 ## Constructor
@@ -31,11 +47,11 @@ static func construct(brd: Board, config: Dictionary) -> Collection:
 	collection.board = brd
 	for prop in config.keys():
 		collection.set(prop, config[prop])
+	brd.board_objects.add_child(collection)
 	for key in collection.inside.keys():
 		var piece: Piece = brd.get_piece(key)
 		if piece != null:
 			piece.add_to_collection(collection.name)
-	brd.board_objects.add_child(collection)
 	return collection
 
 func can_access() -> bool:

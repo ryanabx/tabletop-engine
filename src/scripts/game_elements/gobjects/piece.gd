@@ -39,6 +39,8 @@ func add_to_collection(c_name: String) -> void:
 	if coll != null:
 		coll.add_piece(self)
 		collection = c_name
+		coll.gobject_scale.x = maxf(gobject_scale.x, coll.gobject_scale.x)
+		coll.gobject_scale.y = maxf(gobject_scale.y, coll.gobject_scale.y)
 
 ## Removes the piece from its collection, if any  
 func remove_from_collection() -> void:

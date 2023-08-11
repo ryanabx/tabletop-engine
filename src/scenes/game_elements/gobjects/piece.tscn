@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://src/scripts/game_elements/gobjects/piece.gd" id="1_w74q3"]
 
 [node name="Piece" type="Node2D"]
+z_index = 2
 script = ExtResource("1_w74q3")
 
 [node name="Up" type="Sprite2D" parent="."]

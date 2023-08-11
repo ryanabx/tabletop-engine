@@ -13,9 +13,15 @@ properties/1/sync = true
 properties/1/watch = false
 
 [node name="Collection" type="Node2D"]
+z_index = 1
 script = ExtResource("1_u0s07")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_1cbsf")
 
 [node name="CollectionScale" type="Node2D" parent="."]
+
+[node name="Count" type="Label" parent="."]
+z_index = 1000
+offset_right = 40.0
+offset_bottom = 23.0

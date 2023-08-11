@@ -66,7 +66,7 @@ func convert_to_stack(objs: Array[Piece]) -> void:
 	var inside: Dictionary = {}
 	for obj in objs:
 		inside[obj.name] = true
-	board.construct_collection({
+	Collection.construct(board,{
 		"name": board.unique_name("collection"),
 		"position": objs[-1].position,
 		"permanent": false,

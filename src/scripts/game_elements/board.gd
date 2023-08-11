@@ -76,6 +76,7 @@ func unique_name(s: String) -> String:
 func _process(_delta: float) -> void:
 	clamp_camera()
 	board_processing.board_process()
+	board_player.player_process()
 	queue_redraw()
 
 ## Self explanatory

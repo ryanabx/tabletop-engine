@@ -51,13 +51,24 @@ func get_highlighted_item() -> Gobject:
 ### Main Processes ###
 ######################
 
-func _process(_delta: float) -> void:
-	# if not (Input.is_action_pressed("game_select_stack") or Input.is_action_pressed("game_select_stack")) and currently_moving_selection:
+func player_process() -> void:
+	# if not (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")) and currently_moving_selection:
 	# 	release_grab_offsets()
 	update_selection_box()
-
-	if currently_moving_selection and (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")):
+	if not (selected_collections.is_empty() and selected_pieces.is_empty()) and (Input.is_action_pressed("game_select") or Input.is_action_pressed("game_select_stack")):
 		move_selected_objects()
+
+
+func move_selected_objects() -> void:
+	# print("Moving objects: ", get_selected_pieces().size(), ", ", get_selected_collections().size())
+	for obj in get_selected_pieces():
+		if not grab_offsets.pieces.has(obj.name):
+			grab_offsets.pieces[obj.name] = obj.position - board.get_local_mouse_position()
+		obj.position = board.get_local_mouse_position() + grab_offsets.pieces[obj.name]
+	for obj in get_selected_collections():
+		if not grab_offsets.pieces.has(obj.name):
+			grab_offsets.pieces[obj.name] = obj.position - board.get_local_mouse_position()
+		obj.position = board.get_local_mouse_position() + grab_offsets.pieces[obj.name]
 	
 
 func set_grab_offsets() -> void:
@@ -85,15 +96,6 @@ func release_grab_offsets() -> void:
 	currently_moving_selection = false
 	grab_offsets = {"pieces": {}, "collections": {}}
 
-func move_selected_objects() -> void:
-	for obj in get_selected_pieces():
-		if not grab_offsets.pieces.has(obj.name):
-			grab_offsets.pieces[obj.name] = obj.position - board.get_local_mouse_position()
-		board.move_piece(obj, board.get_local_mouse_position() + grab_offsets.pieces[obj.name])
-	for obj in get_selected_collections():
-		if not grab_offsets.pieces.has(obj.name):
-			grab_offsets.pieces[obj.name] = obj.position - board.get_local_mouse_position()
-		board.move_collection(obj, board.get_local_mouse_position() + grab_offsets.collections[obj.name])
 
 func update_selection_box() -> void:
 	if selection_boxing:
@@ -240,9 +242,9 @@ func select_collections_from_pieces() -> void:
 ## Select objects
 func select_pieces(objs: Array[Piece], append: bool = false, remove_from_collection = true) -> void:
 	if not append:
-		print("Deselecting objects")
 		deselect_objects()
 	for obj in objs:
+		print("Select a piece")
 		_sel_piece(obj, true, remove_from_collection)
 	
 	if state == STATE.IDLE and not objs.is_empty():
@@ -252,16 +254,17 @@ func select_pieces(objs: Array[Piece], append: bool = false, remove_from_collect
 		select_collections_from_pieces()
 
 ## Select one object
-func _sel_piece(obj: Piece, append: bool = false, remove_from_collection = true) -> void:
+func _sel_piece(obj: Piece, append: bool = false, no_collection = true) -> void:
 	# Piece exclusive stuff
 	if obj is Piece:
-		if remove_from_collection:
+		if no_collection:
 			obj.remove_from_collection()
 		obj.move_self_to_top()
 	if append and not selected_pieces.has(obj.name):
 		selected_pieces.append(obj.name)
 	else:
 		selected_pieces = [obj.name]
+	print(get_selected_pieces())
 
 func select_collection(coll: Collection, append = true) -> void:
 	if append and not selected_collections.has(coll.name):

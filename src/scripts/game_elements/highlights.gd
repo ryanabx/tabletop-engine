@@ -7,7 +7,7 @@ func _process(_delta: float) -> void:
 
 func _draw() -> void:
 	draw_player_stuff()
-
+    
 func draw_player_stuff() -> void:
 	if board.board_player.get_highlighted_item() != null:
 		# print("Highlighted item")
