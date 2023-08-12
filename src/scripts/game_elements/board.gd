@@ -85,6 +85,29 @@ func clamp_camera() -> void:
 
 var ready_players: Array = []
 
+
+#####################
+### RPC functions ###
+#####################
+@rpc("any_peer","call_local", "reliable")
+func create_collection(data: PackedByteArray) -> void:
+	var config: Dictionary = bytes_to_var(data)
+	Collection.construct(self, config)
+
+@rpc("any_peer","call_local", "reliable")
+func create_piece(data: PackedByteArray) -> void:
+	var config: Dictionary = bytes_to_var(data)
+	Piece.construct(self, config)
+
+@rpc("any_peer","call_local", "reliable")
+func assign_authority(pid: int, objects: PackedStringArray):
+	for obj in objects:
+		get_gobject(obj).set_multiplayer_authority(pid)
+
+func grab_authority_on_objs(objects: Array) -> void:
+	var objs: PackedStringArray = PackedStringArray(objects.map(func(v: Gobject) -> String: return v.name))
+	assign_authority.rpc(multiplayer.get_unique_id(), objs)
+
 ####################
 ### Config stuff ###
 ####################

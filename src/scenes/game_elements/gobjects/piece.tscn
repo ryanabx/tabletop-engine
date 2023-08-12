@@ -1,6 +1,40 @@
-[gd_scene load_steps=2 format=3 uid="uid://ca7idetpgn18y"]
+[gd_scene load_steps=3 format=3 uid="uid://ca7idetpgn18y"]
 
 [ext_resource type="Script" path="res://src/scripts/game_elements/gobjects/piece.gd" id="1_w74q3"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_bm0ol"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/sync = true
+properties/0/watch = false
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/sync = true
+properties/1/watch = false
+properties/2/path = NodePath(".:gobject_scale")
+properties/2/spawn = true
+properties/2/sync = false
+properties/2/watch = true
+properties/3/path = NodePath(".:collection")
+properties/3/spawn = true
+properties/3/sync = false
+properties/3/watch = true
+properties/4/path = NodePath(".:image_up")
+properties/4/spawn = true
+properties/4/sync = false
+properties/4/watch = true
+properties/5/path = NodePath(".:image_down")
+properties/5/spawn = true
+properties/5/sync = false
+properties/5/watch = true
+properties/6/path = NodePath(".:face_up")
+properties/6/spawn = true
+properties/6/sync = false
+properties/6/watch = true
+properties/7/path = NodePath(".:shape")
+properties/7/spawn = true
+properties/7/sync = false
+properties/7/watch = true
 
 [node name="Piece" type="Node2D"]
 z_index = 2
@@ -16,6 +50,9 @@ monitorable = false
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D"]
 polygon = PackedVector2Array(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5)
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_bm0ol")
 
 [connection signal="input_event" from="Area2D" to="." method="_on_area_2d_input_event"]
 [connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]

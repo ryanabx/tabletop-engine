@@ -50,6 +50,7 @@ func _process(_delta: float) -> void:
 
 func select_pieces(objs: Array[Piece]) -> void:
 	selected_pieces = []
+	board.grab_authority_on_objs(objs)
 	for obj in objs:
 		obj.move_self_to_top()
 		selected_pieces.append(obj)
@@ -70,28 +71,32 @@ func stack_selection_to_item(item: Piece) -> void:
 
 func stack_stackables_to_collection(coll: Collection) -> void:
 	print("Stacking stackables to collection")
+	board.grab_authority_on_objs(selected_pieces + [coll])
 	for piece in selected_pieces:
 		piece.add_to_collection(coll)
 		piece.selected = false
 
 func convert_to_stack(items: Array[Piece]) -> void:
 	print("Making new stack")
+	board.grab_authority_on_objs(items)
 	# First, create new collection
-	var collection: Collection = Collection.construct(
-		board,
-		{
+	var collection: Collection = board.create_collection.rpc(
+		var_to_bytes({
 			"name": board.unique_name("newcoll"),
 			"position": items[0].position,
 			"rotation": items[0].rotation
-		}
+		})
 	)
+	board.grab_authority_on_objs([collection])
 	for item in items:
 		item.add_to_collection(collection)
 		item.selected = false
 
 func select_collections(objs: Array[Collection]) -> void:
+	board.grab_authority_on_objs(objs)
 	selected_pieces = []
 	for obj in objs:
+		board.grab_authority_on_objs(obj.get_pieces())
 		for pc in obj.get_pieces():
 			pc.move_self_to_top()
 			selected_pieces.append(pc)
@@ -99,6 +104,7 @@ func select_collections(objs: Array[Collection]) -> void:
 			pc.grab_offset = board.get_local_mouse_position() - pc.position
 
 func deselect_pieces() -> void:
+	board.grab_authority_on_objs(get_selected_pieces())
 	for obj in get_selected_pieces():
 		obj.selected = false
 	selected_pieces = []
