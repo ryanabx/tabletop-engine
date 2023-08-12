@@ -1,0 +1,38 @@
+[gd_scene load_steps=3 format=3 uid="uid://cqs76613c04on"]
+
+[ext_resource type="Script" path="res://src/scripts/game_elements/gobjects/collection.gd" id="1_u0s07"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_1cbsf"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/sync = true
+properties/0/watch = false
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/sync = true
+properties/1/watch = false
+
+[node name="Collection" type="Node2D"]
+z_index = 1
+script = ExtResource("1_u0s07")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_1cbsf")
+
+[node name="CollectionScale" type="Node2D" parent="."]
+
+[node name="Count" type="Label" parent="."]
+z_index = 1000
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="Area2D" type="Area2D" parent="."]
+monitoring = false
+monitorable = false
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D"]
+polygon = PackedVector2Array(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5)
+
+[connection signal="input_event" from="Area2D" to="." method="_on_area_2d_input_event"]
+[connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Area2D" to="." method="_on_area_2d_mouse_exited"]

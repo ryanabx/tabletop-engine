@@ -53,7 +53,6 @@ func file_menu() -> void:
 		file.add_submenu_item("Reset", "reset", 1)
 		reset_submenu.add_item("Reset Tabletop", 10)
 		reset_submenu.add_item("Reset Camera", 11)
-	file.add_item("Exit to Title Screen", 2)
 	file.add_item("Exit Open Boardgame Framework", 4)
 
 func view_menu() -> void:
@@ -93,7 +92,6 @@ func file_pressed(id: int) -> void:
 		3: export_config()
 		10: Globals.get_shared_tabletop_manager().load_game_config(Globals.get_current_game())
 		11: Globals.get_shared_tabletop_manager().camera_controller.reset_camera()
-		2: get_tree().change_scene_to_file("res://src/scenes/pages/title_screen.tscn")
 		4: get_tree().quit()
 
 func view_pressed(id: int) -> void:

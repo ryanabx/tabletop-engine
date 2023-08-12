@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dth55ipp6bxj8"]
+
+[ext_resource type="Script" path="res://src/scripts/game_elements/gobjects/gobject.gd" id="1_o833h"]
+
+[node name="Gobject" type="Node2D"]
+script = ExtResource("1_o833h")
