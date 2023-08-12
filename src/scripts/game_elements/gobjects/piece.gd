@@ -6,6 +6,8 @@ var image_down: String = ""
 var collection: String = ""
 var face_up: bool = false
 
+var grab_offset: Vector2 = Vector2.ZERO
+
 @onready var sprite_down: Sprite2D = $Down
 @onready var sprite_up: Sprite2D = $Up
 
@@ -22,7 +24,7 @@ func _process(_delta: float) -> void:
 
 func update_position() -> void:
 	if selected:
-		position = board.get_local_mouse_position().clamp(board.border.position, board.border.end)
+		position = (board.get_local_mouse_position() - grab_offset).clamp(board.border.position, board.border.end)
 		if collection != "":
 			get_collection().position = position
 
@@ -144,19 +146,19 @@ func input_unhandled(event: InputEvent) -> void:
 			board.board_player.input_state = board.board_player.InputState.HANDLED
 		elif event.is_action_pressed("game_select_stack"):
 			var coll: Collection = board.get_collection(collection)
-			if coll != null:
+			if coll != null and not coll.permanent:
 				# print(name," clicked ",amount, " index ", get_index())
 				board.board_player.select_collections([coll])
 			board.board_player.input_state = board.board_player.InputState.HANDLED
 	if not event is InputEventMouseMotion:
 		pass
-		# print("Event: ", event)
+		#print("Event: ", event)
 
 
 	if (event.is_action_released("game_select") or event.is_action_released("game_select_stack")):
 		if selected == true:
 			board.board_player.queue_for_deselection()
 			return
-		else:
+		elif can_access():
 			print("RELEASED AND STACKABLE OBJECT FOUND")
 			board.board_player.stack_selection_to_item(self)

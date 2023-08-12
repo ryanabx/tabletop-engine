@@ -27,10 +27,10 @@ func get_selected_pieces() -> Array[Piece]:
 ### Input Handling ###
 ######################
 
-# func _input(event: InputEvent) -> void:
-# 	if event.is_action_released("game_select") or event.is_action_released("game_select_stack"):
-# 		print("Deselecting current selection")
-# 		call_deferred("deselect_pieces")
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("game_flip"):
+		for pc in get_selected_pieces():
+			pc.flip()
 
 ######################
 ### Main Processes ###
@@ -50,6 +50,7 @@ func select_pieces(objs: Array[Piece]) -> void:
 		obj.move_self_to_top()
 		selected_pieces.append(obj)
 		obj.selected = true
+		obj.grab_offset = board.get_local_mouse_position() - obj.position
 
 func stack_selection_to_item(item: Piece) -> void:
 	if item.get_collection() != null:
@@ -88,6 +89,7 @@ func select_collections(objs: Array[Collection]) -> void:
 			pc.move_self_to_top()
 			selected_pieces.append(pc)
 			pc.selected = true
+			pc.grab_offset = board.get_local_mouse_position() - pc.position
 
 func deselect_pieces() -> void:
 	for obj in get_selected_pieces():

@@ -9,9 +9,15 @@ var permanent: bool = false
 var force_state = null
 var type: Type = Type.STACK
 
+var selected: bool = false
+@onready var collision_polygon = $Area2D/CollisionPolygon2D
+
 enum Type {STACK, HAND}
 
 @onready var count: Label = $Count
+
+func _ready() -> void:
+	collision_polygon.polygon = get_gobject_transform() * self.shape
 
 func _process(_delta: float) -> void:
 	count.position = (get_gobject_transform() * self.shape)[0]
@@ -72,5 +78,20 @@ func _on_area_2d_mouse_exited() -> void:
 	pass # Replace with function body.
 
 
-func _on_area_2d_input_event(viewport:Node, event:InputEvent, shape_idx:int) -> void:
-	pass # Replace with function body.
+
+func _on_area_2d_input_event(_viewport:Node, event:InputEvent, _shape_idx:int) -> void:
+	match board.board_player.input_state:
+		board.board_player.InputState.HANDLED:
+			return
+		board.board_player.InputState.UNHANDLED:
+			input_unhandled(event)
+
+func input_unhandled(event: InputEvent) -> void:
+	if board.board_player.selected_pieces.is_empty():
+		return
+
+
+	if (event.is_action_released("game_select") or event.is_action_released("game_select_stack")):
+		if selected == false and can_access():
+			print("RELEASED AND STACKABLE OBJECT FOUND")
+			board.board_player.stack_stackables_to_collection(self)
