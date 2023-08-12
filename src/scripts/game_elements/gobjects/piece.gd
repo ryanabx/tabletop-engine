@@ -137,7 +137,6 @@ func _on_area_2d_input_event(_viewport:Node, event:InputEvent, _shape_idx:int) -
 	
 	if board.board_player.selected_pieces.is_empty():
 		if event.is_action_pressed("game_select") or (event.is_action_pressed("game_select_stack") and collection == ""):
-			remove_from_collection()
 			# print(name," clicked ",amount, " index ",get_index())
 			board.board_player.select_pieces([self])
 			board.board_player.input_state = board.board_player.InputState.HANDLED

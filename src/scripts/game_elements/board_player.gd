@@ -2,6 +2,7 @@ class_name BoardPlayer
 extends Node2D
 
 var selected_pieces: Array[Piece] = []
+var selected_collections: Array[Collection] = []
 
 var selection_box: Rect2 = Rect2(0,0,0,0)
 var selection_boxing: bool = false
@@ -35,8 +36,11 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("game_flip"):
 		for pc in get_selected_pieces():
 			pc.flip()
-	if event is InputEventMouseMotion and not selected_pieces.is_empty():
+	if event is InputEventMouseMotion and not moved_since_selected and not selected_pieces.is_empty():
 		moved_since_selected = true
+		for pc in selected_pieces:
+			if not selected_collections.has(board.get_collection(pc.collection)):
+				pc.remove_from_collection()
 
 func _ready() -> void:
 	timer = Timer.new()
@@ -112,7 +116,7 @@ func select_collections(objs: Array[Collection]) -> void:
 			selected_pieces.append(pc)
 			pc.selected = true
 			pc.grab_offset = board.get_local_mouse_position() - pc.position
-	
+		selected_collections.append(obj)
 	moved_since_selected = false
 	timer.start()
 
@@ -121,6 +125,7 @@ func deselect_pieces() -> void:
 	for obj in get_selected_pieces():
 		obj.selected = false
 	selected_pieces = []
+	selected_collections = []
 	moved_since_selected = true
 
 func queue_for_deselection() -> void:
@@ -130,5 +135,8 @@ func queue_for_deselection() -> void:
 func game_menu_check() -> void:
 	if not moved_since_selected:
 		print("Could create game menu")
-		SignalManager.game_menu_create.emit(selected_pieces)
+		if selected_pieces.size() == 1 and selected_pieces[0].collection != "":
+			SignalManager.game_menu_create.emit(selected_pieces[0].get_collection().get_pieces())
+		else:
+			SignalManager.game_menu_create.emit(selected_pieces)
 		deselect_pieces()
