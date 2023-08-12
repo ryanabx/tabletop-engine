@@ -79,16 +79,20 @@ func _on_clicked_from_object_group(id: int) -> void:
 		8: _shuffle_selection()
 
 func _flip_selected_objects() -> void:
-	SignalManager.flip_objects.emit(object_group)
+	for obj in object_group:
+		obj.flip()
 
-func _set_objects_orientation(flipped: bool) -> void:
-	SignalManager.set_object_face.emit(object_group, flipped)
+func _set_objects_orientation(side: bool) -> void:
+	for obj in object_group:
+		obj.set_side(side)
 
 func _move_objects_to_front() -> void:
-	SignalManager.move_items_to_front.emit(object_group)
+	for obj in object_group:
+		obj.move_self_to_top()
 
 func _move_objects_to_back() -> void:
-	SignalManager.move_items_to_back.emit(object_group)
+	for obj in object_group:
+		obj.move_self_to_back()
 
 func _stack_selected_objects() -> void:
 	SignalManager.convert_to_stack.emit(object_group)

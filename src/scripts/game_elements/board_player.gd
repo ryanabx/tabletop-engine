@@ -14,6 +14,8 @@ var input_state: InputState = InputState.UNHANDLED
 
 var queued_deselection: bool = false
 
+var moved_since_selected: bool = true
+
 var board: Board
 
 ######################
@@ -31,6 +33,8 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("game_flip"):
 		for pc in get_selected_pieces():
 			pc.flip()
+	if event is InputEventMouseMotion and not selected_pieces.is_empty():
+		moved_since_selected = true
 
 ######################
 ### Main Processes ###
@@ -51,6 +55,9 @@ func select_pieces(objs: Array[Piece]) -> void:
 		selected_pieces.append(obj)
 		obj.selected = true
 		obj.grab_offset = board.get_local_mouse_position() - obj.position
+	
+	moved_since_selected = false
+	get_tree().create_timer(0.5).timeout.connect(game_menu_check)
 
 func stack_selection_to_item(item: Piece) -> void:
 	if item.get_collection() != null:
@@ -95,6 +102,14 @@ func deselect_pieces() -> void:
 	for obj in get_selected_pieces():
 		obj.selected = false
 	selected_pieces = []
+	moved_since_selected = true
 
 func queue_for_deselection() -> void:
 	queued_deselection = true
+
+
+func game_menu_check() -> void:
+	if not moved_since_selected:
+		print("Could create game menu")
+		SignalManager.game_menu_create.emit(selected_pieces)
+		deselect_pieces()

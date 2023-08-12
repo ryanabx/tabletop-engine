@@ -80,6 +80,8 @@ func _on_area_2d_mouse_exited() -> void:
 
 
 func _on_area_2d_input_event(_viewport:Node, event:InputEvent, _shape_idx:int) -> void:
+	if event is InputEventKey:
+		print(event)
 	match board.board_player.input_state:
 		board.board_player.InputState.HANDLED:
 			return

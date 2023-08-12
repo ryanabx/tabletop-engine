@@ -131,13 +131,9 @@ var amount: int = 0
 
 
 func _on_area_2d_input_event(_viewport:Node, event:InputEvent, _shape_idx:int) -> void:
-	match board.board_player.input_state:
-		board.board_player.InputState.HANDLED:
-			return
-		board.board_player.InputState.UNHANDLED:
-			input_unhandled(event)
-
-func input_unhandled(event: InputEvent) -> void:
+	if board.board_player.input_state == board.board_player.InputState.HANDLED:
+		return
+	
 	if board.board_player.selected_pieces.is_empty():
 		if event.is_action_pressed("game_select") or (event.is_action_pressed("game_select_stack") and collection == ""):
 			remove_from_collection()
