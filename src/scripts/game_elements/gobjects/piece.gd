@@ -11,7 +11,8 @@ var grab_offset: Vector2 = Vector2.ZERO
 @onready var sprite_down: Sprite2D = $Down
 @onready var sprite_up: Sprite2D = $Up
 
-@onready var collision_polygon = $Area2D/CollisionPolygon2D
+@onready var collision_polygon: CollisionPolygon2D = $Area2D/CollisionPolygon2D
+@onready var area2d: Area2D = $Area2D
 
 var selectable: bool = false
 
@@ -115,6 +116,18 @@ func can_access() -> bool:
 		return _coll.can_access()
 	return true
 
+func set_selected(sl: bool) -> void:
+	if sl == true:
+		selected = true
+		area2d.input_pickable = false
+	else:
+		selected = false
+		area2d.input_pickable = true
+
+func is_selected() -> bool:
+	return selected
+
+
 
 func _on_area_2d_mouse_entered() -> void:
 	selectable = true
@@ -152,9 +165,6 @@ func _on_area_2d_input_event(_viewport:Node, event:InputEvent, _shape_idx:int) -
 
 
 	if (event.is_action_released("game_select") or event.is_action_released("game_select_stack")):
-		if selected == true:
-			board.board_player.queue_for_deselection()
-			return
-		elif can_access():
+		if can_access():
 			print("RELEASED AND STACKABLE OBJECT FOUND")
 			board.board_player.stack_selection_to_item(self)

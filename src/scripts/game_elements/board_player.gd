@@ -36,7 +36,10 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("game_flip"):
 		for pc in get_selected_pieces():
 			pc.flip()
-	if event is InputEventMouseMotion and not moved_since_selected and not selected_pieces.is_empty():
+	if (event.is_action_released("game_select") or event.is_action_released("game_select_stack")):
+		queue_for_deselection()
+	if event is InputEventMouseMotion and\
+		 not moved_since_selected and not selected_pieces.is_empty():
 		moved_since_selected = true
 		for pc in selected_pieces:
 			if not selected_collections.has(board.get_collection(pc.collection)):
@@ -47,6 +50,7 @@ func _ready() -> void:
 	add_child(timer)
 	timer.timeout.connect(game_menu_check)
 	timer.wait_time = 0.5
+	SignalManager.select_objects.connect(select_objects_from_menu)
 
 ######################
 ### Main Processes ###
@@ -60,6 +64,26 @@ func _process(_delta: float) -> void:
 		queued_deselection = false
 	pass
 
+func select_objects_from_menu(objs: Array[Piece], with_collections: bool) -> void:
+	timer.stop()
+	selected_pieces = []
+	board.grab_authority_on_objs(objs)
+	if with_collections == true:
+		# NOTE: With collections expects that all objs being selected are in the same collection
+		var collection: Collection = objs[0].get_collection()
+		if collection.permanent == true:
+			convert_to_stack(objs)
+			collection = objs[0].get_collection()
+		selected_collections.append(collection)
+
+	for obj in objs:
+		obj.move_self_to_top()
+		selected_pieces.append(obj)
+		obj.set_selected(true)
+		obj.grab_offset = Vector2.ZERO
+			
+			
+
 func select_pieces(objs: Array[Piece]) -> void:
 	timer.stop()
 	selected_pieces = []
@@ -67,7 +91,7 @@ func select_pieces(objs: Array[Piece]) -> void:
 	for obj in objs:
 		obj.move_self_to_top()
 		selected_pieces.append(obj)
-		obj.selected = true
+		obj.set_selected(true)
 		obj.grab_offset = board.get_local_mouse_position() - obj.position
 	
 	moved_since_selected = false
@@ -87,7 +111,7 @@ func stack_stackables_to_collection(coll: Collection) -> void:
 	board.grab_authority_on_objs(selected_pieces + [coll])
 	for piece in selected_pieces:
 		piece.add_to_collection(coll)
-		piece.selected = false
+		piece.set_selected(false)
 
 func convert_to_stack(items: Array[Piece]) -> void:
 	print("Making new stack")
@@ -103,7 +127,7 @@ func convert_to_stack(items: Array[Piece]) -> void:
 	board.grab_authority_on_objs([collection])
 	for item in items:
 		item.add_to_collection(collection)
-		item.selected = false
+		item.set_selected(false)
 
 func select_collections(objs: Array[Collection]) -> void:
 	timer.stop()
@@ -114,7 +138,7 @@ func select_collections(objs: Array[Collection]) -> void:
 		for pc in obj.get_pieces():
 			pc.move_self_to_top()
 			selected_pieces.append(pc)
-			pc.selected = true
+			pc.set_selected(true)
 			pc.grab_offset = board.get_local_mouse_position() - pc.position
 		selected_collections.append(obj)
 	moved_since_selected = false
@@ -123,7 +147,7 @@ func select_collections(objs: Array[Collection]) -> void:
 func deselect_pieces() -> void:
 	board.grab_authority_on_objs(get_selected_pieces())
 	for obj in get_selected_pieces():
-		obj.selected = false
+		obj.set_selected(false)
 	selected_pieces = []
 	selected_collections = []
 	moved_since_selected = true

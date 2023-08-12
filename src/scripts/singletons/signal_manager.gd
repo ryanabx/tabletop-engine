@@ -1,16 +1,13 @@
 extends Node
 
-# Right click menu creation
+# Game menu creation
 signal game_menu_create(objects: Array)
 signal game_menu_destroy()
 
-# Right click menu commands
-signal move_items_to_front(objects: Array)
-signal move_items_to_back(objects: Array)
+# Game menu commands
 signal shuffle_selection(objects: Array)
 signal convert_to_stack(objects: Array)
-signal set_object_face(objects: Array, face_up: bool)
-signal flip_objects(objects: Array)
+signal select_objects(objects: Array, with_collections: bool)
 
 # Menubar Signals
 signal create_load_config_dialog()

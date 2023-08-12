@@ -59,6 +59,7 @@ func init_group_menu():
 	id_pressed.connect(_on_clicked_from_object_group)
 	ordering_menu.id_pressed.connect(_on_clicked_from_object_group)
 	orientation_menu.id_pressed.connect(_on_clicked_from_object_group)
+	add_item("Select group", 9)
 
 # RIGHT CLICK MENU FUNCIONALITIES
 
@@ -77,6 +78,7 @@ func _on_clicked_from_object_group(id: int) -> void:
 		5: _set_objects_orientation(true)
 		6: _set_objects_orientation(false)
 		8: _shuffle_selection()
+		9: _select_objects(true)
 
 func _flip_selected_objects() -> void:
 	for obj in object_group:
@@ -102,3 +104,6 @@ func _shuffle_selection() -> void:
 
 func _on_popup_hide() -> void:
 	SignalManager.game_menu_destroy.emit()
+
+func _select_objects(with_collections: bool) -> void:
+	SignalManager.select_objects.emit(object_group, with_collections)
