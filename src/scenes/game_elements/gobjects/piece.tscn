@@ -52,6 +52,7 @@ monitorable = false
 polygon = PackedVector2Array(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5)
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_interval = 0.1
 replication_config = SubResource("SceneReplicationConfig_bm0ol")
 
 [connection signal="input_event" from="Area2D" to="." method="_on_area_2d_input_event"]

@@ -89,15 +89,33 @@ var ready_players: Array = []
 #####################
 ### RPC functions ###
 #####################
-@rpc("any_peer","call_local", "reliable")
-func create_collection(data: PackedByteArray) -> void:
+func create_collection(data: PackedByteArray) -> Collection:
 	var config: Dictionary = bytes_to_var(data)
-	Collection.construct(self, config)
+	var c: Collection = Collection.construct(self, config)
+	c.set_multiplayer_authority(multiplayer.get_unique_id())
+	_create_collection.rpc(data)
+	print(c.name, " ",c.get_index())
+	return c
 
-@rpc("any_peer","call_local", "reliable")
-func create_piece(data: PackedByteArray) -> void:
+@rpc("any_peer","call_remote", "reliable")
+func _create_collection(data: PackedByteArray) -> void:
 	var config: Dictionary = bytes_to_var(data)
-	Piece.construct(self, config)
+	var c: Collection = Collection.construct(self, config)
+	c.set_multiplayer_authority(multiplayer.get_remote_sender_id())
+
+func create_piece(data: PackedByteArray) -> Piece:
+	var config: Dictionary = bytes_to_var(data)
+	var p: Piece = Piece.construct(self, config)
+	p.set_multiplayer_authority(multiplayer.get_unique_id())
+	_create_piece.rpc(data)
+	print(p.name, " ", p.get_index())
+	return p
+
+@rpc("any_peer","call_remote", "reliable")
+func _create_piece(data: PackedByteArray) -> void:
+	var config: Dictionary = bytes_to_var(data)
+	var p: Piece = Piece.construct(self, config)
+	p.set_multiplayer_authority(multiplayer.get_remote_sender_id())
 
 @rpc("any_peer","call_local", "reliable")
 func assign_authority(pid: int, objects: PackedStringArray):
@@ -116,6 +134,8 @@ func grab_authority_on_objs(objects: Array) -> void:
 func _ready() -> void:
 	board_player.board = self
 	highlights.board = self
+
+	get_viewport().set_physics_object_picking_sort(true)
 
 	var coordinate_scale: Vector2 = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)
 	BoardSetup.setup_initial_board_state(self, coordinate_scale)

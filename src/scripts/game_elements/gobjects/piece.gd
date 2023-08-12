@@ -44,14 +44,12 @@ func update_position_in_collection() -> void:
 
 ## Sets the object's face
 func set_face(_face_up: bool) -> void:
-	if is_multiplayer_authority():
-		face_up = _face_up
+	face_up = _face_up
 	_refresh_image()
 
 ## Flips the object's face
 func flip() -> void:
-	if is_multiplayer_authority():
-		face_up = not face_up
+	face_up = not face_up
 	_refresh_image()
 
 ## Adds this piece to a collection with the name c_name
@@ -129,8 +127,11 @@ var selected: bool = false
 
 var amount: int = 0
 
-
 func _on_area_2d_input_event(_viewport:Node, event:InputEvent, _shape_idx:int) -> void:
+	# if event is InputEventMouseButton and not board.board_player.input_state == board.board_player.InputState.HANDLED:
+	# 	print(name, " ",get_index(), " ",event.pressed)
+	# 	board.board_player.input_state = board.board_player.InputState.HANDLED
+	# 	return
 	if board.board_player.input_state == board.board_player.InputState.HANDLED:
 		return
 	

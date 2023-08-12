@@ -84,7 +84,7 @@ func _flip_selected_objects() -> void:
 
 func _set_objects_orientation(side: bool) -> void:
 	for obj in object_group:
-		obj.set_side(side)
+		obj.set_face(side)
 
 func _move_objects_to_front() -> void:
 	for obj in object_group:

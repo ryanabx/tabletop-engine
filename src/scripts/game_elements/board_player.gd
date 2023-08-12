@@ -18,6 +18,8 @@ var moved_since_selected: bool = true
 
 var board: Board
 
+var timer: Timer
+
 ######################
 ### Getter Methods ###
 ######################
@@ -36,6 +38,12 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and not selected_pieces.is_empty():
 		moved_since_selected = true
 
+func _ready() -> void:
+	timer = Timer.new()
+	add_child(timer)
+	timer.timeout.connect(game_menu_check)
+	timer.wait_time = 0.5
+
 ######################
 ### Main Processes ###
 ######################
@@ -49,6 +57,7 @@ func _process(_delta: float) -> void:
 	pass
 
 func select_pieces(objs: Array[Piece]) -> void:
+	timer.stop()
 	selected_pieces = []
 	board.grab_authority_on_objs(objs)
 	for obj in objs:
@@ -58,7 +67,7 @@ func select_pieces(objs: Array[Piece]) -> void:
 		obj.grab_offset = board.get_local_mouse_position() - obj.position
 	
 	moved_since_selected = false
-	get_tree().create_timer(0.5).timeout.connect(game_menu_check)
+	timer.start()
 
 func stack_selection_to_item(item: Piece) -> void:
 	if item.get_collection() != null:
@@ -80,7 +89,7 @@ func convert_to_stack(items: Array[Piece]) -> void:
 	print("Making new stack")
 	board.grab_authority_on_objs(items)
 	# First, create new collection
-	var collection: Collection = board.create_collection.rpc(
+	var collection: Collection = board.create_collection(
 		var_to_bytes({
 			"name": board.unique_name("newcoll"),
 			"position": items[0].position,
@@ -93,6 +102,7 @@ func convert_to_stack(items: Array[Piece]) -> void:
 		item.selected = false
 
 func select_collections(objs: Array[Collection]) -> void:
+	timer.stop()
 	board.grab_authority_on_objs(objs)
 	selected_pieces = []
 	for obj in objs:
@@ -102,6 +112,9 @@ func select_collections(objs: Array[Collection]) -> void:
 			selected_pieces.append(pc)
 			pc.selected = true
 			pc.grab_offset = board.get_local_mouse_position() - pc.position
+	
+	moved_since_selected = false
+	timer.start()
 
 func deselect_pieces() -> void:
 	board.grab_authority_on_objs(get_selected_pieces())

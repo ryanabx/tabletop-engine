@@ -81,9 +81,9 @@ static func _new_conf_obj(o: Dictionary, board: Board, coordinate_scale: Vector2
 				if not obj.has("name"):
 					obj.name = board.unique_name("collection")
 				# print("Constructing collection ", obj.name)
-				board.create_collection.rpc(var_to_bytes(obj))
+				board.create_collection(var_to_bytes(obj))
 			"piece":
 				if not obj.has("name"):
 					obj.name = board.unique_name("piece")
 				# print("Constructing piece ",obj.name)
-				board.create_piece.rpc(var_to_bytes(obj))
+				board.create_piece(var_to_bytes(obj))
