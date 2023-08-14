@@ -5,6 +5,10 @@ var coordinates_labels: Array
 @onready var game_name_label: Label = $VBoxContainer/GameNameLabel
 @onready var menu_bar: MenuBar = $VBoxContainer/TitleBar/HBoxContainer/MenuBar
 @onready var fps_counter: Label = $VBoxContainer/TitleBar/HBoxContainer/FPSCounter
+@onready var game_info: Label = $VBoxContainer/TitleBar/HBoxContainer/GameInfo
+
+var game_name: String = "untitled"
+var game_ip_addr: String = "local"
 
 func _ready() -> void:
 	multiplayer.peer_connected.connect(peer_connected)
@@ -42,16 +46,25 @@ func update_bar_color() -> void:
 func _process(_delta: float) -> void:
 	fps_counter.text = str(Engine.get_frames_per_second(), "fps")
 	coordinates_labels[0].position = get_local_mouse_position() + Vector2(20.0, -30.0)
+	game_info.text = str("Game: ",game_name, " | Server: ",game_ip_addr, " | ")
+	if multiplayer.multiplayer_peer is WebSocketMultiplayerPeer:
+		if multiplayer.is_server():
+			game_ip_addr = str("Host")
+		else:
+			game_ip_addr = str(multiplayer.multiplayer_peer.get_peer_address(1),":",multiplayer.multiplayer_peer.get_peer_port(1))
+	
 	if Globals.get_current_tabletop() == null:
 		return
 	var coordinates = Globals.get_current_tabletop().get_local_mouse_position()
 	coordinates_labels[0].set_text(str(round(coordinates.x),",", round(coordinates.y)))
 	
+	
+
 	if Globals.get_current_game() != null:
+		game_name = Globals.get_current_game().name
 		game_name_label.text = "Current Game: " + Globals.get_current_game().name
 	else:
 		game_name_label.text = "No Game Loaded"
-	queue_redraw()
 
 var drag_window: bool = false
 var start_position: Vector2 = Vector2.ZERO

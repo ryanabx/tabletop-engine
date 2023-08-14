@@ -36,7 +36,11 @@ mouse_filter = 2
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 1
+prefer_global_menu = false
 script = ExtResource("2_fos3n")
+
+[node name="GameInfo" type="Label" parent="VBoxContainer/TitleBar/HBoxContainer"]
+layout_mode = 2
 
 [node name="FPSCounter" type="Label" parent="VBoxContainer/TitleBar/HBoxContainer"]
 layout_mode = 2
