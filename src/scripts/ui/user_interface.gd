@@ -16,8 +16,8 @@ func _ready() -> void:
 	SignalManager.game_load_started.connect(show_loading)
 	SignalManager.game_load_finished.connect(hide_loading)
 	update_bar_color()
-	coordinates_labels.append(Label.new())
-	add_child(coordinates_labels[0])
+	# coordinates_labels.append(Label.new())
+	# add_child(coordinates_labels[0])
 
 func show_loading() -> void:
 	print("Game load started")
@@ -45,20 +45,16 @@ func update_bar_color() -> void:
 
 func _process(_delta: float) -> void:
 	fps_counter.text = str(Engine.get_frames_per_second(), "fps")
-	coordinates_labels[0].position = get_local_mouse_position() + Vector2(20.0, -30.0)
+	# coordinates_labels[0].position = get_local_mouse_position() + Vector2(20.0, -30.0)
 	game_info.text = str("Game: ",game_name, " | Server: ",game_ip_addr, " | ")
 	if multiplayer.multiplayer_peer is WebSocketMultiplayerPeer:
 		if multiplayer.is_server():
 			game_ip_addr = str("Host")
 		else:
 			game_ip_addr = str(multiplayer.multiplayer_peer.get_peer_address(1),":",multiplayer.multiplayer_peer.get_peer_port(1))
-	
-	if Globals.get_current_tabletop() == null:
-		return
-	var coordinates = Globals.get_current_tabletop().get_local_mouse_position()
-	coordinates_labels[0].set_text(str(round(coordinates.x),",", round(coordinates.y)))
-	
-	
+
+	# var coordinates = Globals.get_current_tabletop().get_local_mouse_position()
+	# coordinates_labels[0].set_text(str(round(coordinates.x),",", round(coordinates.y)))
 
 	if Globals.get_current_game() != null:
 		game_name = Globals.get_current_game().name

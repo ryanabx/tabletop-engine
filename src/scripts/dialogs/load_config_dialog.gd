@@ -11,6 +11,6 @@ func _on_create_load_config() -> void:
 	popup()
 
 func _on_file_decided(fname: String) -> void:
-	Globals.get_shared_tabletop_manager().load_game_config(ResourceLoader.load(fname, ""))
+	SignalManager.load_game_config.emit(ResourceLoader.load(fname, ""))
 	dialog_text = ""
 

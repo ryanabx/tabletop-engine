@@ -64,6 +64,13 @@ layout_mode = 2
 text = "Multiplayer Connections"
 horizontal_alignment = 1
 
+[node name="WebNotice" type="Label" parent="MplayConfigWindow/Container/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+text = "Cannot create server on Web platform"
+horizontal_alignment = 1
+
 [node name="HBoxContainer2" type="HBoxContainer" parent="MplayConfigWindow/Container/VBoxContainer"]
 layout_mode = 2
 alignment = 1

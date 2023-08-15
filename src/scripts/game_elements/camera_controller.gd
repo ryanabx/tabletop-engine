@@ -5,7 +5,6 @@ extends Node2D
 
 const MOVEMENT_SPEED: float = 1150.0
 const ROTATION_SPEED: float = 2.0
-const ZOOM_SPEED: float = 2.0
 
 var initial_mouse_pos: Vector2 = Vector2.ZERO
 var free_cam: bool = false
@@ -33,9 +32,9 @@ func snap_to_nearest_orientation() -> void:
 func _process(_delta: float) -> void:
 	# Zooming
 	if Input.is_action_pressed("camera_zoom_in"):
-		camera.zoom *= 1.020
+		camera.zoom *= 1.030
 	if Input.is_action_pressed("camera_zoom_out"):
-		camera.zoom *= 0.980
+		camera.zoom *= 0.970
 	
 	if Input.is_action_just_pressed("ui_zoom_in"):
 		camera.zoom *= 1.1

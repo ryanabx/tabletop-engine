@@ -10,13 +10,16 @@ extends Node
 
 var current_game: String = ""
 
+var board: Board = null
+
 func _ready() -> void:
 	Globals.set_shared_tabletop_manager(self)
+	SignalManager.load_game_config.connect(load_game_config)
 
 func remove_tabletop() -> void:
-	if Globals.get_current_tabletop() != null:
-		Globals.get_current_tabletop().queue_free()
-		await Globals.get_current_tabletop().tree_exited
+	if board != null:
+		board.queue_free()
+		await board.tree_exited
 	return
 
 func load_game_config(gc: GameConfig) -> void:

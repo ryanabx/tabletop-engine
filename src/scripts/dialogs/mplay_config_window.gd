@@ -2,6 +2,9 @@ extends Window
 
 func _ready() -> void:
 	SignalManager.open_multiplayer_menu.connect(open_window)
+	if OS.get_name() == "Web":
+		$Container/VBoxContainer/HBoxContainer2.hide()
+		$Container/VBoxContainer/WebNotice.show()
 
 func open_window() -> void:
 	print("opening window")

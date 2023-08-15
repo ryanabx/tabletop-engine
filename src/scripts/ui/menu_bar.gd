@@ -84,7 +84,7 @@ func set_player(index: int) -> void:
 	player.name = str("Player ",Player.get_number())
 
 func run_action(index: int) -> void:
-	Globals.get_shared_tabletop_manager().run_action(index)
+	SignalManager.run_action.emit(index)
 
 func file_pressed(id: int) -> void:
 	match id:

@@ -59,14 +59,8 @@ func _input(event: InputEvent) -> void:
 func set_current_tabletop(tabletop: Board) -> void:
 	current_tabletop = tabletop
 
-func get_current_tabletop() -> Board:
-	return current_tabletop
-
 func set_shared_tabletop_manager(tt: BoardManager) -> void:
 	tabletop_manager = tt
-
-func get_shared_tabletop_manager() -> BoardManager:
-	return tabletop_manager
 
 func get_current_game():
 	if current_tabletop == null:
