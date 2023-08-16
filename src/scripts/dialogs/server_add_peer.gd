@@ -2,6 +2,9 @@ extends Window
 
 var connection: WebRTCPeerConnection
 
+func _on_close_requested() -> void:
+	hide()
+
 @onready var client_sdp: LineEdit = $MarginContainer/VBoxContainer/HBoxContainer/ClientSDP
 @onready var server_sdp: LineEdit = $MarginContainer/VBoxContainer/HBoxContainer/ServerSDP
 @onready var client_ice: LineEdit = $MarginContainer/VBoxContainer/HBoxContainer2/ClientICE
