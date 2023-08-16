@@ -58,3 +58,10 @@ func has_any(arr1: Array, arr2: Array) -> bool:
 				return true
 	return false
 	
+func compress_dict_to_string(_d: Dictionary) -> String:
+	var bytes: PackedByteArray = var_to_bytes(_d)
+	return bytes.compress().get_string_from_utf8()
+
+func decompress_dict_from_string(_s: String) -> Dictionary:
+	var bytes: PackedByteArray = _s.to_utf8_buffer()
+	return bytes_to_var(bytes.decompress_dynamic(124800))
