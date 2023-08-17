@@ -5,7 +5,7 @@ extends Node2D
 @onready var collection_scene: PackedScene = preload("res://src/scenes/game_elements/gobjects/collection.tscn")
 
 # Game
-var game: GameConfig
+var game: GameConfig2
 
 var def_font: Font
 

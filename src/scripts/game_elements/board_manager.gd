@@ -26,10 +26,8 @@ func remove_tabletop() -> void:
 		await board.tree_exited
 	return
 
-func load_game_config(gc: GameConfig) -> void:
-	var config: Dictionary = gc.unpack_data()
-	var cfg_bytes: PackedByteArray = var_to_bytes(config)
-	config_bytes = cfg_bytes
+func load_game_config(gc: GameConfig2) -> void:
+	config_bytes = gc.to_bytes()
 
 	await remove_tabletop()
 	if not multiplayer.is_server():
@@ -39,9 +37,9 @@ func load_game_config(gc: GameConfig) -> void:
 	var end: int = MTU
 
 	while(true):
-		var slice: PackedByteArray = cfg_bytes.slice(beg, end)
-		receive_config_part.rpc(slice, end >= cfg_bytes.size())
-		if end >= cfg_bytes.size():
+		var slice: PackedByteArray = config_bytes.slice(beg, end)
+		receive_config_part.rpc(slice, end >= config_bytes.size())
+		if end >= config_bytes.size():
 			spawn_board()
 			break
 		beg += MTU
@@ -59,9 +57,8 @@ func receive_config_part(bytes: PackedByteArray, final: bool) -> void:
 
 func spawn_board() -> void:
 	print("Spawning board")
-	var gc_d: Dictionary = bytes_to_var(config_bytes)
-	print("Converted bytes to var")
-	var gc: GameConfig = GameConfig.repack(gc_d)
+	var gc: GameConfig2 = GameConfig2.new()
+	gc.fill_bytes(config_bytes)
 	var board_new: Board = board_scene.instantiate()
 	board_new.name = gc.name
 	Globals.set_current_tabletop(board_new)

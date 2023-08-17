@@ -9,6 +9,6 @@ func _on_create_export_config() -> void:
 	popup()
 
 func _on_folder_decided(fpath: String) -> void:
-	var game_config: GameConfig = GameConfig.build_config_from_file(fpath)
+	var game_config: PackedByteArray = GameConfig2.export_config_from_file(fpath)
 	hide()
 	SignalManager.export_conf.emit(game_config)

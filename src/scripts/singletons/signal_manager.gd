@@ -17,8 +17,8 @@ signal run_action(index: int)
 
 # File Dialogs
 signal config_file_opened(fname: String)
-signal export_conf(config: Resource)
-signal load_game_config(config: Resource)
+signal export_conf(config: PackedByteArray)
+signal load_game_config(config: GameConfig2)
 
 # Game Loading
 signal game_percent_loaded(pc: float)
