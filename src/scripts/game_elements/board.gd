@@ -135,6 +135,7 @@ func _ready() -> void:
 	board_player.board = self
 	highlights.board = self
 
+	get_viewport().set_physics_object_picking(true)
 	get_viewport().set_physics_object_picking_sort(true)
 
 	var coordinate_scale: Vector2 = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)

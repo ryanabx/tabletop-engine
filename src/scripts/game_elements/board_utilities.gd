@@ -57,7 +57,7 @@ func shuffle(pcs: Array[Piece]) -> void:
 func _swap(pc1: Piece, contents: Dictionary) -> void:
 	pc1.position = contents.position
 	pc1.rotation = contents.rotation
-	pc1.move_to_index(contents.index)
+	pc1.move_to_index.rpc(contents.index)
 	if pc1.collection != contents.collection:
 		pc1.add_to_collection(contents.collection)
 

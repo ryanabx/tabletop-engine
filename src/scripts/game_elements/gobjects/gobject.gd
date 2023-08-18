@@ -8,13 +8,16 @@ var gobject_scale: Vector2 = Vector2.ONE
 var board: Board
 
 ## Moves this object to the top of the draw order
+@rpc("any_peer","call_local", "reliable")
 func move_self_to_top() -> void:
     get_parent().move_child(self, -1)
 
 ## Moves this object to the back of the draw order
+@rpc("any_peer","call_local", "reliable")
 func move_self_to_back() -> void:
     get_parent().move_child(self, 0)
 
+@rpc("any_peer","call_local", "reliable")
 func move_to_index(index: int) -> void:
     get_parent().move_child(self, index)
 

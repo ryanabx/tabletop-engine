@@ -16,6 +16,20 @@ enum Type {STACK, HAND}
 
 @onready var count: Label = $Count
 
+## Moves this object to the top of the draw order
+@rpc("any_peer","call_local", "reliable")
+func move_self_to_top() -> void:
+	get_parent().move_child(self, -1)
+
+## Moves this object to the back of the draw order
+@rpc("any_peer","call_local", "reliable")
+func move_self_to_back() -> void:
+	get_parent().move_child(self, 0)
+
+@rpc("any_peer","call_local", "reliable")
+func move_to_index(index: int) -> void:
+	get_parent().move_child(self, index)
+
 func _ready() -> void:
 	collision_polygon.polygon = get_gobject_transform() * self.shape
 
@@ -80,20 +94,11 @@ func _on_area_2d_mouse_exited() -> void:
 
 
 func _on_area_2d_input_event(_viewport:Node, event:InputEvent, _shape_idx:int) -> void:
-	if event is InputEventKey:
-		print(event)
-	match board.board_player.input_state:
-		board.board_player.InputState.HANDLED:
-			return
-		board.board_player.InputState.UNHANDLED:
-			input_unhandled(event)
-
-func input_unhandled(event: InputEvent) -> void:
-	if board.board_player.selected_pieces.is_empty():
+	if event is InputEventMouseMotion:
 		return
 
-
-	if (event.is_action_released("game_select") or event.is_action_released("game_select_stack")):
-		if selected == false and can_access():
-			print("RELEASED AND STACKABLE OBJECT FOUND")
-			board.board_player.stack_stackables_to_collection(self)
+	if board.board_player.is_selecting():
+		if (event.is_action_released("game_select") or event.is_action_released("game_select_stack")):
+			if selected == false and can_access():
+				print("RELEASED AND STACKABLE OBJECT FOUND")
+				board.board_player.stack_stackables_to_collection(self)

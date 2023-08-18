@@ -7,12 +7,6 @@ var selected_collections: Array[Collection] = []
 var selection_box: Rect2 = Rect2(0,0,0,0)
 var selection_boxing: bool = false
 
-enum InputState {
-	UNHANDLED, HANDLED
-}
-
-var input_state: InputState = InputState.UNHANDLED
-
 var queued_deselection: bool = false
 
 var moved_since_selected: bool = true
@@ -27,6 +21,9 @@ var timer: Timer
 
 func get_selected_pieces() -> Array[Piece]:
 	return selected_pieces
+
+func is_selecting() -> bool:
+	return not (selected_pieces.is_empty() and selected_collections.is_empty())
 
 ######################
 ### Input Handling ###
@@ -57,7 +54,6 @@ func _ready() -> void:
 ######################
 
 func _process(_delta: float) -> void:
-	input_state = InputState.UNHANDLED
 	if queued_deselection:
 		if not selected_pieces.is_empty():
 			deselect_pieces()
@@ -77,7 +73,7 @@ func select_objects_from_menu(objs: Array[Piece], with_collections: bool) -> voi
 		selected_collections.append(collection)
 
 	for obj in objs:
-		obj.move_self_to_top()
+		obj.move_self_to_top.rpc()
 		selected_pieces.append(obj)
 		obj.set_selected(true)
 		obj.grab_offset = Vector2.ZERO
@@ -89,7 +85,7 @@ func select_pieces(objs: Array[Piece]) -> void:
 	selected_pieces = []
 	board.grab_authority_on_objs(objs)
 	for obj in objs:
-		obj.move_self_to_top()
+		obj.move_self_to_top.rpc()
 		selected_pieces.append(obj)
 		obj.set_selected(true)
 		obj.grab_offset = board.get_local_mouse_position() - obj.position
@@ -103,7 +99,6 @@ func stack_selection_to_item(item: Piece) -> void:
 	else:
 		selected_pieces.push_front(item)
 		convert_to_stack(selected_pieces)
-	input_state = InputState.HANDLED
 	selected_pieces = []
 
 func stack_stackables_to_collection(coll: Collection) -> void:
@@ -136,7 +131,7 @@ func select_collections(objs: Array[Collection]) -> void:
 	for obj in objs:
 		board.grab_authority_on_objs(obj.get_pieces())
 		for pc in obj.get_pieces():
-			pc.move_self_to_top()
+			pc.move_self_to_top.rpc()
 			selected_pieces.append(pc)
 			pc.set_selected(true)
 			pc.grab_offset = board.get_local_mouse_position() - pc.position

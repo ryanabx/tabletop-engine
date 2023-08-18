@@ -49,9 +49,6 @@ const COLOR_PERMANENT: Color = Color.BLACK
 const COLOR_SELECTION_BOX_BORDER: Color = Color.BLUE
 const COLOR_SELECTION_BOX: Color = COLOR_SELECTION_BOX_BORDER * COLOR_TRANSPARENT_HIGHLIGHT
 
-func _ready() -> void:
-	get_window().get_viewport().physics_object_picking_sort = true
-
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_exit_fullscreen") and DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
