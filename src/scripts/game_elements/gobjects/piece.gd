@@ -132,10 +132,10 @@ func can_access() -> bool:
 func set_selected(sl: bool) -> void:
 	if sl == true:
 		selected = true
-		area2d.input_pickable = false
+		area2d.collision_layer = 2
 	else:
 		selected = false
-		area2d.input_pickable = true
+		area2d.collision_layer = 1
 
 func is_selected() -> bool:
 	return selected

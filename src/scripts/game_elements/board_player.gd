@@ -24,6 +24,9 @@ var physics_state: PhysicsDirectSpaceState2D
 func get_selected_pieces() -> Array[Piece]:
 	return selected_pieces
 
+func get_selected_collections() -> Array[Collection]:
+	return selected_collections
+
 func is_selecting() -> bool:
 	return not (selected_pieces.is_empty() and selected_collections.is_empty())
 
@@ -43,6 +46,7 @@ func _input(event: InputEvent) -> void:
 		for pc in selected_pieces:
 			if not selected_collections.has(board.get_collection(pc.collection)):
 				pc.remove_from_collection()
+		return
 	
 	var params: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
 	params.position = get_local_mouse_position()
@@ -55,6 +59,14 @@ func _input(event: InputEvent) -> void:
 		if results.size() > 0:
 			results.sort_custom(compare_by_z_index)
 			print(results[0].collider.get_parent().get_name())
+			results[0].collider.get_parent()._on_gobject_input(event)
+	elif event.is_action_released("game_select"):
+		var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
+		if results.size() > 0:
+			results.sort_custom(compare_by_z_index)
+			print(results[0].collider.get_parent().get_name())
+			results[0].collider.get_parent()._on_gobject_input(event)
+	
 
 
 func compare_by_z_index(a: Dictionary, b: Dictionary) -> bool:
@@ -90,6 +102,7 @@ func select_objects_from_menu(objs: Array[Piece], with_collections: bool) -> voi
 			convert_to_stack(objs)
 			collection = objs[0].get_collection()
 		selected_collections.append(collection)
+		collection.set_selected(true)
 
 	for obj in objs:
 		obj.move_self_to_top.rpc()
@@ -97,7 +110,7 @@ func select_objects_from_menu(objs: Array[Piece], with_collections: bool) -> voi
 		obj.set_selected(true)
 		obj.grab_offset = Vector2.ZERO
 			
-			
+
 
 func select_pieces(objs: Array[Piece]) -> void:
 	timer.stop()
@@ -155,14 +168,19 @@ func select_collections(objs: Array[Collection]) -> void:
 			pc.set_selected(true)
 			pc.grab_offset = board.get_local_mouse_position() - pc.position
 		selected_collections.append(obj)
+		obj.set_selected(true)
 	moved_since_selected = false
 	timer.start()
 
 func deselect_pieces() -> void:
 	board.grab_authority_on_objs(get_selected_pieces())
 	for obj in get_selected_pieces():
-		obj.set_selected(false)
+		if is_instance_valid(obj):
+			obj.set_selected(false)
 	selected_pieces = []
+	for obj in get_selected_collections():
+		if is_instance_valid(obj):
+			obj.set_selected(false)
 	selected_collections = []
 	moved_since_selected = true
 

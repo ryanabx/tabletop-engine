@@ -120,7 +120,9 @@ func _create_piece(data: PackedByteArray) -> void:
 @rpc("any_peer","call_local", "reliable")
 func assign_authority(pid: int, objects: PackedStringArray):
 	for obj in objects:
-		get_gobject(obj).set_multiplayer_authority(pid)
+		var gobj: Gobject = get_gobject(obj)
+		if gobj != null:
+			gobj.set_multiplayer_authority(pid)
 
 func grab_authority_on_objs(objects: Array) -> void:
 	var objs: PackedStringArray = PackedStringArray(objects.map(func(v: Gobject) -> String: return v.name))

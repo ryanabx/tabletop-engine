@@ -11,6 +11,7 @@ var type: Type = Type.STACK
 
 var selected: bool = false
 @onready var collision_polygon = $Area2D/CollisionPolygon2D
+@onready var area2d: Area2D = $Area2D
 
 enum Type {STACK, HAND}
 
@@ -19,6 +20,7 @@ enum Type {STACK, HAND}
 func _ready() -> void:
 	self.gobject_input.connect(_on_gobject_input)
 	collision_polygon.polygon = get_gobject_transform() * self.shape
+	count.z_index = 1000
 
 ## Moves this object to the top of the draw order
 @rpc("any_peer","call_local", "reliable")
@@ -60,7 +62,6 @@ func erase_self() -> void:
 		var piece: Piece = self.board.get_piece(obj)
 		if piece != null:
 			piece.collection = ""
-
 	queue_free()
 
 static var collection_scene = preload("res://src/scenes/game_elements/gobjects/collection.tscn")
@@ -83,6 +84,15 @@ func can_access() -> bool:
 	elif access_perms[Player.get_id()] == false:
 		return false
 	return true
+
+
+func set_selected(sl: bool) -> void:
+	if sl == true:
+		selected = true
+		area2d.collision_layer = 2
+	else:
+		selected = false
+		area2d.collision_layer = 1
 
 func _on_gobject_input(event:InputEvent) -> void:
 	if event is InputEventMouseMotion:
