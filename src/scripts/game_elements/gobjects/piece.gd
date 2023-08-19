@@ -14,9 +14,6 @@ var grab_offset: Vector2 = Vector2.ZERO
 @onready var collision_polygon: CollisionPolygon2D = $Area2D/CollisionPolygon2D
 @onready var area2d: Area2D = $Area2D
 
-var selectable: bool = false
-
-
 ## Moves this object to the top of the draw order
 @rpc("any_peer","call_local", "reliable")
 func move_self_to_top() -> void:
@@ -34,6 +31,7 @@ func move_to_index(index: int) -> void:
 func _ready() -> void:
 	_refresh_image()
 	collision_polygon.polygon = get_gobject_transform() * self.shape
+	self.gobject_input.connect(_on_gobject_input)
 
 func _process(_delta: float) -> void:
 	update_position()
@@ -142,20 +140,11 @@ func set_selected(sl: bool) -> void:
 func is_selected() -> bool:
 	return selected
 
-
-
-func _on_area_2d_mouse_entered() -> void:
-	selectable = true
-
-
-func _on_area_2d_mouse_exited() -> void:
-	selectable = false
-
 var selected: bool = false
 
 var amount: int = 0
 
-func _on_area_2d_input_event(_viewport:Node, event:InputEvent, _shape_idx:int) -> void:
+func _on_gobject_input(event:InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		return
 	
@@ -171,7 +160,6 @@ func _on_area_2d_input_event(_viewport:Node, event:InputEvent, _shape_idx:int) -
 			if can_access():
 				print("RELEASED AND STACKABLE OBJECT FOUND")
 				board.board_player.stack_selection_to_item(self)
-
 
 func _on_multiplayer_synchronizer_synchronized() -> void:
 	_refresh_image()

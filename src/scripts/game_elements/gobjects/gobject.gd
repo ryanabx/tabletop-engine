@@ -7,6 +7,8 @@ var erased: bool = false
 var gobject_scale: Vector2 = Vector2.ONE
 var board: Board
 
+signal gobject_input(event: InputEvent)
+
 ## Moves this object to the top of the draw order
 @rpc("any_peer","call_local", "reliable")
 func move_self_to_top() -> void:

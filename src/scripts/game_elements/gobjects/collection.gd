@@ -16,6 +16,10 @@ enum Type {STACK, HAND}
 
 @onready var count: Label = $Count
 
+func _ready() -> void:
+	self.gobject_input.connect(_on_gobject_input)
+	collision_polygon.polygon = get_gobject_transform() * self.shape
+
 ## Moves this object to the top of the draw order
 @rpc("any_peer","call_local", "reliable")
 func move_self_to_top() -> void:
@@ -29,9 +33,6 @@ func move_self_to_back() -> void:
 @rpc("any_peer","call_local", "reliable")
 func move_to_index(index: int) -> void:
 	get_parent().move_child(self, index)
-
-func _ready() -> void:
-	collision_polygon.polygon = get_gobject_transform() * self.shape
 
 func _process(_delta: float) -> void:
 	count.position = (get_gobject_transform() * self.shape)[0]
@@ -83,17 +84,7 @@ func can_access() -> bool:
 		return false
 	return true
 
-
-func _on_area_2d_mouse_entered() -> void:
-	pass # Replace with function body.
-
-
-func _on_area_2d_mouse_exited() -> void:
-	pass # Replace with function body.
-
-
-
-func _on_area_2d_input_event(_viewport:Node, event:InputEvent, _shape_idx:int) -> void:
+func _on_gobject_input(event:InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		return
 

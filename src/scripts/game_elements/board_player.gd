@@ -15,6 +15,8 @@ var board: Board
 
 var timer: Timer
 
+var physics_state: PhysicsDirectSpaceState2D
+
 ######################
 ### Getter Methods ###
 ######################
@@ -41,6 +43,22 @@ func _input(event: InputEvent) -> void:
 		for pc in selected_pieces:
 			if not selected_collections.has(board.get_collection(pc.collection)):
 				pc.remove_from_collection()
+	
+	var params: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
+	params.position = get_local_mouse_position()
+	params.collide_with_areas = true
+	params.collide_with_bodies = false
+	params.collision_mask = 1
+
+	if event.is_action_pressed("game_select"):
+		var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
+		if results.size() > 0:
+			results.sort_custom(compare_by_z_index)
+			print(results[0].collider.get_parent().get_name())
+
+
+func compare_by_z_index(a: Dictionary, b: Dictionary) -> bool:
+	return a.collider.get_parent().get_index() > b.collider.get_parent().get_index()
 
 func _ready() -> void:
 	timer = Timer.new()
@@ -48,6 +66,7 @@ func _ready() -> void:
 	timer.timeout.connect(game_menu_check)
 	timer.wait_time = 0.5
 	SignalManager.select_objects.connect(select_objects_from_menu)
+	physics_state = get_world_2d().get_direct_space_state()
 
 ######################
 ### Main Processes ###
