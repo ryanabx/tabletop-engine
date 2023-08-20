@@ -5,7 +5,7 @@ extends Node2D
 @onready var collection_scene: PackedScene = preload("res://src/scenes/game_elements/gobjects/collection.tscn")
 
 # Game
-var game: GameConfig
+var game: GameConfig2
 
 var def_font: Font
 
@@ -120,7 +120,9 @@ func _create_piece(data: PackedByteArray) -> void:
 @rpc("any_peer","call_local", "reliable")
 func assign_authority(pid: int, objects: PackedStringArray):
 	for obj in objects:
-		get_gobject(obj).set_multiplayer_authority(pid)
+		var gobj: Gobject = get_gobject(obj)
+		if gobj != null:
+			gobj.set_multiplayer_authority(pid)
 
 func grab_authority_on_objs(objects: Array) -> void:
 	var objs: PackedStringArray = PackedStringArray(objects.map(func(v: Gobject) -> String: return v.name))
@@ -135,6 +137,7 @@ func _ready() -> void:
 	board_player.board = self
 	highlights.board = self
 
+	get_viewport().set_physics_object_picking(true)
 	get_viewport().set_physics_object_picking_sort(true)
 
 	var coordinate_scale: Vector2 = Vector2(game.board.coordinate_scale.x, game.board.coordinate_scale.y)

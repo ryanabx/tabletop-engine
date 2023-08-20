@@ -8,13 +8,34 @@ var face_up: bool = false
 
 var grab_offset: Vector2 = Vector2.ZERO
 
+class PieceInfo extends RefCounted:
+	var name: String = ""
+	var image_up: String = ""
+	var image_down: String = ""
+	var collection: String = ""
+	var face_up: bool = false
+	var shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)])
+	var gobject_scale: Vector2 = Vector2.ONE
+
 @onready var sprite_down: Sprite2D = $Down
 @onready var sprite_up: Sprite2D = $Up
 
 @onready var collision_polygon: CollisionPolygon2D = $Area2D/CollisionPolygon2D
 @onready var area2d: Area2D = $Area2D
 
-var selectable: bool = false
+## Moves this object to the top of the draw order
+@rpc("any_peer","call_local", "reliable")
+func move_self_to_top() -> void:
+	get_parent().move_child(self, -1)
+
+## Moves this object to the back of the draw order
+@rpc("any_peer","call_local", "reliable")
+func move_self_to_back() -> void:
+	get_parent().move_child(self, 0)
+
+@rpc("any_peer","call_local", "reliable")
+func move_to_index(index: int) -> void:
+	get_parent().move_child(self, index)
 
 func _ready() -> void:
 	_refresh_image()
@@ -119,52 +140,30 @@ func can_access() -> bool:
 func set_selected(sl: bool) -> void:
 	if sl == true:
 		selected = true
-		area2d.input_pickable = false
+		area2d.collision_layer = 2
 	else:
 		selected = false
-		area2d.input_pickable = true
+		area2d.collision_layer = 1
 
 func is_selected() -> bool:
 	return selected
-
-
-
-func _on_area_2d_mouse_entered() -> void:
-	selectable = true
-
-
-func _on_area_2d_mouse_exited() -> void:
-	selectable = false
 
 var selected: bool = false
 
 var amount: int = 0
 
-func _on_area_2d_input_event(_viewport:Node, event:InputEvent, _shape_idx:int) -> void:
-	# if event is InputEventMouseButton and not board.board_player.input_state == board.board_player.InputState.HANDLED:
-	# 	print(name, " ",get_index(), " ",event.pressed)
-	# 	board.board_player.input_state = board.board_player.InputState.HANDLED
-	# 	return
-	if board.board_player.input_state == board.board_player.InputState.HANDLED:
-		return
-	
-	if board.board_player.selected_pieces.is_empty():
-		if event.is_action_pressed("game_select") or (event.is_action_pressed("game_select_stack") and collection == ""):
-			# print(name," clicked ",amount, " index ",get_index())
-			board.board_player.select_pieces([self])
-			board.board_player.input_state = board.board_player.InputState.HANDLED
-		elif event.is_action_pressed("game_select_stack"):
-			var coll: Collection = board.get_collection(collection)
-			if coll != null and not coll.permanent:
-				# print(name," clicked ",amount, " index ", get_index())
-				board.board_player.select_collections([coll])
-			board.board_player.input_state = board.board_player.InputState.HANDLED
-	if not event is InputEventMouseMotion:
-		pass
-		#print("Event: ", event)
+func _on_select(event:InputEvent) -> void:
+	if event.is_action_pressed("game_select") or (event.is_action_pressed("game_select_stack") and collection == ""):
+		board.board_player.select_pieces([self])
+	elif event.is_action_pressed("game_select_stack"):
+		var coll: Collection = board.get_collection(collection)
+		if coll != null and not coll.permanent:
+			board.board_player.select_collections([coll])
 
+func _on_deselect(_event: InputEvent) -> void:
+	if can_access():
+		print("RELEASED AND STACKABLE OBJECT FOUND")
+		board.board_player.stack_selection_to_item(self)
 
-	if (event.is_action_released("game_select") or event.is_action_released("game_select_stack")):
-		if can_access():
-			print("RELEASED AND STACKABLE OBJECT FOUND")
-			board.board_player.stack_selection_to_item(self)
+func _on_multiplayer_synchronizer_synchronized() -> void:
+	_refresh_image()

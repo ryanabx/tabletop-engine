@@ -14,7 +14,6 @@ config/name="Open Boardgame Framework"
 config/description="A 2-dimensional virtual tabletop for all! Create board game configurations which can be loaded in and played with friends online or in person!"
 run/main_scene="res://src/scenes/game_elements/board_manager.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
-run/max_fps=60
 config/icon="res://icon.png"
 config/windows_native_icon="res://icon.ico"
 
@@ -32,7 +31,6 @@ window/size/viewport_width=1280
 window/size/viewport_height=720
 window/size/window_width_override=1920
 window/size/window_height_override=1080
-window/subwindows/embed_subwindows=false
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 

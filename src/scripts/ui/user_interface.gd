@@ -35,7 +35,7 @@ func peer_connected(_id: int) -> void:
 	update_bar_color()
 
 func update_bar_color() -> void:
-	if multiplayer != null and multiplayer.is_server() and multiplayer.multiplayer_peer is WebSocketMultiplayerPeer:
+	if multiplayer != null and multiplayer.is_server() and multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
 		if multiplayer.get_peers().size() > 0:
 			$VBoxContainer/TitleBar.get_theme_stylebox("panel").bg_color = Color8(39, 61, 42)
 		else:
@@ -47,11 +47,6 @@ func _process(_delta: float) -> void:
 	fps_counter.text = str(Engine.get_frames_per_second(), "fps")
 	# coordinates_labels[0].position = get_local_mouse_position() + Vector2(20.0, -30.0)
 	game_info.text = str("Game: ",game_name, " | Server: ",game_ip_addr, " | ")
-	if multiplayer.multiplayer_peer is WebSocketMultiplayerPeer:
-		if multiplayer.is_server():
-			game_ip_addr = str("Host")
-		else:
-			game_ip_addr = str(multiplayer.multiplayer_peer.get_peer_address(1),":",multiplayer.multiplayer_peer.get_peer_port(1))
 
 	# var coordinates = Globals.get_current_tabletop().get_local_mouse_position()
 	# coordinates_labels[0].set_text(str(round(coordinates.x),",", round(coordinates.y)))

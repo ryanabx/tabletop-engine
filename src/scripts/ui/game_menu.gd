@@ -90,11 +90,11 @@ func _set_objects_orientation(side: bool) -> void:
 
 func _move_objects_to_front() -> void:
 	for obj in object_group:
-		obj.move_self_to_top()
+		obj.move_self_to_top.rpc()
 
 func _move_objects_to_back() -> void:
 	for obj in object_group:
-		obj.move_self_to_back()
+		obj.move_self_to_back.rpc()
 
 func _stack_selected_objects() -> void:
 	SignalManager.convert_to_stack.emit(object_group)

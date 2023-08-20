@@ -7,12 +7,6 @@ var selected_collections: Array[Collection] = []
 var selection_box: Rect2 = Rect2(0,0,0,0)
 var selection_boxing: bool = false
 
-enum InputState {
-	UNHANDLED, HANDLED
-}
-
-var input_state: InputState = InputState.UNHANDLED
-
 var queued_deselection: bool = false
 
 var moved_since_selected: bool = true
@@ -21,12 +15,20 @@ var board: Board
 
 var timer: Timer
 
+var physics_state: PhysicsDirectSpaceState2D
+
 ######################
 ### Getter Methods ###
 ######################
 
 func get_selected_pieces() -> Array[Piece]:
 	return selected_pieces
+
+func get_selected_collections() -> Array[Collection]:
+	return selected_collections
+
+func is_selecting() -> bool:
+	return not (selected_pieces.is_empty() and selected_collections.is_empty())
 
 ######################
 ### Input Handling ###
@@ -44,6 +46,59 @@ func _input(event: InputEvent) -> void:
 		for pc in selected_pieces:
 			if not selected_collections.has(board.get_collection(pc.collection)):
 				pc.remove_from_collection()
+		return
+	
+	var params: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
+	params.position = get_local_mouse_position()
+	params.collide_with_areas = true
+	params.collide_with_bodies = false
+	params.collision_mask = 1
+
+	if event.is_action_pressed("game_select"):
+		var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
+		if results.size() > 0:
+			results.sort_custom(compare_by_z_index)
+			print(results[0].collider.get_parent().get_name())
+			results[0].collider.get_parent()._on_select(event)
+	elif event.is_action_released("game_select"):
+		var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
+		if results.size() > 0:
+			results.sort_custom(compare_by_z_index)
+			print(results[0].collider.get_parent().get_name())
+			results[0].collider.get_parent()._on_deselect(event)
+
+func compare_by_z_index(a: Dictionary, b: Dictionary) -> bool:
+	return a.collider.get_parent().get_index() > b.collider.get_parent().get_index()
+
+## Shuffles objects
+func shuffle(pcs: Array[Piece]) -> void:
+	var pcs_shuffled: Array[Piece] = pcs.duplicate(false)
+	pcs_shuffled.shuffle()
+	for i in range(pcs.size()):
+		var pc1: Piece = pcs[i]
+		var pc2: Piece = pcs_shuffled[i]
+		var contents1: Dictionary = {
+			"position": pc1.position,
+			"rotation": pc1.rotation,
+			"index": pc1.get_index(),
+			"collection": pc1.collection
+		}
+		var contents2: Dictionary = {
+			"position": pc2.position,
+			"rotation": pc2.rotation,
+			"index": pc2.get_index(),
+			"collection": pc2.collection
+		}
+		_swap(pc1, contents2)
+		_swap(pc2, contents1)
+
+func _swap(pc1: Piece, contents: Dictionary) -> void:
+	pc1.position = contents.position
+	pc1.rotation = contents.rotation
+	pc1.move_to_index.rpc(contents.index)
+	if pc1.collection != contents.collection:
+		pc1.add_to_collection(contents.collection)
+
 
 func _ready() -> void:
 	timer = Timer.new()
@@ -51,13 +106,14 @@ func _ready() -> void:
 	timer.timeout.connect(game_menu_check)
 	timer.wait_time = 0.5
 	SignalManager.select_objects.connect(select_objects_from_menu)
+	SignalManager.shuffle_selection.connect(shuffle)
+	physics_state = get_world_2d().get_direct_space_state()
 
 ######################
 ### Main Processes ###
 ######################
 
 func _process(_delta: float) -> void:
-	input_state = InputState.UNHANDLED
 	if queued_deselection:
 		if not selected_pieces.is_empty():
 			deselect_pieces()
@@ -75,21 +131,20 @@ func select_objects_from_menu(objs: Array[Piece], with_collections: bool) -> voi
 			convert_to_stack(objs)
 			collection = objs[0].get_collection()
 		selected_collections.append(collection)
+		collection.set_selected(true)
 
 	for obj in objs:
-		obj.move_self_to_top()
+		obj.move_self_to_top.rpc()
 		selected_pieces.append(obj)
 		obj.set_selected(true)
 		obj.grab_offset = Vector2.ZERO
 			
-			
-
 func select_pieces(objs: Array[Piece]) -> void:
 	timer.stop()
 	selected_pieces = []
 	board.grab_authority_on_objs(objs)
 	for obj in objs:
-		obj.move_self_to_top()
+		obj.move_self_to_top.rpc()
 		selected_pieces.append(obj)
 		obj.set_selected(true)
 		obj.grab_offset = board.get_local_mouse_position() - obj.position
@@ -103,15 +158,14 @@ func stack_selection_to_item(item: Piece) -> void:
 	else:
 		selected_pieces.push_front(item)
 		convert_to_stack(selected_pieces)
-	input_state = InputState.HANDLED
-	selected_pieces = []
+	deselect_pieces()
+	
 
 func stack_stackables_to_collection(coll: Collection) -> void:
 	print("Stacking stackables to collection")
 	board.grab_authority_on_objs(selected_pieces + [coll])
 	for piece in selected_pieces:
 		piece.add_to_collection(coll)
-		piece.set_selected(false)
 
 func convert_to_stack(items: Array[Piece]) -> void:
 	print("Making new stack")
@@ -136,19 +190,24 @@ func select_collections(objs: Array[Collection]) -> void:
 	for obj in objs:
 		board.grab_authority_on_objs(obj.get_pieces())
 		for pc in obj.get_pieces():
-			pc.move_self_to_top()
+			pc.move_self_to_top.rpc()
 			selected_pieces.append(pc)
 			pc.set_selected(true)
 			pc.grab_offset = board.get_local_mouse_position() - pc.position
 		selected_collections.append(obj)
+		obj.set_selected(true)
 	moved_since_selected = false
 	timer.start()
 
 func deselect_pieces() -> void:
 	board.grab_authority_on_objs(get_selected_pieces())
 	for obj in get_selected_pieces():
-		obj.set_selected(false)
+		if is_instance_valid(obj):
+			obj.set_selected(false)
 	selected_pieces = []
+	for obj in get_selected_collections():
+		if is_instance_valid(obj):
+			obj.set_selected(false)
 	selected_collections = []
 	moved_since_selected = true
 

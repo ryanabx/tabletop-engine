@@ -1,16 +1,18 @@
 extends FileDialog
 
-var config: Resource = null
+var config: PackedByteArray = []
 
 func _ready() -> void:
 	SignalManager.export_conf.connect(_on_config_created)
 	file_selected.connect(_on_file_decided)
-	filters = ["*.obf.res"]
+	filters = ["*.obgf"]
 
-func _on_config_created(conf: Resource) -> void:
+func _on_config_created(conf: PackedByteArray) -> void:
 	config = conf
 	popup()
 
 func _on_file_decided(fpath: String) -> void:
-	var result: int = ResourceSaver.save(config, fpath, (32+64))
-	print("Finished exporting with code ",result)
+	var f = FileAccess.open(fpath, FileAccess.WRITE)
+	f.store_buffer(config)
+	f.close()
+	print("Finished config")

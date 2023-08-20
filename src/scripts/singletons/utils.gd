@@ -57,4 +57,9 @@ func has_any(arr1: Array, arr2: Array) -> bool:
 			if x == y:
 				return true
 	return false
-	
+
+func encode_offer(offer: Dictionary) -> String:
+	return JSON.stringify(offer)
+
+func decode_offer(offer: String) -> Dictionary:
+	return JSON.parse_string(offer)
