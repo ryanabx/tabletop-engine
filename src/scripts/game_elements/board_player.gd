@@ -59,18 +59,46 @@ func _input(event: InputEvent) -> void:
 		if results.size() > 0:
 			results.sort_custom(compare_by_z_index)
 			print(results[0].collider.get_parent().get_name())
-			results[0].collider.get_parent()._on_gobject_input(event)
+			results[0].collider.get_parent()._on_select(event)
 	elif event.is_action_released("game_select"):
 		var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
 		if results.size() > 0:
 			results.sort_custom(compare_by_z_index)
 			print(results[0].collider.get_parent().get_name())
-			results[0].collider.get_parent()._on_gobject_input(event)
-	
-
+			results[0].collider.get_parent()._on_deselect(event)
 
 func compare_by_z_index(a: Dictionary, b: Dictionary) -> bool:
 	return a.collider.get_parent().get_index() > b.collider.get_parent().get_index()
+
+## Shuffles objects
+func shuffle(pcs: Array[Piece]) -> void:
+	var pcs_shuffled: Array[Piece] = pcs.duplicate(false)
+	pcs_shuffled.shuffle()
+	for i in range(pcs.size()):
+		var pc1: Piece = pcs[i]
+		var pc2: Piece = pcs_shuffled[i]
+		var contents1: Dictionary = {
+			"position": pc1.position,
+			"rotation": pc1.rotation,
+			"index": pc1.get_index(),
+			"collection": pc1.collection
+		}
+		var contents2: Dictionary = {
+			"position": pc2.position,
+			"rotation": pc2.rotation,
+			"index": pc2.get_index(),
+			"collection": pc2.collection
+		}
+		_swap(pc1, contents2)
+		_swap(pc2, contents1)
+
+func _swap(pc1: Piece, contents: Dictionary) -> void:
+	pc1.position = contents.position
+	pc1.rotation = contents.rotation
+	pc1.move_to_index.rpc(contents.index)
+	if pc1.collection != contents.collection:
+		pc1.add_to_collection(contents.collection)
+
 
 func _ready() -> void:
 	timer = Timer.new()
@@ -78,6 +106,7 @@ func _ready() -> void:
 	timer.timeout.connect(game_menu_check)
 	timer.wait_time = 0.5
 	SignalManager.select_objects.connect(select_objects_from_menu)
+	SignalManager.shuffle_selection.connect(shuffle)
 	physics_state = get_world_2d().get_direct_space_state()
 
 ######################
@@ -110,8 +139,6 @@ func select_objects_from_menu(objs: Array[Piece], with_collections: bool) -> voi
 		obj.set_selected(true)
 		obj.grab_offset = Vector2.ZERO
 			
-
-
 func select_pieces(objs: Array[Piece]) -> void:
 	timer.stop()
 	selected_pieces = []
@@ -131,14 +158,14 @@ func stack_selection_to_item(item: Piece) -> void:
 	else:
 		selected_pieces.push_front(item)
 		convert_to_stack(selected_pieces)
-	selected_pieces = []
+	deselect_pieces()
+	
 
 func stack_stackables_to_collection(coll: Collection) -> void:
 	print("Stacking stackables to collection")
 	board.grab_authority_on_objs(selected_pieces + [coll])
 	for piece in selected_pieces:
 		piece.add_to_collection(coll)
-		piece.set_selected(false)
 
 func convert_to_stack(items: Array[Piece]) -> void:
 	print("Making new stack")

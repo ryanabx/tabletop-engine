@@ -29,20 +29,20 @@ func set_camera_orientation(deg: float) -> void:
 func snap_to_nearest_orientation() -> void:
 	camera.rotation_degrees = roundf(camera.rotation_degrees / 90.0) * 90.0
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	# Zooming
 	if Input.is_action_pressed("camera_zoom_in"):
-		camera.zoom *= 1.030
+		camera.zoom *= 1.0 + (delta * 1.5)
 	if Input.is_action_pressed("camera_zoom_out"):
-		camera.zoom *= 0.970
+		camera.zoom /= 1.0 + (delta * 1.5)
 	
 	if Input.is_action_just_pressed("ui_zoom_in"):
 		camera.zoom *= 1.1
 	if Input.is_action_just_pressed("ui_zoom_out"):
-		camera.zoom *= 0.9
+		camera.zoom /= 1.1
 	
-	camera.position += (Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED * _delta).rotated(camera.rotation)
-	camera.rotation += Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise") * ROTATION_SPEED * _delta
+	camera.position += (Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED * delta).rotated(camera.rotation)
+	camera.rotation += Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise") * ROTATION_SPEED * delta
 	if absf(Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise")) < 0.1 and absf(roundf(camera.rotation_degrees / 45.0) * 45.0 - camera.rotation_degrees) < 7.5:
 		camera.rotation_degrees = roundf(camera.rotation_degrees / 45.0) * 45.0
 	check_free_cam()

@@ -2,12 +2,9 @@ class_name Gobject
 extends Node2D
 
 var shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)])
-var erased: bool = false
-
 var gobject_scale: Vector2 = Vector2.ONE
-var board: Board
 
-signal gobject_input(event: InputEvent)
+var board: Board
 
 ## Moves this object to the top of the draw order
 @rpc("any_peer","call_local", "reliable")

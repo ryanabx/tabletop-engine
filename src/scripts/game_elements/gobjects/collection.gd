@@ -18,7 +18,6 @@ enum Type {STACK, HAND}
 @onready var count: Label = $Count
 
 func _ready() -> void:
-	self.gobject_input.connect(_on_gobject_input)
 	collision_polygon.polygon = get_gobject_transform() * self.shape
 	count.z_index = 1000
 
@@ -94,7 +93,10 @@ func set_selected(sl: bool) -> void:
 		selected = false
 		area2d.collision_layer = 1
 
-func _on_gobject_input(event:InputEvent) -> void:
+func _on_select(_event:InputEvent) -> void:
+	pass
+
+func _on_deselect(event:InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		return
 

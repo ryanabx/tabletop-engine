@@ -8,6 +8,15 @@ var face_up: bool = false
 
 var grab_offset: Vector2 = Vector2.ZERO
 
+class PieceInfo extends RefCounted:
+	var name: String = ""
+	var image_up: String = ""
+	var image_down: String = ""
+	var collection: String = ""
+	var face_up: bool = false
+	var shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)])
+	var gobject_scale: Vector2 = Vector2.ONE
+
 @onready var sprite_down: Sprite2D = $Down
 @onready var sprite_up: Sprite2D = $Up
 
@@ -31,7 +40,6 @@ func move_to_index(index: int) -> void:
 func _ready() -> void:
 	_refresh_image()
 	collision_polygon.polygon = get_gobject_transform() * self.shape
-	self.gobject_input.connect(_on_gobject_input)
 
 func _process(_delta: float) -> void:
 	update_position()
@@ -144,22 +152,18 @@ var selected: bool = false
 
 var amount: int = 0
 
-func _on_gobject_input(event:InputEvent) -> void:
-	if event is InputEventMouseMotion:
-		return
-	
-	if not board.board_player.is_selecting():
-		if event.is_action_pressed("game_select") or (event.is_action_pressed("game_select_stack") and collection == ""):
-			board.board_player.select_pieces([self])
-		elif event.is_action_pressed("game_select_stack"):
-			var coll: Collection = board.get_collection(collection)
-			if coll != null and not coll.permanent:
-				board.board_player.select_collections([coll])
-	else:
-		if (event.is_action_released("game_select") or event.is_action_released("game_select_stack")):
-			if can_access():
-				print("RELEASED AND STACKABLE OBJECT FOUND")
-				board.board_player.stack_selection_to_item(self)
+func _on_select(event:InputEvent) -> void:
+	if event.is_action_pressed("game_select") or (event.is_action_pressed("game_select_stack") and collection == ""):
+		board.board_player.select_pieces([self])
+	elif event.is_action_pressed("game_select_stack"):
+		var coll: Collection = board.get_collection(collection)
+		if coll != null and not coll.permanent:
+			board.board_player.select_collections([coll])
+
+func _on_deselect(_event: InputEvent) -> void:
+	if can_access():
+		print("RELEASED AND STACKABLE OBJECT FOUND")
+		board.board_player.stack_selection_to_item(self)
 
 func _on_multiplayer_synchronizer_synchronized() -> void:
 	_refresh_image()
