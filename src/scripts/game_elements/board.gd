@@ -126,12 +126,10 @@ func assign_authority(pid: int, objects: PackedStringArray):
 			gobj.set_multiplayer_authority(pid)
 
 func grab_authority_on_objs(objects: Array) -> void:
-	var objs: PackedStringArray = PackedStringArray(
-		objects.map(
-			func(v: Gobject) -> String:
-				return v.name
-				)
-		)
+	var objs: PackedStringArray = []
+	for obj in objects:
+		if obj != null:
+			objs.append(obj.name)
 	assign_authority.rpc(multiplayer.get_unique_id(), objs)
 
 ####################

@@ -37,7 +37,7 @@ properties/7/sync = false
 properties/7/watch = true
 
 [node name="Piece" type="Node2D"]
-z_index = 2
+z_index = 1
 script = ExtResource("1_w74q3")
 
 [node name="Up" type="Sprite2D" parent="."]

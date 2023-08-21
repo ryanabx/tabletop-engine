@@ -56,7 +56,12 @@ func move_self_to_back() -> void:
 func move_to_index(index: int) -> void:
 	get_parent().move_child(self, index)
 
+func update_position() -> void:
+	if selected and not permanent:
+		position = (board.get_local_mouse_position() - grab_offset).clamp(board.border.position, board.border.end)
+
 func _process(_delta: float) -> void:
+	update_position()
 	count.position = (get_gobject_transform() * self.shape)[0]
 	count.text = str(name,"[",inside.size(),"]")
 	queue_redraw()
@@ -110,6 +115,11 @@ func erase_self() -> void:
 		if is_multiplayer_authority():
 			deserialize_piece(obj)
 	queue_free()
+
+func clear_inside() -> void:
+	inside = []
+	if not permanent:
+		erase_self.rpc()
 
 static var collection_scene = preload("res://src/scenes/game_elements/gobjects/collection.tscn")
 ## Constructor

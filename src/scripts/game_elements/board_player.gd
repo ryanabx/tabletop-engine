@@ -175,7 +175,6 @@ func select_collection(obj: Collection) -> void:
 	deselect_queue_take_piece_off()
 	board.grab_authority_on_objs([obj])
 	obj.move_self_to_top.rpc()
-	obj.set_selected(true)
 	queue_take_piece_off = obj
 	moved_since_selected = false
 	timer.start()
@@ -192,8 +191,11 @@ func stack_selection_to_item(item: Gobject) -> void:
 func stack_stackables_to_collection(coll: Collection) -> void:
 	print("Stacking stackables to collection")
 	board.grab_authority_on_objs(selected_pieces + [coll])
-	for piece in selected_pieces:
+	for piece in get_selected_pieces():
 		piece.add_to_collection(coll)
+	for collection in get_selected_collections():
+		coll.inside.append_array(collection.inside)
+		collection.clear_inside()
 
 func convert_to_stack(items: Array[Piece]) -> void:
 	print("Making new stack")
