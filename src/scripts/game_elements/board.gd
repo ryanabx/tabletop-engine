@@ -106,9 +106,10 @@ func _create_collection(data: PackedByteArray) -> void:
 func create_piece(data: PackedByteArray) -> Piece:
 	var config: Dictionary = bytes_to_var(data)
 	var p: Piece = Piece.construct(self, config)
-	p.set_multiplayer_authority(multiplayer.get_unique_id())
-	_create_piece.rpc(data)
-	print(p.name, " ", p.get_index())
+	if p != null:
+		p.set_multiplayer_authority(multiplayer.get_unique_id())
+		_create_piece.rpc(data)
+		print(p.name, " ", p.get_index())
 	return p
 
 @rpc("any_peer","call_remote", "reliable")
@@ -125,7 +126,12 @@ func assign_authority(pid: int, objects: PackedStringArray):
 			gobj.set_multiplayer_authority(pid)
 
 func grab_authority_on_objs(objects: Array) -> void:
-	var objs: PackedStringArray = PackedStringArray(objects.map(func(v: Gobject) -> String: return v.name))
+	var objs: PackedStringArray = PackedStringArray(
+		objects.map(
+			func(v: Gobject) -> String:
+				return v.name
+				)
+		)
 	assign_authority.rpc(multiplayer.get_unique_id(), objs)
 
 ####################

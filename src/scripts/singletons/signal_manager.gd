@@ -2,6 +2,7 @@ extends Node
 
 # Game menu creation
 signal game_menu_create(objects: Array)
+signal game_menu_create_collection(collection: Collection)
 signal game_menu_destroy()
 
 # Game menu commands

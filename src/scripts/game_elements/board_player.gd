@@ -3,6 +3,7 @@ extends Node2D
 
 var selected_pieces: Array[Piece] = []
 var selected_collections: Array[Collection] = []
+var queue_take_piece_off: Collection = null
 
 var selection_box: Rect2 = Rect2(0,0,0,0)
 var selection_boxing: bool = false
@@ -41,11 +42,15 @@ func _input(event: InputEvent) -> void:
 	if (event.is_action_released("game_select") or event.is_action_released("game_select_stack")):
 		queue_for_deselection()
 	if event is InputEventMouseMotion and\
-		 not moved_since_selected and not selected_pieces.is_empty():
+		 not moved_since_selected:
+		timer.stop()
+		if queue_take_piece_off != null:
+			var pc: Piece = queue_take_piece_off.remove_from_top()
+			pc.position = queue_take_piece_off.position
+			pc.rotation = queue_take_piece_off.rotation
+			select_pieces([pc])
+			deselect_queue_take_piece_off()
 		moved_since_selected = true
-		for pc in selected_pieces:
-			if not selected_collections.has(board.get_collection(pc.collection)):
-				pc.remove_from_collection()
 		return
 	
 	var params: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
@@ -115,14 +120,14 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	if queued_deselection:
-		if not selected_pieces.is_empty():
-			deselect_pieces()
+		if not (selected_pieces.is_empty() and selected_collections.is_empty() and queue_take_piece_off == null):
+			deselect()
 		queued_deselection = false
 	pass
 
 func select_objects_from_menu(objs: Array[Piece], with_collections: bool) -> void:
 	timer.stop()
-	selected_pieces = []
+	deselect_pieces()
 	board.grab_authority_on_objs(objs)
 	if with_collections == true:
 		# NOTE: With collections expects that all objs being selected are in the same collection
@@ -141,7 +146,7 @@ func select_objects_from_menu(objs: Array[Piece], with_collections: bool) -> voi
 			
 func select_pieces(objs: Array[Piece]) -> void:
 	timer.stop()
-	selected_pieces = []
+	deselect_pieces()
 	board.grab_authority_on_objs(objs)
 	for obj in objs:
 		obj.move_self_to_top.rpc()
@@ -152,13 +157,36 @@ func select_pieces(objs: Array[Piece]) -> void:
 	moved_since_selected = false
 	timer.start()
 
-func stack_selection_to_item(item: Piece) -> void:
-	if item.get_collection() != null:
-		stack_stackables_to_collection(item.get_collection())
-	else:
+func select_collections(objs: Array[Collection]) -> void:
+	timer.stop()
+	deselect_collections()
+	board.grab_authority_on_objs(objs)
+	for obj in objs:
+		obj.move_self_to_top.rpc()
+		selected_collections.append(obj)
+		obj.set_selected(true)
+		obj.grab_offset = board.get_local_mouse_position() - obj.position
+	
+	moved_since_selected = false
+	timer.start()
+
+func select_collection(obj: Collection) -> void:
+	timer.stop()
+	deselect_queue_take_piece_off()
+	board.grab_authority_on_objs([obj])
+	obj.move_self_to_top.rpc()
+	obj.set_selected(true)
+	queue_take_piece_off = obj
+	moved_since_selected = false
+	timer.start()
+
+func stack_selection_to_item(item: Gobject) -> void:
+	if item is Collection:
+		stack_stackables_to_collection(item)
+	elif item is Piece:
 		selected_pieces.push_front(item)
 		convert_to_stack(selected_pieces)
-	deselect_pieces()
+	deselect()
 	
 
 func stack_stackables_to_collection(coll: Collection) -> void:
@@ -183,21 +211,13 @@ func convert_to_stack(items: Array[Piece]) -> void:
 		item.add_to_collection(collection)
 		item.set_selected(false)
 
-func select_collections(objs: Array[Collection]) -> void:
-	timer.stop()
-	board.grab_authority_on_objs(objs)
-	selected_pieces = []
-	for obj in objs:
-		board.grab_authority_on_objs(obj.get_pieces())
-		for pc in obj.get_pieces():
-			pc.move_self_to_top.rpc()
-			selected_pieces.append(pc)
-			pc.set_selected(true)
-			pc.grab_offset = board.get_local_mouse_position() - pc.position
-		selected_collections.append(obj)
-		obj.set_selected(true)
-	moved_since_selected = false
-	timer.start()
+func deselect() -> void:
+	deselect_pieces()
+	deselect_collections()
+	deselect_queue_take_piece_off()
+	moved_since_selected = true
+	
+	
 
 func deselect_pieces() -> void:
 	board.grab_authority_on_objs(get_selected_pieces())
@@ -205,11 +225,18 @@ func deselect_pieces() -> void:
 		if is_instance_valid(obj):
 			obj.set_selected(false)
 	selected_pieces = []
+
+func deselect_collections() -> void:
+	board.grab_authority_on_objs(get_selected_collections())
 	for obj in get_selected_collections():
 		if is_instance_valid(obj):
 			obj.set_selected(false)
 	selected_collections = []
-	moved_since_selected = true
+
+func deselect_queue_take_piece_off() -> void:
+	if queue_take_piece_off != null:
+		queue_take_piece_off.set_selected(false)
+		queue_take_piece_off = null
 
 func queue_for_deselection() -> void:
 	queued_deselection = true
@@ -217,9 +244,10 @@ func queue_for_deselection() -> void:
 
 func game_menu_check() -> void:
 	if not moved_since_selected:
-		print("Could create game menu")
-		if selected_pieces.size() == 1 and selected_pieces[0].collection != "":
-			SignalManager.game_menu_create.emit(selected_pieces[0].get_collection().get_pieces())
-		else:
+		if not get_selected_pieces().is_empty():
 			SignalManager.game_menu_create.emit(selected_pieces)
-		deselect_pieces()
+		elif queue_take_piece_off != null:
+			SignalManager.game_menu_create_collection.emit(queue_take_piece_off)
+		else:
+			print("Could not create game menu")
+		deselect()

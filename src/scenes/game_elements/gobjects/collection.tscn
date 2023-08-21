@@ -69,3 +69,5 @@ monitorable = false
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D"]
 polygon = PackedVector2Array(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5)
+
+[connection signal="synchronized" from="MultiplayerSynchronizer2" to="." method="_on_multiplayer_synchronizer_2_synchronized"]
