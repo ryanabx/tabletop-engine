@@ -2,9 +2,11 @@ class_name RightClickMenu
 extends PopupMenu
 
 var object_group: Array[Piece] = []
+var collection: Collection = null
 
 func _ready() -> void:
 	SignalManager.game_menu_create.connect(_on_menu_created)
+	SignalManager.game_menu_create_collection.connect(_on_collection_menu_created)
 	hide()
 	popup_hide.connect(_on_popup_hide)
 
@@ -15,19 +17,52 @@ func reset_menu() -> void:
 		id_pressed.disconnect(_on_clicked_from_object)
 	if id_pressed.is_connected(_on_clicked_from_object_group):
 		id_pressed.disconnect(_on_clicked_from_object_group)
+	if id_pressed.is_connected(_on_clicked_from_collection):
+		id_pressed.disconnect(_on_clicked_from_collection)
 	clear()
 	set_position(get_viewport().get_mouse_position())
 
-func _on_menu_created(objects: Array):
+func _on_menu_created(objects: Array) -> void:
 	reset_menu()
-	print("Menu created. Position: ",position)
+	print("Menu created.")
 	object_group = objects.duplicate(false)
+	collection = null
 	if object_group.size() > 1:
 		init_group_menu()
 	else:
 		init_piece_menu()
 	reset_size()
 	popup()
+
+func _on_collection_menu_created(coll: Collection) -> void:
+	reset_menu()
+	print("Collection menu created")
+	object_group = []
+	collection = coll
+	init_collection_menu()
+	reset_size()
+	popup()
+
+func init_collection_menu() -> void:
+	add_item("Convert to stack", 0)
+	add_item("Shuffle", 8)
+	var orientation_menu = PopupMenu.new()
+	orientation_menu.add_item("Face up", 5)
+	orientation_menu.add_item("Face down", 6)
+	orientation_menu.add_item("Flip selection", 1)
+	add_child(orientation_menu)
+	orientation_menu.name = "orientation"
+	add_submenu_item("Set Orientation", "orientation", 7)
+	var ordering_menu = PopupMenu.new()
+	ordering_menu.name = "ordering"
+	add_child(ordering_menu)
+	add_submenu_item("Ordering", "ordering", 2)
+	ordering_menu.add_item("Go to front", 3)
+	ordering_menu.add_item("Send to back", 4)
+	id_pressed.connect(_on_clicked_from_collection)
+	ordering_menu.id_pressed.connect(_on_clicked_from_collection)
+	orientation_menu.id_pressed.connect(_on_clicked_from_collection)
+	add_item("Select group", 9)
 
 func init_piece_menu() -> void:
 	add_item("Flip object", 0)
@@ -79,6 +114,34 @@ func _on_clicked_from_object_group(id: int) -> void:
 		6: _set_objects_orientation(false)
 		8: _shuffle_selection()
 		9: _select_objects(true)
+
+func _on_clicked_from_collection(id: int) -> void:
+	match id:
+		0: print("Not implemented")
+		1: collection.flip()
+		3: collection.move_self_to_front.rpc()
+		4: collection.move_self_to_back.rpc()
+		5: collection.set_orientation(true)
+		6: collection.set_orientation(false)
+		8: collection.shuffle()
+		9: _select_collection()
+
+func _select_collection() -> void:
+	if collection.permanent:
+		var new_collection: Collection = collection.board.create_collection(
+			var_to_bytes({
+				"name": collection.board.unique_name("newcoll"),
+				"position": collection.position,
+				"rotation": collection.rotation
+			})
+		)
+		new_collection.inside = collection.inside
+		new_collection.call_inside_changed()
+		collection.clear_inside()
+		collection = new_collection
+		
+	collection.board.board_player.select_collections([collection])
+	collection.grab_offset = Vector2.ZERO
 
 func _flip_selected_objects() -> void:
 	for obj in object_group:

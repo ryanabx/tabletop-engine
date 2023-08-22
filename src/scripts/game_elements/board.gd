@@ -92,7 +92,6 @@ var ready_players: Array = []
 func create_collection(data: PackedByteArray) -> Collection:
 	var config: Dictionary = bytes_to_var(data)
 	var c: Collection = Collection.construct(self, config)
-	c.set_multiplayer_authority(multiplayer.get_unique_id())
 	_create_collection.rpc(data)
 	print(c.name, " ",c.get_index())
 	return c
@@ -100,33 +99,20 @@ func create_collection(data: PackedByteArray) -> Collection:
 @rpc("any_peer","call_remote", "reliable")
 func _create_collection(data: PackedByteArray) -> void:
 	var config: Dictionary = bytes_to_var(data)
-	var c: Collection = Collection.construct(self, config)
-	c.set_multiplayer_authority(multiplayer.get_remote_sender_id())
+	Collection.construct(self, config)
 
 func create_piece(data: PackedByteArray) -> Piece:
 	var config: Dictionary = bytes_to_var(data)
 	var p: Piece = Piece.construct(self, config)
-	p.set_multiplayer_authority(multiplayer.get_unique_id())
-	_create_piece.rpc(data)
-	print(p.name, " ", p.get_index())
+	if p != null:
+		_create_piece.rpc(data)
+		print(p.name, " ", p.get_index())
 	return p
 
 @rpc("any_peer","call_remote", "reliable")
 func _create_piece(data: PackedByteArray) -> void:
 	var config: Dictionary = bytes_to_var(data)
-	var p: Piece = Piece.construct(self, config)
-	p.set_multiplayer_authority(multiplayer.get_remote_sender_id())
-
-@rpc("any_peer","call_local", "reliable")
-func assign_authority(pid: int, objects: PackedStringArray):
-	for obj in objects:
-		var gobj: Gobject = get_gobject(obj)
-		if gobj != null:
-			gobj.set_multiplayer_authority(pid)
-
-func grab_authority_on_objs(objects: Array) -> void:
-	var objs: PackedStringArray = PackedStringArray(objects.map(func(v: Gobject) -> String: return v.name))
-	assign_authority.rpc(multiplayer.get_unique_id(), objs)
+	Piece.construct(self, config)
 
 ####################
 ### Config stuff ###
@@ -159,7 +145,7 @@ func game_percent_loaded(pc: float) -> void:
 
 @rpc("authority", "call_local", "reliable")
 func game_load_finished() -> void:
-	SignalManager.game_load_finished.emit()
+	SignalManager.game_load_finished.emit(self)
 
 @rpc("authority", "call_local", "reliable")			
 func game_load_started() -> void:

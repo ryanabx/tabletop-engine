@@ -15,29 +15,29 @@ properties/2/path = NodePath(".:gobject_scale")
 properties/2/spawn = true
 properties/2/sync = false
 properties/2/watch = true
-properties/3/path = NodePath(".:collection")
+properties/3/path = NodePath(".:image_up")
 properties/3/spawn = true
 properties/3/sync = false
 properties/3/watch = true
-properties/4/path = NodePath(".:image_up")
+properties/4/path = NodePath(".:image_down")
 properties/4/spawn = true
 properties/4/sync = false
 properties/4/watch = true
-properties/5/path = NodePath(".:image_down")
+properties/5/path = NodePath(".:face_up")
 properties/5/spawn = true
 properties/5/sync = false
 properties/5/watch = true
-properties/6/path = NodePath(".:face_up")
+properties/6/path = NodePath(".:shape")
 properties/6/spawn = true
 properties/6/sync = false
 properties/6/watch = true
-properties/7/path = NodePath(".:shape")
+properties/7/path = NodePath(".:auth")
 properties/7/spawn = true
-properties/7/sync = false
-properties/7/watch = true
+properties/7/sync = true
+properties/7/watch = false
 
 [node name="Piece" type="Node2D"]
-z_index = 2
+z_index = 1
 script = ExtResource("1_w74q3")
 
 [node name="Up" type="Sprite2D" parent="."]

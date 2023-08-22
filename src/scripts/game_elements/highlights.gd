@@ -22,3 +22,14 @@ func draw_player_stuff() -> void:
 			obj.get_extents(),
 			Color.GREEN * Color(1,1,1,0.2)
 			)
+	if board.board_player.queue_take_piece_off != null:
+		draw_colored_polygon(
+			board.board_player.queue_take_piece_off.get_extents(),
+			Color.BLUE * Color(1,1,1,0.2)
+			)
+	for obj in board.board_player.get_selected_collections():
+		draw_colored_polygon(
+			obj.get_extents(),
+			Color.BLUE * Color(1,1,1,0.2)
+			)
+

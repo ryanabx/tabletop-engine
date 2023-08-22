@@ -2,6 +2,7 @@ extends Node
 
 # Game menu creation
 signal game_menu_create(objects: Array)
+signal game_menu_create_collection(collection: Collection)
 signal game_menu_destroy()
 
 # Game menu commands
@@ -23,4 +24,4 @@ signal load_game_config(config: GameConfig2)
 # Game Loading
 signal game_percent_loaded(pc: float)
 signal game_load_started()
-signal game_load_finished()
+signal game_load_finished(board: Board)
