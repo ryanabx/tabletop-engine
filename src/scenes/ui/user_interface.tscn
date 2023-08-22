@@ -49,9 +49,6 @@ layout_mode = 2
 layout_mode = 2
 text = "Multiplayer"
 
-[node name="GameNameLabel" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-
 [node name="LoadingBarContainer" type="CenterContainer" parent="."]
 visible = false
 layout_mode = 1

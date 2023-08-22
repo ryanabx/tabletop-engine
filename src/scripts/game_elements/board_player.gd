@@ -5,6 +5,8 @@ var selected_pieces: Array[Piece] = []
 var selected_collections: Array[Collection] = []
 var queue_take_piece_off: Collection = null
 
+var grab_position: Vector2 = Vector2.ZERO
+
 var selection_box: Rect2 = Rect2(0,0,0,0)
 var selection_boxing: bool = false
 
@@ -60,6 +62,7 @@ func _input(event: InputEvent) -> void:
 	params.collision_mask = 1
 
 	if event.is_action_pressed("game_select"):
+		grab_position = get_local_mouse_position()
 		var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
 		if results.size() > 0:
 			results.sort_custom(compare_by_z_index)
@@ -128,7 +131,6 @@ func _process(_delta: float) -> void:
 func select_objects_from_menu(objs: Array[Piece], with_collections: bool) -> void:
 	timer.stop()
 	deselect_pieces()
-	board.grab_authority_on_objs(objs)
 	if with_collections == true:
 		# NOTE: With collections expects that all objs being selected are in the same collection
 		var collection: Collection = objs[0].get_collection()
@@ -147,12 +149,11 @@ func select_objects_from_menu(objs: Array[Piece], with_collections: bool) -> voi
 func select_pieces(objs: Array[Piece]) -> void:
 	timer.stop()
 	deselect_pieces()
-	board.grab_authority_on_objs(objs)
 	for obj in objs:
 		obj.move_self_to_top.rpc()
 		selected_pieces.append(obj)
 		obj.set_selected(true)
-		obj.grab_offset = board.get_local_mouse_position() - obj.position
+		obj.grab_offset = grab_position - obj.position
 	
 	moved_since_selected = false
 	timer.start()
@@ -160,12 +161,11 @@ func select_pieces(objs: Array[Piece]) -> void:
 func select_collections(objs: Array[Collection]) -> void:
 	timer.stop()
 	deselect_collections()
-	board.grab_authority_on_objs(objs)
 	for obj in objs:
 		obj.move_self_to_top.rpc()
 		selected_collections.append(obj)
 		obj.set_selected(true)
-		obj.grab_offset = board.get_local_mouse_position() - obj.position
+		obj.grab_offset = grab_position - obj.position
 	
 	moved_since_selected = false
 	timer.start()
@@ -173,7 +173,6 @@ func select_collections(objs: Array[Collection]) -> void:
 func select_collection(obj: Collection) -> void:
 	timer.stop()
 	deselect_queue_take_piece_off()
-	board.grab_authority_on_objs([obj])
 	obj.move_self_to_top.rpc()
 	queue_take_piece_off = obj
 	moved_since_selected = false
@@ -186,20 +185,18 @@ func stack_selection_to_item(item: Gobject) -> void:
 		selected_pieces.push_front(item)
 		convert_to_stack(selected_pieces)
 	deselect()
-	
 
 func stack_stackables_to_collection(coll: Collection) -> void:
 	print("Stacking stackables to collection")
-	board.grab_authority_on_objs(selected_pieces + [coll])
 	for piece in get_selected_pieces():
 		piece.add_to_collection(coll)
 	for collection in get_selected_collections():
 		coll.inside.append_array(collection.inside)
+		coll.call_inside_changed()
 		collection.clear_inside()
 
 func convert_to_stack(items: Array[Piece]) -> void:
 	print("Making new stack")
-	board.grab_authority_on_objs(items)
 	# First, create new collection
 	var collection: Collection = board.create_collection(
 		var_to_bytes({
@@ -208,7 +205,6 @@ func convert_to_stack(items: Array[Piece]) -> void:
 			"rotation": items[0].rotation
 		})
 	)
-	board.grab_authority_on_objs([collection])
 	for item in items:
 		item.add_to_collection(collection)
 		item.set_selected(false)
@@ -222,14 +218,12 @@ func deselect() -> void:
 	
 
 func deselect_pieces() -> void:
-	board.grab_authority_on_objs(get_selected_pieces())
 	for obj in get_selected_pieces():
 		if is_instance_valid(obj):
 			obj.set_selected(false)
 	selected_pieces = []
 
 func deselect_collections() -> void:
-	board.grab_authority_on_objs(get_selected_collections())
 	for obj in get_selected_collections():
 		if is_instance_valid(obj):
 			obj.set_selected(false)
@@ -243,6 +237,20 @@ func deselect_queue_take_piece_off() -> void:
 func queue_for_deselection() -> void:
 	queued_deselection = true
 
+func rotate_selection(amount: float, axis: float) -> void:
+	for obj in get_selected_collections():
+		if not is_instance_valid(obj):
+			continue
+		obj.rotation += amount
+		if absf(axis) < 0.1 and absf(roundf(obj.rotation_degrees / 45.0) * 45.0 - obj.rotation_degrees) < 7.5:
+			obj.rotation_degrees = roundf(obj.rotation_degrees / 45.0) * 45.0
+	
+	for obj in get_selected_pieces():
+		if not is_instance_valid(obj):
+			continue
+		obj.rotation += amount
+		if absf(axis) < 0.1 and absf(roundf(obj.rotation_degrees / 45.0) * 45.0 - obj.rotation_degrees) < 7.5:
+			obj.rotation_degrees = roundf(obj.rotation_degrees / 45.0) * 45.0
 
 func game_menu_check() -> void:
 	if not moved_since_selected:

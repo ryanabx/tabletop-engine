@@ -136,6 +136,7 @@ func _select_collection() -> void:
 			})
 		)
 		new_collection.inside = collection.inside
+		new_collection.call_inside_changed()
 		collection.clear_inside()
 		collection = new_collection
 		

@@ -6,6 +6,13 @@ var gobject_scale: Vector2 = Vector2.ONE
 
 var board: Board
 
+var auth: int:
+    get:
+        return get_multiplayer_authority()
+    set(val):
+        set_multiplayer_authority(val)
+
+
 ## Moves this object to the top of the draw order
 @rpc("any_peer","call_local", "reliable")
 func move_self_to_top() -> void:

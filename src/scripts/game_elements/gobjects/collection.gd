@@ -34,7 +34,6 @@ func deserialize_piece(_dict: Dictionary) -> Piece:
 	var piece: Piece = board.create_piece(
 	var_to_bytes(_dict)
 	)
-	board.grab_authority_on_objs([piece])
 	return piece
 
 
@@ -86,6 +85,7 @@ func add_piece(piece: Piece) -> void:
 	var pc_d: Dictionary = serialize_piece(piece)
 	piece.erase_self.rpc()
 	inside.append(pc_d)
+	call_inside_changed()
 
 func remove_from_top() -> Piece:
 	var pc_d: Dictionary = inside.pop_back()
@@ -93,10 +93,18 @@ func remove_from_top() -> Piece:
 	if inside.is_empty() and not permanent:
 		if is_multiplayer_authority():
 			erase_self.rpc()
+	else:
+		call_inside_changed()
 	return piece
 
 func get_inside() -> Array[Dictionary]:
 	return inside
+
+func set_inside(_inside: Array) -> void:
+	if _inside != inside:
+		self.inside = _inside
+		call_inside_changed()
+	
 
 func flip() -> void:
 	for obj in inside:
@@ -108,6 +116,7 @@ func set_orientation(orientation: bool) -> void:
 
 func shuffle() -> void:
 	inside.shuffle()
+	call_inside_changed()
 
 @rpc("authority","call_local","reliable")
 func erase_self() -> void:
@@ -120,6 +129,8 @@ func clear_inside() -> void:
 	inside = []
 	if not permanent:
 		erase_self.rpc()
+	else:
+		call_inside_changed()
 
 static var collection_scene = preload("res://src/scenes/game_elements/gobjects/collection.tscn")
 ## Constructor
@@ -167,3 +178,12 @@ func _on_deselect(_event:InputEvent) -> void:
 
 func _on_multiplayer_synchronizer_2_synchronized() -> void:
 	collision_polygon.polygon = get_gobject_transform() * self.shape
+
+func call_inside_changed() -> void:
+	inside_changed.rpc(var_to_bytes(inside).compress(3))
+
+@rpc("authority", "call_remote", "reliable")
+func inside_changed(new_inside: PackedByteArray) -> void:
+	var n_inside: Array[Dictionary] = []
+	n_inside.assign(bytes_to_var(new_inside.decompress_dynamic(-1, 3)))
+	inside = n_inside

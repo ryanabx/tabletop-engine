@@ -10,7 +10,6 @@ const MTU: int = 1476
 @onready var user_interface: UserInterface = $UserInterfaceLayer/UserInterface
 @onready var camera_controller: CameraController = $CameraController
 @onready var dialogs: Node = $UserInterfaceLayer/Dialogs
-@onready var board_spawner: BoardSpawner = $BoardSpawner
 
 var config_bytes: PackedByteArray = []
 
@@ -44,10 +43,7 @@ func load_game_config(gc: GameConfig2) -> void:
 			break
 		beg += MTU
 		end += MTU
-			
-	
 	print("host_loaded_config")
-		
 
 @rpc("authority","call_remote","reliable")
 func receive_config_part(bytes: PackedByteArray, final: bool) -> void:

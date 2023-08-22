@@ -1,7 +1,7 @@
 class_name CameraController
 extends Node2D
 
-@onready var camera = $Camera2D
+@onready var camera: Camera2D = $Camera2D
 
 const MOVEMENT_SPEED: float = 1150.0
 const ROTATION_SPEED: float = 2.0
@@ -10,8 +10,16 @@ var initial_mouse_pos: Vector2 = Vector2.ZERO
 var free_cam: bool = false
 var initial_camera_pos: Vector2 = Vector2.ZERO
 
+var board: Board = null
+
 var clamp1: Vector2
 var clamp2: Vector2
+
+func _ready() -> void:
+	SignalManager.game_load_finished.connect(_game_loaded)
+
+func _game_loaded(_board: Board) -> void:
+	board = _board
 
 func reset_camera() -> void:
 	camera.zoom = Vector2.ONE
@@ -42,7 +50,14 @@ func _process(delta: float) -> void:
 		camera.zoom /= 1.1
 	
 	camera.position += (Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED * delta).rotated(camera.rotation)
-	camera.rotation += Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise") * ROTATION_SPEED * delta
+	if board != null and not (board.board_player.get_selected_pieces().is_empty() and board.board_player.get_selected_collections().is_empty()):
+		board.board_player.rotate_selection(
+			Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise") * ROTATION_SPEED * delta,
+			Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise")
+		)
+	else:
+		camera.rotation += Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise") * ROTATION_SPEED * delta
+	
 	if absf(Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise")) < 0.1 and absf(roundf(camera.rotation_degrees / 45.0) * 45.0 - camera.rotation_degrees) < 7.5:
 		camera.rotation_degrees = roundf(camera.rotation_degrees / 45.0) * 45.0
 	check_free_cam()

@@ -4,6 +4,7 @@ extends Gobject
 var image_up: String = ""
 var image_down: String = ""
 var face_up: bool = false
+# TODO: Properties setget
 
 var grab_offset: Vector2 = Vector2.ZERO
 
@@ -110,6 +111,7 @@ func can_access() -> bool:
 	return true
 
 func set_selected(sl: bool) -> void:
+	self.auth = multiplayer.get_unique_id()
 	if sl == true:
 		selected = true
 		area2d.collision_layer = 2
