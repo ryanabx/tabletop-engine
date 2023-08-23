@@ -3,15 +3,21 @@ extends MenuBar
 @onready var menu: MenuBar = self
 @onready var player: PopupMenu
 @onready var actions: PopupMenu
+@onready var tabletop: PopupMenu
+
+var board: Board = null
 
 func _ready() -> void:
 	file_menu()
 	if multiplayer.is_server():
 		tabletop_menu()
-	view_menu()
 	options_menu()
 	if not multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
 		multiplayer_menu()
+	SignalManager.game_load_finished.connect(set_board)
+
+func set_board(_b: Board) -> void:
+	board = _b
 
 func new_game_loaded(max_players: int, action: Array) -> void:
 	if player != null:
@@ -42,15 +48,15 @@ func player_menu(max_players: int) -> void:
 
 
 func multiplayer_menu() -> void:
-	var multiplayer: PopupMenu = PopupMenu.new()
-	multiplayer.id_pressed.connect(multiplayer_pressed)
-	multiplayer.name = "Multiplayer"
-	menu.add_child(multiplayer)
-	multiplayer.add_item("Create Server", 0)
-	multiplayer.add_item("Connect to Client", 1)
+	var _multiplayer: PopupMenu = PopupMenu.new()
+	_multiplayer.id_pressed.connect(multiplayer_pressed)
+	_multiplayer.name = "Multiplayer"
+	menu.add_child(_multiplayer)
+	_multiplayer.add_item("Create Server", 0)
+	_multiplayer.add_item("Connect to Client", 1)
 
 func tabletop_menu() -> void:
-	var tabletop: PopupMenu = PopupMenu.new()
+	tabletop = PopupMenu.new()
 	tabletop.id_pressed.connect(tabletop_pressed)
 	tabletop.name = "Tabletop"
 	menu.add_child(tabletop)
@@ -67,23 +73,6 @@ func file_menu() -> void:
 	menu.add_child(file)
 	file.add_item("Main Menu", 0)
 	file.add_item("Quit", 1)
-
-func view_menu() -> void:
-	var view: PopupMenu = PopupMenu.new()
-	view.id_pressed.connect(view_pressed)
-	view.name = "View"
-	menu.add_child(view)
-	view.add_item("Reset Camera", 0)
-	var rotation_submenu: PopupMenu = PopupMenu.new()
-	rotation_submenu.id_pressed.connect(view_pressed)
-	rotation_submenu.name = "rotation"
-	view.add_child(rotation_submenu)
-	view.add_submenu_item("Camera Rotation", "rotation", 1)
-	rotation_submenu.add_item("0 Degrees", 2)
-	rotation_submenu.add_item("90 Degrees", 3)
-	rotation_submenu.add_item("180 Degrees", 4)
-	rotation_submenu.add_item("270 Degrees", 5)
-	rotation_submenu.add_item("Snap To Nearest 90 Degree Angle", 6)
 
 func options_menu() -> void:
 	var options: PopupMenu = PopupMenu.new()
@@ -116,17 +105,11 @@ func tabletop_pressed(id: int) -> void:
 	match id:
 		0: if multiplayer.is_server(): load_config()
 		1: export_config()
-		2: Globals.get_shared_tabletop_manager().load_game_config(Globals.get_current_game())
-		3: print("Not implemented yet")
-
-func view_pressed(id: int) -> void:
-	match id:
-		0: Globals.get_shared_tabletop_manager().camera_controller.reset_camera()
-		2: Globals.get_shared_tabletop_manager().camera_controller.set_camera_orientation(0)
-		3: Globals.get_shared_tabletop_manager().camera_controller.set_camera_orientation(90)
-		4: Globals.get_shared_tabletop_manager().camera_controller.set_camera_orientation(180)
-		5: Globals.get_shared_tabletop_manager().camera_controller.set_camera_orientation(270)
-		6: Globals.get_shared_tabletop_manager().camera_controller.snap_to_nearest_orientation()
+		2:
+			if board != null:
+				board.get_parent().load_game_config(Globals.get_current_game())
+				board = null
+		3: get_tree().reload_current_scene()
 
 func options_pressed(index: int) -> void:
 	match index:

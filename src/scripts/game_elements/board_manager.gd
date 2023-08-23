@@ -60,3 +60,4 @@ func spawn_board() -> void:
 	Globals.set_current_tabletop(board_new)
 	board_new.game = gc
 	add_child(board_new)
+	board = board_new
