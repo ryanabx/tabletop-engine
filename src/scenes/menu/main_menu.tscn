@@ -1,0 +1,96 @@
+[gd_scene load_steps=3 format=3 uid="uid://dlnv5bicqv8ih"]
+
+[ext_resource type="Script" path="res://src/scripts/menu/main_menu.gd" id="1_1pq65"]
+
+[sub_resource type="FontVariation" id="FontVariation_o2yd7"]
+variation_embolden = 1.0
+spacing_glyph = 15
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_1pq65")
+metadata/_edit_lock_ = true
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0941176, 0.2, 0.164706, 1)
+metadata/_edit_lock_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="VBoxContainer/CenterContainer"]
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+theme_override_fonts/font = SubResource("FontVariation_o2yd7")
+theme_override_font_sizes/font_size = 50
+text = "Open Boardgame Framework"
+horizontal_alignment = 1
+uppercase = true
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 100
+theme_override_constants/margin_right = 100
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="NewGame" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 72
+text = "NEW GAME"
+
+[node name="Settings" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 72
+text = "SETTINGS"
+
+[node name="Quit" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 72
+text = "QUIT"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="VersionNumber" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "Version Number"
+
+[node name="CopyrightNotice" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "Copyright ryanabx 2023"
+
+[connection signal="pressed" from="VBoxContainer/MarginContainer/VBoxContainer/NewGame" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]

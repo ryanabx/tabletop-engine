@@ -6,8 +6,12 @@ extends MenuBar
 
 func _ready() -> void:
 	file_menu()
+	if multiplayer.is_server():
+		tabletop_menu()
 	view_menu()
 	options_menu()
+	if not multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
+		multiplayer_menu()
 
 func new_game_loaded(max_players: int, action: Array) -> void:
 	if player != null:
@@ -27,6 +31,7 @@ func actions_menu(action: Array) -> void:
 		actions.add_item(i.name)
 	menu.add_child(actions)
 
+
 func player_menu(max_players: int) -> void:
 	player = PopupMenu.new()
 	player.index_pressed.connect(set_player)
@@ -34,26 +39,34 @@ func player_menu(max_players: int) -> void:
 	for i in range(max_players):
 		player.add_item(str("Player ",i+1))
 	menu.add_child(player)
-		
+
+
+func multiplayer_menu() -> void:
+	var multiplayer: PopupMenu = PopupMenu.new()
+	multiplayer.id_pressed.connect(multiplayer_pressed)
+	multiplayer.name = "Multiplayer"
+	menu.add_child(multiplayer)
+	multiplayer.add_item("Create Server", 0)
+	multiplayer.add_item("Connect to Client", 1)
+
+func tabletop_menu() -> void:
+	var tabletop: PopupMenu = PopupMenu.new()
+	tabletop.id_pressed.connect(tabletop_pressed)
+	tabletop.name = "Tabletop"
+	menu.add_child(tabletop)
+	tabletop.add_item("Load Config", 0)
+	tabletop.add_item("Create Config", 1)
+	tabletop.add_item("Reload Config", 2)
+	tabletop.add_item("Reset Tabletop", 3)
+	
 
 func file_menu() -> void:
 	var file: PopupMenu = PopupMenu.new()
 	file.id_pressed.connect(file_pressed)
 	file.name = "File"
 	menu.add_child(file)
-	if multiplayer.is_server():
-		file.add_item("Load Config", 0)
-		file.add_item("Export Config", 3)
-
-		# Reset submenu
-		var reset_submenu: PopupMenu = PopupMenu.new()
-		reset_submenu.id_pressed.connect(file_pressed)
-		reset_submenu.name = "reset"
-		file.add_child(reset_submenu)
-		file.add_submenu_item("Reset", "reset", 1)
-		reset_submenu.add_item("Reset Tabletop", 10)
-		reset_submenu.add_item("Reset Camera", 11)
-	file.add_item("Exit Open Boardgame Framework", 4)
+	file.add_item("Main Menu", 0)
+	file.add_item("Quit", 1)
 
 func view_menu() -> void:
 	var view: PopupMenu = PopupMenu.new()
@@ -88,11 +101,23 @@ func run_action(index: int) -> void:
 
 func file_pressed(id: int) -> void:
 	match id:
+		0: get_tree().change_scene_to_file("res://src/scenes/menu/main_menu.tscn")
+		1: get_tree().quit()
+
+func multiplayer_pressed(id: int) -> void:
+	match id:
+		0:
+			MultiplayerManager.create_server()
+			SignalManager.server_add_peer.emit()
+		1:
+			SignalManager.client_add_peer.emit()
+
+func tabletop_pressed(id: int) -> void:
+	match id:
 		0: if multiplayer.is_server(): load_config()
-		3: export_config()
-		10: Globals.get_shared_tabletop_manager().load_game_config(Globals.get_current_game())
-		11: Globals.get_shared_tabletop_manager().camera_controller.reset_camera()
-		4: get_tree().quit()
+		1: export_config()
+		2: Globals.get_shared_tabletop_manager().load_game_config(Globals.get_current_game())
+		3: print("Not implemented yet")
 
 func view_pressed(id: int) -> void:
 	match id:

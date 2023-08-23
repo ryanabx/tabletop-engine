@@ -12,7 +12,8 @@ config_version=5
 
 config/name="Open Boardgame Framework"
 config/description="A 2-dimensional virtual tabletop for all! Create board game configurations which can be loaded in and played with friends online or in person!"
-run/main_scene="res://src/scenes/game_elements/board_manager.tscn"
+config/version="0.0.1"
+run/main_scene="res://src/scenes/menu/main_menu.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.png"
 config/windows_native_icon="res://icon.ico"
@@ -40,7 +41,7 @@ import/blender/enabled=false
 
 [gui]
 
-theme/default_theme_scale=1.5
+theme/default_theme_scale=2.0
 
 [input]
 

@@ -2,9 +2,9 @@ class_name UserInterface
 extends Control
 
 var coordinates_labels: Array
-@onready var menu_bar: MenuBar = $VBoxContainer/TitleBar/HBoxContainer/MenuBar
-@onready var fps_counter: Label = $VBoxContainer/TitleBar/HBoxContainer/FPSCounter
-@onready var game_info: Label = $VBoxContainer/TitleBar/HBoxContainer/GameInfo
+@onready var menu_bar: MenuBar = $TitleBar/HBoxContainer/MenuBar
+@onready var fps_counter: Label = $BottomBar/HBoxContainer/FPSCounter
+@onready var game_info: Label = $BottomBar/HBoxContainer/GameInfo
 
 var game_name: String = "untitled"
 var game_ip_addr: String = "local"
@@ -37,11 +37,11 @@ func peer_connected(_id: int) -> void:
 func update_bar_color() -> void:
 	if multiplayer != null and multiplayer.is_server() and multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
 		if multiplayer.get_peers().size() > 0:
-			$VBoxContainer/TitleBar.get_theme_stylebox("panel").bg_color = Color8(39, 61, 42)
+			$TitleBar.get_theme_stylebox("panel").bg_color = Color8(39, 61, 42)
 		else:
-			$VBoxContainer/TitleBar.get_theme_stylebox("panel").bg_color = Color8(62, 99, 67)
+			$TitleBar.get_theme_stylebox("panel").bg_color = Color8(62, 99, 67)
 	elif not multiplayer.is_server():
-		$VBoxContainer/TitleBar.get_theme_stylebox("panel").bg_color = Color8(39, 47, 61)
+		$TitleBar.get_theme_stylebox("panel").bg_color = Color8(39, 47, 61)
 
 func _process(_delta: float) -> void:
 	fps_counter.text = str(Engine.get_frames_per_second(), "fps")

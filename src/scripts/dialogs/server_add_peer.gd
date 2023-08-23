@@ -26,6 +26,7 @@ func _ice_created(media: String, index: int, _name: String) -> void:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	SignalManager.server_add_peer.connect(popup)
 	about_to_popup.connect(_on_popup)
 
 func _on_popup() -> void:

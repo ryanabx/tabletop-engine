@@ -16,6 +16,10 @@ signal create_export_config_dialog()
 signal open_multiplayer_menu()
 signal run_action(index: int)
 
+# Dialogs
+signal server_add_peer()
+signal client_add_peer()
+
 # File Dialogs
 signal config_file_opened(fname: String)
 signal export_conf(config: PackedByteArray)
