@@ -10,8 +10,15 @@ var auth: int:
     get:
         return get_multiplayer_authority()
     set(val):
-        set_multiplayer_authority(val)
+        if auth != val:
+            print("MY_ID: ",multiplayer.get_unique_id()," SET_AUTH: ",val," ON ",get_name())
+            set_multiplayer_authority(val)
+            if val == multiplayer.get_unique_id():
+                set_authority.rpc(val)
 
+@rpc("any_peer","call_remote","reliable")
+func set_authority(id: int) -> void:
+    auth = id
 
 ## Moves this object to the top of the draw order
 @rpc("any_peer","call_local", "reliable")

@@ -43,10 +43,6 @@ properties/9/path = NodePath(".:type")
 properties/9/spawn = true
 properties/9/sync = false
 properties/9/watch = true
-properties/10/path = NodePath(".:auth")
-properties/10/spawn = true
-properties/10/sync = true
-properties/10/watch = false
 
 [node name="Collection" type="Node2D"]
 z_index = 1
@@ -59,7 +55,8 @@ offset_right = 40.0
 offset_bottom = 23.0
 
 [node name="MultiplayerSynchronizer2" type="MultiplayerSynchronizer" parent="."]
-replication_interval = 0.1
+replication_interval = 0.05
+delta_interval = 0.05
 replication_config = SubResource("SceneReplicationConfig_mpkqt")
 
 [node name="Area2D" type="Area2D" parent="."]

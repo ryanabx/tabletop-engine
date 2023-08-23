@@ -145,11 +145,11 @@ func _select_collection() -> void:
 
 func _flip_selected_objects() -> void:
 	for obj in object_group:
-		obj.flip()
+		obj.face_up = not obj.face_up
 
 func _set_objects_orientation(side: bool) -> void:
 	for obj in object_group:
-		obj.set_face(side)
+		obj.face_up = side
 
 func _move_objects_to_front() -> void:
 	for obj in object_group:

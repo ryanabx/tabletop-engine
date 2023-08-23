@@ -31,10 +31,6 @@ properties/6/path = NodePath(".:shape")
 properties/6/spawn = true
 properties/6/sync = false
 properties/6/watch = true
-properties/7/path = NodePath(".:auth")
-properties/7/spawn = true
-properties/7/sync = true
-properties/7/watch = false
 
 [node name="Piece" type="Node2D"]
 z_index = 1
@@ -45,7 +41,8 @@ script = ExtResource("1_w74q3")
 [node name="Down" type="Sprite2D" parent="."]
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_interval = 0.1
+replication_interval = 0.05
+delta_interval = 0.05
 replication_config = SubResource("SceneReplicationConfig_bm0ol")
 
 [node name="Area2D" type="Area2D" parent="."]

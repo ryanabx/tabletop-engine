@@ -94,6 +94,8 @@ func create_collection(data: PackedByteArray) -> Collection:
 	var c: Collection = Collection.construct(self, config)
 	_create_collection.rpc(data)
 	print(c.name, " ",c.get_index())
+	if c != null:
+		c.auth = multiplayer.get_unique_id()
 	return c
 
 @rpc("any_peer","call_remote", "reliable")
@@ -107,6 +109,7 @@ func create_piece(data: PackedByteArray) -> Piece:
 	if p != null:
 		_create_piece.rpc(data)
 		print(p.name, " ", p.get_index())
+		p.auth = multiplayer.get_unique_id()
 	return p
 
 @rpc("any_peer","call_remote", "reliable")

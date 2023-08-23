@@ -40,7 +40,7 @@ func is_selecting() -> bool:
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("game_flip"):
 		for pc in get_selected_pieces():
-			pc.flip()
+			pc.face_up = not pc.face_up
 	if (event.is_action_released("game_select") or event.is_action_released("game_select_stack")):
 		queue_for_deselection()
 	if event is InputEventMouseMotion and\
@@ -179,6 +179,7 @@ func select_collection(obj: Collection) -> void:
 	timer.start()
 
 func stack_selection_to_item(item: Gobject) -> void:
+	item.auth = multiplayer.get_unique_id()
 	if item is Collection:
 		stack_stackables_to_collection(item)
 	elif item is Piece:
@@ -205,6 +206,7 @@ func convert_to_stack(items: Array[Piece]) -> void:
 			"rotation": items[0].rotation
 		})
 	)
+	collection.auth = multiplayer.get_unique_id()
 	for item in items:
 		item.add_to_collection(collection)
 		item.set_selected(false)
@@ -214,8 +216,6 @@ func deselect() -> void:
 	deselect_collections()
 	deselect_queue_take_piece_off()
 	moved_since_selected = true
-	
-	
 
 func deselect_pieces() -> void:
 	for obj in get_selected_pieces():

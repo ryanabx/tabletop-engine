@@ -3,8 +3,17 @@ extends Gobject
 
 var image_up: String = ""
 var image_down: String = ""
-var face_up: bool = false
-# TODO: Properties setget
+var _face_up: bool = false
+var face_up: bool:
+	get:
+		return _face_up
+	set(val):
+		_face_up = val
+		_refresh_image()
+
+@rpc("any_peer","call_remote","reliable")
+func set_authority(id: int) -> void:
+	auth = id
 
 var grab_offset: Vector2 = Vector2.ZERO
 
@@ -37,25 +46,17 @@ func _process(_delta: float) -> void:
 
 func update_position() -> void:
 	if selected:
+		auth = multiplayer.get_unique_id()
 		position = (board.get_local_mouse_position() - grab_offset).clamp(board.border.position, board.border.end)
-
-
-## Sets the object's face
-func set_face(_face_up: bool) -> void:
-	face_up = _face_up
-	_refresh_image()
-
-## Flips the object's face
-func flip() -> void:
-	face_up = not face_up
-	_refresh_image()
 
 ## Adds this piece to a collection with the name c_name
 func add_to_collection(coll: Collection) -> void:
 	if coll != null:
+		auth = multiplayer.get_unique_id()
+		coll.auth = multiplayer.get_unique_id()
 		coll.add_piece(self)
 
-@rpc("authority","call_local","reliable")
+@rpc("any_peer","call_local","reliable")
 func erase_self() -> void:
 	queue_free()
 			
@@ -73,6 +74,7 @@ static func construct(brd: Board, config: Dictionary) -> Piece:
 			"shape": config.shape if "shape" in config else PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)]),
 			"gobject_scale": config.gobject_scale if "gobject_scale" in config else Vector2.ONE
 		}
+		c.auth = brd.multiplayer.get_unique_id()
 		c.inside.append(_dict)
 		return null
 	# Else, create an object
@@ -89,6 +91,11 @@ static func construct(brd: Board, config: Dictionary) -> Piece:
 func _refresh_image() -> void:
 	if image_up == "" or image_down == "":
 		print("Image up or image down is empty")
+		return
+	if board == null or board.game == null\
+		or not image_up in board.game.images or not image_down\
+		in board.game.images or not is_instance_valid(sprite_up)\
+		or not is_instance_valid(sprite_down):
 		return
 	if sprite_up.texture == null:
 		sprite_up.texture = self.board.game.images[image_up]
@@ -111,7 +118,7 @@ func can_access() -> bool:
 	return true
 
 func set_selected(sl: bool) -> void:
-	self.auth = multiplayer.get_unique_id()
+	auth = multiplayer.get_unique_id()
 	if sl == true:
 		selected = true
 		area2d.collision_layer = 2
