@@ -3,7 +3,7 @@ extends Control
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	$HBoxContainer/VersionNumber.text = str("Version: ",ProjectSettings.get_setting("application/config/version"))
+	$VBoxContainer/HBoxContainer/VersionNumber.text = str("Version: ",ProjectSettings.get_setting("application/config/version"))
 
 
 func _on_new_game_pressed() -> void:

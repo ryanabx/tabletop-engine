@@ -32,7 +32,8 @@ func update_loading_percent(pc: float) -> void:
 	$LoadingBarContainer/VBoxContainer/LoadingBar.value = pc * 100.0
 
 func peer_connected(_id: int) -> void:
-	update_bar_color()
+	# update_bar_color()
+	pass
 
 func update_bar_color() -> void:
 	if multiplayer != null and multiplayer.is_server() and multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:

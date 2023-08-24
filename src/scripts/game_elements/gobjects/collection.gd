@@ -24,7 +24,7 @@ func serialize_piece(pc: Piece) -> Dictionary:
         "name": pc.name,
         "image_up": pc.image_up,
         "image_down": pc.image_down,
-        "face_up": pc.face_up,
+        "face_up": pc.face_up if force_state == null else force_state,
         "shape": pc.shape,
         "gobject_scale": pc.gobject_scale
     }
@@ -39,7 +39,7 @@ func deserialize_piece(_dict: Dictionary) -> Piece:
 
 func _ready() -> void:
     collision_polygon.polygon = get_gobject_transform() * self.shape
-    count.z_index = 1000
+    # count.z_index = 1000
 
 ## Moves this object to the top of the draw order
 @rpc("any_peer","call_local", "reliable")
@@ -67,18 +67,23 @@ func update_position() -> void:
 func _process(_delta: float) -> void:
     update_position()
     count.position = (get_gobject_transform() * self.shape)[0]
-    count.text = str(name,"[",inside.size(),"]")
+    count.text = str("[",inside.size(),"]")
+    count.reset_size()
     queue_redraw()
 
 func _draw() -> void:
     if inside.is_empty():
         draw_colored_polygon(get_gobject_transform() * self.shape, Color.BLACK * Color(1,1,1,0.3))
+        draw_rect(count.get_rect().grow(2), Color.BLACK * Color(1.0, 1.0, 1.0, 0.75))
+        draw_rect(count.get_rect().grow(2), Color.WHITE * Color(1.0, 1.0, 1.0, 0.75), false, 2)
         return
     var top_pc: Dictionary = inside[-1]
     _update_scale(Vector2(maxf(base_size.x, top_pc.gobject_scale.x), maxf(base_size.y, top_pc.gobject_scale.y)))
     draw_colored_polygon(get_gobject_transform() * self.shape, Color.BLACK * Color(1,1,1,0.3))
     var texture: Texture2D = board.game.images[top_pc.image_up] if top_pc.face_up else board.game.images[top_pc.image_down]
     draw_texture_rect(texture, Rect2(Vector2.ZERO - gobject_scale / 2, gobject_scale), false)
+    draw_rect(count.get_rect().grow(2), Color.BLACK * Color(1.0, 1.0, 1.0, 0.75))
+    draw_rect(count.get_rect().grow(2), Color.WHITE * Color(1.0, 1.0, 1.0, 0.75), false, 2)
 
 func _update_scale(_sc: Vector2) -> void:
     if gobject_scale != _sc:

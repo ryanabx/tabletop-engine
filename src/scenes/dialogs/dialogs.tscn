@@ -1,9 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://lpw6t5xb1d5i"]
+[gd_scene load_steps=6 format=3 uid="uid://lpw6t5xb1d5i"]
 
 [ext_resource type="Script" path="res://src/scripts/dialogs/export_config_dialog.gd" id="1_1dtoy"]
 [ext_resource type="Script" path="res://src/scripts/dialogs/export_config_dialog2.gd" id="2_r3kfd"]
 [ext_resource type="Script" path="res://src/scripts/dialogs/load_config_dialog.gd" id="3_spydn"]
-[ext_resource type="Script" path="res://src/scripts/dialogs/mplay_config_window.gd" id="4_1kg71"]
 [ext_resource type="Script" path="res://src/scripts/dialogs/server_add_peer.gd" id="5_nllk5"]
 [ext_resource type="Script" path="res://src/scripts/dialogs/client_connect.gd" id="6_sr1ax"]
 
@@ -12,7 +11,7 @@
 [node name="ExportConfigFolderOpen" type="FileDialog" parent="."]
 title = "Open a File"
 initial_position = 2
-size = Vector2i(720, 480)
+size = Vector2i(1020, 620)
 ok_button_text = "Open"
 file_mode = 0
 access = 2
@@ -21,215 +20,118 @@ script = ExtResource("1_1dtoy")
 [node name="ExportConfigFileSave" type="FileDialog" parent="."]
 title = "Save config file"
 initial_position = 2
-size = Vector2i(720, 480)
+size = Vector2i(1020, 620)
 ok_button_text = "Save"
 access = 2
 script = ExtResource("2_r3kfd")
 
 [node name="ImportConfigFileOpen" type="FileDialog" parent="."]
-title = "Open a configuration file"
+title = "Open a File"
 initial_position = 2
-size = Vector2i(720, 480)
+size = Vector2i(1020, 620)
 ok_button_text = "Open"
 file_mode = 0
 access = 2
 script = ExtResource("3_spydn")
 
-[node name="MplayConfigWindow" type="Window" parent="."]
-title = "Connect to peers!"
-initial_position = 2
-size = Vector2i(820, 400)
-visible = false
-transient = true
-script = ExtResource("4_1kg71")
-
-[node name="MarginContainer" type="MarginContainer" parent="MplayConfigWindow"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MplayConfigWindow/MarginContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MplayConfigWindow/MarginContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_constants/separation = 30
-alignment = 1
-
-[node name="ServerSide" type="VBoxContainer" parent="MplayConfigWindow/MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ServerLabel" type="Label" parent="MplayConfigWindow/MarginContainer/VBoxContainer/HBoxContainer/ServerSide"]
-layout_mode = 2
-text = "Server"
-horizontal_alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MplayConfigWindow/MarginContainer/VBoxContainer/HBoxContainer/ServerSide"]
-layout_mode = 2
-alignment = 1
-
-[node name="CreateServer" type="Button" parent="MplayConfigWindow/MarginContainer/VBoxContainer/HBoxContainer/ServerSide/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Create Server"
-
-[node name="Label" type="Label" parent="MplayConfigWindow/MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-text = "OR"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ClientSide" type="VBoxContainer" parent="MplayConfigWindow/MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ClientLabel" type="Label" parent="MplayConfigWindow/MarginContainer/VBoxContainer/HBoxContainer/ClientSide"]
-layout_mode = 2
-text = "Client"
-horizontal_alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MplayConfigWindow/MarginContainer/VBoxContainer/HBoxContainer/ClientSide"]
-layout_mode = 2
-alignment = 1
-
-[node name="ClientId" type="LineEdit" parent="MplayConfigWindow/MarginContainer/VBoxContainer/HBoxContainer/ClientSide/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-placeholder_text = "ID"
-
-[node name="CreateClient" type="Button" parent="MplayConfigWindow/MarginContainer/VBoxContainer/HBoxContainer/ClientSide/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Create Client"
-
 [node name="ServerAddPeer" type="Window" parent="."]
-title = "Add Peer"
+title = "[SERVER] Add Players"
 initial_position = 2
 size = Vector2i(720, 320)
 visible = false
 transient = true
 script = ExtResource("5_nllk5")
 
-[node name="MarginContainer" type="MarginContainer" parent="ServerAddPeer"]
+[node name="PanelContainer" type="PanelContainer" parent="ServerAddPeer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ServerAddPeer/MarginContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="ServerAddPeer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_right = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ServerAddPeer/PanelContainer/MarginContainer"]
 layout_mode = 2
 alignment = 1
 
-[node name="Label" type="Label" parent="ServerAddPeer/MarginContainer/VBoxContainer"]
+[node name="CreateOffer" type="Button" parent="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Server: Add peer"
+text = "Add Player"
+
+[node name="OfferCreateNotice" type="Label" parent="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+text = "Client offer created. Paste offer in client"
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="ServerAddPeer/MarginContainer/VBoxContainer"]
+[node name="PasteOffer" type="Button" parent="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-alignment = 1
+disabled = true
+text = "Paste Client Offer"
 
-[node name="ClientOffer" type="LineEdit" parent="ServerAddPeer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="PlayerLabel" type="Label" parent="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "Client Offer"
+text = "Players:"
+horizontal_alignment = 1
 
-[node name="Connect" type="Button" parent="ServerAddPeer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="PlayerList" type="ItemList" parent="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Connect"
+size_flags_vertical = 3
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="ServerAddPeer/MarginContainer/VBoxContainer"]
+[node name="Done" type="Button" parent="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-alignment = 1
-
-[node name="ServerOffer" type="LineEdit" parent="ServerAddPeer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "Server Offer"
-
-[node name="HBoxContainer3" type="HBoxContainer" parent="ServerAddPeer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="AddAnotherPeer" type="Button" parent="ServerAddPeer/MarginContainer/VBoxContainer/HBoxContainer3"]
-layout_mode = 2
-text = "Add another peer"
-
-[node name="Done" type="Button" parent="ServerAddPeer/MarginContainer/VBoxContainer/HBoxContainer3"]
-layout_mode = 2
+disabled = true
 text = "Done"
 
 [node name="ClientConnect" type="Window" parent="."]
-title = "Add Peer"
+title = "[CLIENT] Connect to server"
 initial_position = 2
 size = Vector2i(720, 320)
 visible = false
 transient = true
 script = ExtResource("6_sr1ax")
 
-[node name="MarginContainer" type="MarginContainer" parent="ClientConnect"]
+[node name="PanelContainer" type="PanelContainer" parent="ClientConnect"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="ClientConnect/PanelContainer"]
+layout_mode = 2
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ClientConnect/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="ClientConnect/PanelContainer/MarginContainer"]
 layout_mode = 2
 alignment = 1
 
-[node name="Label" type="Label" parent="ClientConnect/MarginContainer/VBoxContainer"]
+[node name="PasteOffer" type="Button" parent="ClientConnect/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Client: Connect to server"
+text = "Paste Server Offer"
+
+[node name="IsConnectedLabel" type="Label" parent="ClientConnect/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 6
+text = "Not Connected"
 horizontal_alignment = 1
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="ClientConnect/MarginContainer/VBoxContainer"]
+[node name="Done" type="Button" parent="ClientConnect/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-alignment = 1
+disabled = true
+text = "Done"
 
-[node name="Label" type="Label" parent="ClientConnect/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
-text = "Send to server: "
-
-[node name="ClientOffer" type="LineEdit" parent="ClientConnect/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "Client Offer"
-
-[node name="HBoxContainer" type="HBoxContainer" parent="ClientConnect/MarginContainer/VBoxContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="ServerOffer" type="LineEdit" parent="ClientConnect/MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "Server Offer"
-
-[node name="Connect" type="Button" parent="ClientConnect/MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-text = "Connect"
-
-[connection signal="close_requested" from="MplayConfigWindow" to="MplayConfigWindow" method="_on_close_requested"]
 [connection signal="close_requested" from="ServerAddPeer" to="ServerAddPeer" method="_on_close_requested"]
-[connection signal="pressed" from="ServerAddPeer/MarginContainer/VBoxContainer/HBoxContainer/Connect" to="ServerAddPeer" method="_on_connect_pressed"]
-[connection signal="pressed" from="ServerAddPeer/MarginContainer/VBoxContainer/HBoxContainer3/AddAnotherPeer" to="ServerAddPeer" method="_on_add_another_peer_pressed"]
-[connection signal="pressed" from="ServerAddPeer/MarginContainer/VBoxContainer/HBoxContainer3/Done" to="ServerAddPeer" method="_on_done_pressed"]
+[connection signal="pressed" from="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer/CreateOffer" to="ServerAddPeer" method="_on_create_offer_pressed"]
+[connection signal="pressed" from="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer/PasteOffer" to="ServerAddPeer" method="_on_paste_offer_pressed"]
+[connection signal="pressed" from="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer/Done" to="ServerAddPeer" method="_on_done_pressed"]
 [connection signal="close_requested" from="ClientConnect" to="ClientConnect" method="_on_close_requested"]
-[connection signal="pressed" from="ClientConnect/MarginContainer/VBoxContainer/HBoxContainer/Connect" to="ClientConnect" method="_on_connect_pressed"]
+[connection signal="pressed" from="ClientConnect/PanelContainer/MarginContainer/VBoxContainer/PasteOffer" to="ClientConnect" method="_on_paste_offer_pressed"]
+[connection signal="pressed" from="ClientConnect/PanelContainer/MarginContainer/VBoxContainer/Done" to="ClientConnect" method="_on_done_pressed"]

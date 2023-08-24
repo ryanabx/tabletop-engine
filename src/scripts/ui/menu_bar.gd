@@ -46,14 +46,13 @@ func player_menu(max_players: int) -> void:
 		player.add_item(str("Player ",i+1))
 	menu.add_child(player)
 
-
 func multiplayer_menu() -> void:
 	var _multiplayer: PopupMenu = PopupMenu.new()
 	_multiplayer.id_pressed.connect(multiplayer_pressed)
 	_multiplayer.name = "Multiplayer"
 	menu.add_child(_multiplayer)
 	_multiplayer.add_item("Create Server", 0)
-	_multiplayer.add_item("Connect to Client", 1)
+	_multiplayer.add_item("Connect to Server", 1)
 
 func tabletop_menu() -> void:
 	tabletop = PopupMenu.new()
@@ -96,7 +95,6 @@ func file_pressed(id: int) -> void:
 func multiplayer_pressed(id: int) -> void:
 	match id:
 		0:
-			MultiplayerManager.create_server()
 			SignalManager.server_add_peer.emit()
 		1:
 			SignalManager.client_add_peer.emit()
