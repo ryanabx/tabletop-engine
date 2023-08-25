@@ -13,3 +13,7 @@ func create_server() -> void:
 	var peer: WebRTCMultiplayerPeer = WebRTCMultiplayerPeer.new()
 	peer.create_server()
 	multiplayer.multiplayer_peer = peer
+
+func disband() -> void:
+	multiplayer.multiplayer_peer.close()
+	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()

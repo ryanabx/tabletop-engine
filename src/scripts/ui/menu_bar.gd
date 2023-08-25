@@ -14,10 +14,26 @@ func _ready() -> void:
 	options_menu()
 	if not multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
 		multiplayer_menu()
+	else:
+		server_menu()
 	SignalManager.game_load_finished.connect(set_board)
 
 func set_board(_b: Board) -> void:
 	board = _b
+
+func server_menu() -> void:
+	var sv_menu: PopupMenu = PopupMenu.new()
+	if multiplayer.is_server():
+		sv_menu.name = "Disband Server"
+	else:
+		sv_menu.name = "Disconnect from Server"
+	sv_menu.about_to_popup.connect(_disconnect_from_server)
+	menu.add_child(sv_menu)
+
+func _disconnect_from_server() -> void:
+	print("Disconnect from server")
+	MultiplayerManager.disband()
+	get_tree().reload_current_scene()
 
 func new_game_loaded(max_players: int, action: Array) -> void:
 	if player != null:

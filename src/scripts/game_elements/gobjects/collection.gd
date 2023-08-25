@@ -31,6 +31,7 @@ func serialize_piece(pc: Piece) -> Dictionary:
     return _dict
 
 func deserialize_piece(_dict: Dictionary) -> Piece:
+    _dict.face_up = _dict.face_up if force_state == null else force_state
     var piece: Piece = board.create_piece(
     var_to_bytes(_dict)
     )
@@ -80,7 +81,8 @@ func _draw() -> void:
     var top_pc: Dictionary = inside[-1]
     _update_scale(Vector2(maxf(base_size.x, top_pc.gobject_scale.x), maxf(base_size.y, top_pc.gobject_scale.y)))
     draw_colored_polygon(get_gobject_transform() * self.shape, Color.BLACK * Color(1,1,1,0.3))
-    var texture: Texture2D = board.game.images[top_pc.image_up] if top_pc.face_up else board.game.images[top_pc.image_down]
+    var face_up: bool = top_pc.face_up if force_state == null else force_state
+    var texture: Texture2D = board.game.images[top_pc.image_up] if face_up else board.game.images[top_pc.image_down]
     draw_texture_rect(texture, Rect2(Vector2.ZERO - gobject_scale / 2, gobject_scale), false)
     draw_rect(count.get_rect().grow(2), Color.BLACK * Color(1.0, 1.0, 1.0, 0.75))
     draw_rect(count.get_rect().grow(2), Color.WHITE * Color(1.0, 1.0, 1.0, 0.75), false, 2)
