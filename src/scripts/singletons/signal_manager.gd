@@ -16,6 +16,10 @@ signal create_export_config_dialog()
 signal open_multiplayer_menu()
 signal run_action(index: int)
 
+# Camera move
+signal camera_move_start()
+signal camera_move_end()
+
 # Dialogs
 signal server_add_peer()
 signal client_add_peer()

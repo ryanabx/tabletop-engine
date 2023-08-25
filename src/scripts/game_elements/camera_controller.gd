@@ -17,6 +17,8 @@ var clamp2: Vector2
 
 func _ready() -> void:
 	SignalManager.game_load_finished.connect(_game_loaded)
+	SignalManager.camera_move_start.connect(free_cam_start)
+	SignalManager.camera_move_end.connect(free_cam_finish)
 
 func _game_loaded(_board: Board) -> void:
 	board = _board
@@ -65,14 +67,20 @@ func _process(delta: float) -> void:
 
 func check_free_cam() -> void:
 	if Input.is_action_just_pressed("free_cam"):
-		free_cam = true
-		initial_mouse_pos = get_local_mouse_position()
-		initial_camera_pos = camera.position
-		Input.set_default_cursor_shape(Input.CURSOR_DRAG)
+		free_cam_start()
 	elif Input.is_action_just_released("free_cam"):
-		initial_mouse_pos = Vector2.ZERO
-		free_cam = false
-		Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+		free_cam_finish()
+
+func free_cam_start() -> void:
+	free_cam = true
+	initial_mouse_pos = get_local_mouse_position()
+	initial_camera_pos = camera.position
+	Input.set_default_cursor_shape(Input.CURSOR_DRAG)
+
+func free_cam_finish() -> void:
+	initial_mouse_pos = Vector2.ZERO
+	free_cam = false
+	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 
 func _input(event: InputEvent) -> void:
 	if free_cam and event is InputEventMouseMotion:

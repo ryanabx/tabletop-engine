@@ -68,12 +68,16 @@ func _input(event: InputEvent) -> void:
 			results.sort_custom(compare_by_z_index)
 			print(results[0].collider.get_parent().get_name())
 			results[0].collider.get_parent()._on_select(event)
+		else:
+			SignalManager.camera_move_start.emit()
 	elif event.is_action_released("game_select"):
-		var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
-		if results.size() > 0:
-			results.sort_custom(compare_by_z_index)
-			print(results[0].collider.get_parent().get_name())
-			results[0].collider.get_parent()._on_deselect(event)
+		SignalManager.camera_move_end.emit()
+		if is_selecting():
+			var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
+			if results.size() > 0:
+				results.sort_custom(compare_by_z_index)
+				print(results[0].collider.get_parent().get_name())
+				results[0].collider.get_parent()._on_deselect(event)
 
 func compare_by_z_index(a: Dictionary, b: Dictionary) -> bool:
 	return a.collider.get_parent().get_index() > b.collider.get_parent().get_index()
@@ -145,6 +149,7 @@ func select_objects_from_menu(objs: Array[Piece], with_collections: bool) -> voi
 		selected_pieces.append(obj)
 		obj.set_selected(true)
 		obj.grab_offset = Vector2.ZERO
+	timer.stop()
 			
 func select_pieces(objs: Array[Piece]) -> void:
 	timer.stop()
