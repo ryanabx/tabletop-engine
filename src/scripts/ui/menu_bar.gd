@@ -76,6 +76,7 @@ func tabletop_menu() -> void:
 	tabletop.name = "Tabletop"
 	menu.add_child(tabletop)
 	tabletop.add_item("Load Config", 0)
+	tabletop.add_item("Load Example Config", 5)
 	tabletop.add_item("Create Config", 1)
 	tabletop.add_item("Reload Config", 2)
 	tabletop.add_item("Reset Tabletop", 3)
@@ -124,6 +125,7 @@ func tabletop_pressed(id: int) -> void:
 				board.get_parent().load_game_config(Globals.get_current_game())
 				board = null
 		3: get_tree().reload_current_scene()
+		5: if multiplayer.is_server(): load_sample_config()
 
 func options_pressed(index: int) -> void:
 	match index:
@@ -131,6 +133,18 @@ func options_pressed(index: int) -> void:
 
 func load_config() -> void:
 	SignalManager.create_load_config_dialog.emit()
+
+func load_sample_config() -> void:
+	if FileAccess.file_exists("res://configs/default.obgf"):
+		var bytes: PackedByteArray = FileAccess.get_file_as_bytes("res://configs/default.obgf")
+		var conf: GameConfig2 = GameConfig2.new()
+		if conf.fill_bytes(bytes):
+			SignalManager.load_game_config.emit(
+				conf
+			)
+	else:
+		print("Could not find default config")
+		
 
 func export_config() -> void:
 	SignalManager.create_export_config_dialog.emit()
