@@ -1,4 +1,4 @@
-extends Window
+extends MarginContainer
 
 var connection: WebRTCPeerConnection
 var packet: Dictionary = {
@@ -9,20 +9,17 @@ var packet: Dictionary = {
 
 @onready var offer_create_notice: Label = $PanelContainer/MarginContainer/VBoxContainer/OfferCreateNotice
 @onready var paste_client_offer: Button = $PanelContainer/MarginContainer/VBoxContainer/PasteOffer
-@onready var done: Button = $PanelContainer/MarginContainer/VBoxContainer/Done
+@onready var done: Button = $PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Done
 @onready var player_list: ItemList = $PanelContainer/MarginContainer/VBoxContainer/PlayerList
-
-func _on_close_requested() -> void:
-	hide()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	SignalManager.server_add_peer.connect(popup)
-	about_to_popup.connect(_on_popup)
+	SignalManager.server_add_peer.connect(_on_popup)
 	multiplayer.peer_connected.connect(peer_connected)
 
 func _on_popup() -> void:
 	MultiplayerManager.create_server()
+	show()
 
 func _on_create_offer_pressed() -> void:
 	packet = {
@@ -106,4 +103,9 @@ func peer_connected(id: int) -> void:
 
 func _on_done_pressed() -> void:
 	hide()
+	get_tree().reload_current_scene()
+
+func _on_cancel_pressed() -> void:
+	hide()
+	MultiplayerManager.disband()
 	get_tree().reload_current_scene()

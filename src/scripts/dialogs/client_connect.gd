@@ -1,4 +1,4 @@
-extends Window
+extends MarginContainer
 
 var connection: WebRTCPeerConnection
 
@@ -10,15 +10,11 @@ var packet: Dictionary = {
 
 @onready var paste_offer: Button = $PanelContainer/MarginContainer/VBoxContainer/PasteOffer
 @onready var is_connected_label: Label = $PanelContainer/MarginContainer/VBoxContainer/IsConnectedLabel
-@onready var done: Button = $PanelContainer/MarginContainer/VBoxContainer/Done
-
-func _on_close_requested() -> void:
-	hide()
+@onready var done: Button = $PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Done
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	SignalManager.client_add_peer.connect(popup)
-	about_to_popup.connect(_on_popup)
+	SignalManager.client_add_peer.connect(_on_popup)
 	multiplayer.peer_connected.connect(peer_connected)
 
 func _on_popup() -> void:
@@ -49,6 +45,7 @@ func _on_popup() -> void:
 	packet.id = multiplayer.get_unique_id()
 	connection.session_description_created.connect(_sdp_created)
 	connection.ice_candidate_created.connect(_ice_created)
+	show()
 
 func _on_paste_offer_pressed() -> void:
 	var sv_packet: Dictionary = Utils.decode_offer(DisplayServer.clipboard_get())
@@ -87,4 +84,9 @@ func peer_connected(_id: int) -> void:
 
 func _on_done_pressed() -> void:
 	hide()
+	get_tree().reload_current_scene()
+
+func _on_cancel_pressed() -> void:
+	hide()
+	MultiplayerManager.disband()
 	get_tree().reload_current_scene()

@@ -46,7 +46,7 @@ func update_bar_color() -> void:
 
 func _process(_delta: float) -> void:
 	fps_counter.text = str(Engine.get_frames_per_second(), "fps")
-	game_info.text = str("Game: ",game_name, " | Server: ",game_ip_addr, " | ")
+	game_info.text = str("Game: ",game_name)
 	if Globals.get_current_game() != null:
 		game_name = Globals.get_current_game().name
 

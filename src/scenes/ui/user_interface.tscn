@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://ma7a666pl2us"]
+[gd_scene load_steps=5 format=3 uid="uid://ma7a666pl2us"]
 
 [ext_resource type="Script" path="res://src/scripts/ui/user_interface.gd" id="1_u2rch"]
 [ext_resource type="Script" path="res://src/scripts/ui/menu_bar.gd" id="2_fos3n"]
+[ext_resource type="Script" path="res://src/scripts/dialogs/server_add_peer.gd" id="3_1y55b"]
+[ext_resource type="Script" path="res://src/scripts/dialogs/client_connect.gd" id="4_tck8e"]
 
 [node name="UserInterface" type="Control"]
 layout_mode = 3
@@ -44,10 +46,10 @@ grow_horizontal = 2
 [node name="HBoxContainer" type="HBoxContainer" parent="TitleBar"]
 layout_mode = 2
 mouse_filter = 2
+alignment = 1
 
 [node name="MenuBar" type="MenuBar" parent="TitleBar/HBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
 mouse_filter = 1
 flat = true
 prefer_global_menu = false
@@ -64,9 +66,139 @@ grow_vertical = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="BottomBar"]
 layout_mode = 2
+alignment = 1
 
 [node name="GameInfo" type="Label" parent="BottomBar/HBoxContainer"]
 layout_mode = 2
 
 [node name="FPSCounter" type="Label" parent="BottomBar/HBoxContainer"]
 layout_mode = 2
+
+[node name="Dialogs" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ServerAddPeer" type="MarginContainer" parent="Dialogs"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_1y55b")
+
+[node name="PanelContainer" type="PanelContainer" parent="Dialogs/ServerAddPeer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Dialogs/ServerAddPeer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_right = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Dialogs/ServerAddPeer/PanelContainer/MarginContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="CreateOffer" type="Button" parent="Dialogs/ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Add Player"
+
+[node name="OfferCreateNotice" type="Label" parent="Dialogs/ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+text = "Client offer created. Paste offer in client"
+horizontal_alignment = 1
+
+[node name="PasteOffer" type="Button" parent="Dialogs/ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+disabled = true
+text = "Paste Client Offer"
+
+[node name="PlayerLabel" type="Label" parent="Dialogs/ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Players:"
+horizontal_alignment = 1
+
+[node name="PlayerList" type="ItemList" parent="Dialogs/ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Dialogs/ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Cancel" type="Button" parent="Dialogs/ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"
+
+[node name="Done" type="Button" parent="Dialogs/ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "Done"
+
+[node name="ClientConnect" type="MarginContainer" parent="Dialogs"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_tck8e")
+
+[node name="PanelContainer" type="PanelContainer" parent="Dialogs/ClientConnect"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Dialogs/ClientConnect/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Dialogs/ClientConnect/PanelContainer/MarginContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="PasteOffer" type="Button" parent="Dialogs/ClientConnect/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Paste Server Offer"
+
+[node name="IsConnectedLabel" type="Label" parent="Dialogs/ClientConnect/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 6
+text = "Not Connected"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Dialogs/ClientConnect/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Cancel" type="Button" parent="Dialogs/ClientConnect/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"
+
+[node name="Done" type="Button" parent="Dialogs/ClientConnect/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "Done"
+
+[connection signal="pressed" from="Dialogs/ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer/CreateOffer" to="Dialogs/ServerAddPeer" method="_on_create_offer_pressed"]
+[connection signal="pressed" from="Dialogs/ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer/PasteOffer" to="Dialogs/ServerAddPeer" method="_on_paste_offer_pressed"]
+[connection signal="pressed" from="Dialogs/ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Cancel" to="Dialogs/ServerAddPeer" method="_on_cancel_pressed"]
+[connection signal="pressed" from="Dialogs/ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Done" to="Dialogs/ServerAddPeer" method="_on_done_pressed"]
+[connection signal="pressed" from="Dialogs/ClientConnect/PanelContainer/MarginContainer/VBoxContainer/PasteOffer" to="Dialogs/ClientConnect" method="_on_paste_offer_pressed"]
+[connection signal="pressed" from="Dialogs/ClientConnect/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Cancel" to="Dialogs/ClientConnect" method="_on_cancel_pressed"]
+[connection signal="pressed" from="Dialogs/ClientConnect/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Done" to="Dialogs/ClientConnect" method="_on_done_pressed"]

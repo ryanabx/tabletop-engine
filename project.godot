@@ -34,6 +34,7 @@ window/size/window_width_override=1920
 window/size/window_height_override=1080
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+window/handheld/orientation=4
 
 [filesystem]
 
@@ -41,7 +42,9 @@ import/blender/enabled=false
 
 [gui]
 
-theme/default_theme_scale=2.0
+theme/default_theme_scale=2.5
+theme/custom="res://src/resources/default_obf_theme.tres"
+theme/custom_font="res://src/resources/Lato-Regular.ttf"
 
 [input]
 

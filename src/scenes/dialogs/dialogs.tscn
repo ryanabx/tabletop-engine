@@ -1,137 +1,45 @@
-[gd_scene load_steps=6 format=3 uid="uid://lpw6t5xb1d5i"]
+[gd_scene load_steps=4 format=3 uid="uid://lpw6t5xb1d5i"]
 
 [ext_resource type="Script" path="res://src/scripts/dialogs/export_config_dialog.gd" id="1_1dtoy"]
 [ext_resource type="Script" path="res://src/scripts/dialogs/export_config_dialog2.gd" id="2_r3kfd"]
 [ext_resource type="Script" path="res://src/scripts/dialogs/load_config_dialog.gd" id="3_spydn"]
-[ext_resource type="Script" path="res://src/scripts/dialogs/server_add_peer.gd" id="5_nllk5"]
-[ext_resource type="Script" path="res://src/scripts/dialogs/client_connect.gd" id="6_sr1ax"]
 
 [node name="Dialogs" type="Node"]
 
 [node name="ExportConfigFolderOpen" type="FileDialog" parent="."]
 title = "Open a File"
 initial_position = 2
-size = Vector2i(1020, 620)
+size = Vector2i(1280, 720)
+unresizable = true
+borderless = true
+content_scale_size = Vector2i(640, 360)
 ok_button_text = "Open"
 file_mode = 0
 access = 2
+use_native_dialog = true
 script = ExtResource("1_1dtoy")
 
 [node name="ExportConfigFileSave" type="FileDialog" parent="."]
 title = "Save config file"
 initial_position = 2
-size = Vector2i(1020, 620)
+size = Vector2i(1280, 720)
+unresizable = true
+borderless = true
+content_scale_size = Vector2i(640, 360)
 ok_button_text = "Save"
 access = 2
+use_native_dialog = true
 script = ExtResource("2_r3kfd")
 
 [node name="ImportConfigFileOpen" type="FileDialog" parent="."]
 title = "Open a File"
 initial_position = 2
-size = Vector2i(1020, 620)
+size = Vector2i(1280, 720)
+unresizable = true
+borderless = true
+content_scale_size = Vector2i(640, 360)
 ok_button_text = "Open"
 file_mode = 0
 access = 2
+use_native_dialog = true
 script = ExtResource("3_spydn")
-
-[node name="ServerAddPeer" type="Window" parent="."]
-title = "[SERVER] Add Players"
-initial_position = 2
-size = Vector2i(720, 320)
-visible = false
-transient = true
-script = ExtResource("5_nllk5")
-
-[node name="PanelContainer" type="PanelContainer" parent="ServerAddPeer"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="ServerAddPeer/PanelContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_right = 20
-
-[node name="VBoxContainer" type="VBoxContainer" parent="ServerAddPeer/PanelContainer/MarginContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="CreateOffer" type="Button" parent="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "Add Player"
-
-[node name="OfferCreateNotice" type="Label" parent="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
-visible = false
-layout_mode = 2
-text = "Client offer created. Paste offer in client"
-horizontal_alignment = 1
-
-[node name="PasteOffer" type="Button" parent="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-disabled = true
-text = "Paste Client Offer"
-
-[node name="PlayerLabel" type="Label" parent="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "Players:"
-horizontal_alignment = 1
-
-[node name="PlayerList" type="ItemList" parent="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Done" type="Button" parent="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-disabled = true
-text = "Done"
-
-[node name="ClientConnect" type="Window" parent="."]
-title = "[CLIENT] Connect to server"
-initial_position = 2
-size = Vector2i(720, 320)
-visible = false
-transient = true
-script = ExtResource("6_sr1ax")
-
-[node name="PanelContainer" type="PanelContainer" parent="ClientConnect"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="ClientConnect/PanelContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
-
-[node name="VBoxContainer" type="VBoxContainer" parent="ClientConnect/PanelContainer/MarginContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="PasteOffer" type="Button" parent="ClientConnect/PanelContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "Paste Server Offer"
-
-[node name="IsConnectedLabel" type="Label" parent="ClientConnect/PanelContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 6
-text = "Not Connected"
-horizontal_alignment = 1
-
-[node name="Done" type="Button" parent="ClientConnect/PanelContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-disabled = true
-text = "Done"
-
-[connection signal="close_requested" from="ServerAddPeer" to="ServerAddPeer" method="_on_close_requested"]
-[connection signal="pressed" from="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer/CreateOffer" to="ServerAddPeer" method="_on_create_offer_pressed"]
-[connection signal="pressed" from="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer/PasteOffer" to="ServerAddPeer" method="_on_paste_offer_pressed"]
-[connection signal="pressed" from="ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer/Done" to="ServerAddPeer" method="_on_done_pressed"]
-[connection signal="close_requested" from="ClientConnect" to="ClientConnect" method="_on_close_requested"]
-[connection signal="pressed" from="ClientConnect/PanelContainer/MarginContainer/VBoxContainer/PasteOffer" to="ClientConnect" method="_on_paste_offer_pressed"]
-[connection signal="pressed" from="ClientConnect/PanelContainer/MarginContainer/VBoxContainer/Done" to="ClientConnect" method="_on_done_pressed"]
