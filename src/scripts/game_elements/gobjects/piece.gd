@@ -74,9 +74,12 @@ static func construct(brd: Board, config: Dictionary) -> Piece:
 			"shape": config.shape if "shape" in config else PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)]),
 			"gobject_scale": config.gobject_scale if "gobject_scale" in config else Vector2.ONE
 		}
-		c.auth = brd.multiplayer.get_unique_id()
-		c.inside.append(_dict)
-		return null
+		if c != null:
+			c.auth = brd.multiplayer.get_unique_id()
+			c.inside.append(_dict)
+			return null
+		else:
+			print("ERROR: Piece made before collection. Could not find collection ",config.collection)
 	# Else, create an object
 	config.erase("collection")
 	var piece: Piece = piece_scene.instantiate()

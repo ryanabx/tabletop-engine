@@ -16,7 +16,6 @@ content_scale_size = Vector2i(640, 360)
 ok_button_text = "Open"
 file_mode = 0
 access = 2
-use_native_dialog = true
 script = ExtResource("1_1dtoy")
 
 [node name="ExportConfigFileSave" type="FileDialog" parent="."]
@@ -28,7 +27,6 @@ borderless = true
 content_scale_size = Vector2i(640, 360)
 ok_button_text = "Save"
 access = 2
-use_native_dialog = true
 script = ExtResource("2_r3kfd")
 
 [node name="ImportConfigFileOpen" type="FileDialog" parent="."]
@@ -41,5 +39,4 @@ content_scale_size = Vector2i(640, 360)
 ok_button_text = "Open"
 file_mode = 0
 access = 2
-use_native_dialog = true
 script = ExtResource("3_spydn")

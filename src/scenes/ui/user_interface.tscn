@@ -46,12 +46,14 @@ grow_horizontal = 2
 [node name="HBoxContainer" type="HBoxContainer" parent="TitleBar"]
 layout_mode = 2
 mouse_filter = 2
-alignment = 1
+
+[node name="Padding" type="Panel" parent="TitleBar/HBoxContainer"]
+custom_minimum_size = Vector2(42, 0)
+layout_mode = 2
 
 [node name="MenuBar" type="MenuBar" parent="TitleBar/HBoxContainer"]
 layout_mode = 2
 mouse_filter = 1
-flat = true
 prefer_global_menu = false
 script = ExtResource("2_fos3n")
 
@@ -66,12 +68,21 @@ grow_vertical = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="BottomBar"]
 layout_mode = 2
-alignment = 1
+
+[node name="Padding" type="Panel" parent="BottomBar/HBoxContainer"]
+custom_minimum_size = Vector2(42, 0)
+layout_mode = 2
 
 [node name="GameInfo" type="Label" parent="BottomBar/HBoxContainer"]
 layout_mode = 2
 
 [node name="FPSCounter" type="Label" parent="BottomBar/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_alignment = 2
+
+[node name="Padding2" type="Panel" parent="BottomBar/HBoxContainer"]
+custom_minimum_size = Vector2(42, 0)
 layout_mode = 2
 
 [node name="Dialogs" type="Control" parent="."]
