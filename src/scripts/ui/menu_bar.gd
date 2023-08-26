@@ -9,11 +9,9 @@ var board: Board = null
 
 func _ready() -> void:
 	file_menu()
-	if multiplayer.is_server():
-		tabletop_menu()
+	tabletop_menu()
 	if not Utils.is_mobile_platform():
 		options_menu()
-	
 	if not multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
 		multiplayer_menu()
 	else:
@@ -53,16 +51,19 @@ func actions_menu(action: Array) -> void:
 	actions.name = "Actions"
 	for i in action:
 		actions.add_item(i.name)
-	menu.add_child(actions)
+	tabletop.add_child(actions)
+	tabletop.add_submenu_item("Actions", "Actions")
 
 
 func player_menu(max_players: int) -> void:
 	player = PopupMenu.new()
 	player.index_pressed.connect(set_player)
-	player.name = str("Player ",Player.get_number())
+	player.name = "Player"
+	tabletop.add_child(player)
+	tabletop.add_submenu_item("Player", "Player")
 	for i in range(max_players):
 		player.add_item(str("Player ",i+1))
-	menu.add_child(player)
+	
 
 func multiplayer_menu() -> void:
 	var _multiplayer: PopupMenu = PopupMenu.new()
@@ -77,11 +78,18 @@ func tabletop_menu() -> void:
 	tabletop.id_pressed.connect(tabletop_pressed)
 	tabletop.name = "Tabletop"
 	menu.add_child(tabletop)
-	tabletop.add_item("Load Config", 0)
-	tabletop.add_item("Load Example Config", 5)
-	tabletop.add_item("Create Config", 1)
-	tabletop.add_item("Reload Config", 2)
-	tabletop.add_item("Reset Tabletop", 3)
+	if multiplayer.is_server():
+		var conf: PopupMenu = PopupMenu.new()
+		conf.name = "Config"
+		conf.id_pressed.connect(tabletop_pressed)
+		tabletop.add_child(conf)
+		tabletop.add_submenu_item("Config", "Config")
+		conf.add_item("Load Config", 0)
+		conf.add_item("Load Example Config", 5)
+		conf.add_item("Create Config", 1)
+		conf.add_item("Reload Config", 2)
+		conf.add_item("Reset Tabletop", 3)
+	
 	
 
 func file_menu() -> void:
@@ -90,7 +98,8 @@ func file_menu() -> void:
 	file.name = "File"
 	menu.add_child(file)
 	file.add_item("Main Menu", 0)
-	file.add_item("Quit", 1)
+	if not Utils.is_mobile_platform():
+		file.add_item("Quit", 1)
 
 func options_menu() -> void:
 	var options: PopupMenu = PopupMenu.new()
@@ -101,7 +110,6 @@ func options_menu() -> void:
 
 func set_player(index: int) -> void:
 	Player.set_id(index)
-	player.name = str("Player ",Player.get_number())
 
 func run_action(index: int) -> void:
 	SignalManager.run_action.emit(index)

@@ -35,9 +35,9 @@ func _input(event: InputEvent) -> void:
 
 func touchscreen_events(event: InputEvent) -> void:
 	if event is InputEventMagnifyGesture:
-		camera.zoom *= 1.0 + (1.0 - event.factor) * 0.2
+		camera.zoom = event.factor
 	if event is InputEventPanGesture:
-		camera.rotation_degrees += event.delta.normalized().angle()
+		camera.rotation += event.delta.normalized().angle()
 	
 
 func desktop_events(delta: float) -> void:
