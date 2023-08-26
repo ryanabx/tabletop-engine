@@ -31,6 +31,13 @@ func reset_camera() -> void:
 func _input(event: InputEvent) -> void:
 	var ev: InputEvent = make_input_local(event)
 	multiplatform_events(ev)
+	touchscreen_events(ev)
+
+func touchscreen_events(event: InputEvent) -> void:
+	if event is InputEventMagnifyGesture:
+		camera.zoom *= 1.0 + (1.0 - event.factor) * 0.2
+	if event is InputEventPanGesture:
+		camera.rotation_degrees += event.delta.normalized().angle()
 	
 
 func desktop_events(delta: float) -> void:
