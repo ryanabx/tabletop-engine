@@ -15,8 +15,8 @@ config/description="A 2-dimensional virtual tabletop for all! Create board game 
 config/version="0.0.1"
 run/main_scene="res://src/scenes/menu/main_menu.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
-config/icon="res://icon.png"
-config/windows_native_icon="res://icon.ico"
+config/icon="res://assets/icons/icon_transparent.png"
+config/windows_native_icon="res://assets/icons/Windows/icon_windows.ico"
 
 [autoload]
 
