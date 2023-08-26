@@ -3,11 +3,14 @@ extends Node2D
 
 @onready var camera: Camera2D = $Camera2D
 
+var input_events: Dictionary = {}
+
+var initial: Dictionary = {}
+
 const MOVEMENT_SPEED: float = 2000.0
 const ROTATION_SPEED: float = 2.0
 
 var initial_mouse_pos: Vector2 = Vector2.ZERO
-var free_cam: bool = false
 var initial_camera_pos: Vector2 = Vector2.ZERO
 
 var board: Board = null
@@ -17,8 +20,6 @@ var clamp2: Vector2
 
 func _ready() -> void:
 	SignalManager.game_load_finished.connect(_game_loaded)
-	SignalManager.camera_move_start.connect(free_cam_start)
-	SignalManager.camera_move_end.connect(free_cam_finish)
 
 func _game_loaded(_board: Board) -> void:
 	board = _board
@@ -30,15 +31,38 @@ func reset_camera() -> void:
 
 func _input(event: InputEvent) -> void:
 	var ev: InputEvent = make_input_local(event)
-	multiplatform_events(ev)
 	touchscreen_events(ev)
 
 func touchscreen_events(event: InputEvent) -> void:
-	if event is InputEventMagnifyGesture:
-		camera.zoom = event.factor
-	if event is InputEventPanGesture:
-		camera.rotation += event.delta.normalized().angle()
-	
+	if event is InputEventScreenTouch:
+		if event.pressed and not board_selecting():
+			input_events[event.index] = event
+			initial[event.index] = event
+		else:
+			input_events.erase(event.index)
+			initial.erase(event.index)
+	if event is InputEventScreenDrag:
+		if board_selecting():
+			input_events.erase(event.index)
+			initial.erase(event.index)
+			return
+		input_events[event.index] = event
+		if input_events.size() == 2:
+			var other_index: int
+			if event.index == 0:
+				other_index = 1
+			elif event.index == 1:
+				other_index = 0
+			var vec1: Vector2 = input_events[other_index].position - event.position
+			var vec2: Vector2 = input_events[other_index].position - (event.position - event.relative)
+			camera.rotation += vec1.angle_to(vec2)
+		elif input_events.size() == 1:
+			camera.position -= event.relative
+
+
+
+func board_selecting() -> bool:
+	return board != null and board.board_player.is_selecting()	
 
 func desktop_events(delta: float) -> void:
 	if Input.is_action_pressed("camera_zoom_in"):
@@ -63,25 +87,7 @@ func desktop_events(delta: float) -> void:
 	if absf(Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise")) < 0.1 and absf(roundf(camera.rotation_degrees / 45.0) * 45.0 - camera.rotation_degrees) < 7.5:
 		camera.rotation_degrees = roundf(camera.rotation_degrees / 45.0) * 45.0
 
-func multiplatform_events(event: InputEvent) -> void:
-	if free_cam and event is InputEventScreenDrag:
-		camera.position -= (event.relative)
-
 func _process(delta: float) -> void:
 	if Utils.is_desktop_platform():
 		desktop_events(delta)
 	camera.zoom = camera.zoom.clamp(Vector2(0.2, 0.2), Vector2(10.0, 10.0))
-	
-func free_cam_start() -> void:
-	free_cam = true
-	initial_mouse_pos = get_local_mouse_position()
-	initial_camera_pos = camera.position
-	Input.set_default_cursor_shape(Input.CURSOR_DRAG)
-
-func free_cam_finish() -> void:
-	initial_mouse_pos = Vector2.ZERO
-	free_cam = false
-	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
-
-func in_free_cam() -> bool:
-	return free_cam
