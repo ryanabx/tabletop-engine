@@ -41,14 +41,6 @@ func _ready() -> void:
 	_refresh_image()
 	collision_polygon.polygon = get_gobject_transform() * self.shape
 
-func _process(_delta: float) -> void:
-	update_position()
-
-func update_position() -> void:
-	if selected:
-		auth = multiplayer.get_unique_id()
-		position = (board.get_local_mouse_position() - grab_offset).clamp(board.border.position, board.border.end)
-
 ## Adds this piece to a collection with the name c_name
 func add_to_collection(coll: Collection) -> void:
 	if coll != null:
@@ -136,9 +128,8 @@ var selected: bool = false
 
 var amount: int = 0
 
-func _on_select(event:InputEvent) -> void:
-	if event.is_action_pressed("game_select") or (event.is_action_pressed("game_select_stack")):
-		board.board_player.select_pieces([self])
+func _on_select(_event:InputEvent) -> void:
+	board.board_player.queue_select_object(self)
 
 func _on_deselect(_event: InputEvent) -> void:
 	if can_access():

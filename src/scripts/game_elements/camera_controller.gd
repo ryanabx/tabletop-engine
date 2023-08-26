@@ -52,7 +52,7 @@ func _process(delta: float) -> void:
 		camera.zoom /= 1.1
 	
 	camera.position += (Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED * delta).rotated(camera.rotation)
-	if board != null and not (board.board_player.get_selected_pieces().is_empty() and board.board_player.get_selected_collections().is_empty()):
+	if board != null and board.board_player.is_selecting():
 		board.board_player.rotate_selection(
 			Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise") * ROTATION_SPEED * delta,
 			Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise")
@@ -62,14 +62,7 @@ func _process(delta: float) -> void:
 	
 	if absf(Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise")) < 0.1 and absf(roundf(camera.rotation_degrees / 45.0) * 45.0 - camera.rotation_degrees) < 7.5:
 		camera.rotation_degrees = roundf(camera.rotation_degrees / 45.0) * 45.0
-	check_free_cam()
 	camera.zoom = camera.zoom.clamp(Vector2(0.2, 0.2), Vector2(10.0, 10.0))
-
-func check_free_cam() -> void:
-	if Input.is_action_just_pressed("free_cam"):
-		free_cam_start()
-	elif Input.is_action_just_released("free_cam"):
-		free_cam_finish()
 
 func free_cam_start() -> void:
 	free_cam = true

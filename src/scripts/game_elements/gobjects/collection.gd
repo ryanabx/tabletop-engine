@@ -60,13 +60,7 @@ func move_to_index(index: int) -> void:
 func set_authority(id: int) -> void:
 	auth = id
 
-func update_position() -> void:
-	if selected and not permanent:
-		auth = multiplayer.get_unique_id()
-		position = (board.get_local_mouse_position() - grab_offset).clamp(board.border.position, board.border.end)
-
 func _process(_delta: float) -> void:
-	update_position()
 	count.position = (get_gobject_transform() * self.shape)[0]
 	count.text = str("[",inside.size(),"]")
 	count.reset_size()
@@ -93,12 +87,15 @@ func _update_scale(_sc: Vector2) -> void:
 		collision_polygon.polygon = get_gobject_transform() * self.shape
 
 
-func add_piece(piece: Piece) -> void:
+func add_piece(piece: Piece, back: bool = false) -> void:
 	var pc_d: Dictionary = serialize_piece(piece)
 	piece.auth = multiplayer.get_unique_id()
 	piece.erase_self.rpc()
 	auth = multiplayer.get_unique_id()
-	inside.append(pc_d)
+	if back:
+		inside.push_front(pc_d)
+	else:
+		inside.push_back(pc_d)
 	call_inside_changed()
 
 func remove_from_top() -> Piece:
@@ -189,13 +186,13 @@ func set_selected(sl: bool) -> void:
 func _on_select(_event:InputEvent) -> void:
 	if get_inside().is_empty():
 		return
-	board.board_player.select_collection(self)
+	board.board_player.queue_select_object(self)
 
 func _on_deselect(_event:InputEvent) -> void:
 	if board.board_player.is_selecting():
 		if selected == false and can_access():
 			print("RELEASED AND STACKABLE OBJECT FOUND")
-			board.board_player.stack_stackables_to_collection(self)
+			board.board_player.stack_selection_to_item(self)
 
 
 func _on_multiplayer_synchronizer_2_synchronized() -> void:

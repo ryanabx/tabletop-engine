@@ -9,27 +9,14 @@ func _draw() -> void:
 	draw_player_stuff()
 	
 func draw_player_stuff() -> void:
-	# if board.board_player.get_highlighted_item() != null:
-	# 	# print("Highlighted item")
-	# 	draw_colored_polygon(
-	# 		board.board_player.get_highlighted_item().get_extents(),
-	# 		Color.from_hsv(0.4, 0.2, 1, 0.3)
-	# 		)
-	# if board.board_player.selection_boxing:
-	# 	draw_rect(board.board_player.selection_box, Color.BLUE * Color(1,1,1,0.3))
-	for obj in board.board_player.get_selected_pieces():
+	if board.board_player.is_selecting():
 		draw_colored_polygon(
-			obj.get_extents(),
+			board.board_player.get_selected_object().get_extents(),
 			Color.GREEN * Color(1,1,1,0.2)
 			)
-	if board.board_player.queue_take_piece_off != null:
+	if board.board_player.object_queued():
 		draw_colored_polygon(
-			board.board_player.queue_take_piece_off.get_extents(),
-			Color.BLUE * Color(1,1,1,0.2)
-			)
-	for obj in board.board_player.get_selected_collections():
-		draw_colored_polygon(
-			obj.get_extents(),
+			board.board_player.get_queued_object().get_extents(),
 			Color.BLUE * Color(1,1,1,0.2)
 			)
 
