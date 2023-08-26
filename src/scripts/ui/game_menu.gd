@@ -85,24 +85,7 @@ func _on_clicked_from_collection(id: int) -> void:
 		5: collection.set_orientation(true)
 		6: collection.set_orientation(false)
 		8: collection.shuffle()
-		9: _select_collection()
-
-func _select_collection() -> void:
-	if collection.permanent:
-		var new_collection: Collection = collection.board.create_collection(
-			var_to_bytes({
-				"name": collection.board.unique_name("newcoll"),
-				"position": collection.position,
-				"rotation": collection.rotation
-			})
-		)
-		new_collection.inside = collection.inside
-		new_collection.call_inside_changed()
-		collection.clear_inside()
-		collection = new_collection
-	collection.board.board_player.grab_position = collection.position
-	collection.board.board_player.select_object(collection)
-	collection.grab_offset = Vector2.ZERO
+		9: collection.board.board_player._select_collection(collection)
 
 func _flip_selected_objects() -> void:
 	piece.face_up = not piece.face_up

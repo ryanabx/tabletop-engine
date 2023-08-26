@@ -8,7 +8,21 @@ var grab_position: Vector2 = Vector2.ZERO
 
 var board: Board
 
+var hold_timer: Timer
+
 var physics_state: PhysicsDirectSpaceState2D
+
+
+func _ready() -> void:
+	physics_state = get_world_2d().get_direct_space_state()
+	hold_timer = Timer.new()
+	hold_timer.wait_time = 0.5
+	hold_timer.timeout.connect(_hold_timer_timeout)
+	add_child(hold_timer)
+
+func _hold_timer_timeout() -> void:
+	if collection_queued():
+		_select_collection(get_queued_object())
 
 ######################
 ### Getter Methods ###
@@ -106,6 +120,7 @@ func double_tap_input(event: InputEvent) -> void:
 
 func drag_input(event: InputEvent) -> void:
 	if object_queued():
+		hold_timer.stop()
 		if collection_queued():
 			var pc: Piece = get_queued_object().remove_from_top()
 			pc.position = get_queued_object().position
@@ -153,10 +168,6 @@ func _swap(pc1: Piece, contents: Dictionary) -> void:
 	if pc1.collection != contents.collection:
 		pc1.add_to_collection(contents.collection)
 
-
-func _ready() -> void:
-	physics_state = get_world_2d().get_direct_space_state()
-
 ######################
 ### Main Processes ###
 ######################
@@ -172,6 +183,7 @@ func queue_select_object(obj: Gobject) -> void:
 	deselect()
 	obj.move_self_to_top.rpc()
 	queued_object = obj
+	hold_timer.start()
 
 func stack_selection_to_item(item: Gobject) -> void:
 	item.auth = multiplayer.get_unique_id()
@@ -206,7 +218,25 @@ func stack_on_piece(item: Piece) -> void:
 		get_selected_object().add_to_collection(collection)
 		item.add_to_collection(collection)
 
+func _select_collection(collection: Collection) -> void:
+	if collection.permanent:
+		var new_collection: Collection = collection.board.create_collection(
+			var_to_bytes({
+				"name": collection.board.unique_name("newcoll"),
+				"position": collection.position,
+				"rotation": collection.rotation
+			})
+		)
+		new_collection.inside = collection.inside
+		new_collection.call_inside_changed()
+		collection.clear_inside()
+		collection = new_collection
+	grab_position = collection.position
+	select_object(collection)
+	collection.grab_offset = Vector2.ZERO
+
 func deselect() -> void:
+	hold_timer.stop()
 	deselect_object()
 	dequeue_object()
 	print("Deselect called")

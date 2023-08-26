@@ -3,7 +3,7 @@ extends Node2D
 
 @onready var camera: Camera2D = $Camera2D
 
-const MOVEMENT_SPEED: float = 1150.0
+const MOVEMENT_SPEED: float = 2000.0
 const ROTATION_SPEED: float = 2.0
 
 var initial_mouse_pos: Vector2 = Vector2.ZERO
@@ -39,12 +39,16 @@ func set_camera_orientation(deg: float) -> void:
 func snap_to_nearest_orientation() -> void:
 	camera.rotation_degrees = roundf(camera.rotation_degrees / 90.0) * 90.0
 
-func _process(delta: float) -> void:
-	# Zooming
+func _input(event: InputEvent) -> void:
+	var ev: InputEvent = make_input_local(event)
+	multiplatform_events(ev)
+	
+
+func desktop_events(delta: float) -> void:
 	if Input.is_action_pressed("camera_zoom_in"):
-		camera.zoom *= 1.0 + (delta * 1.5)
+		camera.zoom *= 1.0 + (1.5 * delta)
 	if Input.is_action_pressed("camera_zoom_out"):
-		camera.zoom /= 1.0 + (delta * 1.5)
+		camera.zoom /= 1.0 + (1.5 * delta)
 	
 	if Input.is_action_just_pressed("ui_zoom_in"):
 		camera.zoom *= 1.1
@@ -52,18 +56,25 @@ func _process(delta: float) -> void:
 		camera.zoom /= 1.1
 	
 	camera.position += (Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED * delta).rotated(camera.rotation)
-	if board != null and board.board_player.is_selecting():
+
+	if board == null or not board.board_player.is_selecting():
+		camera.rotation += Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise") * ROTATION_SPEED * delta
+	else:
 		board.board_player.rotate_selection(
 			Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise") * ROTATION_SPEED * delta,
 			Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise")
 		)
-	else:
-		camera.rotation += Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise") * ROTATION_SPEED * delta
-	
 	if absf(Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise")) < 0.1 and absf(roundf(camera.rotation_degrees / 45.0) * 45.0 - camera.rotation_degrees) < 7.5:
 		camera.rotation_degrees = roundf(camera.rotation_degrees / 45.0) * 45.0
-	camera.zoom = camera.zoom.clamp(Vector2(0.2, 0.2), Vector2(10.0, 10.0))
 
+func multiplatform_events(event: InputEvent) -> void:
+	if free_cam and event is InputEventScreenDrag:
+		camera.position -= (event.relative)
+
+func _process(delta: float) -> void:
+	desktop_events(delta)
+	camera.zoom = camera.zoom.clamp(Vector2(0.2, 0.2), Vector2(10.0, 10.0))
+	
 func free_cam_start() -> void:
 	free_cam = true
 	initial_mouse_pos = get_local_mouse_position()
@@ -74,10 +85,6 @@ func free_cam_finish() -> void:
 	initial_mouse_pos = Vector2.ZERO
 	free_cam = false
 	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
-
-func _input(event: InputEvent) -> void:
-	if free_cam and event is InputEventMouseMotion:
-		camera.position -= (event.relative / camera.zoom).rotated(camera.rotation)
 
 func in_free_cam() -> bool:
 	return free_cam
