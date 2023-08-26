@@ -39,4 +39,5 @@ content_scale_size = Vector2i(640, 360)
 ok_button_text = "Open"
 file_mode = 0
 access = 2
+use_native_dialog = true
 script = ExtResource("3_spydn")

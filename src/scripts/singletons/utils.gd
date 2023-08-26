@@ -1,8 +1,5 @@
 extends Node
 
-func _ready() -> void:
-	ThemeDB.get_project_theme().default_base_scale = 8.0
-
 func load_images_into_array(image_strings: Array, image_directory: String) -> Array:
 	var result: Array = []
 	for image_path in image_strings:

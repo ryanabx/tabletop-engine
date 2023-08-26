@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://ma7a666pl2us"]
+[gd_scene load_steps=7 format=3 uid="uid://ma7a666pl2us"]
 
 [ext_resource type="Theme" uid="uid://cj6oka44v3s2j" path="res://src/resources/default_obf_theme.theme" id="1_5ce0b"]
 [ext_resource type="Script" path="res://src/scripts/ui/user_interface.gd" id="1_u2rch"]
 [ext_resource type="Script" path="res://src/scripts/ui/menu_bar.gd" id="2_fos3n"]
 [ext_resource type="Script" path="res://src/scripts/dialogs/server_add_peer.gd" id="3_1y55b"]
 [ext_resource type="Script" path="res://src/scripts/dialogs/client_connect.gd" id="4_tck8e"]
+[ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="6_aaf8p"]
 
 [node name="UserInterface" type="Control"]
 layout_mode = 3
@@ -207,6 +208,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
 text = "Done"
+
+[node name="FadeRect" parent="." instance=ExtResource("6_aaf8p")]
+layout_mode = 1
+mouse_filter = 2
 
 [connection signal="pressed" from="Dialogs/ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer/CreateOffer" to="Dialogs/ServerAddPeer" method="_on_create_offer_pressed"]
 [connection signal="pressed" from="Dialogs/ServerAddPeer/PanelContainer/MarginContainer/VBoxContainer/PasteOffer" to="Dialogs/ServerAddPeer" method="_on_paste_offer_pressed"]

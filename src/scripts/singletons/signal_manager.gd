@@ -28,3 +28,6 @@ signal load_game_config(config: GameConfig2)
 signal game_percent_loaded(pc: float)
 signal game_load_started()
 signal game_load_finished(board: Board)
+
+# Scene Transition
+signal scene_transition(scene: String)

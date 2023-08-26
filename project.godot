@@ -42,9 +42,7 @@ import/blender/enabled=false
 
 [gui]
 
-theme/default_theme_scale=2.0
-theme/custom="res://src/resources/default_obf_theme.theme"
-theme/custom_font="res://src/resources/OpenSans-Bold.ttf"
+theme/custom="res://src/resources/styles/normal/normal_theme.tres"
 
 [input]
 

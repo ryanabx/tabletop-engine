@@ -8,6 +8,9 @@ const DEFAULT_MAX_PLAYERS: int = 4
 
 enum GAME_MODE {SINGLEPLAYER, MULTIPLAYER}
 
+const TRANSITION_TIME_IN: float = 0.2
+const TRANSITION_TIME_OUT: float = 0.1
+
 var game_mode: GAME_MODE = GAME_MODE.SINGLEPLAYER
 
 var piece_id: int = 0

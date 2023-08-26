@@ -10,8 +10,12 @@ func _ready() -> void:
 		quit_button.hide()
 
 func _on_new_game_pressed() -> void:
-	get_tree().change_scene_to_file("res://src/scenes/game_elements/board_manager.tscn")
+	SignalManager.scene_transition.emit("res://src/scenes/menu/new_game.tscn")
 
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()
+
+
+func _on_settings_pressed() -> void:
+	pass # Replace with function body.
