@@ -63,3 +63,18 @@ func encode_offer(offer: Dictionary) -> String:
 
 func decode_offer(offer: String) -> Dictionary:
 	return JSON.parse_string(offer)
+
+func is_desktop_platform() -> bool:
+	return [
+		"Windows", "macOS", "Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD"
+	].has(OS.get_name())
+
+func is_web_platform() -> bool:
+	return [
+		"Web"
+	].has(OS.get_name())
+
+func is_mobile_platform() -> bool:
+	return [
+		"iOS", "Android"
+	].has(OS.get_name())

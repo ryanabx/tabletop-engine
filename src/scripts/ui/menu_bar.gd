@@ -11,7 +11,9 @@ func _ready() -> void:
 	file_menu()
 	if multiplayer.is_server():
 		tabletop_menu()
-	options_menu()
+	if not Utils.is_mobile_platform():
+		options_menu()
+	
 	if not multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
 		multiplayer_menu()
 	else:

@@ -6,13 +6,13 @@ func _ready() -> void:
 	SignalManager.create_load_config_dialog.connect(_on_create_load_config)
 	file_selected.connect(_on_file_decided)
 	filters = ["*.obgf"]
-	if OS.get_name() == "Web":
+	if Utils.is_web_platform():
 		var window = JavaScriptBridge.get_interface("window")
 		window.getFile(file_load_callback)
 
 func _on_create_load_config() -> void:
 	title = "Load a config of your choice!"
-	if OS.get_name() != "Web":
+	if not Utils.is_web_platform():
 		popup()
 	else:
 		var window = JavaScriptBridge.get_interface("window")

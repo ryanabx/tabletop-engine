@@ -28,17 +28,6 @@ func reset_camera() -> void:
 	camera.rotation_degrees = 0.0
 	camera.position = Vector2.ZERO
 
-func set_camera_transform(pos: Vector2, sc: Vector2, rot: float) -> void:
-	camera.zoom = sc
-	camera.rotation_degrees = rot
-	camera.position = pos
-
-func set_camera_orientation(deg: float) -> void:
-	camera.rotation_degrees = deg
-
-func snap_to_nearest_orientation() -> void:
-	camera.rotation_degrees = roundf(camera.rotation_degrees / 90.0) * 90.0
-
 func _input(event: InputEvent) -> void:
 	var ev: InputEvent = make_input_local(event)
 	multiplatform_events(ev)
@@ -72,7 +61,8 @@ func multiplatform_events(event: InputEvent) -> void:
 		camera.position -= (event.relative)
 
 func _process(delta: float) -> void:
-	desktop_events(delta)
+	if Utils.is_desktop_platform():
+		desktop_events(delta)
 	camera.zoom = camera.zoom.clamp(Vector2(0.2, 0.2), Vector2(10.0, 10.0))
 	
 func free_cam_start() -> void:
