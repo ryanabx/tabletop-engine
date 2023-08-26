@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://c2aks78wf35pe"]
+[gd_scene load_steps=5 format=3 uid="uid://c2aks78wf35pe"]
 
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="1_0uyf7"]
 [ext_resource type="Script" path="res://src/scripts/menu/settings.gd" id="1_6gtrg"]
 [ext_resource type="PackedScene" uid="uid://xkoglw4lu6ab" path="res://src/scenes/ui/background.tscn" id="1_tj7dc"]
+[ext_resource type="PackedScene" uid="uid://lpw6t5xb1d5i" path="res://src/scenes/dialogs/dialogs.tscn" id="4_cfiho"]
 
 [node name="Settings" type="Control"]
 layout_mode = 3
@@ -42,6 +43,7 @@ size_flags_horizontal = 4
 layout_mode = 2
 
 [node name="Content" type="MarginContainer" parent="MainMargin/PanelMargins"]
+custom_minimum_size = Vector2(720, 0)
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
@@ -52,9 +54,42 @@ theme_override_constants/margin_bottom = 10
 layout_mode = 2
 theme_override_constants/separation = 30
 
+[node name="Label" type="Label" parent="MainMargin/PanelMargins/Content/ContentList"]
+layout_mode = 2
+text = "Settings"
+horizontal_alignment = 1
+
+[node name="ViewMenu" type="VBoxContainer" parent="MainMargin/PanelMargins/Content/ContentList"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainMargin/PanelMargins/Content/ContentList/ViewMenu"]
+layout_mode = 2
+text = "View"
+horizontal_alignment = 1
+
+[node name="Fullscreen" type="CheckButton" parent="MainMargin/PanelMargins/Content/ContentList/ViewMenu"]
+layout_mode = 2
+text = "Fullscreen"
+
+[node name="ConfigTools" type="VBoxContainer" parent="MainMargin/PanelMargins/Content/ContentList"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainMargin/PanelMargins/Content/ContentList/ConfigTools"]
+layout_mode = 2
+text = "Config Tools"
+horizontal_alignment = 1
+
+[node name="ExportNewConfig" type="Button" parent="MainMargin/PanelMargins/Content/ContentList/ConfigTools"]
+layout_mode = 2
+text = "Export New Config"
+
 [node name="FadeRect" parent="." instance=ExtResource("1_0uyf7")]
 layout_mode = 2
 anchors_preset = 0
 mouse_filter = 2
 
+[node name="Dialogs" parent="." instance=ExtResource("4_cfiho")]
+
 [connection signal="pressed" from="MainMargin/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="MainMargin/PanelMargins/Content/ContentList/ViewMenu/Fullscreen" to="." method="_on_fullscreen_pressed"]
+[connection signal="pressed" from="MainMargin/PanelMargins/Content/ContentList/ConfigTools/ExportNewConfig" to="." method="_on_export_new_config_pressed"]

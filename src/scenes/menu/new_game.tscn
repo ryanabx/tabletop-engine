@@ -43,6 +43,7 @@ size_flags_horizontal = 4
 layout_mode = 2
 
 [node name="Content" type="MarginContainer" parent="MainMargin/PanelMargins"]
+custom_minimum_size = Vector2(720, 0)
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
@@ -56,7 +57,6 @@ theme_override_constants/separation = 30
 [node name="BoardConfig" type="VBoxContainer" parent="MainMargin/PanelMargins/Content/ContentList"]
 custom_minimum_size = Vector2(540, 0)
 layout_mode = 2
-size_flags_horizontal = 4
 theme_override_constants/separation = 20
 
 [node name="Label" type="Label" parent="MainMargin/PanelMargins/Content/ContentList/BoardConfig"]

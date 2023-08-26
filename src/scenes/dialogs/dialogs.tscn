@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://lpw6t5xb1d5i"]
+[gd_scene load_steps=3 format=3 uid="uid://lpw6t5xb1d5i"]
 
 [ext_resource type="Script" path="res://src/scripts/dialogs/export_config_dialog.gd" id="1_1dtoy"]
 [ext_resource type="Script" path="res://src/scripts/dialogs/export_config_dialog2.gd" id="2_r3kfd"]
-[ext_resource type="PackedScene" uid="uid://3jfodsmd4gb7" path="res://src/scenes/dialogs/import_config_file_open.tscn" id="3_n4dbu"]
 
 [node name="Dialogs" type="Node"]
 
@@ -28,5 +27,3 @@ content_scale_size = Vector2i(640, 360)
 ok_button_text = "Save"
 access = 2
 script = ExtResource("2_r3kfd")
-
-[node name="ImportConfigFileOpen" parent="." instance=ExtResource("3_n4dbu")]
