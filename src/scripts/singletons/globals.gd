@@ -4,6 +4,8 @@ extends Node
 # MULTIPLAYER
 const DEFAULT_MAX_PLAYERS: int = 4
 
+var current_game: GameConfig2 = null
+
 # GAME MODE
 
 enum GAME_MODE {SINGLEPLAYER, MULTIPLAYER}
