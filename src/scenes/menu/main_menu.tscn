@@ -22,6 +22,7 @@ metadata/_edit_lock_ = true
 
 [node name="Background" parent="." instance=ExtResource("2_yycfv")]
 layout_mode = 1
+color = Color(0.164706, 0.172549, 0.192157, 1)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1

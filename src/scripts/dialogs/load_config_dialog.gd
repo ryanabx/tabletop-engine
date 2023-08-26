@@ -19,6 +19,7 @@ func _on_create_load_config() -> void:
 		window.input.click()
 
 func _on_file_decided(fname: String) -> void:
+	print(fname)
 	if FileAccess.file_exists(fname):
 		file_decided(FileAccess.get_file_as_bytes(fname))
 	
@@ -39,6 +40,5 @@ func file_decided(buf: PackedByteArray) -> void:
 		load_conf(conf)
 
 func load_conf(conf: GameConfig2) -> void:
-	SignalManager.load_game_config.emit(conf)
-	dialog_text = ""
+	Globals.current_game = conf
 

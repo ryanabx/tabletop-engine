@@ -3,6 +3,7 @@ extends Node
 
 @onready var board_scene: PackedScene = preload("res://src/scenes/game_elements/board.tscn")
 
+var board: Board = null
 
 const MTU: int = 1476
 
@@ -13,11 +14,10 @@ const MTU: int = 1476
 
 var config_bytes: PackedByteArray = []
 
-var board: Board = null
-
 func _ready() -> void:
 	Globals.set_shared_tabletop_manager(self)
-	SignalManager.load_game_config.connect(load_game_config)
+	if Globals.current_game != null:
+		load_game_config(Globals.current_game)
 
 func remove_tabletop() -> void:
 	if board != null:
