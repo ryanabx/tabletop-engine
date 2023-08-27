@@ -2,9 +2,9 @@ class_name UserInterface
 extends Control
 
 var coordinates_labels: Array
-@onready var menu_bar: MenuBar = $TitleBar/HBoxContainer/MenuBar
-@onready var fps_counter: Label = $BottomBar/HBoxContainer/FPSCounter
-@onready var game_info: Label = $BottomBar/HBoxContainer/GameInfo
+@onready var menu_bar: MenuBar = $TitleBar/MenuBar
+@onready var fps_counter: Label = $TopBar/HBoxContainer/FPSCounter
+@onready var game_info: Label = $TopBar/HBoxContainer/GameInfo
 
 var game_name: String = "untitled"
 var game_ip_addr: String = "local"

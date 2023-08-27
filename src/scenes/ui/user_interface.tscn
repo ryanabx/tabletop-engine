@@ -38,53 +38,39 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
 
-[node name="TitleBar" type="PanelContainer" parent="."]
+[node name="TopBar" type="PanelContainer" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
+offset_bottom = 34.0
 grow_horizontal = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TitleBar"]
+[node name="HBoxContainer" type="HBoxContainer" parent="TopBar"]
 layout_mode = 2
-mouse_filter = 2
+theme_override_constants/separation = 30
+alignment = 2
 
-[node name="Padding" type="Panel" parent="TitleBar/HBoxContainer"]
+[node name="GameInfo" type="Label" parent="TopBar/HBoxContainer"]
+layout_mode = 2
+horizontal_alignment = 2
+
+[node name="FPSCounter" type="Label" parent="TopBar/HBoxContainer"]
+layout_mode = 2
+horizontal_alignment = 2
+
+[node name="Padding2" type="Panel" parent="TopBar/HBoxContainer"]
 custom_minimum_size = Vector2(42, 0)
 layout_mode = 2
 
-[node name="MenuBar" type="MenuBar" parent="TitleBar/HBoxContainer"]
+[node name="TitleBar" type="PanelContainer" parent="."]
+layout_mode = 1
+offset_bottom = 64.0
+
+[node name="MenuBar" type="MenuBar" parent="TitleBar"]
 layout_mode = 2
 mouse_filter = 1
 prefer_global_menu = false
 script = ExtResource("2_fos3n")
-
-[node name="BottomBar" type="PanelContainer" parent="."]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="BottomBar"]
-layout_mode = 2
-
-[node name="Padding" type="Panel" parent="BottomBar/HBoxContainer"]
-custom_minimum_size = Vector2(42, 0)
-layout_mode = 2
-
-[node name="GameInfo" type="Label" parent="BottomBar/HBoxContainer"]
-layout_mode = 2
-
-[node name="FPSCounter" type="Label" parent="BottomBar/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-horizontal_alignment = 2
-
-[node name="Padding2" type="Panel" parent="BottomBar/HBoxContainer"]
-custom_minimum_size = Vector2(42, 0)
-layout_mode = 2
 
 [node name="Dialogs" type="Control" parent="."]
 layout_mode = 1

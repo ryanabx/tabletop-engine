@@ -8,14 +8,14 @@ extends MenuBar
 var board: Board = null
 
 func _ready() -> void:
-	file_menu()
+	# file_menu()
 	tabletop_menu()
-	if not Utils.is_mobile_platform():
-		options_menu()
-	if not multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
-		multiplayer_menu()
-	else:
-		server_menu()
+	# if not Utils.is_mobile_platform():
+	# 	options_menu()
+	# if not multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
+	# 	multiplayer_menu()
+	# else:
+	# 	server_menu()
 	SignalManager.game_load_finished.connect(set_board)
 
 func set_board(_b: Board) -> void:
@@ -78,17 +78,9 @@ func tabletop_menu() -> void:
 	tabletop.id_pressed.connect(tabletop_pressed)
 	tabletop.name = "Tabletop"
 	menu.add_child(tabletop)
-	if multiplayer.is_server():
-		var conf: PopupMenu = PopupMenu.new()
-		conf.name = "Config"
-		conf.id_pressed.connect(tabletop_pressed)
-		tabletop.add_child(conf)
-		tabletop.add_submenu_item("Config", "Config")
-		conf.add_item("Load Config", 0)
-		conf.add_item("Load Example Config", 5)
-		conf.add_item("Create Config", 1)
-		conf.add_item("Reload Config", 2)
-		conf.add_item("Reset Tabletop", 3)
+	tabletop.add_item("Main Menu", 0)
+	if not Utils.is_mobile_platform():
+		tabletop.add_item("Quit", 1)
 	
 	
 
@@ -128,14 +120,8 @@ func multiplayer_pressed(id: int) -> void:
 
 func tabletop_pressed(id: int) -> void:
 	match id:
-		0: if multiplayer.is_server(): load_config()
-		1: export_config()
-		2:
-			if board != null:
-				board.get_parent().load_game_config(Globals.get_current_game())
-				board = null
-		3: get_tree().reload_current_scene()
-		5: if multiplayer.is_server(): load_sample_config()
+		0: get_tree().change_scene_to_file("res://src/scenes/menu/main_menu.tscn")
+		1: get_tree().quit()
 
 func options_pressed(index: int) -> void:
 	match index:

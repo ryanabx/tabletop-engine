@@ -1,9 +1,11 @@
-[gd_resource type="Theme" load_steps=5 format=3 uid="uid://dw0yemfv3fuew"]
+[gd_resource type="Theme" load_steps=7 format=3 uid="uid://dw0yemfv3fuew"]
 
 [ext_resource type="StyleBox" uid="uid://bj2jgphoodcke" path="res://src/resources/styles/normal/default_focus.tres" id="1_jjxor"]
 [ext_resource type="StyleBox" uid="uid://droy86s0j0bmv" path="res://src/resources/styles/normal/default_hover.tres" id="2_03x4b"]
 [ext_resource type="StyleBox" uid="uid://dwt8eepamxiqe" path="res://src/resources/styles/normal/default_normal.tres" id="3_mfxiq"]
 [ext_resource type="StyleBox" uid="uid://di4up4la8wnpc" path="res://src/resources/styles/normal/default_pressed.tres" id="4_ugbxp"]
+[ext_resource type="StyleBox" uid="uid://b0d1wu223o5i8" path="res://src/resources/styles/normal/normal_panel.tres" id="5_bqieb"]
+[ext_resource type="StyleBox" uid="uid://b4u5wbjml4djw" path="res://src/resources/styles/normal/normal_popup_panel.tres" id="6_cjqma"]
 
 [resource]
 default_font_size = 24
@@ -11,3 +13,15 @@ Button/styles/focus = ExtResource("1_jjxor")
 Button/styles/hover = ExtResource("2_03x4b")
 Button/styles/normal = ExtResource("3_mfxiq")
 Button/styles/pressed = ExtResource("4_ugbxp")
+MenuBar/styles/disabled = null
+MenuBar/styles/focus = ExtResource("1_jjxor")
+MenuBar/styles/hover = ExtResource("2_03x4b")
+MenuBar/styles/normal = ExtResource("3_mfxiq")
+MenuBar/styles/pressed = ExtResource("4_ugbxp")
+Panel/styles/panel = ExtResource("5_bqieb")
+PanelContainer/styles/panel = ExtResource("5_bqieb")
+PopupMenu/constants/item_end_padding = 24
+PopupMenu/constants/item_start_padding = 24
+PopupMenu/constants/v_separation = 24
+PopupMenu/styles/hover = ExtResource("2_03x4b")
+PopupMenu/styles/panel = ExtResource("6_cjqma")
