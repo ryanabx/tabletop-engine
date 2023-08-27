@@ -5,8 +5,6 @@ extends Node2D
 
 var input_events: Dictionary = {}
 
-var initial: Dictionary = {}
-
 const MOVEMENT_SPEED: float = 2000.0
 const ROTATION_SPEED: float = 2.0
 
@@ -35,17 +33,11 @@ func _input(event: InputEvent) -> void:
 
 func touchscreen_events(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
-		if event.pressed and not board_selecting():
+		if event.pressed:
 			input_events[event.index] = event
-			initial[event.index] = event
 		else:
 			input_events.erase(event.index)
-			initial.erase(event.index)
 	if event is InputEventScreenDrag:
-		if board_selecting():
-			input_events.erase(event.index)
-			initial.erase(event.index)
-			return
 		input_events[event.index] = event
 		if input_events.size() == 2:
 			var other_event: InputEvent
@@ -68,7 +60,7 @@ func touchscreen_events(event: InputEvent) -> void:
 			camera.rotation += rotation_delta
 			camera.position -= position_delta
 			camera.zoom *= zoom_delta
-		elif input_events.size() == 1:
+		elif input_events.size() == 1 and not board_selecting():
 			camera.position -= event.relative
 
 

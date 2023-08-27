@@ -12,6 +12,9 @@ var hold_timer: Timer
 
 var physics_state: PhysicsDirectSpaceState2D
 
+var select_index: int = -1
+
+var input_events: Dictionary = {}
 
 func _ready() -> void:
 	physics_state = get_world_2d().get_direct_space_state()
@@ -67,10 +70,15 @@ func _input(event: InputEvent) -> void:
 		drag_input(ev)
 	
 func touch_input(event: InputEvent) -> void:
-	if event.double_tap == true:
-		double_tap_input(event)
+	if event.pressed:
+		input_events[event.index] = event
 	else:
+		input_events.erase(event.index)
+	
+	if event.double_tap == false:
 		single_tap_input(event)
+	elif input_events.size() == 1:
+		double_tap_input(event)
 
 func single_tap_input(event: InputEvent) -> void:
 	var params: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
@@ -78,19 +86,17 @@ func single_tap_input(event: InputEvent) -> void:
 	params.collide_with_areas = true
 	params.collide_with_bodies = false
 	params.collision_mask = 1
-	if event.pressed:
+	if event.pressed and input_events.size() == 1:
 		# print("Tap Pressed")
 		grab_position = event.position
 		var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
 		if results.size() > 0:
 			results.sort_custom(compare_by_z_index)
 			print(results[0].collider.get_parent().get_name())
+			select_index = event.index
 			results[0].collider.get_parent()._on_select(event)
-		elif not is_selecting():
-			SignalManager.camera_move_start.emit()
-	else:
+	elif not event.pressed and event.index == select_index:
 		# print("Tap Released")
-		SignalManager.camera_move_end.emit()
 		call_deferred("deselect")
 		if is_selecting():
 			var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
@@ -119,6 +125,9 @@ func double_tap_input(event: InputEvent) -> void:
 
 
 func drag_input(event: InputEvent) -> void:
+	input_events[event.index] = event
+	if select_index != event.index:
+		return
 	if object_queued():
 		hold_timer.stop()
 		if collection_queued():
