@@ -1,7 +1,7 @@
 extends Control
 
-@onready var reset_config_button: Button = $MarginContainer/VBoxContainer/HBoxContainer/RemoveConfig
-@onready var load_config_button: Button = $MarginContainer/VBoxContainer/HBoxContainer/LoadConfig
+@onready var reset_config_button: Button = $SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/RemoveConfig
+@onready var load_config_button: Button = $SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/LoadConfig
 
 func _ready() -> void:
 	Globals.current_game = null

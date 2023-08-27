@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://c6y4ttibwy3ay"]
+[gd_scene load_steps=9 format=3 uid="uid://c6y4ttibwy3ay"]
 
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="1_g3g4g"]
 [ext_resource type="PackedScene" uid="uid://xkoglw4lu6ab" path="res://src/scenes/ui/background.tscn" id="1_lbcxe"]
 [ext_resource type="Script" path="res://src/scripts/menu/new_game.gd" id="1_pyp32"]
+[ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/safe_margins.tscn" id="3_4l57n"]
 [ext_resource type="Texture2D" uid="uid://pgsxe1dk7qmx" path="res://src/resources/assets/ui/arrow-to-left.svg" id="3_ccqel"]
 [ext_resource type="Texture2D" uid="uid://cu648p40sig4d" path="res://src/resources/assets/ui/times.svg" id="3_t8nec"]
 [ext_resource type="Texture2D" uid="uid://cyd74v1etxj2a" path="res://src/resources/assets/ui/play.svg" id="4_lry2e"]
@@ -20,32 +21,30 @@ script = ExtResource("1_pyp32")
 [node name="Background" parent="." instance=ExtResource("1_lbcxe")]
 layout_mode = 1
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="SafeMargins" parent="." instance=ExtResource("3_4l57n")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="SafeMargins"]
+layout_mode = 2
 theme_override_constants/margin_top = 120
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "New Game"
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="LoadConfig" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="LoadConfig" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Default Config"
 
-[node name="RemoveConfig" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="RemoveConfig" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 disabled = true
@@ -53,14 +52,14 @@ icon = ExtResource("3_t8nec")
 icon_alignment = 1
 expand_icon = true
 
-[node name="Ready" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="Ready" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Ready"
 icon = ExtResource("4_lry2e")
 icon_alignment = 2
 expand_icon = true
 
-[node name="BackButton" type="Button" parent="MarginContainer"]
+[node name="BackButton" type="Button" parent="SafeMargins/MarginContainer"]
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -75,7 +74,7 @@ mouse_filter = 2
 [node name="ImportConfigFileOpen" parent="." instance=ExtResource("4_ro1ev")]
 size = Vector2i(907, 720)
 
-[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/LoadConfig" to="." method="_on_load_config_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/RemoveConfig" to="." method="_on_remove_config_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Ready" to="." method="_on_ready_pressed"]
-[connection signal="pressed" from="MarginContainer/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/LoadConfig" to="." method="_on_load_config_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/RemoveConfig" to="." method="_on_remove_config_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Ready" to="." method="_on_ready_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/BackButton" to="." method="_on_back_button_pressed"]

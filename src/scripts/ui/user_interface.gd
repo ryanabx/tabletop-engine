@@ -2,9 +2,8 @@ class_name UserInterface
 extends Control
 
 var coordinates_labels: Array
-@onready var menu_bar: MenuBar = $TitleBar/MenuBar
-@onready var fps_counter: Label = $TopBar/HBoxContainer/FPSCounter
-@onready var game_info: Label = $TopBar/HBoxContainer/GameInfo
+@onready var fps_counter: Label = $SafeMargins/TopBar/VBoxContainer/HBoxContainer/FPSCounter
+@onready var game_info: Label = $SafeMargins/TopBar/VBoxContainer/HBoxContainer/GameInfo
 
 var game_name: String = "untitled"
 var game_ip_addr: String = "local"
@@ -20,16 +19,16 @@ func _ready() -> void:
 
 func show_loading() -> void:
 	print("Game load started")
-	$LoadingBarContainer.show()
+	$SafeMargins/LoadingBarContainer.show()
 
 func hide_loading(_board: Board) -> void:
 	board = _board
 	print("Game load finished")
-	$LoadingBarContainer.hide()
+	$SafeMargins/LoadingBarContainer.hide()
 
 func update_loading_percent(pc: float) -> void:
 	print("Game load at ",pc)
-	$LoadingBarContainer/VBoxContainer/LoadingBar.value = pc * 100.0
+	$SafeMargins/LoadingBarContainer/VBoxContainer/LoadingBar.value = pc * 100.0
 
 func peer_connected(_id: int) -> void:
 	# update_bar_color()
@@ -49,6 +48,11 @@ func _process(_delta: float) -> void:
 	game_info.text = str("Game: ",game_name)
 	if Globals.get_current_game() != null:
 		game_name = Globals.get_current_game().name
+	
+	if DisplayServer.screen_get_orientation() == DisplayServer.SCREEN_PORTRAIT and Utils.is_mobile_platform():
+		$TopBar/VBoxContainer/iOSCompatPanel.show()
+	else:
+		$TopBar/VBoxContainer/iOSCompatPanel.hide()
 
 var drag_window: bool = false
 var start_position: Vector2 = Vector2.ZERO
