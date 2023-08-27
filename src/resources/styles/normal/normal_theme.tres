@@ -1,5 +1,6 @@
-[gd_resource type="Theme" load_steps=7 format=3 uid="uid://dw0yemfv3fuew"]
+[gd_resource type="Theme" load_steps=8 format=3 uid="uid://dw0yemfv3fuew"]
 
+[ext_resource type="StyleBox" uid="uid://coivf0s107s78" path="res://src/resources/styles/normal/default_disabled.tres" id="1_hh4yh"]
 [ext_resource type="StyleBox" uid="uid://bj2jgphoodcke" path="res://src/resources/styles/normal/default_focus.tres" id="1_jjxor"]
 [ext_resource type="StyleBox" uid="uid://droy86s0j0bmv" path="res://src/resources/styles/normal/default_hover.tres" id="2_03x4b"]
 [ext_resource type="StyleBox" uid="uid://dwt8eepamxiqe" path="res://src/resources/styles/normal/default_normal.tres" id="3_mfxiq"]
@@ -9,15 +10,21 @@
 
 [resource]
 default_font_size = 24
+Button/styles/disabled = ExtResource("1_hh4yh")
 Button/styles/focus = ExtResource("1_jjxor")
 Button/styles/hover = ExtResource("2_03x4b")
 Button/styles/normal = ExtResource("3_mfxiq")
 Button/styles/pressed = ExtResource("4_ugbxp")
-MenuBar/styles/disabled = null
+MenuBar/styles/disabled = ExtResource("1_hh4yh")
 MenuBar/styles/focus = ExtResource("1_jjxor")
 MenuBar/styles/hover = ExtResource("2_03x4b")
 MenuBar/styles/normal = ExtResource("3_mfxiq")
 MenuBar/styles/pressed = ExtResource("4_ugbxp")
+MenuButton/styles/disabled = ExtResource("1_hh4yh")
+MenuButton/styles/focus = ExtResource("1_jjxor")
+MenuButton/styles/hover = ExtResource("2_03x4b")
+MenuButton/styles/normal = ExtResource("3_mfxiq")
+MenuButton/styles/pressed = ExtResource("4_ugbxp")
 Panel/styles/panel = ExtResource("5_bqieb")
 PanelContainer/styles/panel = ExtResource("5_bqieb")
 PopupMenu/constants/item_end_padding = 24

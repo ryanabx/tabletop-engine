@@ -4,7 +4,6 @@ extends RefCounted
 static func setup_initial_board_state(board: Board, coordinate_scale: Vector2) -> void:
 	SignalManager.game_load_started.emit()
 	_init_board_props(board, coordinate_scale)
-	_update_menu_bar(board)
 
 ## Ran during startup, initializes the board's background and border
 static func _init_board_props(board: Board, coordinate_scale: Vector2) -> void:
@@ -16,10 +15,6 @@ static func _init_board_props(board: Board, coordinate_scale: Vector2) -> void:
 	# Set up game bg
 	if "background_image" in board.game.board and board.game.board.background_image != "":
 		board.board_bg = board.game.board.background_image
-
-## Ran during startup, notifies the menu bar that a new game is loaded
-static func _update_menu_bar(board: Board) -> void:
-	board.get_parent().user_interface.menu_bar.new_game_loaded(board.game.player.max, board.game.actions)
 
 ## Ran during startup, initializes the board's objects
 static func init_board_objs(board: Board, coordinate_scale: Vector2) -> void:

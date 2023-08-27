@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://c2aks78wf35pe"]
+[gd_scene load_steps=6 format=3 uid="uid://c2aks78wf35pe"]
 
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="1_0uyf7"]
 [ext_resource type="Script" path="res://src/scripts/menu/settings.gd" id="1_6gtrg"]
 [ext_resource type="PackedScene" uid="uid://xkoglw4lu6ab" path="res://src/scenes/ui/background.tscn" id="1_tj7dc"]
 [ext_resource type="PackedScene" uid="uid://lpw6t5xb1d5i" path="res://src/scenes/dialogs/dialogs.tscn" id="4_cfiho"]
+[ext_resource type="Texture2D" uid="uid://pgsxe1dk7qmx" path="res://src/resources/assets/ui/arrow-to-left.svg" id="5_efvg1"]
 
 [node name="Settings" type="Control"]
 layout_mode = 3
@@ -28,12 +29,6 @@ theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
-
-[node name="BackButton" type="Button" parent="MainMargin"]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-text = "Back"
 
 [node name="PanelMargins" type="MarginContainer" parent="MainMargin"]
 layout_mode = 2
@@ -83,13 +78,26 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "Export New Config"
 
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0375
+anchor_top = 0.0277778
+anchor_right = 0.0375
+anchor_bottom = 0.0277778
+offset_right = 64.0
+offset_bottom = 64.0
+icon = ExtResource("5_efvg1")
+expand_icon = true
+metadata/_edit_use_anchors_ = true
+
+[node name="Dialogs" parent="." instance=ExtResource("4_cfiho")]
+
 [node name="FadeRect" parent="." instance=ExtResource("1_0uyf7")]
 layout_mode = 2
 anchors_preset = 0
 mouse_filter = 2
 
-[node name="Dialogs" parent="." instance=ExtResource("4_cfiho")]
-
-[connection signal="pressed" from="MainMargin/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="MainMargin/PanelMargins/Content/ContentList/ViewMenu/Fullscreen" to="." method="_on_fullscreen_pressed"]
 [connection signal="pressed" from="MainMargin/PanelMargins/Content/ContentList/ConfigTools/ExportNewConfig" to="." method="_on_export_new_config_pressed"]
+[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]
