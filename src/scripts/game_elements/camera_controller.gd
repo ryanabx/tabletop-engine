@@ -64,9 +64,9 @@ func touchscreen_events(event: InputEvent) -> void:
 
 			var rotation_delta: float = vec1.angle_to(vec2)
 			var position_delta: Vector2 = center2 - center1
-			var zoom_delta: float = dist2 / dist1
+			var zoom_delta: float = dist1 / dist2
 			camera.rotation += rotation_delta
-			camera.position += position_delta
+			camera.position -= position_delta
 			camera.zoom *= zoom_delta
 		elif input_events.size() == 1:
 			camera.position -= event.relative
