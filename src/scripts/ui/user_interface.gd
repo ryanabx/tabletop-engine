@@ -45,7 +45,7 @@ func update_bar_color() -> void:
 		$TitleBar.get_theme_stylebox("panel").bg_color = Color8(39, 47, 61)
 
 func _process(_delta: float) -> void:
-	fps_counter.text = str(Engine.get_frames_per_second(), "fps")
+	fps_counter.text = str(Engine.get_frames_per_second(), " FPS")
 	game_info.text = str("Game: ",game_name)
 	if Globals.get_current_game() != null:
 		game_name = Globals.get_current_game().name

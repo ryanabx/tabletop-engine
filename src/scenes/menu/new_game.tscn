@@ -20,9 +20,12 @@ layout_mode = 1
 
 [node name="MainMargin" type="MarginContainer" parent="."]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
 anchor_bottom = 1.0
+offset_left = -312.0
+offset_right = 312.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 20
@@ -48,16 +51,18 @@ theme_override_constants/margin_bottom = 10
 [node name="ContentList" type="VBoxContainer" parent="MainMargin/PanelMargins/Content"]
 layout_mode = 2
 theme_override_constants/separation = 30
+alignment = 1
+
+[node name="Label" type="Label" parent="MainMargin/PanelMargins/Content/ContentList"]
+layout_mode = 2
+size_flags_vertical = 2
+text = "Board Configuration"
+horizontal_alignment = 1
 
 [node name="BoardConfig" type="VBoxContainer" parent="MainMargin/PanelMargins/Content/ContentList"]
 custom_minimum_size = Vector2(540, 0)
 layout_mode = 2
 theme_override_constants/separation = 20
-
-[node name="Label" type="Label" parent="MainMargin/PanelMargins/Content/ContentList/BoardConfig"]
-layout_mode = 2
-text = "Board Configuration"
-horizontal_alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MainMargin/PanelMargins/Content/ContentList/BoardConfig"]
 layout_mode = 2
@@ -94,7 +99,6 @@ text = "x"
 
 [node name="MultiplayerConfig" type="VBoxContainer" parent="MainMargin/PanelMargins/Content/ContentList"]
 layout_mode = 2
-size_flags_vertical = 3
 
 [node name="Label" type="Label" parent="MainMargin/PanelMargins/Content/ContentList/MultiplayerConfig"]
 layout_mode = 2
@@ -116,6 +120,7 @@ text = "Server"
 
 [node name="StartGame" type="Button" parent="MainMargin/PanelMargins/Content/ContentList"]
 layout_mode = 2
+size_flags_vertical = 10
 text = "Start Game"
 
 [node name="BackButton" type="Button" parent="."]
@@ -125,8 +130,8 @@ anchor_left = 0.0375
 anchor_top = 0.0277778
 anchor_right = 0.0375
 anchor_bottom = 0.0277778
-offset_right = 64.0
-offset_bottom = 64.0
+offset_right = 72.0
+offset_bottom = 72.0
 icon = ExtResource("3_ccqel")
 expand_icon = true
 metadata/_edit_use_anchors_ = true

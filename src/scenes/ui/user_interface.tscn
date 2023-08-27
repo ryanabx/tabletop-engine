@@ -50,41 +50,45 @@ grow_horizontal = 2
 [node name="HBoxContainer" type="HBoxContainer" parent="TopBar"]
 layout_mode = 2
 theme_override_constants/separation = 30
-alignment = 2
 
-[node name="GameInfo" type="Label" parent="TopBar/HBoxContainer"]
-layout_mode = 2
-horizontal_alignment = 2
-
-[node name="FPSCounter" type="Label" parent="TopBar/HBoxContainer"]
-layout_mode = 2
-horizontal_alignment = 2
-
-[node name="Padding2" type="Panel" parent="TopBar/HBoxContainer"]
-custom_minimum_size = Vector2(42, 0)
+[node name="Padding" type="Panel" parent="TopBar/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 
-[node name="MenuPanel" type="PanelContainer" parent="."]
+[node name="MenuPanel" type="PanelContainer" parent="TopBar/HBoxContainer"]
+custom_minimum_size = Vector2(84, 0)
 layout_mode = 2
-anchor_left = 0.0289063
-anchor_top = 0.0208333
-anchor_right = 0.0289063
-anchor_bottom = 0.0208333
-offset_right = 58.0
-offset_bottom = 58.0
 metadata/_edit_use_anchors_ = true
 
-[node name="MenuButton" type="MenuButton" parent="MenuPanel"]
+[node name="MenuButton" type="MenuButton" parent="TopBar/HBoxContainer/MenuPanel"]
 layout_mode = 2
 icon_alignment = 1
 expand_icon = true
 script = ExtResource("2_fos3n")
 
-[node name="TextureRect" type="TextureRect" parent="MenuPanel"]
+[node name="TextureRect" type="TextureRect" parent="TopBar/HBoxContainer/MenuPanel"]
 layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("7_f3h7v")
 expand_mode = 1
+
+[node name="Padding2" type="Panel" parent="TopBar/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GameInfo" type="Label" parent="TopBar/HBoxContainer"]
+layout_mode = 2
+text = "Game: Untitled"
+horizontal_alignment = 2
+
+[node name="FPSCounter" type="Label" parent="TopBar/HBoxContainer"]
+layout_mode = 2
+text = "30 FPS"
+horizontal_alignment = 2
+
+[node name="Padding3" type="Panel" parent="TopBar/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
 
 [node name="Dialogs" type="Control" parent="."]
 layout_mode = 1
