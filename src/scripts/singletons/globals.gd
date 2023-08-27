@@ -57,11 +57,6 @@ const COLOR_SELECTION_BOX: Color = COLOR_SELECTION_BOX_BORDER * COLOR_TRANSPAREN
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_exit_fullscreen") and DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-	
-# func _process(_delta: float) -> void:
-# 	if get_window().get_size().width > get_window().get_size().height:
-# 		get_viewport().set_size_override(true, Vector2(width, height)) # Custom size for 2D.
-# 		get_viewport().set_size_override_stretch(true) # Enable stretch for custom size.
 
 func set_current_tabletop(tabletop: Board) -> void:
 	current_tabletop = tabletop

@@ -1,14 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://dlnv5bicqv8ih"]
+[gd_scene load_steps=5 format=3 uid="uid://dlnv5bicqv8ih"]
 
 [ext_resource type="Script" path="res://src/scripts/menu/main_menu.gd" id="1_1pq65"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="2_62p08"]
 [ext_resource type="PackedScene" uid="uid://xkoglw4lu6ab" path="res://src/scenes/ui/background.tscn" id="2_yycfv"]
-[ext_resource type="Texture2D" uid="uid://1mriqa2ughd7" path="res://assets/icons/icon_transparent.png" id="3_7d86x"]
 
-[sub_resource type="FontVariation" id="FontVariation_o2yd7"]
-variation_embolden = 1.0
-spacing_glyph = 25
-spacing_top = -20
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_sxbqx"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -23,86 +19,74 @@ metadata/_edit_lock_ = true
 [node name="Background" parent="." instance=ExtResource("2_yycfv")]
 layout_mode = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 20
-alignment = 1
 
-[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/CenterContainer"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
-alignment = 1
-
-[node name="TextureRect" type="TextureRect" parent="VBoxContainer/CenterContainer/HBoxContainer"]
-layout_mode = 2
-texture = ExtResource("3_7d86x")
-expand_mode = 3
-
-[node name="Title" type="Label" parent="VBoxContainer/CenterContainer/HBoxContainer"]
-layout_mode = 2
-theme_type_variation = &"HeaderLarge"
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 4
-theme_override_constants/shadow_offset_y = 4
-theme_override_constants/shadow_outline_size = 24
-theme_override_fonts/font = SubResource("FontVariation_o2yd7")
-theme_override_font_sizes/font_size = 70
-text = "Open Boardgame
-Framework"
+size_flags_horizontal = 3
+text = "Open Boardgame Framework"
 horizontal_alignment = 1
-uppercase = true
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+[node name="Panel" type="Panel" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/margin_left = 100
-theme_override_constants/margin_right = 100
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_sxbqx")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer"]
-custom_minimum_size = Vector2(720, 0)
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
-alignment = 1
+size_flags_vertical = 3
+theme_override_constants/separation = 40
 
-[node name="NewGame" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+[node name="NewGame" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
-text = "NEW GAME"
+size_flags_vertical = 3
+text = "New Game"
 
-[node name="Settings" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+[node name="Settings" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
-text = "SETTINGS"
+size_flags_vertical = 3
+text = "Settings"
 
-[node name="Quit" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+[node name="Quit" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
-text = "QUIT"
+size_flags_vertical = 3
+text = "Quit"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
-custom_minimum_size = Vector2(720, 0)
+[node name="Panel3" type="Panel" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
-alignment = 1
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_sxbqx")
 
-[node name="VersionNumber" type="Label" parent="VBoxContainer/HBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
-text = "Version Number"
 
-[node name="CopyrightNotice" type="Label" parent="VBoxContainer/HBoxContainer"]
+[node name="Version" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "© ryanabx 2023"
-horizontal_alignment = 2
+text = "Version x.x.x"
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Copyright ryanabx 2023"
 
 [node name="FadeRect" parent="." instance=ExtResource("2_62p08")]
 layout_mode = 1
 mouse_filter = 2
 
-[connection signal="pressed" from="VBoxContainer/MarginContainer/VBoxContainer/NewGame" to="." method="_on_new_game_pressed"]
-[connection signal="pressed" from="VBoxContainer/MarginContainer/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
-[connection signal="pressed" from="VBoxContainer/MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/VBoxContainer/NewGame" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]

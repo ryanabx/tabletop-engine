@@ -48,14 +48,26 @@ func touchscreen_events(event: InputEvent) -> void:
 			return
 		input_events[event.index] = event
 		if input_events.size() == 2:
-			var other_index: int
+			var other_event: InputEvent
 			if event.index == 0:
-				other_index = 1
+				other_event = input_events[1]
 			elif event.index == 1:
-				other_index = 0
-			var vec1: Vector2 = input_events[other_index].position - event.position
-			var vec2: Vector2 = input_events[other_index].position - (event.position - event.relative)
-			camera.rotation += vec1.angle_to(vec2)
+				other_event = input_events[0]
+			var vec1: Vector2 = other_event.position - event.position
+			var vec2: Vector2 = other_event.position - (event.position - event.relative)
+
+			var center1: Vector2 = other_event.position + (vec1 / 2)
+			var center2: Vector2 = other_event.position + (vec2 / 2)
+
+			var dist1: float = vec1.length()
+			var dist2: float = vec2.length()
+
+			var rotation_delta: float = vec1.angle_to(vec2)
+			var position_delta: Vector2 = center2 - center1
+			var zoom_delta: float = dist2 / dist1
+			camera.rotation += rotation_delta
+			camera.position += position_delta
+			camera.zoom *= zoom_delta
 		elif input_events.size() == 1:
 			camera.position -= event.relative
 
