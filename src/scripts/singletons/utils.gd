@@ -58,16 +58,39 @@ func has_any(arr1: Array, arr2: Array) -> bool:
 				return true
 	return false
 
-func encode_offer(offer: Dictionary) -> String:
-	return JSON.stringify(offer)
-
-func decode_offer(offer: String) -> Dictionary:
-	return JSON.parse_string(offer)
-
 class MultiplayerManager:
-	func create_client() -> void:
-		var peer: WebRTCMultiplayerPeer = WebRTCMultiplayerPeer.new()
-		
+	static var current_connection: WebRTCMultiplayerPeer = null
+	static var wip_connection: WebRTCPeerConnection = null
+	static var wip_packet: Dictionary
+
+	static func add_client() -> void:
+		print("[Server] Adding new client.")
+		wip_connection.create_offer()
+		var sdp: Array = await wip_connection.session_description_created
+		wip_connection.set_local_description(sdp[0], sdp[1])
+		wip_packet.sdp = sdp
+		wip_connection.ice_candidate_created.connect(ice_candidate_created)
+		await Utils.get_tree().create_timer(0.5).timeout
+		print("[Server] Gathered ", wip_packet.ice_candidates.size(), " ice candidates.")
+
+	static func encode_packet(_packet: Dictionary) -> String:
+		return Utils.FileManager.decode_string(Utils.FileManager.compress_dictionary(_packet))
+
+	static func decode_packet(_string: String) -> Dictionary:
+		return Utils.FileManager.decompress_to_dictionary(Utils.FileManager.encode_string(_string))
+
+	static func reset_wip() -> void:
+		# Reset packet
+		wip_packet = {
+			"sdp": "", "id": 0, "ice_candidates": []
+		}
+		# Reset connection variable
+		wip_connection.ice_candidate_created.disconnect(ice_candidate_created)
+		wip_connection = WebRTCPeerConnection.new()
+	
+	static func ice_candidate_created(media: String, index: int, name: String) -> void:
+		print("[Server] New ice candidate for connection: ", media, " :: ", index, " :: ", name, ".")
+		wip_packet.ice_candidates.append([media, index, name])
 
 class PlatformManager:
 	static var current_safe_area: Rect2i = Rect2i(0, 0, 0, 0)
@@ -104,6 +127,22 @@ class PlatformManager:
 		SignalManager.orientation_changed.emit()
 
 class FileManager:
+	## Compresses dictionary through Gzip compression
+	static func compress_dictionary(_dict: Dictionary) -> PackedByteArray:
+		return var_to_bytes(_dict).compress(3)
+	
+	## Decompresses dictionary through Gzip decompression
+	static func decompress_to_dictionary(_bytes: PackedByteArray) -> Dictionary:
+		return bytes_to_var(_bytes.decompress_dynamic(-1, 3))
+	
+	## Gets string from bytes
+	static func decode_string(_bytes: PackedByteArray) -> String:
+		return _bytes.get_string_from_utf16()
+	
+	## Gets bytes from string
+	static func encode_string(_string: String) -> PackedByteArray:
+		return _string.to_utf16_buffer()
+
 	static func create_dir(dir: String) -> void:
 		if DirAccess.dir_exists_absolute(dir):
 			return

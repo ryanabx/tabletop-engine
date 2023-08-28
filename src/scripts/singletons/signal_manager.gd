@@ -39,3 +39,7 @@ signal scene_transition(scene: String)
 
 # Configs
 signal config_added()
+
+
+# Multiplayer Setting Up Signals
+signal mplay_code_created()
