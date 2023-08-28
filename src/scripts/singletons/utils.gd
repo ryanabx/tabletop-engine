@@ -80,6 +80,44 @@ func is_mobile_platform() -> bool:
 	].has(OS.get_name())
 
 
+func create_dir(dir: String) -> void:
+	if DirAccess.dir_exists_absolute(dir):
+		return
+	
+	DirAccess.make_dir_absolute(dir)
+
+func get_available_configs() -> Array[String]:
+	if not DirAccess.dir_exists_absolute(Globals.CONFIG_REPO):
+		print("Directory doesn't exist!")
+		return []
+	
+	var configs: Array[String] = []
+
+	var directory: DirAccess = DirAccess.open(Globals.CONFIG_REPO)
+
+	for fname in directory.get_files():
+		print(fname)
+		var split_fname: PackedStringArray = fname.rsplit(".",1)
+		print(split_fname[0], ", ", split_fname[1])
+		if fname.rsplit(".",1)[-1] == "obgf":
+			configs.append(split_fname[0])
+	
+	return configs
+
+func delete_file(fname: String) -> void:
+	if FileAccess.file_exists(fname):
+		DirAccess.remove_absolute(fname)
+
+func get_config(fname: String) -> GameConfig2:
+	if FileAccess.file_exists(fname):
+		var bytes: PackedByteArray = FileAccess.get_file_as_bytes(fname)
+		var conf: GameConfig2 = GameConfig2.new()
+		if conf.fill_bytes(bytes):
+			return conf
+	else:
+		print("Could not find file ", fname)
+	return null
+
 var current_safe_area: Rect2i = Rect2i(0, 0, 0, 0)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

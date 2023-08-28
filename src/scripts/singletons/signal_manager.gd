@@ -34,3 +34,6 @@ signal game_load_finished(board: Board)
 
 # Scene Transition
 signal scene_transition(scene: String)
+
+# Configs
+signal config_added()

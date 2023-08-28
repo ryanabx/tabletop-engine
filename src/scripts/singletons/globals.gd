@@ -50,6 +50,13 @@ var current_tabletop: Board = null
 
 var tabletop_manager: BoardManager = null
 
+# FILE PATHS
+
+const CONFIG_REPO: String = "user://configs"
+const CONFIG_EXTENSION: String = ".obgf"
+
+const DEFAULT_CONFIG_PATH: String = "res://configs/default.obgf"
+
 # COLORS
 
 const COLOR_TRANSPARENT_HIGHLIGHT = Color(1.0, 1.0, 1.0, 0.2)
