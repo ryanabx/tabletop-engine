@@ -6,6 +6,11 @@ const DEFAULT_MAX_PLAYERS: int = 4
 
 var current_game: GameConfig2 = null
 
+var safe_margin_l: int = 0
+var safe_margin_t: int = 0
+var safe_margin_r: int = 0
+var safe_margin_b: int = 0
+
 # GAME MODE
 
 enum GAME_MODE {SINGLEPLAYER, MULTIPLAYER}

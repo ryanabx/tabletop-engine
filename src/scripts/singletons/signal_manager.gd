@@ -19,6 +19,9 @@ signal camera_move_end()
 signal server_add_peer()
 signal client_add_peer()
 
+# Orientation changed
+signal orientation_changed()
+
 # File Dialogs
 signal config_file_opened(fname: String)
 signal export_conf(config: PackedByteArray)
