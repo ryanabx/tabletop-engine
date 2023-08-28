@@ -57,7 +57,7 @@ func get_config_file_path(conf_name: String) -> String:
 func _on_delete_selected_pressed():
 	if is_selecting_config() and not is_selecting_default_config():
 		var currently_selected: String = get_currently_selected_config()
-		Utils.delete_file(get_config_file_path(currently_selected))
+		Utils.FileManager.delete_file(get_config_file_path(currently_selected))
 		print("File deleted")
 		refresh_list()
 

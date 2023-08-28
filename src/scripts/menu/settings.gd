@@ -5,9 +5,9 @@ extends Control
 @onready var config_tools: VBoxContainer = $MainMargin/PanelMargins/Content/ContentList/ConfigTools
 
 func _ready() -> void:
-	if Utils.is_mobile_platform():
+	if Utils.PlatformManager.is_mobile_platform():
 		view_menu.hide()
-	if Utils.is_web_platform():
+	if Utils.PlatformManager.is_web_platform():
 		config_tools.hide()
 
 func _process(_delta: float) -> void:

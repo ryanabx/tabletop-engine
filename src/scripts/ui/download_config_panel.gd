@@ -21,7 +21,7 @@ func _on_cancel_pressed():
 
 
 func _on_download_pressed():
-	if await Utils.download_file_from_url(url_edit.text):
+	if await Utils.FileManager.download_file_from_url(url_edit.text):
 		SignalManager.config_added.emit()
 		hide()
 

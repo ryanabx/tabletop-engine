@@ -64,133 +64,136 @@ func encode_offer(offer: Dictionary) -> String:
 func decode_offer(offer: String) -> Dictionary:
 	return JSON.parse_string(offer)
 
-func is_desktop_platform() -> bool:
-	return [
-		"Windows", "macOS", "Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD"
-	].has(OS.get_name())
 
-func is_web_platform() -> bool:
-	return [
-		"Web"
-	].has(OS.get_name())
+class PlatformManager:
+	static var current_safe_area: Rect2i = Rect2i(0, 0, 0, 0)
 
-func is_mobile_platform() -> bool:
-	return [
-		"iOS", "Android"
-	].has(OS.get_name())
-
-
-func create_dir(dir: String) -> void:
-	if DirAccess.dir_exists_absolute(dir):
-		return
+	static func is_desktop_platform() -> bool:
+		return [
+			"Windows", "macOS", "Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD"
+		].has(OS.get_name())
 	
-	DirAccess.make_dir_absolute(dir)
-
-func get_available_configs() -> Array[String]:
-	if not DirAccess.dir_exists_absolute(Globals.CONFIG_REPO):
-		print("Directory doesn't exist!")
-		return []
+	static func is_web_platform() -> bool:
+		return [
+			"Web"
+		].has(OS.get_name())
 	
-	var configs: Array[String] = []
-
-	var directory: DirAccess = DirAccess.open(Globals.CONFIG_REPO)
-
-	for fname in directory.get_files():
-		print(fname)
-		var split_fname: PackedStringArray = fname.rsplit(".",1)
-		print(split_fname[0], ", ", split_fname[1])
-		if fname.rsplit(".",1)[-1] == "obgf":
-			configs.append(split_fname[0])
+	static func is_mobile_platform() -> bool:
+		return [
+			"iOS", "Android"
+		].has(OS.get_name())
 	
-	return configs
+	static func on_screen_orientation_changed() -> void:
+		var w_size: Vector2i = DisplayServer.screen_get_size(DisplayServer.get_primary_screen())
+		var orientation_extents: Rect2i = DisplayServer.get_display_safe_area()
+		
+		var margin_l: int = orientation_extents.position.x
+		var margin_t: int = orientation_extents.position.y
+		var margin_r: int = w_size.x - orientation_extents.size.x - margin_l
+		var margin_b: int = w_size.y - orientation_extents.size.y - margin_t
+		print("SAFE AREA CHANGED to: ", orientation_extents, ", w_size: ", w_size, ", margin_l: ", margin_l, ", margin_t: ", margin_t, ", margin_r: ", margin_r, ", margin_b: ", margin_b)
+		Globals.safe_margin_l = margin_l
+		Globals.safe_margin_t = margin_t
+		Globals.safe_margin_r = margin_r
+		Globals.safe_margin_b = margin_b
+		current_safe_area = DisplayServer.get_display_safe_area()
+		SignalManager.orientation_changed.emit()
 
-func delete_file(fname: String) -> void:
-	if FileAccess.file_exists(fname):
-		DirAccess.remove_absolute(fname)
+class FileManager:
+	static func create_dir(dir: String) -> void:
+		if DirAccess.dir_exists_absolute(dir):
+			return
+		
+		DirAccess.make_dir_absolute(dir)
 
-func get_config(fname: String) -> GameConfig2:
-	if FileAccess.file_exists(fname):
-		var bytes: PackedByteArray = FileAccess.get_file_as_bytes(fname)
-		var conf: GameConfig2 = GameConfig2.new()
-		if conf.fill_bytes(bytes):
-			return conf
-	else:
-		print("Could not find file ", fname)
-	return null
+	static func get_available_configs() -> Array[String]:
+		if not DirAccess.dir_exists_absolute(Globals.CONFIG_REPO):
+			print("Directory doesn't exist!")
+			return []
+		
+		var configs: Array[String] = []
 
-func download_file_from_url(url: String) -> bool:
-	var fpath: String = await download_file(url)
-	if fpath == "":
-		print("Could not download file from url ",url)
-		return false
-	
-	return validate_downloaded_file(fpath)
+		var directory: DirAccess = DirAccess.open(Globals.CONFIG_REPO)
 
-func download_file(url: String) -> String:
-	var req: HTTPRequest = HTTPRequest.new()
-	add_child(req)
-	req.download_file = Globals.DOWNLOAD_FILE_PATH
-	var res: int = req.request(url)
-	if res != OK:
+		for fname in directory.get_files():
+			print(fname)
+			var split_fname: PackedStringArray = fname.rsplit(".",1)
+			print(split_fname[0], ", ", split_fname[1])
+			if fname.rsplit(".",1)[-1] == "obgf":
+				configs.append(split_fname[0])
+		
+		return configs
+
+	static func delete_file(fname: String) -> void:
+		if FileAccess.file_exists(fname):
+			DirAccess.remove_absolute(fname)
+
+	static func get_config(fname: String) -> GameConfig2:
+		if FileAccess.file_exists(fname):
+			var bytes: PackedByteArray = FileAccess.get_file_as_bytes(fname)
+			var conf: GameConfig2 = GameConfig2.new()
+			if conf.fill_bytes(bytes):
+				return conf
+		else:
+			print("Could not find file ", fname)
+		return null
+
+	static func download_file_from_url(url: String) -> bool:
+		var fpath: String = await download_file(url)
+		if fpath == "":
+			print("Could not download file from url ",url)
+			return false
+		
+		return validate_downloaded_file(fpath)
+
+	static func download_file(url: String) -> String:
+		var req: HTTPRequest = HTTPRequest.new()
+		Utils.add_child(req)
+		req.download_file = Globals.DOWNLOAD_FILE_PATH
+		var res: int = req.request(url)
+		if res != OK:
+			req.queue_free()
+			print("Error when making httprequest: ", res)
+			return ""
+		print("Downloading ", req.get_body_size(), " bytes from ", url)
+		var result = await req.request_completed
+		print("Download completed: ",result)
 		req.queue_free()
-		print("Error when making httprequest: ", res)
-		return ""
-	print("Downloading ", req.get_body_size(), " bytes from ", url)
-	var result = await req.request_completed
-	print("Download completed: ",result)
-	req.queue_free()
-	if result[1] == 303:
-		var new_url: String = result[2][5].split("Location: ", false, 1)[0]
-		print("303 ERROR, going to url ", new_url)
-		return await download_file(new_url)
-	return Globals.DOWNLOAD_FILE_PATH
+		if result[1] == 303:
+			var new_url: String = result[2][5].split("Location: ", false, 1)[0]
+			print("303 ERROR, going to url ", new_url)
+			return await download_file(new_url)
+		return Globals.DOWNLOAD_FILE_PATH
 
-func validate_downloaded_file(fpath: String) -> bool:
-	var conf: GameConfig2 = get_config(fpath)
-	if conf == null:
-		print("Config was null")
+	static func validate_downloaded_file(fpath: String) -> bool:
+		var conf: GameConfig2 = get_config(fpath)
+		if conf == null:
+			print("Config was null")
+			delete_file(fpath)
+			return false
+		print("Looking for fpath ",fpath)
+		create_dir(Globals.CONFIG_REPO)
+
+		var conf_path: String = str(Globals.CONFIG_REPO, "/",conf.name,Globals.CONFIG_EXTENSION)
+
+		Utils.delete_file(conf_path)
+		
+		var local_copy: FileAccess = FileAccess.open(conf_path, FileAccess.WRITE)
+		
+
+		if local_copy == null:
+			print(FileAccess.get_open_error(), ": ", conf_path)
+			return false
+
+		local_copy.store_buffer(conf.to_bytes())
+		local_copy.close()
+		
 		delete_file(fpath)
-		return false
-	print("Looking for fpath ",fpath)
-	create_dir(Globals.CONFIG_REPO)
+		return true
 
-	var conf_path: String = str(Globals.CONFIG_REPO, "/",conf.name,Globals.CONFIG_EXTENSION)
 
-	Utils.delete_file(conf_path)
-	
-	var local_copy: FileAccess = FileAccess.open(conf_path, FileAccess.WRITE)
-	
-
-	if local_copy == null:
-		print(FileAccess.get_open_error(), ": ", conf_path)
-		return false
-
-	local_copy.store_buffer(conf.to_bytes())
-	local_copy.close()
-	
-	delete_file(fpath)
-	return true
-
-var current_safe_area: Rect2i = Rect2i(0, 0, 0, 0)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	if current_safe_area != DisplayServer.get_display_safe_area():
-		_on_screen_orientation_changed()
-
-
-func _on_screen_orientation_changed() -> void:
-	var w_size: Vector2i = DisplayServer.screen_get_size(DisplayServer.get_primary_screen())
-	var orientation_extents: Rect2i = DisplayServer.get_display_safe_area()
-	
-	var margin_l: int = orientation_extents.position.x
-	var margin_t: int = orientation_extents.position.y
-	var margin_r: int = w_size.x - orientation_extents.size.x - margin_l
-	var margin_b: int = w_size.y - orientation_extents.size.y - margin_t
-	print("SAFE AREA CHANGED to: ", orientation_extents, ", w_size: ", w_size, ", margin_l: ", margin_l, ", margin_t: ", margin_t, ", margin_r: ", margin_r, ", margin_b: ", margin_b)
-	Globals.safe_margin_l = margin_l
-	Globals.safe_margin_t = margin_t
-	Globals.safe_margin_r = margin_r
-	Globals.safe_margin_b = margin_b
-	current_safe_area = DisplayServer.get_display_safe_area()
-	SignalManager.orientation_changed.emit()
+	if PlatformManager.current_safe_area != DisplayServer.get_display_safe_area():
+		PlatformManager.on_screen_orientation_changed()
