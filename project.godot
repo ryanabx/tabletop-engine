@@ -10,13 +10,16 @@ config_version=5
 
 [application]
 
-config/name="Open Boardgame Framework"
+config/name="Open Tabletop Framework"
 config/description="A 2-dimensional virtual tabletop for all! Create board game configurations which can be loaded in and played with friends online or in person!"
 config/version="0.0.1"
 run/main_scene="res://src/scenes/menu/main_menu.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
+boot_splash/bg_color=Color(0.164706, 0.172549, 0.192157, 1)
+boot_splash/image="res://assets/banners/banner.png"
 config/icon="res://assets/icons/icon_transparent.png"
 config/windows_native_icon="res://assets/icons/Windows/icon_windows.ico"
+boot_splash/minimum_display_time=50
 
 [autoload]
 
