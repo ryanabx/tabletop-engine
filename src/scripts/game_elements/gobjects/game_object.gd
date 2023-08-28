@@ -1,4 +1,4 @@
-class_name Gobject
+class_name GameObject
 extends Node2D
 
 var shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)])

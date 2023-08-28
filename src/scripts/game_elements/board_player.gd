@@ -1,8 +1,8 @@
 class_name BoardPlayer
 extends Node2D
 
-var selected_object: Gobject = null
-var queued_object: Gobject = null
+var selected_object: GameObject = null
+var queued_object: GameObject = null
 
 var grab_position: Vector2 = Vector2.ZERO
 
@@ -31,10 +31,10 @@ func _hold_timer_timeout() -> void:
 ### Getter Methods ###
 ######################
 
-func get_selected_object() -> Gobject:
+func get_selected_object() -> GameObject:
 	return selected_object
 
-func get_queued_object() -> Gobject:
+func get_queued_object() -> GameObject:
 	return queued_object
 
 func is_selecting() -> bool:
@@ -181,20 +181,20 @@ func _swap(pc1: Piece, contents: Dictionary) -> void:
 ### Main Processes ###
 ######################
 
-func select_object(obj: Gobject) -> void:
+func select_object(obj: GameObject) -> void:
 	deselect()
 	obj.move_self_to_top.rpc()
 	selected_object = obj
 	obj.set_selected(true)
 	obj.grab_offset = grab_position - obj.position
 
-func queue_select_object(obj: Gobject) -> void:
+func queue_select_object(obj: GameObject) -> void:
 	deselect()
 	obj.move_self_to_top.rpc()
 	queued_object = obj
 	hold_timer.start()
 
-func stack_selection_to_item(item: Gobject) -> void:
+func stack_selection_to_item(item: GameObject) -> void:
 	item.auth = multiplayer.get_unique_id()
 	if item is Collection:
 		stack_on_collection(item)
@@ -261,7 +261,7 @@ func dequeue_object() -> void:
 		queued_object = null
 
 func rotate_selection(amount: float, axis: float) -> void:
-	var obj: Gobject = get_selected_object()
+	var obj: GameObject = get_selected_object()
 	if not is_instance_valid(obj):
 		return
 	obj.rotation += amount

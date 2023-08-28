@@ -3,11 +3,13 @@ extends Control
 @onready var config_list: ItemList = $SafeMargins/MarginContainer/VBoxContainer/ConfigList
 @onready var ready_button: Button = $SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/Ready
 @onready var delete_button: Button = $SafeMargins/MarginContainer/VBoxContainer/HBoxContainer2/DeleteSelected
+@onready var from_file_button: Button = $SafeMargins/MarginContainer/VBoxContainer/HBoxContainer2/LoadConfFile
 
 func _ready() -> void:
 	Globals.current_game = null
 	SignalManager.config_added.connect(refresh_list)
-	MultiplayerManager.disband()
+	if not Utils.PlatformManager.is_desktop_platform():
+		from_file_button.hide()
 	refresh_list()
 
 func _process(_delta: float) -> void:

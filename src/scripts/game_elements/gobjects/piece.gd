@@ -1,5 +1,5 @@
 class_name Piece
-extends Gobject
+extends GameObject
 
 var image_up: String = ""
 var image_down: String = ""

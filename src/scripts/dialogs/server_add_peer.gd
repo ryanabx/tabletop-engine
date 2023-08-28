@@ -18,7 +18,6 @@ func _ready() -> void:
 	multiplayer.peer_connected.connect(peer_connected)
 
 func _on_popup() -> void:
-	MultiplayerManager.create_server()
 	show()
 
 func _on_create_offer_pressed() -> void:
@@ -107,5 +106,4 @@ func _on_done_pressed() -> void:
 
 func _on_cancel_pressed() -> void:
 	hide()
-	MultiplayerManager.disband()
 	get_tree().reload_current_scene()

@@ -9,7 +9,6 @@ func _ready() -> void:
 	if Utils.PlatformManager.is_mobile_platform():
 		quit_button.hide()
 	Globals.current_game = null
-	MultiplayerManager.disband()
 
 func _on_new_game_pressed() -> void:
 	SignalManager.scene_transition.emit("res://src/scenes/menu/new_game.tscn")

@@ -1,5 +1,5 @@
 class_name Collection
-extends Gobject
+extends GameObject
 
 var base_size: Vector2 = Vector2.ONE
 var inside: Array[Dictionary] = []
