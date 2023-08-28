@@ -5,6 +5,8 @@ var coordinates_labels: Array
 @onready var fps_counter: Label = $SafeMargins/TopBar/VBoxContainer/HBoxContainer/FPSCounter
 @onready var game_info: Label = $SafeMargins/TopBar/VBoxContainer/HBoxContainer/GameInfo
 
+@onready var padding_panel: Panel = $PaddingPanel
+
 var game_name: String = "untitled"
 var game_ip_addr: String = "local"
 
@@ -19,7 +21,8 @@ func _ready() -> void:
 	update_bar_color()
 
 func orientation_changed() -> void:
-	$PaddingPanel.custom_minimum_size.y = Globals.safe_margin_t + 2
+	padding_panel.custom_minimum_size.y = Globals.safe_margin_t + 2
+	padding_panel.reset_size()
 
 func show_loading() -> void:
 	print("Game load started")

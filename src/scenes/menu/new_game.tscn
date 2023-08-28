@@ -72,7 +72,7 @@ layout_mode = 1
 mouse_filter = 2
 
 [node name="ImportConfigFileOpen" parent="." instance=ExtResource("4_ro1ev")]
-size = Vector2i(907, 720)
+size = Vector2i(1174, 720)
 
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/LoadConfig" to="." method="_on_load_config_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/RemoveConfig" to="." method="_on_remove_config_pressed"]
