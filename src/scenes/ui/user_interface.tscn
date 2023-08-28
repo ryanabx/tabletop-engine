@@ -19,6 +19,12 @@ size_flags_horizontal = 3
 mouse_filter = 2
 script = ExtResource("1_u2rch")
 
+[node name="PaddingPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+
 [node name="SafeMargins" parent="." instance=ExtResource("2_i3s0x")]
 layout_mode = 1
 
@@ -48,18 +54,9 @@ size_flags_vertical = 0
 [node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/TopBar"]
 layout_mode = 2
 
-[node name="iOSCompatPanel" type="Panel" parent="SafeMargins/TopBar/VBoxContainer"]
-visible = false
-custom_minimum_size = Vector2(0, 60)
-layout_mode = 2
-
 [node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/TopBar/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 30
-
-[node name="Padding" type="Panel" parent="SafeMargins/TopBar/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
 
 [node name="MenuPanel" type="PanelContainer" parent="SafeMargins/TopBar/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(128, 128)
@@ -92,10 +89,6 @@ horizontal_alignment = 2
 layout_mode = 2
 text = "30 FPS"
 horizontal_alignment = 2
-
-[node name="Padding3" type="Panel" parent="SafeMargins/TopBar/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
 
 [node name="Dialogs" type="Control" parent="."]
 layout_mode = 1

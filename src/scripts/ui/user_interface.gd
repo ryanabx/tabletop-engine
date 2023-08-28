@@ -15,7 +15,11 @@ func _ready() -> void:
 	SignalManager.game_percent_loaded.connect(update_loading_percent)
 	SignalManager.game_load_started.connect(show_loading)
 	SignalManager.game_load_finished.connect(hide_loading)
+	SignalManager.orientation_changed.connect(orientation_changed)
 	update_bar_color()
+
+func orientation_changed() -> void:
+	$PaddingPanel.custom_minimum_size.y = Globals.safe_margin_t + 2
 
 func show_loading() -> void:
 	print("Game load started")
@@ -48,11 +52,6 @@ func _process(_delta: float) -> void:
 	game_info.text = str("Game: ",game_name)
 	if Globals.get_current_game() != null:
 		game_name = Globals.get_current_game().name
-	
-	if DisplayServer.screen_get_orientation() == DisplayServer.SCREEN_PORTRAIT and Utils.is_mobile_platform():
-		$TopBar/VBoxContainer/iOSCompatPanel.show()
-	else:
-		$TopBar/VBoxContainer/iOSCompatPanel.hide()
 
 var drag_window: bool = false
 var start_position: Vector2 = Vector2.ZERO
