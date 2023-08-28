@@ -118,6 +118,59 @@ func get_config(fname: String) -> GameConfig2:
 		print("Could not find file ", fname)
 	return null
 
+func download_file_from_url(url: String) -> bool:
+	var fpath: String = await download_file(url)
+	if fpath == "":
+		print("Could not download file from url ",url)
+		return false
+	
+	return validate_downloaded_file(fpath)
+
+func download_file(url: String) -> String:
+	var req: HTTPRequest = HTTPRequest.new()
+	add_child(req)
+	req.download_file = Globals.DOWNLOAD_FILE_PATH
+	var res: int = req.request(url)
+	if res != OK:
+		req.queue_free()
+		print("Error when making httprequest: ", res)
+		return ""
+	print("Downloading ", req.get_body_size(), " bytes from ", url)
+	var result = await req.request_completed
+	print("Download completed: ",result)
+	req.queue_free()
+	if result[1] == 303:
+		var new_url: String = result[2][5].split("Location: ", false, 1)[0]
+		print("303 ERROR, going to url ", new_url)
+		return await download_file(new_url)
+	return Globals.DOWNLOAD_FILE_PATH
+
+func validate_downloaded_file(fpath: String) -> bool:
+	var conf: GameConfig2 = get_config(fpath)
+	if conf == null:
+		print("Config was null")
+		delete_file(fpath)
+		return false
+	print("Looking for fpath ",fpath)
+	create_dir(Globals.CONFIG_REPO)
+
+	var conf_path: String = str(Globals.CONFIG_REPO, "/",conf.name,Globals.CONFIG_EXTENSION)
+
+	Utils.delete_file(conf_path)
+	
+	var local_copy: FileAccess = FileAccess.open(conf_path, FileAccess.WRITE)
+	
+
+	if local_copy == null:
+		print(FileAccess.get_open_error(), ": ", conf_path)
+		return false
+
+	local_copy.store_buffer(conf.to_bytes())
+	local_copy.close()
+	
+	delete_file(fpath)
+	return true
+
 var current_safe_area: Rect2i = Rect2i(0, 0, 0, 0)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

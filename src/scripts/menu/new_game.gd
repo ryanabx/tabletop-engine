@@ -60,3 +60,7 @@ func _on_delete_selected_pressed():
 		Utils.delete_file(get_config_file_path(currently_selected))
 		print("File deleted")
 		refresh_list()
+
+
+func _on_load_conf_url_pressed():
+	SignalManager.download_config_popup.emit()

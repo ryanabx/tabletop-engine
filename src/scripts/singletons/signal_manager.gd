@@ -27,6 +27,8 @@ signal config_file_opened(fname: String)
 signal export_conf(config: PackedByteArray)
 signal load_game_config(config: GameConfig2)
 
+signal download_config_popup()
+
 # Game Loading
 signal game_percent_loaded(pc: float)
 signal game_load_started()

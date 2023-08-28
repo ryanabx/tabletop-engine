@@ -57,6 +57,8 @@ const CONFIG_EXTENSION: String = ".obgf"
 
 const DEFAULT_CONFIG_PATH: String = "res://configs/default.obgf"
 
+const DOWNLOAD_FILE_PATH: String = "user://downloaded_file.obgf"
+
 # COLORS
 
 const COLOR_TRANSPARENT_HIGHLIGHT = Color(1.0, 1.0, 1.0, 0.2)
