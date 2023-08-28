@@ -19,6 +19,7 @@ func _ready() -> void:
 	SignalManager.game_load_finished.connect(hide_loading)
 	SignalManager.orientation_changed.connect(orientation_changed)
 	update_bar_color()
+	orientation_changed()
 
 func orientation_changed() -> void:
 	padding_panel.custom_minimum_size.y = Globals.safe_margin_t + 2

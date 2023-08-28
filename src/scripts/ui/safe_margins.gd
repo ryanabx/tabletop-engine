@@ -2,6 +2,7 @@ extends MarginContainer
 
 func _ready() -> void:
 	SignalManager.orientation_changed.connect(_screen_orientation_changed)
+	_screen_orientation_changed()
 
 func _screen_orientation_changed() -> void:
 	add_theme_constant_override("margin_left", Globals.safe_margin_l)
