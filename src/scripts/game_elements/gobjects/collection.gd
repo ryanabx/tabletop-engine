@@ -168,9 +168,9 @@ static func construct(brd: Board, config: Dictionary) -> Collection:
 	return collection
 
 func can_access() -> bool:
-	if access_perms.size() <= Player.get_id():
+	if access_perms.size() <= Globals.Player.ID:
 		return true # Default to true if there's no access perms
-	elif access_perms[Player.get_id()] == false:
+	elif access_perms[Globals.Player.ID] == false:
 		return false
 	return true
 

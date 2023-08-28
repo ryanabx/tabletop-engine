@@ -191,8 +191,6 @@ class FileManager:
 		delete_file(fpath)
 		return true
 
-
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	if PlatformManager.current_safe_area != DisplayServer.get_display_safe_area():

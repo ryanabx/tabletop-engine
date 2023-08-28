@@ -23,11 +23,9 @@ boot_splash/minimum_display_time=50
 
 [autoload]
 
-Utils="*res://src/scripts/singletons/utils.gd"
 Globals="*res://src/scripts/singletons/globals.gd"
+Utils="*res://src/scripts/singletons/utils.gd"
 SignalManager="*res://src/scripts/singletons/signal_manager.gd"
-Player="*res://src/scripts/singletons/player.gd"
-MultiplayerManager="*res://src/scripts/singletons/multiplayer_manager.gd"
 
 [display]
 

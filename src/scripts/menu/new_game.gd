@@ -22,16 +22,16 @@ func _on_back_button_pressed() -> void:
 func refresh_list() -> void:
 	config_list.clear()
 	config_list.add_item("Default Config")
-	for conf in Utils.get_available_configs():
+	for conf in Utils.FileManager.get_available_configs():
 		config_list.add_item(conf)
 	print("Config list refreshed!")
 
 func _on_ready_pressed():
 	if is_selecting_config():
 		if is_selecting_default_config():
-			Globals.current_game = Utils.get_config(Globals.DEFAULT_CONFIG_PATH)
+			Globals.current_game = Utils.FileManager.get_config(Globals.DEFAULT_CONFIG_PATH)
 		else:
-			Globals.current_game = Utils.get_config(get_config_file_path(get_currently_selected_config()))
+			Globals.current_game = Utils.FileManager.get_config(get_config_file_path(get_currently_selected_config()))
 		SignalManager.scene_transition.emit("res://src/scenes/game_elements/board_manager.tscn")
 
 

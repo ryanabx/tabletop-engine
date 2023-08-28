@@ -61,7 +61,7 @@ func tabletop_menu() -> void:
 		menu.get_popup().add_item("Quit", 1)
 
 func set_player(index: int) -> void:
-	Player.set_id(index)
+	Globals.Player.ID = index
 
 func run_action(index: int) -> void:
 	SignalManager.run_action.emit(index)
