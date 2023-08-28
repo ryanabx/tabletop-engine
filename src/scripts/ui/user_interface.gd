@@ -22,7 +22,6 @@ func _ready() -> void:
 
 func orientation_changed() -> void:
 	padding_panel.custom_minimum_size.y = Globals.safe_margin_t + 2
-	padding_panel.reset_size()
 
 func show_loading() -> void:
 	print("Game load started")
