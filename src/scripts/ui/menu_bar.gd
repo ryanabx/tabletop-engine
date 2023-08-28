@@ -68,5 +68,5 @@ func run_action(index: int) -> void:
 
 func tabletop_pressed(id: int) -> void:
 	match id:
-		0: get_tree().change_scene_to_file("res://src/scenes/menu/main_menu.tscn")
+		0: SignalManager.scene_transition.emit("res://src/scenes/menu/main_menu.tscn")
 		1: get_tree().quit()

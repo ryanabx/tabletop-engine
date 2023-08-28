@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://dlnv5bicqv8ih"]
+[gd_scene load_steps=7 format=3 uid="uid://dlnv5bicqv8ih"]
 
 [ext_resource type="Script" path="res://src/scripts/menu/main_menu.gd" id="1_1pq65"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="2_62p08"]
 [ext_resource type="PackedScene" uid="uid://xkoglw4lu6ab" path="res://src/scenes/ui/background.tscn" id="2_yycfv"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/safe_margins.tscn" id="3_o4qee"]
+[ext_resource type="Texture2D" uid="uid://1mriqa2ughd7" path="res://assets/icons/icon_transparent.png" id="4_ec8ka"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_sxbqx"]
 
@@ -33,6 +34,16 @@ theme_override_constants/separation = 40
 [node name="HBoxContainer2" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="AspectRatioContainer" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer2/AspectRatioContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("4_ec8ka")
+expand_mode = 2
+stretch_mode = 4
 
 [node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
