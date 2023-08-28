@@ -87,6 +87,6 @@ class Player:
 	static var ID: int = 0
 
 class Game:
-	enum ObjectType: {
-		
-	}  
+	enum ObjectType {
+		TYPE_PIECE, TYPE_STACK
+	}

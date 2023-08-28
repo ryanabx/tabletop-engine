@@ -64,6 +64,10 @@ func encode_offer(offer: Dictionary) -> String:
 func decode_offer(offer: String) -> Dictionary:
 	return JSON.parse_string(offer)
 
+class MultiplayerManager:
+	func create_client() -> void:
+		var peer: WebRTCMultiplayerPeer = WebRTCMultiplayerPeer.new()
+		
 
 class PlatformManager:
 	static var current_safe_area: Rect2i = Rect2i(0, 0, 0, 0)
