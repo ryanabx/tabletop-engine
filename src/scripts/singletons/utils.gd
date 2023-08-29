@@ -297,17 +297,17 @@ var current_safe_area: Rect2i = Rect2i(0, 0, 0, 0)
 func is_desktop_platform() -> bool:
 	return [
 		"Windows", "macOS", "Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD"
-	].has(Utils.OS.get_name())
+	].has(OS.get_name())
 
 func is_web_platform() -> bool:
 	return [
 		"Web"
-	].has(Utils.OS.get_name())
+	].has(OS.get_name())
 
 func is_mobile_platform() -> bool:
 	return [
 		"iOS", "Android"
-	].has(Utils.OS.get_name())
+	].has(OS.get_name())
 
 func on_screen_orientation_changed() -> void:
 	var w_size: Vector2i = DisplayServer.screen_get_size(DisplayServer.get_primary_screen())
