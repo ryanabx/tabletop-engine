@@ -24,6 +24,29 @@ const RTC_CONFIG: Dictionary = {
 				"stun.aa.net.uk:3478",
 				"stun.acrobits.cz:3478"
 				]
+		},
+		{
+        "urls": "stun:stun.relay.metered.ca:80",
+      	},
+      	{
+			"urls": "turn:a.relay.metered.ca:80",
+			"username": "b7153991e76085c83420f473",
+			"credential": "S7apm/MC4QIFJG4C",
+		},
+		{
+			"urls": "turn:a.relay.metered.ca:80?transport=tcp",
+			"username": "b7153991e76085c83420f473",
+			"credential": "S7apm/MC4QIFJG4C",
+		},
+		{
+			"urls": "turn:a.relay.metered.ca:443",
+			"username": "b7153991e76085c83420f473",
+			"credential": "S7apm/MC4QIFJG4C",
+		},
+		{
+			"urls": "turn:a.relay.metered.ca:443?transport=tcp",
+			"username": "b7153991e76085c83420f473",
+			"credential": "S7apm/MC4QIFJG4C",
 		}
 	]
 }
