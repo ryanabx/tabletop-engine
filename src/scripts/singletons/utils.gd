@@ -91,6 +91,7 @@ class MultiplayerManager:
 		MultiplayerManager.reset_wip()
 		# Unique id for client
 		wip_packet.id = unique_id
+		wip_connection.initialize(Globals.RTC_CONFIG)
 		Utils.multiplayer.multiplayer_peer.add_peer(wip_connection, wip_packet.id)
 		unique_id += 1
 		# Server creates offer
@@ -140,6 +141,7 @@ class MultiplayerManager:
 		connection_type = "Client"
 		current_connection = WebRTCMultiplayerPeer.new()
 		current_connection.create_client(id)
+		wip_connection.initialize(Globals.RTC_CONFIG)
 		current_connection.add_peer(wip_connection, 1)
 		Utils.multiplayer.multiplayer_peer = current_connection
 

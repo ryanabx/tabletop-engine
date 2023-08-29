@@ -4,6 +4,30 @@ extends Node
 # MULTIPLAYER
 const DEFAULT_MAX_PLAYERS: int = 4
 
+const RTC_CONFIG: Dictionary = {
+	"iceServers": [
+		{
+			"urls": [
+				"stun.l.google.com:19302",
+				"iphone-stun.strato-iphone.de:3478",
+				"numb.viagenie.ca:3478",
+				"s1.taraba.net:3478",
+				"s2.taraba.net:3478",
+				"stun.12connect.com:3478",
+				"stun.12voip.com:3478",
+				"stun.1und1.de:3478",
+				"stun.2talk.co.nz:3478",
+				"stun.2talk.com:3478",
+				"stun.3clogic.com:3478",
+				"stun.3cx.com:3478",
+				"stun.a-mm.tv:3478",
+				"stun.aa.net.uk:3478",
+				"stun.acrobits.cz:3478"
+				]
+		}
+	]
+}
+
 var current_game: GameConfig2 = null
 
 var safe_margin_l: int = 0

@@ -16,7 +16,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	ready_button.disabled = not is_selecting_config() or not multiplayer.is_server()
 	delete_button.disabled = not is_selecting_config() or is_selecting_default_config()
-	
+
 
 
 func _on_back_button_pressed() -> void:
@@ -24,6 +24,7 @@ func _on_back_button_pressed() -> void:
 
 
 func refresh_list() -> void:
+	print(multiplayer.multiplayer_peer.get_connection_status())
 	config_list.clear()
 	config_list.add_item("Default Config")
 	for conf in Utils.FileManager.get_available_configs():
