@@ -76,7 +76,7 @@ class MultiplayerManager:
 	static func close_connection() -> void:
 		if current_connection != null:
 			current_connection.close()
-			Utils.multiplayer.multiplayerpeer = OfflineMultiplayerPeer.new()
+			Utils.multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 			print("Connection closed")
 
 	static func initialize_server() -> void:
