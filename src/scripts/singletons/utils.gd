@@ -190,17 +190,17 @@ class PlatformManager:
 	static func is_desktop_platform() -> bool:
 		return [
 			"Windows", "macOS", "Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD"
-		].has(OS.get_name())
+		].has(Utils.OS.get_name())
 	
 	static func is_web_platform() -> bool:
 		return [
 			"Web"
-		].has(OS.get_name())
+		].has(Utils.OS.get_name())
 	
 	static func is_mobile_platform() -> bool:
 		return [
 			"iOS", "Android"
-		].has(OS.get_name())
+		].has(Utils.OS.get_name())
 	
 	static func on_screen_orientation_changed() -> void:
 		var w_size: Vector2i = DisplayServer.screen_get_size(DisplayServer.get_primary_screen())
@@ -215,7 +215,7 @@ class PlatformManager:
 		Globals.safe_margin_t = margin_t
 		Globals.safe_margin_r = margin_r
 		Globals.safe_margin_b = margin_b
-		current_safe_area = DisplayServer.get_display_safe_area()
+		PlatformManager.current_safe_area = DisplayServer.get_display_safe_area()
 		SignalManager.orientation_changed.emit()
 
 class FileManager:
@@ -328,8 +328,8 @@ class FileManager:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	if PlatformManager.current_safe_area != DisplayServer.get_display_safe_area():
-		PlatformManager.on_screen_orientation_changed()
+	if Utils.PlatformManager.current_safe_area != DisplayServer.get_display_safe_area():
+		Utils.PlatformManager.on_screen_orientation_changed()
 	
 	if multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
 		multiplayer.poll()
