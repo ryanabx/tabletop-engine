@@ -139,6 +139,7 @@ class MultiplayerManager:
 		wip_packet.sdp = sdp
 		wip_connection.set_local_description(sdp[0], sdp[1])
 		while wip_connection.get_gathering_state() != wip_connection.GATHERING_STATE_COMPLETE:
+			print("Current gathering state: ", wip_connection.get_gathering_state())
 			var ice_candidate: Array = await wip_connection.ice_candidate_created
 			print("[Client] New ice candidate for connection: ", ice_candidate)
 			wip_packet.ice_candidates.append(ice_candidate)
