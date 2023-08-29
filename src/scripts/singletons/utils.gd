@@ -1,5 +1,9 @@
 extends Node
 
+func _ready() -> void:
+	multiplayer.peer_connected.connect(MultiplayerManager.peer_connected)
+	multiplayer.peer_disconnected.connect(MultiplayerManager.peer_disconnected)
+
 func load_images_into_array(image_strings: Array, image_directory: String) -> Array:
 	var result: Array = []
 	for image_path in image_strings:
@@ -103,7 +107,7 @@ class MultiplayerManager:
 		# Found client code
 		print("[Server] Received code from user. Decoding...")
 		var _packet: Dictionary = decode_packet(code)
-		print("[Server] THIS IS THE PACKET WE GOT: ", _packet)
+		# print("[Server] THIS IS THE PACKET WE GOT: ", _packet)
 		print("[Server] Setting remote description from ",_packet.sdp)
 		wip_connection.set_remote_description(_packet.sdp[0], _packet.sdp[1])
 		for ice_candidate in _packet.ice_candidates:
@@ -165,6 +169,12 @@ class MultiplayerManager:
 	static func ice_candidate_created(media: String, index: int, name: String) -> void:
 		print("New ice candidate for connection: ", media, " :: ", index, " :: ", name, ".")
 		wip_packet.ice_candidates.append([media, index, name])	
+	
+	static func peer_connected(id: int) -> void:
+		print("Hello, peer ",id)
+	
+	static func peer_disconnected(id: int) -> void:
+		print("Goodbye, peer ",id)
 
 class PlatformManager:
 	static var current_safe_area: Rect2i = Rect2i(0, 0, 0, 0)
