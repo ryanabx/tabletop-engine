@@ -103,7 +103,7 @@ class MultiplayerManager:
 		wip_connection.set_local_description(sdp[0], sdp[1])
 		while wip_connection.get_gathering_state() != wip_connection.GATHERING_STATE_COMPLETE:
 			await Utils.get_tree().create_timer(1).timeout
-			print("Number of ICE candidates gathered: ", wip_packet.ice_candidates.size(), " current state: ",wip_connection.GATHERING_STATE_COMPLETE)
+			print("Number of ICE candidates gathered: ", wip_packet.ice_candidates.size(), " current state: ",wip_connection.get_gathering_state())
 		# ICE Candidates
 		print("[Server] Gathered ", wip_packet.ice_candidates.size(), " ice candidates... Encoding packet...")
 		SignalManager.mplay_code_created.emit(encode_packet(wip_packet))
@@ -139,7 +139,7 @@ class MultiplayerManager:
 		wip_connection.set_local_description(sdp[0], sdp[1])
 		while wip_connection.get_gathering_state() != wip_connection.GATHERING_STATE_COMPLETE:
 			await Utils.get_tree().create_timer(1).timeout
-			print("Number of ICE candidates gathered: ", wip_packet.ice_candidates.size(), " current state: ",wip_connection.GATHERING_STATE_COMPLETE)
+			print("Number of ICE candidates gathered: ", wip_packet.ice_candidates.size(), " current state: ",wip_connection.get_gathering_state())
 		print("[Client] Ice candidates from server: ",_packet.ice_candidates)
 		for ice_candidate in _packet.ice_candidates:
 			wip_connection.add_ice_candidate(ice_candidate[0], ice_candidate[1], ice_candidate[2])
@@ -164,7 +164,7 @@ class MultiplayerManager:
 
 	static func ice_candidate_created(media: String, index: int, name: String):
 		var ice_candidate: Array = [media, index, name]
-		print("[Client] New ice candidate for connection: ", ice_candidate)
+		print("[",MultiplayerManager.connection_type,"] New ice candidate for connection: ", ice_candidate)
 		wip_packet.ice_candidates.append(ice_candidate)
 
 	static func reset_wip() -> void:
