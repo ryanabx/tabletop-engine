@@ -99,7 +99,7 @@ class MultiplayerManager:
 		# Session Description Protocol
 		var sdp: Array = await wip_connection.session_description_created
 		wip_connection.set_local_description(sdp[0], sdp[1])
-		await Utils.get_tree().create_timer(0.5).timeout
+		await Utils.get_tree().create_timer(1.0).timeout
 		# ICE Candidates
 		print("[Server] Gathered ", wip_packet.ice_candidates.size(), " ice candidates... Encoding packet...")
 		SignalManager.mplay_code_created.emit(encode_packet(wip_packet))
@@ -326,3 +326,6 @@ class FileManager:
 func _process(_delta):
 	if PlatformManager.current_safe_area != DisplayServer.get_display_safe_area():
 		PlatformManager.on_screen_orientation_changed()
+	
+	if multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
+		multiplayer.poll()
