@@ -25,8 +25,10 @@ func _on_back_button_pressed() -> void:
 
 func refresh_list() -> void:
 	if Utils.MultiplayerManager.wip_connection != null:
-		print(multiplayer.multiplayer_peer.get_connection_status(), ", ",
-		Utils.MultiplayerManager.wip_connection.get_connection_state()
+		print("Connecting state multiplayer peer: ",multiplayer.multiplayer_peer.get_connection_status(),
+		", ConnectionState: ", Utils.MultiplayerManager.wip_connection.get_connection_state(),
+		", GatheringState: ", Utils.MultiplayerManager.wip_connection.get_gathering_state(),
+		", SignalingState: ", Utils.MultiplayerManager.wip_connection.get_signaling_state()
 		)
 	config_list.clear()
 	config_list.add_item("Default Config")
