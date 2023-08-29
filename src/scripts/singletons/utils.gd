@@ -174,9 +174,9 @@ class MultiplayerManager:
 		}
 		# Reset connection variable
 		if wip_connection != null:
-			wip_connection.ice_candidate_created.disconnect(ice_candidate_created)
+			wip_connection.ice_candidate_created.disconnect(MultiplayerManager.ice_candidate_created)
 		wip_connection = WebRTCPeerConnection.new()
-		wip_connection.ice_candidate_created.connect(ice_candidate_created)
+		wip_connection.ice_candidate_created.connect(MultiplayerManager.ice_candidate_created)
 	
 	static func peer_connected(id: int) -> void:
 		print("Hello, peer ",id)
