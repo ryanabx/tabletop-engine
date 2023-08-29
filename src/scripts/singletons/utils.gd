@@ -110,6 +110,7 @@ class MultiplayerManager:
 		# print("[Server] THIS IS THE PACKET WE GOT: ", _packet)
 		print("[Server] Setting remote description from ",_packet.sdp)
 		wip_connection.set_remote_description(_packet.sdp[0], _packet.sdp[1])
+		print("[Server] Ice candidates from client: ",_packet.ice_candidates)
 		for ice_candidate in _packet.ice_candidates:
 			wip_connection.add_ice_candidate(ice_candidate[0], ice_candidate[1], ice_candidate[2])
 		print("[Server] Done")
@@ -127,6 +128,7 @@ class MultiplayerManager:
 		initialize_client(_packet.id)
 		print("[Client] Setting remote description from ",_packet.sdp)
 		wip_connection.set_remote_description(_packet.sdp[0], _packet.sdp[1])
+		print("[Client] Ice candidates from server: ",_packet.ice_candidates)
 		for ice_candidate in _packet.ice_candidates:
 			wip_connection.add_ice_candidate(ice_candidate[0], ice_candidate[1], ice_candidate[2])
 		await Utils.get_tree().create_timer(0.5).timeout
