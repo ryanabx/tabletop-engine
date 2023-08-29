@@ -24,8 +24,10 @@ func _on_back_button_pressed() -> void:
 
 
 func refresh_list() -> void:
-	print(multiplayer.multiplayer_peer.get_connection_status(), ", ",
-	Utils.MultiplayerManager.wip_connection.get_connection_state())
+	if Utils.MultiplayerManager.wip_connection != null:
+		print(multiplayer.multiplayer_peer.get_connection_status(), ", ",
+		Utils.MultiplayerManager.wip_connection.get_connection_state()
+		)
 	config_list.clear()
 	config_list.add_item("Default Config")
 	for conf in Utils.FileManager.get_available_configs():
