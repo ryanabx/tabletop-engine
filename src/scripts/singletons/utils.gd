@@ -98,8 +98,13 @@ class MultiplayerManager:
 		wip_connection.create_offer()
 		# Session Description Protocol
 		var sdp: Array = await wip_connection.session_description_created
+		print("[",connection_type,"] New SDP created: ", sdp)
+		wip_packet.sdp = sdp
 		wip_connection.set_local_description(sdp[0], sdp[1])
-		await Utils.get_tree().create_timer(1.0).timeout
+		while wip_connection.get_gathering_state() != wip_connection.GATHERING_STATE_COMPLETE:
+			var ice_candidate: Array = await wip_connection.ice_candidate_created
+			print("[Server] New ice candidate for connection: ", ice_candidate)
+			wip_packet.ice_candidates.append(ice_candidate)
 		# ICE Candidates
 		print("[Server] Gathered ", wip_packet.ice_candidates.size(), " ice candidates... Encoding packet...")
 		SignalManager.mplay_code_created.emit(encode_packet(wip_packet))
@@ -129,6 +134,14 @@ class MultiplayerManager:
 		initialize_client(_packet.id)
 		print("[Client] Setting remote description from ",_packet.sdp)
 		wip_connection.set_remote_description(_packet.sdp[0], _packet.sdp[1])
+		var sdp: Array = await wip_connection.session_description_created
+		print("[",connection_type,"] New SDP created: ", sdp)
+		wip_packet.sdp = sdp
+		wip_connection.set_local_description(sdp[0], sdp[1])
+		while wip_connection.get_gathering_state() != wip_connection.GATHERING_STATE_COMPLETE:
+			var ice_candidate: Array = await wip_connection.ice_candidate_created
+			print("[Client] New ice candidate for connection: ", ice_candidate)
+			wip_packet.ice_candidates.append(ice_candidate)
 		print("[Client] Ice candidates from server: ",_packet.ice_candidates)
 		for ice_candidate in _packet.ice_candidates:
 			wip_connection.add_ice_candidate(ice_candidate[0], ice_candidate[1], ice_candidate[2])
@@ -145,7 +158,6 @@ class MultiplayerManager:
 		current_connection.add_peer(wip_connection, 1)
 		Utils.multiplayer.multiplayer_peer = current_connection
 
-
 	static func encode_packet(_packet: Dictionary) -> String:
 		return Utils.FileManager.decode_string(Utils.FileManager.compress_dictionary(_packet))
 
@@ -158,21 +170,7 @@ class MultiplayerManager:
 			"sdp": "", "id": 0, "ice_candidates": []
 		}
 		# Reset connection variable
-		if wip_connection != null:
-			wip_connection.session_description_created.disconnect(MultiplayerManager.sdp_created)
-			wip_connection.ice_candidate_created.disconnect(MultiplayerManager.ice_candidate_created)
 		wip_connection = WebRTCPeerConnection.new()
-		wip_connection.session_description_created.connect(MultiplayerManager.sdp_created)
-		wip_connection.ice_candidate_created.connect(MultiplayerManager.ice_candidate_created)
-	
-	static func sdp_created(type: String, sdp: String) -> void:
-		print("[",connection_type,"] New SDP created: ", type, " :: ",sdp, ".")
-		wip_connection.set_local_description(type, sdp)
-		wip_packet.sdp = [type, sdp]
-
-	static func ice_candidate_created(media: String, index: int, name: String) -> void:
-		print("New ice candidate for connection: ", media, " :: ", index, " :: ", name, ".")
-		wip_packet.ice_candidates.append([media, index, name])	
 	
 	static func peer_connected(id: int) -> void:
 		print("Hello, peer ",id)
