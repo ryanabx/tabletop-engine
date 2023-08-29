@@ -9,7 +9,7 @@ func _ready() -> void:
 	Globals.current_game = null
 	SignalManager.config_added.connect(refresh_list)
 	SignalManager.mplay_code_created.connect(_on_offer_created)
-	if not Utils.PlatformManager.is_desktop_platform():
+	if not Utils.is_desktop_platform():
 		from_file_button.hide()
 	refresh_list()
 

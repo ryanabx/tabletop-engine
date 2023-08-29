@@ -184,40 +184,6 @@ class MultiplayerManager:
 	static func peer_disconnected(id: int) -> void:
 		print("Goodbye, peer ",id)
 
-class PlatformManager:
-	static var current_safe_area: Rect2i = Rect2i(0, 0, 0, 0)
-
-	static func is_desktop_platform() -> bool:
-		return [
-			"Windows", "macOS", "Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD"
-		].has(Utils.OS.get_name())
-	
-	static func is_web_platform() -> bool:
-		return [
-			"Web"
-		].has(Utils.OS.get_name())
-	
-	static func is_mobile_platform() -> bool:
-		return [
-			"iOS", "Android"
-		].has(Utils.OS.get_name())
-	
-	static func on_screen_orientation_changed() -> void:
-		var w_size: Vector2i = DisplayServer.screen_get_size(DisplayServer.get_primary_screen())
-		var orientation_extents: Rect2i = DisplayServer.get_display_safe_area()
-		
-		var margin_l: int = orientation_extents.position.x
-		var margin_t: int = orientation_extents.position.y
-		var margin_r: int = w_size.x - orientation_extents.size.x - margin_l
-		var margin_b: int = w_size.y - orientation_extents.size.y - margin_t
-		print("SAFE AREA CHANGED to: ", orientation_extents, ", w_size: ", w_size, ", margin_l: ", margin_l, ", margin_t: ", margin_t, ", margin_r: ", margin_r, ", margin_b: ", margin_b)
-		Globals.safe_margin_l = margin_l
-		Globals.safe_margin_t = margin_t
-		Globals.safe_margin_r = margin_r
-		Globals.safe_margin_b = margin_b
-		PlatformManager.current_safe_area = DisplayServer.get_display_safe_area()
-		SignalManager.orientation_changed.emit()
-
 class FileManager:
 	## Compresses dictionary through Gzip compression
 	static func compress_dictionary(_dict: Dictionary) -> PackedByteArray:
@@ -326,10 +292,43 @@ class FileManager:
 		delete_file(fpath)
 		return true
 
+var current_safe_area: Rect2i = Rect2i(0, 0, 0, 0)
+
+func is_desktop_platform() -> bool:
+	return [
+		"Windows", "macOS", "Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD"
+	].has(Utils.OS.get_name())
+
+func is_web_platform() -> bool:
+	return [
+		"Web"
+	].has(Utils.OS.get_name())
+
+func is_mobile_platform() -> bool:
+	return [
+		"iOS", "Android"
+	].has(Utils.OS.get_name())
+
+func on_screen_orientation_changed() -> void:
+	var w_size: Vector2i = DisplayServer.screen_get_size(DisplayServer.get_primary_screen())
+	var orientation_extents: Rect2i = DisplayServer.get_display_safe_area()
+	
+	var margin_l: int = orientation_extents.position.x
+	var margin_t: int = orientation_extents.position.y
+	var margin_r: int = w_size.x - orientation_extents.size.x - margin_l
+	var margin_b: int = w_size.y - orientation_extents.size.y - margin_t
+	print("SAFE AREA CHANGED to: ", orientation_extents, ", w_size: ", w_size, ", margin_l: ", margin_l, ", margin_t: ", margin_t, ", margin_r: ", margin_r, ", margin_b: ", margin_b)
+	Globals.safe_margin_l = margin_l
+	Globals.safe_margin_t = margin_t
+	Globals.safe_margin_r = margin_r
+	Globals.safe_margin_b = margin_b
+	current_safe_area = DisplayServer.get_display_safe_area()
+	SignalManager.orientation_changed.emit()
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	if Utils.PlatformManager.current_safe_area != DisplayServer.get_display_safe_area():
-		Utils.PlatformManager.on_screen_orientation_changed()
+	if Utils.current_safe_area != DisplayServer.get_display_safe_area():
+		Utils.on_screen_orientation_changed()
 	
 	if multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
 		multiplayer.poll()

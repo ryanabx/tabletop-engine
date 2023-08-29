@@ -6,7 +6,7 @@ extends Control
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	version.text = str("Version: ",ProjectSettings.get_setting("application/config/version"))
-	if Utils.PlatformManager.is_mobile_platform():
+	if Utils.is_mobile_platform():
 		quit_button.hide()
 	Globals.current_game = null
 

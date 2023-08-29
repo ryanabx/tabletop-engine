@@ -6,13 +6,13 @@ func _ready() -> void:
 	SignalManager.create_load_config_dialog.connect(_on_create_load_config)
 	file_selected.connect(filepath_selected)
 	filters = ["*.obgf"]
-	if Utils.PlatformManager.is_web_platform():
+	if Utils.is_web_platform():
 		var window = JavaScriptBridge.get_interface("window")
 		window.getFile(file_load_callback)
 
 func _on_create_load_config() -> void:
 	title = "Import a config"
-	if not Utils.PlatformManager.is_web_platform():
+	if not Utils.is_web_platform():
 		popup()
 	else:
 		var window = JavaScriptBridge.get_interface("window")

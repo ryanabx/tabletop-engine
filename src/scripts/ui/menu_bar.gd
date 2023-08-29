@@ -57,7 +57,7 @@ func player_menu() -> void:
 func tabletop_menu() -> void:
 	menu.get_popup().id_pressed.connect(tabletop_pressed)
 	menu.get_popup().add_item("Main Menu", 0)
-	if not Utils.PlatformManager.is_mobile_platform():
+	if not Utils.is_mobile_platform():
 		menu.get_popup().add_item("Quit", 1)
 
 func set_player(index: int) -> void:
