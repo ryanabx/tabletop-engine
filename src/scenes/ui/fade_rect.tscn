@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://danbn6jjfghru"]
 
-[ext_resource type="Script" path="res://src/scenes/ui/fade_rect.gd" id="1_ngpyu"]
+[ext_resource type="Script" path="res://src/scripts/ui/fade_rect.gd" id="1_ngpyu"]
 
 [node name="FadeRect" type="ColorRect"]
 visible = false

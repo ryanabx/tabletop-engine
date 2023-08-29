@@ -58,20 +58,85 @@ func has_any(arr1: Array, arr2: Array) -> bool:
 				return true
 	return false
 
+@rpc("any_peer", "call_remote", "reliable")
+func go_to_scene(fpath: String) -> void:
+	SignalManager.scene_transition.emit(fpath)
+
 class MultiplayerManager:
 	static var current_connection: WebRTCMultiplayerPeer = null
 	static var wip_connection: WebRTCPeerConnection = null
 	static var wip_packet: Dictionary
+	static var unique_id: int = 2
+	static var connection_type: String = "Neither"
+
+	static func close_connection() -> void:
+		if current_connection != null:
+			current_connection.close()
+			Utils.multiplayer.multiplayerpeer = OfflineMultiplayerPeer.new()
+			print("Connection closed")
+
+	static func initialize_server() -> void:
+		close_connection()
+		connection_type = "Server"
+		current_connection = WebRTCMultiplayerPeer.new()
+		current_connection.create_server()
+		Utils.multiplayer.multiplayer_peer = current_connection
 
 	static func add_client() -> void:
 		print("[Server] Adding new client.")
+		MultiplayerManager.reset_wip()
+		# Unique id for client
+		wip_packet.id = unique_id
+		Utils.multiplayer.multiplayer_peer.add_peer(wip_connection, wip_packet.id)
+		unique_id += 1
+		# Server creates offer
 		wip_connection.create_offer()
+		# Session Description Protocol
 		var sdp: Array = await wip_connection.session_description_created
 		wip_connection.set_local_description(sdp[0], sdp[1])
-		wip_packet.sdp = sdp
-		wip_connection.ice_candidate_created.connect(ice_candidate_created)
 		await Utils.get_tree().create_timer(0.5).timeout
-		print("[Server] Gathered ", wip_packet.ice_candidates.size(), " ice candidates.")
+		# ICE Candidates
+		print("[Server] Gathered ", wip_packet.ice_candidates.size(), " ice candidates... Encoding packet...")
+		SignalManager.mplay_code_created.emit(encode_packet(wip_packet))
+		# Wait for client to respond
+		var code: String = await SignalManager.mplay_code_received
+		# Found client code
+		print("[Server] Received code from user. Decoding...")
+		var _packet: Dictionary = decode_packet(code)
+		print("[Server] THIS IS THE PACKET WE GOT: ", _packet)
+		print("[Server] Setting remote description from ",_packet.sdp)
+		wip_connection.set_remote_description(_packet.sdp[0], _packet.sdp[1])
+		for ice_candidate in _packet.ice_candidates:
+			wip_connection.add_ice_candidate(ice_candidate[0], ice_candidate[1], ice_candidate[2])
+		print("[Server] Done")
+		return
+	
+	static func connect_to_server() -> void:
+		connection_type = "Client"
+		print("[Client] Connecting to server")
+		reset_wip()
+		print("[Client] Waiting for code from user...")
+		var code: String = await SignalManager.mplay_code_received
+		# Found server code
+		print("[Client] Received code from server. Decoding...")
+		var _packet: Dictionary = decode_packet(code)
+		initialize_client(_packet.id)
+		print("[Client] Setting remote description from ",_packet.sdp)
+		wip_connection.set_remote_description(_packet.sdp[0], _packet.sdp[1])
+		for ice_candidate in _packet.ice_candidates:
+			wip_connection.add_ice_candidate(ice_candidate[0], ice_candidate[1], ice_candidate[2])
+		await Utils.get_tree().create_timer(0.5).timeout
+		print("[Client] Gathered ", wip_packet.ice_candidates.size(), " ice candidates... Encoding packet...")
+		SignalManager.mplay_code_created.emit(encode_packet(wip_packet))
+		return
+
+	static func initialize_client(id: int) -> void:
+		connection_type = "Client"
+		current_connection = WebRTCMultiplayerPeer.new()
+		current_connection.create_client(id)
+		current_connection.add_peer(wip_connection, 1)
+		Utils.multiplayer.multiplayer_peer = current_connection
+
 
 	static func encode_packet(_packet: Dictionary) -> String:
 		return Utils.FileManager.decode_string(Utils.FileManager.compress_dictionary(_packet))
@@ -85,12 +150,21 @@ class MultiplayerManager:
 			"sdp": "", "id": 0, "ice_candidates": []
 		}
 		# Reset connection variable
-		wip_connection.ice_candidate_created.disconnect(ice_candidate_created)
+		if wip_connection != null:
+			wip_connection.session_description_created.disconnect(MultiplayerManager.sdp_created)
+			wip_connection.ice_candidate_created.disconnect(MultiplayerManager.ice_candidate_created)
 		wip_connection = WebRTCPeerConnection.new()
+		wip_connection.session_description_created.connect(MultiplayerManager.sdp_created)
+		wip_connection.ice_candidate_created.connect(MultiplayerManager.ice_candidate_created)
 	
+	static func sdp_created(type: String, sdp: String) -> void:
+		print("[",connection_type,"] New SDP created: ", type, " :: ",sdp, ".")
+		wip_connection.set_local_description(type, sdp)
+		wip_packet.sdp = [type, sdp]
+
 	static func ice_candidate_created(media: String, index: int, name: String) -> void:
-		print("[Server] New ice candidate for connection: ", media, " :: ", index, " :: ", name, ".")
-		wip_packet.ice_candidates.append([media, index, name])
+		print("New ice candidate for connection: ", media, " :: ", index, " :: ", name, ".")
+		wip_packet.ice_candidates.append([media, index, name])	
 
 class PlatformManager:
 	static var current_safe_area: Rect2i = Rect2i(0, 0, 0, 0)
@@ -129,19 +203,19 @@ class PlatformManager:
 class FileManager:
 	## Compresses dictionary through Gzip compression
 	static func compress_dictionary(_dict: Dictionary) -> PackedByteArray:
-		return var_to_bytes(_dict).compress(3)
+		return var_to_bytes(JSON.stringify(_dict)).compress(3)
 	
 	## Decompresses dictionary through Gzip decompression
 	static func decompress_to_dictionary(_bytes: PackedByteArray) -> Dictionary:
-		return bytes_to_var(_bytes.decompress_dynamic(-1, 3))
+		return JSON.parse_string(bytes_to_var(_bytes.decompress_dynamic(-1, 3)))
 	
 	## Gets string from bytes
 	static func decode_string(_bytes: PackedByteArray) -> String:
-		return _bytes.get_string_from_utf16()
+		return Marshalls.raw_to_base64(_bytes)
 	
 	## Gets bytes from string
 	static func encode_string(_string: String) -> PackedByteArray:
-		return _string.to_utf16_buffer()
+		return Marshalls.base64_to_raw(_string)
 
 	static func create_dir(dir: String) -> void:
 		if DirAccess.dir_exists_absolute(dir):

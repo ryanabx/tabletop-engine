@@ -39,11 +39,11 @@ func file_decided(buf: PackedByteArray) -> void:
 	if not conf.fill_bytes(buf): # Invalid config, save it back
 		return
 	
-	Utils.create_dir(Globals.CONFIG_REPO)
+	Utils.FileManager.create_dir(Globals.CONFIG_REPO)
 
 	var conf_path: String = str(Globals.CONFIG_REPO, "/",conf.name,Globals.CONFIG_EXTENSION)
 
-	Utils.delete_file(conf_path)
+	Utils.FileManager.delete_file(conf_path)
 	
 	var local_copy: FileAccess = FileAccess.open(conf_path, FileAccess.WRITE)
 

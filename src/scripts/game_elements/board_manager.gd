@@ -14,10 +14,29 @@ const MTU: int = 1476
 
 var config_bytes: PackedByteArray = []
 
+var peers_ready: int = 0
+signal peer_ready(id: int)
+
+@rpc("any_peer","call_remote","reliable")
+func notify_ready(id: int) -> void:
+	if multiplayer.is_server():
+		peer_ready.emit(id)
+
 func _ready() -> void:
 	Globals.set_shared_tabletop_manager(self)
-	if Globals.current_game != null:
-		load_game_config(Globals.current_game)
+	if multiplayer.is_server():
+		make_tabletop()
+	else:
+		notify_ready.rpc(multiplayer.get_unique_id())
+
+func make_tabletop():
+	if multiplayer.get_peers().size() > 0:
+		Utils.go_to_scene.rpc("res://src/scenes/game_elements/board_manager.tscn")
+	while peers_ready != multiplayer.get_peers().size():
+		var id: int = await peer_ready
+		print("Peer ",id, " is ready!")
+		peers_ready += 1
+	load_game_config(Globals.current_game)
 
 func remove_tabletop() -> void:
 	if board != null:

@@ -42,4 +42,5 @@ signal config_added()
 
 
 # Multiplayer Setting Up Signals
-signal mplay_code_created()
+signal mplay_code_created(_string: String)
+signal mplay_code_received(_string: String)

@@ -13,6 +13,7 @@ script = ExtResource("1_u8h4e")
 layer = 10
 
 [node name="GameMenu" parent="UserInterfaceLayer" instance=ExtResource("2_ywb68")]
+visible = false
 
 [node name="Dialogs" parent="UserInterfaceLayer" instance=ExtResource("3_3512o")]
 

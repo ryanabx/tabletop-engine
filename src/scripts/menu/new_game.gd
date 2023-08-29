@@ -8,13 +8,15 @@ extends Control
 func _ready() -> void:
 	Globals.current_game = null
 	SignalManager.config_added.connect(refresh_list)
+	SignalManager.mplay_code_created.connect(_on_offer_created)
 	if not Utils.PlatformManager.is_desktop_platform():
 		from_file_button.hide()
 	refresh_list()
 
 func _process(_delta: float) -> void:
-	ready_button.disabled = not is_selecting_config()
+	ready_button.disabled = not is_selecting_config() or not multiplayer.is_server()
 	delete_button.disabled = not is_selecting_config() or is_selecting_default_config()
+	
 
 
 func _on_back_button_pressed() -> void:
@@ -66,3 +68,74 @@ func _on_delete_selected_pressed():
 
 func _on_load_conf_url_pressed():
 	SignalManager.download_config_popup.emit()
+
+
+func _on_client_pressed() -> void:
+	Utils.MultiplayerManager.connect_to_server()
+	%Options1.hide()
+	%OptionsClient.show()
+
+func _on_server_pressed() -> void:
+	Utils.MultiplayerManager.initialize_server()
+	%Options1.hide()
+	%OptionsServer.show()
+
+
+func _on_add_client_pressed() -> void:
+	Utils.MultiplayerManager.add_client()
+	%OptionsServer.hide()
+	%ServerOfferClient.show()
+
+
+func _on_submit_offer_pressed() -> void:
+	if %ServerOffer.text != "":
+		SignalManager.mplay_code_received.emit(%ServerOffer.text)
+		%OptionsClient.hide()
+		%OfferClient.show()
+
+func _on_offer_created(offer: String) -> void:
+	print("Offer created! ", offer, ", ",Utils.MultiplayerManager.connection_type)
+	if Utils.MultiplayerManager.connection_type == "Client":
+		%CodeForServer.text = offer
+	elif Utils.MultiplayerManager.connection_type == "Server":
+		%ServerCode.text = offer
+
+
+func _on_disconnect_mplay_pressed() -> void:
+	Utils.MultiplayerManager.close_connection()
+	%ConnectedYes.hide()
+	%Options1.show()
+
+
+func _on_paste_offer_from_server_pressed() -> void:
+	%ServerOffer.text = DisplayServer.clipboard_get()
+
+
+func _on_copy_server_code_pressed() -> void:
+	DisplayServer.clipboard_set(%CodeForServer.text)
+
+
+func _on_accept_client_pressed() -> void:
+	%OfferClient.hide()
+	%ConnectedYes.show()
+
+
+
+func _on_copy_code_server_pressed() -> void:
+	DisplayServer.clipboard_set(%ServerCode.text)
+
+
+func _on_next_server_step_pressed() -> void:
+	%ServerOfferClient.hide()
+	%ServerPasteClientOffer.show()
+
+
+func _on_paste_client_code_pressed() -> void:
+	%ClientCodeOffer.text = DisplayServer.clipboard_get()
+
+
+func _on_next_server_step2_pressed() -> void:
+	if %ClientCodeOffer.text != "":
+		SignalManager.mplay_code_received.emit(%ClientCodeOffer.text)
+		%ServerPasteClientOffer.hide()
+		%OptionsServer.show()
