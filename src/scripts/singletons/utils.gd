@@ -1,8 +1,12 @@
 extends Node
 
+var req: HTTPRequest
+
 func _ready() -> void:
 	multiplayer.peer_connected.connect(MultiplayerManager.peer_connected)
 	multiplayer.peer_disconnected.connect(MultiplayerManager.peer_disconnected)
+	req = HTTPRequest.new()
+	add_child(req)
 
 func load_images_into_array(image_strings: Array, image_directory: String) -> Array:
 	var result: Array = []
@@ -43,6 +47,16 @@ func load_json_from_file(fname: String) -> Dictionary:
 		print("File not found: ",fname)
 		return {}
 
+func random_string(length: int) -> String:
+	return generate_word(Globals.CODE_CHARS, length)
+
+func generate_word(chars, length) -> String:
+	var word: String = ""
+	var n_char = len(chars)
+	for i in range(length):
+		word += chars[randi()% n_char]
+	return word
+
 func load_images_from_directory(dir: String) -> Dictionary:
 	var textures: Dictionary = {}
 	var directory_access = DirAccess.open(dir)
@@ -78,6 +92,10 @@ class MultiplayerManager:
 			current_connection.close()
 			Utils.multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 			print("Connection closed")
+	
+	static func cancel_peer_connection() -> void:
+		wip_connection.close()
+		reset_wip()
 
 	static func initialize_server() -> void:
 		close_connection()
@@ -94,6 +112,32 @@ class MultiplayerManager:
 		wip_connection.initialize(Globals.RTC_CONFIG)
 		Utils.multiplayer.multiplayer_peer.add_peer(wip_connection, wip_packet.id)
 		unique_id += 1
+		await server_offer()
+		await gather_ice_candidates()
+		# ICE Candidates
+		print("[Server] Gathered ", wip_packet.ice_candidates.size(), " ice candidates... Encoding packet...")
+		SignalManager.mplay_code_created.emit(encode_packet(wip_packet))
+		# Wait for client to respond
+		await process_packet_server()
+		print("[Server] Done")
+		await SignalManager.mplay_go_to_wait
+		var result: bool = await wait_for_connection()
+		if result == true:
+			SignalManager.mplay_connection_result.emit(result)
+		return
+	
+	static func gather_ice_candidates() -> bool:
+		var timeout: float = 0.0
+		var timer_amt: float = 0.3
+		while wip_connection.get_gathering_state() != wip_connection.GATHERING_STATE_COMPLETE and timeout < Globals.ICE_TIMEOUT:
+			await Utils.get_tree().create_timer(timer_amt).timeout
+			print("Number of ICE candidates gathered: ", wip_packet.ice_candidates.size(), " current state: ",wip_connection.get_gathering_state(), ", timeout: ",timeout)
+			if wip_connection.get_gathering_state() == wip_connection.GATHERING_STATE_GATHERING:
+				timeout += timer_amt
+			SignalManager.mplay_offer_percentage.emit(timeout / Globals.ICE_TIMEOUT)
+		return true
+	
+	static func server_offer() -> bool:
 		# Server creates offer
 		wip_connection.create_offer()
 		# Session Description Protocol
@@ -101,31 +145,41 @@ class MultiplayerManager:
 		print("[",connection_type,"] New SDP created: ", sdp)
 		wip_packet.sdp = sdp
 		wip_connection.set_local_description(sdp[0], sdp[1])
-		while wip_connection.get_gathering_state() != wip_connection.GATHERING_STATE_COMPLETE:
-			await Utils.get_tree().create_timer(1).timeout
-			print("Number of ICE candidates gathered: ", wip_packet.ice_candidates.size(), " current state: ",wip_connection.get_gathering_state())
-		# ICE Candidates
-		print("[Server] Gathered ", wip_packet.ice_candidates.size(), " ice candidates... Encoding packet...")
-		SignalManager.mplay_code_created.emit(encode_packet(wip_packet))
-		# Wait for client to respond
+		return true
+	
+	static func process_packet_server() -> bool:
 		var code: String = await SignalManager.mplay_code_received
-		# Found client code
-		print("[Server] Received code from user. Decoding...")
+		# Found peer code
 		var _packet: Dictionary = decode_packet(code)
-		# print("[Server] THIS IS THE PACKET WE GOT: ", _packet)
-		print("[Server] Setting remote description from ",_packet.sdp)
 		wip_connection.set_remote_description(_packet.sdp[0], _packet.sdp[1])
-		print("[Server] Ice candidates from client: ",_packet.ice_candidates)
 		for ice_candidate in _packet.ice_candidates:
 			wip_connection.add_ice_candidate(ice_candidate[0], ice_candidate[1], ice_candidate[2])
-		print("[Server] Done")
-		return
-	
+		return true
+
 	static func connect_to_server() -> void:
 		connection_type = "Client"
 		print("[Client] Connecting to server")
 		reset_wip()
 		print("[Client] Waiting for code from user...")
+		await process_packet_client()
+		await gather_ice_candidates()
+		await Utils.get_tree().create_timer(0.5).timeout
+		print("[Client] Gathered ", wip_packet.ice_candidates.size(), " ice candidates... Encoding packet...")
+		SignalManager.mplay_code_created.emit(encode_packet(wip_packet))
+		await SignalManager.mplay_go_to_wait
+		var result: bool = await wait_for_connection()
+		if result == true:
+			SignalManager.mplay_connection_result.emit(result)
+		return
+	
+	static func wait_for_connection() -> bool:
+		SignalManager.mplay_establishing_connection.emit()
+		while wip_connection.get_connection_state() not in [wip_connection.STATE_CONNECTED, wip_connection.STATE_CLOSED]:
+			await Utils.get_tree().create_timer(0.5).timeout
+			print("Current connection state: ",wip_connection.get_connection_state())
+		return wip_connection.get_connection_state() == wip_connection.STATE_CONNECTED
+	
+	static func process_packet_client() -> bool:
 		var code: String = await SignalManager.mplay_code_received
 		# Found server code
 		print("[Client] Received code from server. Decoding...")
@@ -140,13 +194,7 @@ class MultiplayerManager:
 		print("[Client] Ice candidates from server: ",_packet.ice_candidates)
 		for ice_candidate in _packet.ice_candidates:
 			wip_connection.add_ice_candidate(ice_candidate[0], ice_candidate[1], ice_candidate[2])
-		while wip_connection.get_gathering_state() != wip_connection.GATHERING_STATE_COMPLETE:
-			await Utils.get_tree().create_timer(1).timeout
-			print("Number of ICE candidates gathered: ", wip_packet.ice_candidates.size(), " current state: ",wip_connection.get_gathering_state())
-		await Utils.get_tree().create_timer(0.5).timeout
-		print("[Client] Gathered ", wip_packet.ice_candidates.size(), " ice candidates... Encoding packet...")
-		SignalManager.mplay_code_created.emit(encode_packet(wip_packet))
-		return
+		return true
 
 	static func initialize_client(id: int) -> void:
 		connection_type = "Client"
@@ -157,7 +205,8 @@ class MultiplayerManager:
 		Utils.multiplayer.multiplayer_peer = current_connection
 
 	static func encode_packet(_packet: Dictionary) -> String:
-		return Utils.FileManager.decode_string(Utils.FileManager.compress_dictionary(_packet))
+		var _string: String = Utils.FileManager.decode_string(Utils.FileManager.compress_dictionary(_packet))
+		return _string
 
 	static func decode_packet(_string: String) -> Dictionary:
 		return Utils.FileManager.decompress_to_dictionary(Utils.FileManager.encode_string(_string))
@@ -248,8 +297,7 @@ class FileManager:
 		return validate_downloaded_file(fpath)
 
 	static func download_file(url: String) -> String:
-		var req: HTTPRequest = HTTPRequest.new()
-		Utils.add_child(req)
+		var req: HTTPRequest = Utils.req
 		req.download_file = Globals.DOWNLOAD_FILE_PATH
 		var res: int = req.request(url)
 		if res != OK:
@@ -264,6 +312,7 @@ class FileManager:
 			var new_url: String = result[2][5].split("Location: ", false, 1)[0]
 			print("303 ERROR, going to url ", new_url)
 			return await download_file(new_url)
+		req.download_file = ""
 		return Globals.DOWNLOAD_FILE_PATH
 
 	static func validate_downloaded_file(fpath: String) -> bool:

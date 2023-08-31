@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://c6y4ttibwy3ay"]
+[gd_scene load_steps=19 format=3 uid="uid://c6y4ttibwy3ay"]
 
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="1_g3g4g"]
 [ext_resource type="PackedScene" uid="uid://xkoglw4lu6ab" path="res://src/scenes/ui/background.tscn" id="1_lbcxe"]
@@ -12,10 +12,9 @@
 [ext_resource type="Texture2D" uid="uid://bsnynahp005eg" path="res://src/resources/assets/ui/refresh.svg" id="4_ymada"]
 [ext_resource type="Texture2D" uid="uid://4beyn2jx8qy6" path="res://src/resources/assets/ui/trash.svg" id="7_wh1a7"]
 [ext_resource type="Texture2D" uid="uid://cwsqhpxivn7dj" path="res://src/resources/assets/ui/user_plus.svg" id="8_l16sw"]
-[ext_resource type="Texture2D" uid="uid://tmjue0xeerhn" path="res://src/resources/assets/ui/satellite.svg" id="9_anb0a"]
 [ext_resource type="Theme" uid="uid://bnnf8du3wbin8" path="res://src/resources/styles/normal/normal_scaled_down.tres" id="9_h5t8p"]
 [ext_resource type="Texture2D" uid="uid://c4sv5wkd2de3o" path="res://src/resources/assets/ui/paste.svg" id="10_34mdf"]
-[ext_resource type="Texture2D" uid="uid://by7a375ujkqjs" path="res://src/resources/assets/ui/user_check.svg" id="11_6gk6n"]
+[ext_resource type="Texture2D" uid="uid://d3lt0lpgn6jex" path="res://src/resources/assets/ui/check.svg" id="11_2ut3k"]
 [ext_resource type="Texture2D" uid="uid://b0x6jhbpg5ejw" path="res://src/resources/assets/ui/copy.svg" id="12_f42h6"]
 [ext_resource type="Texture2D" uid="uid://cu648p40sig4d" path="res://src/resources/assets/ui/times.svg" id="13_ljwlr"]
 [ext_resource type="PackedScene" uid="uid://fq6oqa0p4pa3" path="res://src/scenes/ui/download_config_panel.tscn" id="13_x3agj"]
@@ -37,14 +36,13 @@ layout_mode = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="SafeMargins"]
 layout_mode = 2
-theme_override_constants/margin_top = 120
 
 [node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer"]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "New Tabletop"
+text = "New Tabletop Options"
 horizontal_alignment = 1
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
@@ -54,38 +52,38 @@ layout_mode = 2
 [node name="Label2" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Configs"
+text = "Configs "
 horizontal_alignment = 1
 
 [node name="LoadConfFile" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer2"]
 custom_minimum_size = Vector2(152, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 icon = ExtResource("4_xmsat")
-flat = true
 icon_alignment = 1
 expand_icon = true
 
 [node name="LoadConfURL" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer2"]
 custom_minimum_size = Vector2(152, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 icon = ExtResource("4_m66q1")
-flat = true
 icon_alignment = 1
 expand_icon = true
 
 [node name="RefreshConfList" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer2"]
 custom_minimum_size = Vector2(152, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 icon = ExtResource("4_ymada")
-flat = true
 icon_alignment = 1
 expand_icon = true
 
 [node name="DeleteSelected" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer2"]
 custom_minimum_size = Vector2(152, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 icon = ExtResource("7_wh1a7")
-flat = true
 icon_alignment = 1
 expand_icon = true
 
@@ -105,183 +103,161 @@ size_flags_horizontal = 3
 [node name="MplayLabel" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/Options1"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Multiplayer (Client or Server)"
+text = "Multiplayer "
 horizontal_alignment = 1
 
 [node name="Client" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/Options1"]
 custom_minimum_size = Vector2(152, 0)
 layout_mode = 2
-icon = ExtResource("8_l16sw")
-flat = true
+size_flags_horizontal = 3
+text = "Client"
 icon_alignment = 1
 expand_icon = true
 
 [node name="Server" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/Options1"]
 custom_minimum_size = Vector2(152, 0)
 layout_mode = 2
-icon = ExtResource("9_anb0a")
-flat = true
+size_flags_horizontal = 3
+text = "Server"
 icon_alignment = 1
 expand_icon = true
 
-[node name="OptionsServer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3"]
+[node name="ServerMain" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/OptionsServer"]
+[node name="ServerStatsLabel" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ServerMain"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Server Created: "
+text = "[Server] # of peers: 0"
+horizontal_alignment = 1
 
-[node name="AddClient" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/OptionsServer"]
+[node name="AddClient" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ServerMain"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 icon = ExtResource("8_l16sw")
 icon_alignment = 1
 expand_icon = true
 
-[node name="DisconnectMplay" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/OptionsServer"]
+[node name="DisconnectMplay" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ServerMain"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 icon = ExtResource("13_ljwlr")
 icon_alignment = 1
 expand_icon = true
 
-[node name="ServerOfferClient" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3"]
+[node name="CreatingCode" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/CreatingCode"]
+layout_mode = 2
+text = "Creating code..."
+
+[node name="CodeProgress" type="ProgressBar" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/CreatingCode"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="CodeCreated" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ServerOfferClient"]
-layout_mode = 2
-text = "Copy code to client: "
-
-[node name="ServerCode" type="LineEdit" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ServerOfferClient"]
-unique_name_in_owner = true
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/CodeCreated"]
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Code"
+text = "Code created! Send to friend: "
 
-[node name="CopyCodeServer" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ServerOfferClient"]
-custom_minimum_size = Vector2(150, 0)
+[node name="CopyCode" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/CodeCreated"]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 icon = ExtResource("12_f42h6")
 icon_alignment = 1
 expand_icon = true
 
-[node name="NextServerStep" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ServerOfferClient"]
-custom_minimum_size = Vector2(150, 0)
-layout_mode = 2
-icon = ExtResource("11_6gk6n")
-icon_alignment = 1
-expand_icon = true
-
-[node name="ServerPasteClientOffer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3"]
+[node name="CodeCopied" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ServerPasteClientOffer"]
-layout_mode = 2
-text = "Paste client code:"
-
-[node name="ClientCodeOffer" type="LineEdit" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ServerPasteClientOffer"]
-unique_name_in_owner = true
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/CodeCopied"]
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Code"
+text = "Code Copied to Clipboard!"
 
-[node name="PasteClientCode" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ServerPasteClientOffer"]
-custom_minimum_size = Vector2(150, 0)
-layout_mode = 2
-icon = ExtResource("10_34mdf")
-icon_alignment = 1
-expand_icon = true
-
-[node name="NextServerStep" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ServerPasteClientOffer"]
-custom_minimum_size = Vector2(150, 0)
-layout_mode = 2
-icon = ExtResource("11_6gk6n")
-icon_alignment = 1
-expand_icon = true
-
-[node name="OptionsClient" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/OptionsClient"]
-layout_mode = 2
-text = "[Client] Connect: "
-
-[node name="ServerOffer" type="LineEdit" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/OptionsClient"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "Code"
-
-[node name="PasteOfferFromServer" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/OptionsClient"]
-custom_minimum_size = Vector2(150, 0)
-layout_mode = 2
-icon = ExtResource("10_34mdf")
-icon_alignment = 1
-expand_icon = true
-
-[node name="SubmitOffer" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/OptionsClient"]
-custom_minimum_size = Vector2(150, 0)
-layout_mode = 2
-icon = ExtResource("11_6gk6n")
-icon_alignment = 1
-expand_icon = true
-
-[node name="OfferClient" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/OfferClient"]
-layout_mode = 2
-text = "Copy code to server:"
-
-[node name="CodeForServer" type="LineEdit" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/OfferClient"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "Code"
-
-[node name="CopyServerCode" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/OfferClient"]
-custom_minimum_size = Vector2(150, 0)
+[node name="CopyCode" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/CodeCopied"]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 icon = ExtResource("12_f42h6")
 icon_alignment = 1
 expand_icon = true
 
-[node name="AcceptClient" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/OfferClient"]
-custom_minimum_size = Vector2(150, 0)
+[node name="Next" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/CodeCopied"]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-icon = ExtResource("11_6gk6n")
+icon = ExtResource("11_2ut3k")
 icon_alignment = 1
 expand_icon = true
 
-[node name="ConnectedYes" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3"]
+[node name="CodeFromPeer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ConnectedYes"]
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/CodeFromPeer"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Connected to host!"
-horizontal_alignment = 1
+text = "Paste Code from Peer:"
 
-[node name="DisconnectMplay" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ConnectedYes"]
+[node name="PasteCode" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/CodeFromPeer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+icon = ExtResource("10_34mdf")
+icon_alignment = 1
+expand_icon = true
+
+[node name="EstablishingConnection" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ConnectingLabel" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/EstablishingConnection"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Connecting..."
+
+[node name="Cancel" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/EstablishingConnection"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+icon = ExtResource("13_ljwlr")
+icon_alignment = 1
+expand_icon = true
+
+[node name="ClientFinished" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ClientFinished"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Connected to server!"
+
+[node name="Cancel" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ClientFinished"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 icon = ExtResource("13_ljwlr")
@@ -331,16 +307,13 @@ visible = false
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer2/DeleteSelected" to="." method="_on_delete_selected_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/Options1/Client" to="." method="_on_client_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/Options1/Server" to="." method="_on_server_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/OptionsServer/AddClient" to="." method="_on_add_client_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/OptionsServer/DisconnectMplay" to="." method="_on_disconnect_mplay_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ServerOfferClient/CopyCodeServer" to="." method="_on_copy_code_server_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ServerOfferClient/NextServerStep" to="." method="_on_next_server_step_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ServerPasteClientOffer/PasteClientCode" to="." method="_on_paste_client_code_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ServerPasteClientOffer/NextServerStep" to="." method="_on_next_server_step2_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/OptionsClient/PasteOfferFromServer" to="." method="_on_paste_offer_from_server_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/OptionsClient/SubmitOffer" to="." method="_on_submit_offer_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/OfferClient/CopyServerCode" to="." method="_on_copy_server_code_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/OfferClient/AcceptClient" to="." method="_on_accept_client_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ConnectedYes/DisconnectMplay" to="." method="_on_disconnect_mplay_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ServerMain/AddClient" to="." method="_on_add_client_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ServerMain/DisconnectMplay" to="." method="_on_disconnect_mplay_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/CodeCreated/CopyCode" to="." method="_on_copy_code_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/CodeCopied/CopyCode" to="." method="_on_copy_code_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/CodeCopied/Next" to="." method="_on_next_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/CodeFromPeer/PasteCode" to="." method="_on_paste_code_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/EstablishingConnection/Cancel" to="." method="_on_cancel_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer3/ClientFinished/Cancel" to="." method="_on_cancel_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/Ready" to="." method="_on_ready_pressed"]

@@ -5,19 +5,35 @@ extends Control
 @onready var delete_button: Button = $SafeMargins/MarginContainer/VBoxContainer/HBoxContainer2/DeleteSelected
 @onready var from_file_button: Button = $SafeMargins/MarginContainer/VBoxContainer/HBoxContainer2/LoadConfFile
 
+var peer_choice: int = 0 # Client
+
+var current_mplay_page: String = "Options1"
+
+var code: String = ""
+
 func _ready() -> void:
 	Globals.current_game = null
 	SignalManager.config_added.connect(refresh_list)
-	SignalManager.mplay_code_created.connect(_on_offer_created)
+	SignalManager.mplay_code_created.connect(code_created)
+	SignalManager.mplay_offer_percentage.connect(code_percentage)
+	SignalManager.mplay_connection_result.connect(connection_result)
+	SignalManager.mplay_establishing_connection.connect(establishing_connection)
 	if not Utils.is_desktop_platform():
 		from_file_button.hide()
+	Utils.MultiplayerManager.close_connection()
 	refresh_list()
 
 func _process(_delta: float) -> void:
 	ready_button.disabled = not is_selecting_config() or not multiplayer.is_server()
 	delete_button.disabled = not is_selecting_config() or is_selecting_default_config()
 
+	if peer_choice == 1 and multiplayer.is_server():
+		%ServerStatsLabel.text = str("[Server] # of peers: ",multiplayer.get_peers().size())
 
+func mplay_next_page(next_mplay_page: String) -> void:
+	get_node(str("%",current_mplay_page)).hide()
+	get_node(str("%",next_mplay_page)).show()
+	current_mplay_page = next_mplay_page
 
 func _on_back_button_pressed() -> void:
 	SignalManager.scene_transition.emit("res://src/scenes/menu/main_menu.tscn")
@@ -44,10 +60,8 @@ func _on_ready_pressed():
 			Globals.current_game = Utils.FileManager.get_config(get_config_file_path(get_currently_selected_config()))
 		SignalManager.scene_transition.emit("res://src/scenes/game_elements/board_manager.tscn")
 
-
 func _on_load_conf_file_pressed():
 	SignalManager.create_load_config_dialog.emit()
-
 
 func _on_refresh_conf_list_pressed():
 	refresh_list()
@@ -71,77 +85,66 @@ func _on_delete_selected_pressed():
 		print("File deleted")
 		refresh_list()
 
-
 func _on_load_conf_url_pressed():
 	SignalManager.download_config_popup.emit()
 
+# MULTIPLAYER
 
 func _on_client_pressed() -> void:
+	peer_choice = 0 # Client
 	Utils.MultiplayerManager.connect_to_server()
-	%Options1.hide()
-	%OptionsClient.show()
+	mplay_next_page("CodeFromPeer")
 
 func _on_server_pressed() -> void:
 	Utils.MultiplayerManager.initialize_server()
-	%Options1.hide()
-	%OptionsServer.show()
-
+	peer_choice = 1 # Server
+	mplay_next_page("ServerMain")
 
 func _on_add_client_pressed() -> void:
 	Utils.MultiplayerManager.add_client()
-	%OptionsServer.hide()
-	%ServerOfferClient.show()
+	mplay_next_page("CreatingCode")
 
+func code_created(_code: String) -> void:
+	code = _code
+	mplay_next_page("CodeCreated")
 
-func _on_submit_offer_pressed() -> void:
-	if %ServerOffer.text != "":
-		SignalManager.mplay_code_received.emit(%ServerOffer.text)
-		%OptionsClient.hide()
-		%OfferClient.show()
+func code_percentage(pc: float) -> void:
+	%CodeProgress.value = pc * 100.0
 
-func _on_offer_created(offer: String) -> void:
-	print("Offer created! ", offer, ", ",Utils.MultiplayerManager.connection_type)
-	if Utils.MultiplayerManager.connection_type == "Client":
-		%CodeForServer.text = offer
-	elif Utils.MultiplayerManager.connection_type == "Server":
-		%ServerCode.text = offer
+func _on_copy_code_pressed() -> void:
+	DisplayServer.clipboard_set(code)
+	mplay_next_page("CodeCopied")
 
+func _on_next_pressed() -> void:
+	if peer_choice == 0: # Client
+		SignalManager.mplay_go_to_wait.emit()
+	elif peer_choice == 1: # Server
+		mplay_next_page("CodeFromPeer")
 
-func _on_disconnect_mplay_pressed() -> void:
-	Utils.MultiplayerManager.close_connection()
-	%ConnectedYes.hide()
-	%Options1.show()
+func establishing_connection() -> void:
+	mplay_next_page("EstablishingConnection")
 
+func _on_paste_code_pressed() -> void:
+	SignalManager.mplay_code_received.emit(DisplayServer.clipboard_get())
+	if peer_choice == 0: # Client
+		mplay_next_page("CreatingCode")
+	elif peer_choice == 1: # Server
+		SignalManager.mplay_go_to_wait.emit()
 
-func _on_paste_offer_from_server_pressed() -> void:
-	%ServerOffer.text = DisplayServer.clipboard_get()
+func connection_result(result: bool) -> void:
+	if result == true:
+		if peer_choice == 0:
+			mplay_next_page("ClientFinished")
+		elif peer_choice == 1:
+			mplay_next_page("ServerMain")
+	else:
+		OS.alert("Connection with peer failed.")
+		mplay_next_page("Options1")
 
-
-func _on_copy_server_code_pressed() -> void:
-	DisplayServer.clipboard_set(%CodeForServer.text)
-
-
-func _on_accept_client_pressed() -> void:
-	%OfferClient.hide()
-	%ConnectedYes.show()
-
-
-
-func _on_copy_code_server_pressed() -> void:
-	DisplayServer.clipboard_set(%ServerCode.text)
-
-
-func _on_next_server_step_pressed() -> void:
-	%ServerOfferClient.hide()
-	%ServerPasteClientOffer.show()
-
-
-func _on_paste_client_code_pressed() -> void:
-	%ClientCodeOffer.text = DisplayServer.clipboard_get()
-
-
-func _on_next_server_step2_pressed() -> void:
-	if %ClientCodeOffer.text != "":
-		SignalManager.mplay_code_received.emit(%ClientCodeOffer.text)
-		%ServerPasteClientOffer.hide()
-		%OptionsServer.show()
+func _on_cancel_pressed() -> void:
+	if peer_choice == 0: # Client
+		Utils.MultiplayerManager.close_connection()
+		mplay_next_page("Options1")
+	elif peer_choice == 1: # Server
+		Utils.MultiplayerManager.cancel_peer_connection()
+		mplay_next_page("ServerMain")

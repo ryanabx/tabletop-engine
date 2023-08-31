@@ -4,6 +4,15 @@ extends Node
 # MULTIPLAYER
 const DEFAULT_MAX_PLAYERS: int = 4
 
+var CODE_CHARS: String = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+
+const ICE_TIMEOUT: float = 5
+
+const PASTEBIN_API_KEY: String = "hU0AYwp4BVxVzAmTzdl9KgRJ-Lr8J4OA"
+
+const PASTEBIN_API_POST_URL: String = "https://pastebin.com/api/api_post.php"
+const PASTEBIN_API_GET_URL: String = "https://pastebin.com/raw"
+
 const RTC_CONFIG: Dictionary = {
 	"iceServers": [
 		{
@@ -26,8 +35,33 @@ const RTC_CONFIG: Dictionary = {
 				]
 		},
 		{
-        "urls": "stun:stun.relay.metered.ca:80",
+        "urls": ["stun:stun.relay.metered.ca:80"]
       	},
+		{
+			"urls": 'turn:numb.viagenie.ca',
+			"credential": 'muazkh',
+			"username": 'webrtc@live.com'
+		},
+		{
+			"urls": 'turn:192.158.29.39:3478?transport=udp',
+			"credential": 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+			"username": '28224511:1379330808'
+		},
+		{
+			"urls": 'turn:192.158.29.39:3478?transport=tcp',
+			"credential": 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+			"username": '28224511:1379330808'
+		},
+		{
+			"urls": 'turn:turn.bistri.com:80',
+			"credential": 'homeo',
+			"username": 'homeo'
+		},
+		{
+			"urls": 'turn:turn.anyfirewall.com:443?transport=tcp',
+			"credential": 'webrtc',
+			"username": 'webrtc'
+		},
       	{
 			"urls": "turn:a.relay.metered.ca:80",
 			"username": "b7153991e76085c83420f473",
