@@ -36,8 +36,6 @@ window/size/window_height_override=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=6
-window/ios/hide_home_indicator=false
-window/ios/suppress_ui_gesture=false
 
 [filesystem]
 
