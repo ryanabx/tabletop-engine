@@ -36,6 +36,7 @@ window/size/window_height_override=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=6
+window/ios/allow_high_refresh_rate=false
 
 [filesystem]
 
