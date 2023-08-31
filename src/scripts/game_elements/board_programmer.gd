@@ -1,11 +1,18 @@
-# Programmability Reference for Open Tabletop. Copyright Ryanabx 2023
+## Programmability Reference for Open Tabletop. Copyright Ryanabx 2023
 class_name BoardProgrammer
 extends RefCounted
+
+enum GameObjectTypes {
+    TYPES_PIECE,
+    TYPES_COLLECTION
+}
 
 var evaluator: Expression = Expression.new()
 var board: Board
 
 var actions: Dictionary = {}
+
+var returned: Array = []
 
 func _init(_board: Board) -> void:
     board = _board
@@ -38,3 +45,11 @@ func run_on_board(_call: String, args: Array) -> Variant:
     if not callable.is_valid():
         return false
     return callable.callv(args)
+
+## Creates a game object on the board
+func create_game_object(type: GameObjectTypes, config: Dictionary) -> void:
+    match type:
+        GameObjectTypes.TYPES_PIECE:
+            board.create_piece(config)
+        GameObjectTypes.TYPES_COLLECTION:
+            board.create_collection(config)

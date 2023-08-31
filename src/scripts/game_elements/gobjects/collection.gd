@@ -33,7 +33,7 @@ func serialize_piece(pc: Piece) -> Dictionary:
 func deserialize_piece(_dict: Dictionary) -> Piece:
 	_dict.face_up = _dict.face_up if force_state == null else force_state
 	var piece: Piece = board.create_piece(
-	var_to_bytes(_dict)
+	_dict
 	)
 	return piece
 

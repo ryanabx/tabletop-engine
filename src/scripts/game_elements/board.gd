@@ -7,6 +7,7 @@ extends Node2D
 # Game
 var game: GameConfig2
 
+
 var def_font: Font
 
 # Children
@@ -64,6 +65,10 @@ func get_game_objects() -> Array[GameObject]:
 	res.assign(board_objects.get_children())
 	return res
 
+func clear_board() -> void:
+	for obj in get_game_objects():
+		obj.erase_self.rpc()
+
 func unique_name(s: String) -> String:
 	var n: String = str(multiplayer.get_unique_id(),s,counter)
 	counter += 1
@@ -91,8 +96,8 @@ var ready_players: Array = []
 #####################
 ### RPC functions ###
 #####################
-func create_collection(data: PackedByteArray) -> Collection:
-	var config: Dictionary = bytes_to_var(data)
+func create_collection(config: Dictionary) -> Collection:
+	var data: PackedByteArray = var_to_bytes(config)
 	var c: Collection = Collection.construct(self, config)
 	_create_collection.rpc(data)
 	print(c.name, " ",c.get_index())
@@ -105,8 +110,8 @@ func _create_collection(data: PackedByteArray) -> void:
 	var config: Dictionary = bytes_to_var(data)
 	Collection.construct(self, config)
 
-func create_piece(data: PackedByteArray) -> Piece:
-	var config: Dictionary = bytes_to_var(data)
+func create_piece(config: Dictionary) -> Piece:
+	var data: PackedByteArray = var_to_bytes(config)
 	var p: Piece = Piece.construct(self, config)
 	if p != null:
 		_create_piece.rpc(data)
@@ -232,9 +237,9 @@ class BoardSetup:
 					if not obj.has("name"):
 						obj.name = board.unique_name("collection")
 					# print("Constructing collection ", obj.name)
-					board.create_collection(var_to_bytes(obj))
+					board.create_collection(obj)
 				"piece":
 					if not obj.has("name"):
 						obj.name = board.unique_name("piece")
 					# print("Constructing piece ",obj.name)
-					board.call_deferred("create_piece",var_to_bytes(obj))
+					board.call_deferred("create_piece",obj)

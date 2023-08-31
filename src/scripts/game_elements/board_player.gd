@@ -217,11 +217,11 @@ func stack_on_piece(item: Piece) -> void:
 	elif is_selecting_piece():
 		print("Making new stack")
 		var collection: Collection = board.create_collection(
-			var_to_bytes({
+			{
 				"name": board.unique_name("newcoll"),
 				"position": item.position,
 				"rotation": item.rotation
-			})
+			}
 		)
 		collection.auth = multiplayer.get_unique_id()
 		get_selected_object().add_to_collection(collection)
@@ -230,11 +230,11 @@ func stack_on_piece(item: Piece) -> void:
 func _select_collection(collection: Collection) -> void:
 	if collection.permanent:
 		var new_collection: Collection = collection.board.create_collection(
-			var_to_bytes({
+			{
 				"name": collection.board.unique_name("newcoll"),
 				"position": collection.position,
 				"rotation": collection.rotation
-			})
+			}
 		)
 		new_collection.inside = collection.inside
 		new_collection.call_inside_changed()
