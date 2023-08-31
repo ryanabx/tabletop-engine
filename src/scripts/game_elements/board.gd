@@ -55,6 +55,8 @@ func get_collections(a: Array) -> Array[Collection]:
 
 func get_gobject(n: String) -> GameObject:
 	var o: GameObject = board_objects.get_node_or_null(n)
+	if o == null or o.get_parent() != self:
+		return null
 	return o
 
 func get_game_objects() -> Array[GameObject]:

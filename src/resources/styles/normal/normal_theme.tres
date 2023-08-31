@@ -14,6 +14,7 @@ opentype_features = {
 }
 
 [resource]
+default_base_scale = 2.0
 default_font = SubResource("FontVariation_y6dps")
 default_font_size = 64
 Button/styles/disabled = ExtResource("1_hh4yh")
