@@ -22,7 +22,6 @@ func reset_menu() -> void:
 
 func _on_menu_created(pc: Piece) -> void:
 	reset_menu()
-	print("Piece Menu created.")
 	piece = pc
 	collection = null
 	init_piece_menu()
@@ -56,7 +55,6 @@ func init_collection_menu() -> void:
 	id_pressed.connect(_on_clicked_from_collection)
 	ordering_menu.id_pressed.connect(_on_clicked_from_collection)
 	orientation_menu.id_pressed.connect(_on_clicked_from_collection)
-	add_item("Select group", 9)
 
 func init_piece_menu() -> void:
 	add_item("Flip object", 0)
@@ -73,31 +71,19 @@ func init_piece_menu() -> void:
 
 func _on_clicked_from_object(id: int) -> void:
 	match id:
-		0: _flip_selected_objects()
-		2: _move_objects_to_front()
-		3: _move_objects_to_back()
+		0: piece.face_up = not piece.face_up
+		2: piece.move_self_to_top()
+		3: piece.move_self_to_back()
 
 func _on_clicked_from_collection(id: int) -> void:
 	match id:
 		1: collection.flip()
-		3: collection.move_self_to_front.rpc()
-		4: collection.move_self_to_back.rpc()
+		3: collection.move_self_to_front()
+		4: collection.move_self_to_back()
 		5: collection.set_orientation(true)
 		6: collection.set_orientation(false)
 		8: collection.shuffle()
 		9: collection.board.board_player._select_collection(collection)
-
-func _flip_selected_objects() -> void:
-	piece.face_up = not piece.face_up
-
-func _set_objects_orientation(side: bool) -> void:
-	piece.face_up = side
-
-func _move_objects_to_front() -> void:
-	piece.move_self_to_top.rpc()
-
-func _move_objects_to_back() -> void:
-	piece.move_self_to_back.rpc()
 
 func _on_popup_hide() -> void:
 	SignalManager.game_menu_destroy.emit()

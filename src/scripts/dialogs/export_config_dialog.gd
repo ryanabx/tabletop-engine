@@ -1,14 +1,17 @@
 extends FileDialog
 
+
+# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	SignalManager.create_export_config_dialog.connect(_on_create_export_config)
-	file_selected.connect(_on_folder_decided)
-	filters = ["*.json"]
+	SignalManager.create_export_config_dialog.connect(popup)
+	file_selected.connect(filepath_selected)
 
-func _on_create_export_config() -> void:
-	popup()
 
-func _on_folder_decided(fpath: String) -> void:
-	var game_config: PackedByteArray = GameConfig2.export_config_from_file(fpath)
-	hide()
-	SignalManager.export_conf.emit(game_config)
+func filepath_selected(fpath: String) -> void:
+	var bytes: PackedByteArray = TabletopGame.export_obgf_from_file(fpath)
+	if bytes.is_empty():
+		print("Problem creating obgf config")
+		return
+	SignalManager.export_config_created.emit(bytes)
+	
+

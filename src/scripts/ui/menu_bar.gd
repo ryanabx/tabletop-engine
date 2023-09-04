@@ -21,26 +21,12 @@ func set_board(_b: Board) -> void:
 	player_menu()
 	actions_menu()
 
-# func server_menu() -> void:
-# 	var sv_menu: PopupMenu = PopupMenu.new()
-# 	if multiplayer.is_server():
-# 		sv_menu.name = "Disband Server"
-# 	else:
-# 		sv_menu.name = "Disconnect from Server"
-# 	sv_menu.about_to_popup.connect(_disconnect_from_server)
-# 	menu.add_child(sv_menu)
-
-# func _disconnect_from_server() -> void:
-# 	print("Disconnect from server")
-# 	MultiplayerManager.disband()
-# 	get_tree().reload_current_scene()
-
 func actions_menu() -> void:
 	actions = PopupMenu.new()
 	actions.index_pressed.connect(run_action)
 	actions.name = "Actions"
-	for i in board.game.actions:
-		actions.add_item(i.name)
+	for i in board.game.get_actions():
+		actions.add_item(i)
 	menu.get_popup().add_child(actions)
 	menu.get_popup().add_submenu_item("Actions", "Actions")
 
@@ -51,7 +37,7 @@ func player_menu() -> void:
 	player.name = "Player"
 	menu.get_popup().add_child(player)
 	menu.get_popup().add_submenu_item("Player", "Player")
-	for i in range(board.game.player.max):
+	for i in range(board.game.settings().max_players):
 		player.add_item(str("Player ",i+1))
 
 func tabletop_menu() -> void:

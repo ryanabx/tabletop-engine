@@ -3,14 +3,13 @@ extends FileDialog
 var file_load_callback = JavaScriptBridge.create_callback(f_decided_web)
 
 func _ready() -> void:
-	SignalManager.create_load_config_dialog.connect(_on_create_load_config)
+	SignalManager.create_load_config_dialog.connect(import_config)
 	file_selected.connect(filepath_selected)
-	filters = ["*.obgf"]
 	if Utils.is_web_platform():
 		var window = JavaScriptBridge.get_interface("window")
 		window.getFile(file_load_callback)
 
-func _on_create_load_config() -> void:
+func import_config() -> void:
 	title = "Import a config"
 	if not Utils.is_web_platform():
 		popup()
@@ -35,13 +34,11 @@ func f_decided_web(args) -> void:
 	file_decided(buf)
 
 func file_decided(buf: PackedByteArray) -> void:
-	var conf: GameConfig2 = GameConfig2.new()
-	if not conf.fill_bytes(buf): # Invalid config, save it back
-		return
+	var config: TabletopGame = TabletopGame.import_obgf(buf)
 	
 	Utils.FileManager.create_dir(Globals.CONFIG_REPO)
 
-	var conf_path: String = str(Globals.CONFIG_REPO, "/",conf.name,Globals.CONFIG_EXTENSION)
+	var conf_path: String = str(Globals.CONFIG_REPO, "/",config.export_settings().name,Globals.CONFIG_EXTENSION)
 
 	Utils.FileManager.delete_file(conf_path)
 	

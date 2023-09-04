@@ -8,7 +8,7 @@ func _ready() -> void:
 	version.text = str("Version: ",ProjectSettings.get_setting("application/config/version"))
 	if Utils.is_mobile_platform():
 		quit_button.hide()
-	Globals.current_game = null
+	Globals.load_this_game = PackedByteArray([])
 	Utils.MultiplayerManager.close_connection()
 
 func _on_new_game_pressed() -> void:

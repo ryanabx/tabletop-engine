@@ -278,15 +278,13 @@ class FileManager:
 		if FileAccess.file_exists(fname):
 			DirAccess.remove_absolute(fname)
 
-	static func get_config(fname: String) -> GameConfig2:
+	static func get_file_bytes(fname: String) -> PackedByteArray:
 		if FileAccess.file_exists(fname):
 			var bytes: PackedByteArray = FileAccess.get_file_as_bytes(fname)
-			var conf: GameConfig2 = GameConfig2.new()
-			if conf.fill_bytes(bytes):
-				return conf
+			return bytes
 		else:
 			print("Could not find file ", fname)
-		return null
+		return PackedByteArray([])
 
 	static func download_file_from_url(url: String) -> bool:
 		var fpath: String = await download_file(url)
@@ -316,15 +314,16 @@ class FileManager:
 		return Globals.DOWNLOAD_FILE_PATH
 
 	static func validate_downloaded_file(fpath: String) -> bool:
-		var conf: GameConfig2 = get_config(fpath)
-		if conf == null:
+		var bytes: PackedByteArray = get_file_bytes(fpath)
+		if bytes.is_empty():
 			print("Config was null")
 			delete_file(fpath)
 			return false
 		print("Looking for fpath ",fpath)
 		create_dir(Globals.CONFIG_REPO)
+		var conf: TabletopGame = TabletopGame.import_obgf(bytes)
 
-		var conf_path: String = str(Globals.CONFIG_REPO, "/",conf.name,Globals.CONFIG_EXTENSION)
+		var conf_path: String = str(Globals.CONFIG_REPO, "/",conf.export_settings().name,Globals.CONFIG_EXTENSION)
 
 		Utils.delete_file(conf_path)
 		

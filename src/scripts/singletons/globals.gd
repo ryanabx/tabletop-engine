@@ -85,7 +85,7 @@ const RTC_CONFIG: Dictionary = {
 	]
 }
 
-var current_game: GameConfig2 = null
+var load_this_game: PackedByteArray = PackedByteArray([])
 
 var safe_margin_l: int = 0
 var safe_margin_t: int = 0
@@ -159,7 +159,7 @@ func set_current_tabletop(tabletop: Board) -> void:
 func set_shared_tabletop_manager(tt: BoardManager) -> void:
 	tabletop_manager = tt
 
-func get_current_game():
+func get_current_game() -> TabletopGame:
 	if current_tabletop == null:
 		return null
 	return current_tabletop.game

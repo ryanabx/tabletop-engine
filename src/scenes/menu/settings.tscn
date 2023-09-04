@@ -1,10 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://c2aks78wf35pe"]
+[gd_scene load_steps=8 format=3 uid="uid://c2aks78wf35pe"]
 
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="1_0uyf7"]
 [ext_resource type="Script" path="res://src/scripts/menu/settings.gd" id="1_6gtrg"]
 [ext_resource type="PackedScene" uid="uid://xkoglw4lu6ab" path="res://src/scenes/ui/background.tscn" id="1_tj7dc"]
-[ext_resource type="PackedScene" uid="uid://lpw6t5xb1d5i" path="res://src/scenes/dialogs/dialogs.tscn" id="4_cfiho"]
+[ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/safe_margins.tscn" id="2_868ow"]
 [ext_resource type="Texture2D" uid="uid://pgsxe1dk7qmx" path="res://src/resources/assets/ui/arrow-to-left.svg" id="5_efvg1"]
+[ext_resource type="PackedScene" uid="uid://43h6btll8hg2" path="res://src/scenes/dialogs/export_config_dialog.tscn" id="6_qwpln"]
+[ext_resource type="PackedScene" uid="uid://ce2b2jb8a3lp8" path="res://src/scenes/dialogs/save_exported_config.tscn" id="7_70qvt"]
 
 [node name="Settings" type="Control"]
 layout_mode = 3
@@ -18,86 +20,73 @@ script = ExtResource("1_6gtrg")
 [node name="Background" parent="." instance=ExtResource("1_tj7dc")]
 layout_mode = 1
 
-[node name="MainMargin" type="MarginContainer" parent="."]
+[node name="SafeMargins" parent="." instance=ExtResource("2_868ow")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
 
-[node name="PanelMargins" type="MarginContainer" parent="MainMargin"]
-layout_mode = 2
-size_flags_horizontal = 4
-
-[node name="Panel" type="Panel" parent="MainMargin/PanelMargins"]
+[node name="MarginContainer" type="MarginContainer" parent="SafeMargins"]
 layout_mode = 2
 
-[node name="Content" type="MarginContainer" parent="MainMargin/PanelMargins"]
-custom_minimum_size = Vector2(720, 0)
+[node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer"]
 layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
 
-[node name="ContentList" type="VBoxContainer" parent="MainMargin/PanelMargins/Content"]
-layout_mode = 2
-theme_override_constants/separation = 30
-
-[node name="Label" type="Label" parent="MainMargin/PanelMargins/Content/ContentList"]
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Settings"
 horizontal_alignment = 1
 
-[node name="ViewMenu" type="VBoxContainer" parent="MainMargin/PanelMargins/Content/ContentList"]
+[node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainMargin/PanelMargins/Content/ContentList/ViewMenu"]
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 text = "View"
 horizontal_alignment = 1
 
-[node name="Fullscreen" type="CheckButton" parent="MainMargin/PanelMargins/Content/ContentList/ViewMenu"]
-layout_mode = 2
-text = "Fullscreen"
-
-[node name="ConfigTools" type="VBoxContainer" parent="MainMargin/PanelMargins/Content/ContentList"]
+[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainMargin/PanelMargins/Content/ContentList/ConfigTools"]
+[node name="ToggleFullscreen" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
-text = "Config Tools"
+size_flags_horizontal = 3
+text = "Toggle Fullscreen"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "Configuration Tools"
 horizontal_alignment = 1
 
-[node name="ExportNewConfig" type="Button" parent="MainMargin/PanelMargins/Content/ContentList/ConfigTools"]
+[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer2"]
 layout_mode = 2
-text = "Export New Config"
 
-[node name="BackButton" type="Button" parent="."]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.0375
-anchor_top = 0.0277778
-anchor_right = 0.0375
-anchor_bottom = 0.0277778
-offset_right = 72.0
-offset_bottom = 72.0
+[node name="ExportConfig" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer2/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Export Config"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(164, 164)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
 icon = ExtResource("5_efvg1")
 expand_icon = true
-metadata/_edit_use_anchors_ = true
-
-[node name="Dialogs" parent="." instance=ExtResource("4_cfiho")]
 
 [node name="FadeRect" parent="." instance=ExtResource("1_0uyf7")]
 layout_mode = 2
 anchors_preset = 0
 mouse_filter = 2
 
-[connection signal="pressed" from="MainMargin/PanelMargins/Content/ContentList/ViewMenu/Fullscreen" to="." method="_on_fullscreen_pressed"]
-[connection signal="pressed" from="MainMargin/PanelMargins/Content/ContentList/ConfigTools/ExportNewConfig" to="." method="_on_export_new_config_pressed"]
-[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]
+[node name="ExportConfigDialog" parent="." instance=ExtResource("6_qwpln")]
+
+[node name="SaveExportedConfig" parent="." instance=ExtResource("7_70qvt")]
+
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/ToggleFullscreen" to="." method="_on_toggle_fullscreen_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer2/HBoxContainer/ExportConfig" to="." method="_on_export_config_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]

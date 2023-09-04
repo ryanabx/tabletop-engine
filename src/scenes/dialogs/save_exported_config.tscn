@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://ce2b2jb8a3lp8"]
+
+[ext_resource type="Script" path="res://src/scripts/dialogs/save_exported_config.gd" id="1_gj2h3"]
+
+[node name="SaveExportedConfig" type="FileDialog"]
+initial_position = 2
+size = Vector2i(1385, 1280)
+access = 2
+filters = PackedStringArray("*.obgf")
+use_native_dialog = true
+script = ExtResource("1_gj2h3")

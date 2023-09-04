@@ -1,7 +1,42 @@
-[gd_scene load_steps=3 format=3 uid="uid://lpw6t5xb1d5i"]
+[gd_scene load_steps=3 format=3 uid="uid://bitddhy1ncjge"]
 
-[ext_resource type="Script" path="res://src/scripts/dialogs/export_config_dialog.gd" id="1_1dtoy"]
-[ext_resource type="Script" path="res://src/scripts/dialogs/export_config_dialog2.gd" id="2_r3kfd"]
+[sub_resource type="GDScript" id="GDScript_djui1"]
+script/source = "extends FileDialog
+
+func _ready() -> void:
+	SignalManager.create_export_config_dialog.connect(_on_create_export_config)
+	file_selected.connect(_on_folder_decided)
+	filters = [\"*.json\"]
+
+func _on_create_export_config() -> void:
+	popup()
+
+func _on_folder_decided(fpath: String) -> void:
+	var game_config: PackedByteArray = GameConfig2.export_config_from_file(fpath)
+	hide()
+	SignalManager.export_conf.emit(game_config)
+"
+
+[sub_resource type="GDScript" id="GDScript_1cw35"]
+script/source = "extends FileDialog
+
+var config: PackedByteArray = []
+
+func _ready() -> void:
+	SignalManager.export_conf.connect(_on_config_created)
+	file_selected.connect(_on_file_decided)
+	filters = [\"*.obgf\"]
+
+func _on_config_created(conf: PackedByteArray) -> void:
+	config = conf
+	popup()
+
+func _on_file_decided(fpath: String) -> void:
+	var f = FileAccess.open(fpath, FileAccess.WRITE)
+	f.store_buffer(config)
+	f.close()
+	print(\"Finished config\")
+"
 
 [node name="Dialogs" type="Node"]
 
@@ -15,7 +50,8 @@ content_scale_size = Vector2i(640, 360)
 ok_button_text = "Open"
 file_mode = 0
 access = 2
-script = ExtResource("1_1dtoy")
+use_native_dialog = true
+script = SubResource("GDScript_djui1")
 
 [node name="ExportConfigFileSave" type="FileDialog" parent="."]
 title = "Save config file"
@@ -26,4 +62,5 @@ borderless = true
 content_scale_size = Vector2i(640, 360)
 ok_button_text = "Save"
 access = 2
-script = ExtResource("2_r3kfd")
+use_native_dialog = true
+script = SubResource("GDScript_1cw35")

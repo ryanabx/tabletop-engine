@@ -39,7 +39,7 @@ func _process(_delta: float) -> void:
 	fps_counter.text = str(Engine.get_frames_per_second(), " FPS")
 	game_info.text = str("Game: ",game_name)
 	if Globals.get_current_game() != null:
-		game_name = Globals.get_current_game().name
+		game_name = Globals.get_current_game().export_settings().name
 
 var drag_window: bool = false
 var start_position: Vector2 = Vector2.ZERO

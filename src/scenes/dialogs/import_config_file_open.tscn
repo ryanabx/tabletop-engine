@@ -5,12 +5,13 @@
 [node name="ImportConfigFileOpen" type="FileDialog"]
 title = "Open a File"
 initial_position = 2
-size = Vector2i(1280, 720)
+size = Vector2i(1280, 1280)
 unresizable = true
 borderless = true
 content_scale_size = Vector2i(640, 360)
 ok_button_text = "Open"
 file_mode = 0
 access = 2
+filters = PackedStringArray("*.obgf")
 use_native_dialog = true
 script = ExtResource("1_x5evh")

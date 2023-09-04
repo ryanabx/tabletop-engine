@@ -1,8 +1,6 @@
 class_name BoardManager
 extends Node
 
-@onready var board_scene: PackedScene = preload("res://src/scenes/game_elements/board.tscn")
-
 var board: Board = null
 
 const MTU: int = 1476
@@ -10,9 +8,8 @@ const MTU: int = 1476
 # Crucial base operation nodes
 @onready var user_interface: UserInterface = $UserInterfaceLayer/UserInterface
 @onready var camera_controller: CameraController = $CameraController
-@onready var dialogs: Node = $UserInterfaceLayer/Dialogs
 
-var config_bytes: PackedByteArray = []
+var config_bytes: PackedByteArray = PackedByteArray([])
 
 var peers_ready: int = 0
 signal peer_ready(id: int)
@@ -36,7 +33,7 @@ func make_tabletop():
 		var id: int = await peer_ready
 		print("Peer ",id, " is ready!")
 		peers_ready += 1
-	load_game_config(Globals.current_game)
+	load_game_config()
 
 func remove_tabletop() -> void:
 	if board != null:
@@ -44,12 +41,12 @@ func remove_tabletop() -> void:
 		await board.tree_exited
 	return
 
-func load_game_config(gc: GameConfig2) -> void:
-	config_bytes = gc.to_bytes()
-
+func load_game_config() -> void:
 	await remove_tabletop()
 	if not multiplayer.is_server():
 		return
+	
+	config_bytes = Globals.load_this_game
 	
 	var beg: int = 0
 	var end: int = MTU
@@ -71,12 +68,12 @@ func receive_config_part(bytes: PackedByteArray, final: bool) -> void:
 		spawn_board()
 
 func spawn_board() -> void:
-	print("Spawning board")
-	var gc: GameConfig2 = GameConfig2.new()
-	gc.fill_bytes(config_bytes)
-	var board_new: Board = board_scene.instantiate()
-	board_new.name = gc.name
-	Globals.set_current_tabletop(board_new)
+	print("Spawning board: ", config_bytes.size())
+	var gc: TabletopGame = TabletopGame.import_obgf(config_bytes)
+	var board_new: Board = load("res://src/scenes/game_elements/board.tscn").instantiate()
 	board_new.game = gc
+	board_new.name = gc.export_settings().name
+	Globals.set_current_tabletop(board_new)
+	
 	add_child(board_new)
 	board = board_new

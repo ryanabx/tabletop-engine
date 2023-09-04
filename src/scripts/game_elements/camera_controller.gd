@@ -29,6 +29,8 @@ func reset_camera() -> void:
 
 func _input(event: InputEvent) -> void:
 	var ev: InputEvent = make_input_local(event)
+	if board_selecting():
+		return
 	touchscreen_events(ev)
 
 func touchscreen_events(event: InputEvent) -> void:

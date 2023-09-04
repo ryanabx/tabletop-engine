@@ -12,7 +12,7 @@ var current_mplay_page: String = "Options1"
 var code: String = ""
 
 func _ready() -> void:
-	Globals.current_game = null
+	Globals.load_this_game = PackedByteArray([])
 	SignalManager.config_added.connect(refresh_list)
 	SignalManager.mplay_code_created.connect(code_created)
 	SignalManager.mplay_offer_percentage.connect(code_percentage)
@@ -55,9 +55,9 @@ func refresh_list() -> void:
 func _on_ready_pressed():
 	if is_selecting_config():
 		if is_selecting_default_config():
-			Globals.current_game = Utils.FileManager.get_config(Globals.DEFAULT_CONFIG_PATH)
+			Globals.load_this_game = Utils.FileManager.get_file_bytes(Globals.DEFAULT_CONFIG_PATH)
 		else:
-			Globals.current_game = Utils.FileManager.get_config(get_config_file_path(get_currently_selected_config()))
+			Globals.load_this_game = Utils.FileManager.get_file_bytes(get_config_file_path(get_currently_selected_config()))
 		SignalManager.scene_transition.emit("res://src/scenes/game_elements/board_manager.tscn")
 
 func _on_load_conf_file_pressed():
