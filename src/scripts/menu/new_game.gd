@@ -147,4 +147,8 @@ func _on_cancel_pressed() -> void:
 		mplay_next_page("Options1")
 	elif peer_choice == 1: # Server
 		Utils.MultiplayerManager.cancel_peer_connection()
-		mplay_next_page("ServerMain")
+		if current_mplay_page == "ServerMain":
+			Utils.MultiplayerManager.close_connection()
+			mplay_next_page("Options1")
+		else:
+			mplay_next_page("ServerMain")

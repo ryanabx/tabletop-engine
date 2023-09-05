@@ -14,10 +14,7 @@ func _on_back_button_pressed() -> void:
 
 
 func _on_toggle_fullscreen_pressed() -> void:
-	if DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-	else:
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+	Globals.Settings.fullscreen = not Globals.Settings.fullscreen
 
 
 func _on_export_config_pressed() -> void:

@@ -37,8 +37,8 @@ const RTC_CONFIG: Dictionary = {
 				]
 		},
 		{
-        "urls": ["stun:stun.relay.metered.ca:80"]
-      	},
+		"urls": ["stun:stun.relay.metered.ca:80"]
+	  	},
 		{
 			"urls": 'turn:numb.viagenie.ca',
 			"credential": 'muazkh',
@@ -64,7 +64,7 @@ const RTC_CONFIG: Dictionary = {
 			"credential": 'webrtc',
 			"username": 'webrtc'
 		},
-      	{
+	  	{
 			"urls": "turn:a.relay.metered.ca:80",
 			"username": "b7153991e76085c83420f473",
 			"credential": "S7apm/MC4QIFJG4C",
@@ -169,7 +169,26 @@ func get_current_game() -> TabletopGame:
 class Player:
 	static var ID: int = 0
 
-class Game:
-	enum ObjectType {
-		TYPE_PIECE, TYPE_STACK
+class Settings:
+	enum SelectType {
+		TAP, DRAG
 	}
+	enum MultiplayerMethod {
+		P2P_SHORTENED, P2P
+	}
+	# View settings
+	static var fullscreen: bool:
+		set(val):
+			if val == true:
+				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+			else:
+				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		get:
+			return (DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN)
+	
+	# In-game settings
+	static var select_type: SelectType = SelectType.DRAG
+
+	# Multiplayer connection settings
+	static var multiplayer_method: MultiplayerMethod = MultiplayerMethod.P2P_SHORTENED
+	
