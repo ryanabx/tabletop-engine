@@ -126,7 +126,7 @@ func drag_input(event: InputEvent) -> void:
 	input_events[event.index] = event
 	if select_index != event.index:
 		return
-	if object_queued():
+	if object_queued() and event.position.distance_to(grab_position) > Globals.GRAB_THRESHOLD:
 		hold_timer.stop()
 		if collection_queued() and board.game.can_take_piece_off(get_queued_object()):
 			var pc: Piece = get_queued_object().remove_from_top()

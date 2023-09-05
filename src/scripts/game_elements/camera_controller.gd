@@ -68,7 +68,7 @@ func touchscreen_events(event: InputEvent) -> void:
 
 
 func board_selecting() -> bool:
-	return board != null and board.board_player.is_selecting()	
+	return board != null and (board.board_player.is_selecting() or board.board_player.object_queued())
 
 func desktop_events(delta: float) -> void:
 	if Input.is_action_pressed("camera_zoom_in"):

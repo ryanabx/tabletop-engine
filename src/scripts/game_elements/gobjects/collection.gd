@@ -24,13 +24,16 @@ func _ready() -> void:
 	add_child(sprite)
 	# Count label
 	count = Label.new()
-	count.scale = Vector2(0.5, 0.5)
+	count.z_index = 1
+	count.add_theme_constant_override("outline_size", 16)
+	count.add_theme_color_override("font_outline_color", Color.BLACK)
+	count.scale = Vector2(0.40, 0.40)
 	add_child(count)
 	super._ready()
 
 func _process(_delta: float) -> void:
 	count.position = (get_gobject_transform() * self.shape)[0]
-	count.text = str("[",inside.size(),"]")
+	count.text = str("x",inside.size())
 	count.reset_size()
 	queue_redraw()
 	if inside.is_empty():
@@ -44,8 +47,7 @@ func _process(_delta: float) -> void:
 	sprite.scale = size / sprite.texture.get_size()
 
 func _draw() -> void:
-	draw_rect(count.get_rect().grow(2), Color.BLACK * Color(1.0, 1.0, 1.0, 0.75))
-	draw_colored_polygon(collision_polygon.polygon, Color.BLACK * Color(1,1,1,0.3))
+	draw_polyline(collision_polygon.polygon + PackedVector2Array([collision_polygon.polygon[0]]), Color.WHITE, 2)
 
 func add_piece(piece: Piece, back: bool = false) -> void:
 	if not board.game.can_stack_piece(piece, self):

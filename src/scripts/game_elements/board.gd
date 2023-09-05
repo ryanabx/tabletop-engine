@@ -13,8 +13,15 @@ var def_font: Font = null
 @onready var board_objects: Node2D = $BoardObjects
 @onready var highlights: Node2D = $Highlights
 
+var background_sprite: Sprite2D
+
 # Board properties
-var background: String = ""
+var background: String = "":
+	set(val):
+		background = val
+		background_sprite.set_texture(game.include_images[background])
+		background_sprite.scale = border.size / background_sprite.texture.get_size()
+
 var border: Rect2 = Rect2(0,0,0,0)
 
 var counter: int = 0
@@ -24,8 +31,6 @@ func _draw() -> void:
 
 ## Draw the background specified
 func draw_board_bg() -> void:
-	if background != "":
-		draw_texture_rect(game.include_images[background], border, false)
 	draw_rect(border, Color.WHITE, false, Globals.OUTLINE_THICKNESS)
 
 func get_piece(n: String) -> Piece:
@@ -111,6 +116,10 @@ func new_game_object(type, properties: Dictionary) -> GameObject:
 func _ready() -> void:
 	board_player.board = self
 	highlights.board = self
+
+	background_sprite = Sprite2D.new()
+	background_sprite.z_index = -10
+	add_child(background_sprite)
 	
 	get_viewport().set_physics_object_picking(true)
 	get_viewport().set_physics_object_picking_sort(true)

@@ -4,6 +4,8 @@ extends Node
 # MULTIPLAYER
 const DEFAULT_MAX_PLAYERS: int = 4
 
+const GRAB_THRESHOLD: float = 40.0
+
 var CODE_CHARS: String = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
 
 const ICE_TIMEOUT: float = 5
