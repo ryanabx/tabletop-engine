@@ -142,6 +142,8 @@ const DEFAULT_CONFIG_PATH: String = "res://configs/default.obgf"
 
 const DOWNLOAD_FILE_PATH: String = "user://downloaded_file.obgf"
 
+const SETTINGS_PATH: String = "user://settings.json"
+
 # COLORS
 
 const COLOR_TRANSPARENT_HIGHLIGHT = Color(1.0, 1.0, 1.0, 0.2)
@@ -168,27 +170,3 @@ func get_current_game() -> TabletopGame:
 
 class Player:
 	static var ID: int = 0
-
-class Settings:
-	enum SelectType {
-		TAP, DRAG
-	}
-	enum MultiplayerMethod {
-		P2P_SHORTENED, P2P
-	}
-	# View settings
-	static var fullscreen: bool:
-		set(val):
-			if val == true:
-				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
-			else:
-				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-		get:
-			return (DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN)
-	
-	# In-game settings
-	static var select_type: SelectType = SelectType.DRAG
-
-	# Multiplayer connection settings
-	static var multiplayer_method: MultiplayerMethod = MultiplayerMethod.P2P_SHORTENED
-	

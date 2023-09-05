@@ -28,41 +28,105 @@ layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Settings"
 horizontal_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="View" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/View"]
 layout_mode = 2
 text = "View"
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/View"]
 layout_mode = 2
 
-[node name="ToggleFullscreen" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+[node name="ToggleFullscreen" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/View/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Toggle Fullscreen"
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
+[node name="Controls" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer2"]
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Controls"]
+layout_mode = 2
+text = "Controls"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Controls"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Controls/HBoxContainer"]
+layout_mode = 2
+text = "Selecting objects: "
+
+[node name="SelectingObjects" type="OptionButton" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Controls/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+item_count = 2
+selected = 0
+popup/item_0/text = "Drag"
+popup/item_0/id = 0
+popup/item_1/text = "Click"
+popup/item_1/id = 1
+
+[node name="Multiplayer" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Multiplayer"]
+layout_mode = 2
+text = "Multiplayer"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Multiplayer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Multiplayer/HBoxContainer"]
+layout_mode = 2
+text = "Connection method:"
+
+[node name="ConnectionMethod" type="OptionButton" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Multiplayer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+item_count = 2
+selected = 0
+popup/item_0/text = "P2P Shortened"
+popup/item_0/id = 0
+popup/item_1/text = "P2P"
+popup/item_1/id = 1
+
+[node name="ConfigTools" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/ConfigTools"]
 layout_mode = 2
 text = "Configuration Tools"
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer2"]
+[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/ConfigTools"]
 layout_mode = 2
 
-[node name="ExportConfig" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer2/HBoxContainer"]
+[node name="ExportConfig" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/ConfigTools/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Export Config"
@@ -84,9 +148,12 @@ anchors_preset = 0
 mouse_filter = 2
 
 [node name="ExportConfigDialog" parent="." instance=ExtResource("6_qwpln")]
+size = Vector2i(1318, 1280)
 
 [node name="SaveExportedConfig" parent="." instance=ExtResource("7_70qvt")]
 
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/ToggleFullscreen" to="." method="_on_toggle_fullscreen_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer2/HBoxContainer/ExportConfig" to="." method="_on_export_config_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/View/HBoxContainer/ToggleFullscreen" to="." method="_on_toggle_fullscreen_pressed"]
+[connection signal="item_selected" from="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Controls/HBoxContainer/SelectingObjects" to="." method="_on_selecting_objects_item_selected"]
+[connection signal="item_selected" from="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Multiplayer/HBoxContainer/ConnectionMethod" to="." method="_on_connection_method_item_selected"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/ConfigTools/HBoxContainer/ExportConfig" to="." method="_on_export_config_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
