@@ -4,7 +4,6 @@ extends Selectable
 var inside: Array[Dictionary] = []
 var permanent: bool = false
 var face_up: bool = false
-var lock_state: bool = false
 
 var grab_offset: Vector2 = Vector2.ZERO
 
@@ -25,6 +24,7 @@ func _ready() -> void:
 	add_child(sprite)
 	# Count label
 	count = Label.new()
+	count.scale = Vector2(0.5, 0.5)
 	add_child(count)
 	super._ready()
 
@@ -45,7 +45,6 @@ func _process(_delta: float) -> void:
 
 func _draw() -> void:
 	draw_rect(count.get_rect().grow(2), Color.BLACK * Color(1.0, 1.0, 1.0, 0.75))
-	draw_rect(count.get_rect().grow(2), Color.WHITE * Color(1.0, 1.0, 1.0, 0.75), false, 2)
 	draw_colored_polygon(collision_polygon.polygon, Color.BLACK * Color(1,1,1,0.3))
 
 func add_piece(piece: Piece, back: bool = false) -> void:
@@ -113,22 +112,6 @@ func clear_inside() -> void:
 		erase_self.rpc()
 	else:
 		call_inside_changed()
-
-## Constructor
-static func construct(brd: Board, config: Dictionary) -> Collection:
-	var collection: Collection = Collection.new()
-	collection.board = brd
-	for prop in config.keys():
-		if prop == "inside":
-			continue
-		collection.set(prop, config[prop])
-	brd.board_objects.add_child(collection)
-	if "inside" in config:
-		for key in config.inside:
-			var piece: Piece = brd.get_piece(key)
-			if piece != null:
-				collection.add_piece(piece)
-	return collection
 
 func _on_select(_event:InputEvent) -> void:
 	if get_inside().is_empty():

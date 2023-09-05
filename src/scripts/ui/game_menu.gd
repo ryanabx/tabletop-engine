@@ -77,13 +77,18 @@ func _on_clicked_from_object(id: int) -> void:
 
 func _on_clicked_from_collection(id: int) -> void:
 	match id:
-		1: collection.flip()
+		1:
+			if not collection.lock_state:
+				collection.face_up = not collection.face_up
 		3: collection.move_self_to_front()
 		4: collection.move_self_to_back()
-		5: collection.set_orientation(true)
-		6: collection.set_orientation(false)
+		5:
+			if not collection.lock_state:
+				collection.face_up = true
+		6:
+			if not collection.lock_state:
+				collection.face_up = false
 		8: collection.shuffle()
-		9: collection.board.board_player._select_collection(collection)
 
 func _on_popup_hide() -> void:
 	SignalManager.game_menu_destroy.emit()

@@ -100,7 +100,7 @@ func new_game_object(type, properties: Dictionary) -> GameObject:
 	for prop in properties:
 		c.set(prop, properties[prop])
 	c.board = self
-	add_child(c)
+	board_objects.add_child(c)
 	return c
 
 ####################

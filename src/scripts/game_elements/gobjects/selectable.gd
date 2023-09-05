@@ -4,6 +4,8 @@ extends GameObject
 @onready var collision_polygon: CollisionPolygon2D
 @onready var area2d: Area2D
 
+var lock_state: bool = false
+
 func _ready() -> void:
 	# Collision stuff
 	area2d = Area2D.new()

@@ -21,6 +21,7 @@ var index: int:
         return get_index()
     set(val):
         get_parent().move_child(self, val)
+        print("Moving self to ",val)
 
 @rpc("any_peer","call_remote","reliable")
 func set_authority(id: int) -> void:

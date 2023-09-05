@@ -27,19 +27,6 @@ func _ready() -> void:
 @rpc("any_peer","call_local","reliable")
 func erase_self() -> void:
 	queue_free()
-			
-## Constructor
-static func construct(brd: Board, config: Dictionary) -> Piece:
-	var piece: Piece = Piece.new()
-	piece.board = brd
-	for prop in config.keys():
-		piece.set(prop, config[prop])
-	brd.board_objects.add_child(piece)
-	if "collection" in config and config.collection != "":
-		var c: Collection = brd.get_collection(config.collection)
-		c.add_piece(piece)
-		return null
-	return piece
 
 # Private methods
 
