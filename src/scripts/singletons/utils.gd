@@ -168,8 +168,8 @@ class MultiplayerManager:
 		SignalManager.mplay_code_created.emit(encode_packet(wip_packet))
 		await SignalManager.mplay_go_to_wait
 		var result: bool = await wait_for_connection()
-		if result == true:
-			SignalManager.mplay_connection_result.emit(result)
+		SignalManager.mplay_connection_result.emit(result)
+
 		return
 	
 	static func wait_for_connection() -> bool:
