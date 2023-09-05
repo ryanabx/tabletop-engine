@@ -285,6 +285,7 @@ icon_alignment = 2
 expand_icon = true
 
 [node name="ImportConfigFileOpen" parent="." instance=ExtResource("4_ro1ev")]
+size = Vector2i(1318, 1280)
 unresizable = false
 borderless = false
 popup_window = true
