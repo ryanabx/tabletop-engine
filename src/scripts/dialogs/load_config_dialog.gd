@@ -1,12 +1,12 @@
 extends FileDialog
 
-var file_load_callback = JavaScriptBridge.create_callback(f_decided_web)
+var file_load_callback := JavaScriptBridge.create_callback(f_decided_web)
 
 func _ready() -> void:
 	SignalManager.create_load_config_dialog.connect(import_config)
 	file_selected.connect(filepath_selected)
 	if Utils.is_web_platform():
-		var window = JavaScriptBridge.get_interface("window")
+		var window := JavaScriptBridge.get_interface("window")
 		window.getFile(file_load_callback)
 
 func import_config() -> void:
@@ -14,7 +14,7 @@ func import_config() -> void:
 	if not Utils.is_web_platform():
 		popup()
 	else:
-		var window = JavaScriptBridge.get_interface("window")
+		var window := JavaScriptBridge.get_interface("window")
 		window.input.click()
 
 func filepath_selected(fname: String) -> void:
@@ -23,7 +23,7 @@ func filepath_selected(fname: String) -> void:
 		file_decided(FileAccess.get_file_as_bytes(fname))
 	
 
-func f_decided_web(args) -> void:
+func f_decided_web(args: Array) -> void:
 	print(args)
 	print("File decided")
 	var buf: PackedByteArray = []

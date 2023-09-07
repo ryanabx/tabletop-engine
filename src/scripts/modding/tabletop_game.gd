@@ -78,7 +78,7 @@ static func import_obgf(bytes: PackedByteArray) -> TabletopGame:
     var sc: GDScript = GDScript.new()
     sc.set_source_code(config.script)
     sc.reload()
-    var obj = TabletopGame.new()
+    var obj := TabletopGame.new()
     obj.set_script(sc)
 
     obj.set_images(config.include_images)
@@ -100,7 +100,7 @@ static func export_obgf(scr_text: String, dir_path: String) -> PackedByteArray:
     var sc: GDScript = GDScript.new()
     sc.set_source_code(scr_text)
     sc.reload()
-    var obj = TabletopGame.new()
+    var obj := TabletopGame.new()
     obj.set_script(sc)
     obj._init()
     var config: Dictionary = {}

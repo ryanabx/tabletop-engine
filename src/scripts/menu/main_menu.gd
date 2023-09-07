@@ -1,7 +1,7 @@
 extends Control
 
 @onready var version: Label = $SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/Version
-@onready var quit_button: Button = $SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/Quit
+@onready var quit_button := $SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/Quit
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

@@ -21,6 +21,8 @@ var background: String = "":
 		background = val
 		background_sprite.set_texture(game.include_images[background])
 		background_sprite.scale = border.size / background_sprite.texture.get_size()
+	get:
+		return background
 
 var border: Rect2 = Rect2(0,0,0,0)
 
@@ -100,7 +102,7 @@ var ready_players: Array = []
 #####################
 
 ## Creates new game object on the board
-func new_game_object(type, properties: Dictionary) -> GameObject:
+func new_game_object(type: GDScript, properties: Dictionary) -> GameObject:
 	var c: GameObject = type.new()
 	for prop in properties:
 		c.set(prop, properties[prop])

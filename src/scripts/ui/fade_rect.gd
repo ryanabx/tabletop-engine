@@ -30,5 +30,5 @@ func _on_scene_transition(_scene: String) -> void:
 	fade_out_timer.start()
 	
 
-func _on_fade_timer_timeout():
+func _on_fade_timer_timeout() -> void:
 	get_tree().change_scene_to_file(scene)

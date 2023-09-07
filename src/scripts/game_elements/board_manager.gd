@@ -3,7 +3,7 @@ extends Node
 
 var board: Board = null
 
-const MTU: int = 1476
+const MTU = 1476
 
 # Crucial base operation nodes
 @onready var user_interface: UserInterface = $UserInterfaceLayer/UserInterface
@@ -26,7 +26,7 @@ func _ready() -> void:
 	else:
 		notify_ready.rpc(multiplayer.get_unique_id())
 
-func make_tabletop():
+func make_tabletop() -> void:
 	if multiplayer.get_peers().size() > 0:
 		Utils.go_to_scene.rpc("res://src/scenes/game_elements/board_manager.tscn")
 	while peers_ready != multiplayer.get_peers().size():
