@@ -1,6 +1,6 @@
 extends Control
 
-@onready var version: Label = $SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/Version
+@onready var version := $SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/Version
 @onready var quit_button := $SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/Quit
 
 # Called when the node enters the scene tree for the first time.
@@ -8,8 +8,10 @@ func _ready() -> void:
 	version.text = str("Version: ",ProjectSettings.get_setting("application/config/version"))
 	if Utils.is_mobile_platform():
 		quit_button.hide()
+	for i: Node in get_tree().get_nodes_in_group("hi"):
+		pass
 	Globals.load_this_game = PackedByteArray([])
-	Utils.MultiplayerManager.close_connection()
+	MultiplayerManager.close_connection()
 
 func _on_new_game_pressed() -> void:
 	SignalManager.scene_transition.emit("res://src/scenes/menu/new_game.tscn")

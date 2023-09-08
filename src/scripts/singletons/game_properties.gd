@@ -36,13 +36,13 @@ func load_settings() -> void:
 	if FileAccess.file_exists(Globals.SETTINGS_PATH):
 		var settings_str: String = FileAccess.get_file_as_string(Globals.SETTINGS_PATH)
 		var settings_dict: Dictionary = JSON.parse_string(settings_str)
-		for prop in settings_dict.keys():
+		for prop: String in settings_dict.keys():
 			set(prop, settings_dict[prop])
 	print("Settings loaded!")
 
 func save_settings() -> void:
 	var settings_dict: Dictionary = {}
-	for prop in properties:
+	for prop: String in properties:
 		settings_dict[prop] = get(prop)
 	var settings_str: String = JSON.stringify(settings_dict)
 	var s_save: FileAccess = FileAccess.open(Globals.SETTINGS_PATH, FileAccess.WRITE)

@@ -150,7 +150,7 @@ func compare_by_z_index(a: Dictionary, b: Dictionary) -> bool:
 func shuffle(pcs: Array[Piece]) -> void:
 	var pcs_shuffled: Array[Piece] = pcs.duplicate(false)
 	pcs_shuffled.shuffle()
-	for i in range(pcs.size()):
+	for i: int in range(pcs.size()):
 		var pc1: Piece = pcs[i]
 		var pc2: Piece = pcs_shuffled[i]
 		var contents1: Dictionary = {

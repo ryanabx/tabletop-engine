@@ -20,7 +20,7 @@ func _ready() -> void:
 	SignalManager.mplay_establishing_connection.connect(establishing_connection)
 	if not Utils.is_desktop_platform():
 		from_file_button.hide()
-	Utils.MultiplayerManager.close_connection()
+	MultiplayerManager.close_connection()
 	refresh_list()
 
 func _process(_delta: float) -> void:
@@ -40,15 +40,15 @@ func _on_back_button_pressed() -> void:
 
 
 func refresh_list() -> void:
-	if Utils.MultiplayerManager.wip_connection != null:
+	if MultiplayerManager.wip_connection != null:
 		print("Connecting state multiplayer peer: ",multiplayer.multiplayer_peer.get_connection_status(),
-		", ConnectionState: ", Utils.MultiplayerManager.wip_connection.get_connection_state(),
-		", GatheringState: ", Utils.MultiplayerManager.wip_connection.get_gathering_state(),
-		", SignalingState: ", Utils.MultiplayerManager.wip_connection.get_signaling_state()
+		", ConnectionState: ", MultiplayerManager.wip_connection.get_connection_state(),
+		", GatheringState: ", MultiplayerManager.wip_connection.get_gathering_state(),
+		", SignalingState: ", MultiplayerManager.wip_connection.get_signaling_state()
 		)
 	config_list.clear()
 	config_list.add_item("Default Config")
-	for conf in Utils.FileManager.get_available_configs():
+	for conf: String in Utils.FileManager.get_available_configs():
 		config_list.add_item(conf)
 	print("Config list refreshed!")
 
@@ -92,16 +92,16 @@ func _on_load_conf_url_pressed() -> void:
 
 func _on_client_pressed() -> void:
 	peer_choice = 0 # Client
-	Utils.MultiplayerManager.connect_to_server()
+	MultiplayerManager.connect_to_server()
 	mplay_next_page("CodeFromPeer")
 
 func _on_server_pressed() -> void:
-	Utils.MultiplayerManager.initialize_server()
+	MultiplayerManager.initialize_server()
 	peer_choice = 1 # Server
 	mplay_next_page("ServerMain")
 
 func _on_add_client_pressed() -> void:
-	Utils.MultiplayerManager.add_client()
+	MultiplayerManager.add_client()
 	mplay_next_page("CreatingCode")
 
 func code_created(_code: String) -> void:
@@ -143,12 +143,12 @@ func connection_result(result: bool) -> void:
 
 func _on_cancel_pressed() -> void:
 	if peer_choice == 0: # Client
-		Utils.MultiplayerManager.close_connection()
+		MultiplayerManager.close_connection()
 		mplay_next_page("Options1")
 	elif peer_choice == 1: # Server
-		Utils.MultiplayerManager.cancel_peer_connection()
+		MultiplayerManager.cancel_peer_connection()
 		if current_mplay_page == "ServerMain":
-			Utils.MultiplayerManager.close_connection()
+			MultiplayerManager.close_connection()
 			mplay_next_page("Options1")
 		else:
 			mplay_next_page("ServerMain")

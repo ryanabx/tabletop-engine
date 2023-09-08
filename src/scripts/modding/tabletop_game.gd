@@ -44,7 +44,7 @@ func run_action(_action: String) -> bool:
 ## Sets images from the ImageIncludes in this config
 func set_images(imgs: Dictionary) -> void:
     include_images = {}
-    for img in imgs.keys():
+    for img: String in imgs.keys():
         var n_img: Image = Image.new()
         n_img.load_webp_from_buffer(imgs[img])
         include_images[img] = ImageTexture.create_from_image(n_img)
@@ -109,12 +109,12 @@ static func export_obgf(scr_text: String, dir_path: String) -> PackedByteArray:
     config.include = {}
     config.include_images = {}
     # Add folders to includes
-    for folder in obj.export_settings().include_folders:
+    for folder: String in obj.export_settings().include_folders:
         var folder_open: DirAccess = DirAccess.open(str(dir_path,"/",folder))
         if folder_open == null:
             print("DirAccess failed to open ",str(dir_path,"/",folder),": ",DirAccess.get_open_error())
             return PackedByteArray([])
-        for fname in folder_open.get_files():
+        for fname: String in folder_open.get_files():
             # Validate file extension
             var file_extension: String = fname.rsplit(".", false, 1)[-1]
             if str(".",file_extension) not in obj.export_settings().include_types:
@@ -122,12 +122,12 @@ static func export_obgf(scr_text: String, dir_path: String) -> PackedByteArray:
             # Add file to includes
             config.include[str(folder,"/",fname)] = FileAccess.get_file_as_bytes(str(dir_path,"/",folder,"/",fname))
     # Add images to include_images
-    for folder in obj.export_settings().include_image_folders:
+    for folder: String in obj.export_settings().include_image_folders:
         var folder_open: DirAccess = DirAccess.open(str(dir_path,"/",folder))
         if folder_open == null:
             print("DirAccess failed to open ",str(dir_path,"/",folder),": ",DirAccess.get_open_error())
             return PackedByteArray([])
-        for fname in folder_open.get_files():
+        for fname: String in folder_open.get_files():
             # Validate file extension
             var file_extension: String = fname.rsplit(".", false, 1)[-1]
             if str(".",file_extension) not in obj.export_settings().include_image_types:

@@ -41,7 +41,7 @@ func get_piece(n: String) -> Piece:
 
 func get_pieces(a: Array) -> Array[Piece]:
 	var pcs: Array[Piece] = []
-	for _a in a:
+	for _a: String in a:
 		var pc: Piece = get_piece(_a)
 		if pc != null:
 			pcs.append(pc)
@@ -53,7 +53,7 @@ func get_collection(n: String) -> Collection:
 
 func get_collections(a: Array) -> Array[Collection]:
 	var cs: Array[Collection] = []
-	for _a in a:
+	for _a: String in a:
 		var c: Collection = get_collection(_a)
 		if c != null:
 			cs.append(c)
@@ -71,7 +71,7 @@ func get_game_objects() -> Array[GameObject]:
 	return res
 
 func clear_board() -> void:
-	for obj in get_game_objects():
+	for obj: GameObject in get_game_objects():
 		obj.erase_self.rpc()
 
 func unique_name(s: String) -> String:
@@ -104,7 +104,7 @@ var ready_players: Array = []
 ## Creates new game object on the board
 func new_game_object(type: GDScript, properties: Dictionary) -> GameObject:
 	var c: GameObject = type.new()
-	for prop in properties:
+	for prop: String in properties:
 		c.set(prop, properties[prop])
 	c.board = self
 	board_objects.add_child(c)

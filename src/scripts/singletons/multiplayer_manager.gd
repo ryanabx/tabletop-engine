@@ -56,7 +56,7 @@ func add_client_p2p() -> void:
 	# Found peer code
 	var _packet: Dictionary = decode_packet(code)
 	wip_connection.set_remote_description(_packet.sdp[0], _packet.sdp[1])
-	for ice_candidate in _packet.ice_candidates:
+	for ice_candidate: Array in _packet.ice_candidates:
 		wip_connection.add_ice_candidate(ice_candidate[0], ice_candidate[1], ice_candidate[2])
 	print("[Server] Done")
 	await SignalManager.mplay_go_to_wait
@@ -107,7 +107,7 @@ func add_server_p2p() -> void:
 	var sdp: Array = await wip_connection.session_description_created
 	wip_packet.sdp = sdp
 	wip_connection.set_local_description(sdp[0], sdp[1])
-	for ice_candidate in _packet.ice_candidates:
+	for ice_candidate: Array in _packet.ice_candidates:
 		wip_connection.add_ice_candidate(ice_candidate[0], ice_candidate[1], ice_candidate[2])
 	await gather_ice_candidates_p2p()
 	await Utils.get_tree().create_timer(0.5).timeout
@@ -213,7 +213,7 @@ func add_peer_p2p_shortened(connection: WebRTCPeerConnection, is_server: bool) -
 				multiplayer.multiplayer_peer.add_peer(connection, results.SDP[2])
 				connection.set_remote_description(results.SDP[0], results.SDP[1])
 			if "ICE_CANDIDATES" in results:
-				for candidate in results.ICE_CANDIDATES:
+				for candidate: Array in results.ICE_CANDIDATES:
 					connection.add_ice_candidate(candidate[0], candidate[1], candidate[2])
 	if connection.get_connection_state() == connection.STATE_CONNECTED:
 		print("Connected successfully!")

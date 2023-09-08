@@ -102,7 +102,7 @@ func shuffle() -> void:
 
 @rpc("authority","call_local","reliable")
 func erase_self() -> void:
-	for obj in inside:
+	for obj: Dictionary in inside:
 		if is_multiplayer_authority():
 			deserialize_piece(obj)
 	queue_free()

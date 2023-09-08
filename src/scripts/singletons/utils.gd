@@ -8,7 +8,7 @@ func _ready() -> void:
 
 func load_images_into_array(image_strings: Array, image_directory: String) -> Array:
 	var result: Array = []
-	for image_path in image_strings:
+	for image_path: String in image_strings:
 		var _image := Image.new()
 		var _err := _image.load(image_directory + image_path)
 		if _err != OK:
@@ -51,7 +51,7 @@ func random_string(length: int) -> String:
 func generate_word(chars: String, length: int) -> String:
 	var word: String = ""
 	var n_char := len(chars)
-	for i in range(length):
+	for i: int in range(length):
 		word += chars[randi()% n_char]
 	return word
 
@@ -59,7 +59,7 @@ func load_images_from_directory(dir: String) -> Dictionary:
 	var textures: Dictionary = {}
 	var directory_access := DirAccess.open(dir)
 	if directory_access.dir_exists("."):
-		for fname in directory_access.get_files():
+		for fname: String in directory_access.get_files():
 			var file_ext: String = fname.rsplit(".")[-1]
 			if file_ext in ["png", "jpg", "jpeg", "bmp", "svg"]:
 				var _tx := load_texture_from_string(fname, str(dir,"/"))
@@ -67,9 +67,9 @@ func load_images_from_directory(dir: String) -> Dictionary:
 					textures[fname] = _tx
 	return textures
 
-func has_any(arr1: Array, arr2: Array) -> bool:
-	for x in arr1:
-		for y in arr2:
+func has_any(arr1: Array[Variant], arr2: Array[Variant]) -> bool:
+	for x: Variant in arr1:
+		for y: Variant in arr2:
 			if x == y:
 				return true
 	return false
@@ -111,7 +111,7 @@ class FileManager:
 
 		var directory: DirAccess = DirAccess.open(Globals.CONFIG_REPO)
 
-		for fname in directory.get_files():
+		for fname: String in directory.get_files():
 			print(fname)
 			var split_fname: PackedStringArray = fname.rsplit(".",1)
 			print(split_fname[0], ", ", split_fname[1])

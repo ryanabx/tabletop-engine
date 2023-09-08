@@ -28,7 +28,7 @@ func f_decided_web(args: Array) -> void:
 	print("File decided")
 	var buf: PackedByteArray = []
 
-	for x in range(args[0].length):
+	for x: int in range(args[0].length):
 		buf.append(args[0][x])
 	
 	file_decided(buf)

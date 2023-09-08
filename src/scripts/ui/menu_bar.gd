@@ -25,7 +25,7 @@ func actions_menu() -> void:
 	actions = PopupMenu.new()
 	actions.index_pressed.connect(run_action)
 	actions.name = "Actions"
-	for i in board.game.get_actions():
+	for i: String in board.game.get_actions():
 		actions.add_item(i)
 	menu.get_popup().add_child(actions)
 	menu.get_popup().add_submenu_item("Actions", "Actions")
@@ -37,7 +37,7 @@ func player_menu() -> void:
 	player.name = "Player"
 	menu.get_popup().add_child(player)
 	menu.get_popup().add_submenu_item("Player", "Player")
-	for i in range(board.game.settings().max_players):
+	for i: int in range(board.game.settings().max_players):
 		player.add_item(str("Player ",i+1))
 
 func tabletop_menu() -> void:
