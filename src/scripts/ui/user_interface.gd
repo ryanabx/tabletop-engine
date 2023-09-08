@@ -2,8 +2,8 @@ class_name UserInterface
 extends Control
 
 var coordinates_labels: Array
-@onready var fps_counter: Label = $SafeMargins/TopBar/VBoxContainer/HBoxContainer/FPSCounter
-@onready var game_info: Label = $SafeMargins/TopBar/VBoxContainer/HBoxContainer/GameInfo
+# @onready var fps_counter: Label = %FPSCounter
+@onready var game_info: Label = %GameInfo
 
 @onready var padding_panel: Panel = $PaddingPanel
 
@@ -33,10 +33,10 @@ func hide_loading(_board: Board) -> void:
 
 func update_loading_percent(pc: float) -> void:
 	print("Game load at ",pc)
-	$SafeMargins/LoadingBarContainer/VBoxContainer/LoadingBar.value = pc * 100.0
+	%LoadingBar.value = pc * 100.0
 
 func _process(_delta: float) -> void:
-	fps_counter.text = str(Engine.get_frames_per_second(), " FPS")
+	# fps_counter.text = str(Engine.get_frames_per_second(), " FPS")
 	game_info.text = str("Game: ",game_name)
 	if Globals.get_current_game() != null:
 		game_name = Globals.get_current_game().export_settings().name

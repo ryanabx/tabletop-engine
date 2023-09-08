@@ -1,4 +1,4 @@
-class_name Hand
+class_name Deck
 extends Collection
 
 
