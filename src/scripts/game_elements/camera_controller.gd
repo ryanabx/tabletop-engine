@@ -40,12 +40,18 @@ func _input(event: InputEvent) -> void:
 		init_zoom = zoom
 	elif event is InputEventScreenDrag:
 		current_points[event.index] = event
-		var curr: Array = current_points.values()
 		if current_points.size() == 1: # Pan only
-			offset += event.relative.rotated(init_rot) / init_zoom
+			offset -= event.relative.rotated(init_rot) / init_zoom
 		if current_points.size() == 2: # Zoom, Rotate
-			var vec1: Vector2 = curr[1].position - curr[0].position
-			var vec2: Vector2 = curr[1].position - curr[0].position + event.relative
+			var other: int
+			var my: int = event.index
+			if current_points.keys().find(event.index) == 0:
+				other = current_points.keys()[1]
+			else:
+				other = current_points.keys()[0]
+
+			var vec1: Vector2 = current_points[my].position - current_points[other].position
+			var vec2: Vector2 = current_points[my].position + event.relative - current_points[other].position
 
 			var r: float = vec1.angle_to(vec2)
 			var s: Vector2 = Vector2.ONE * (vec2.length() / vec1.length())
