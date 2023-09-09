@@ -61,10 +61,11 @@ func _input(event: InputEvent) -> void:
 			var s: Vector2 = Vector2.ONE * (vec2.length() / vec1.length())
 
 			rotation += r
-			# zoom *= s
+			zoom *= s
 			# (offset - center1).rotated(r) + center2 rotation working
+			# ((offset - center1).rotated(r) / s) + ((center1 - center2) / s) + center2 zoom working
 			print("Center1: ",center1, " :: Center2: ",center2)
-			offset = (offset - center1).rotated(r) + center2
+			offset = ((offset - center1).rotated(r) / s) + ((center1 - center2) / s) + center2
 
 func board_selecting() -> bool:
 	return board != null and (board.board_player.is_selecting() or board.board_player.object_queued())
