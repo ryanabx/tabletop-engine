@@ -32,30 +32,26 @@ func _input(event: InputEvent) -> void:
 		return
 	if event is InputEventScreenTouch:
 		if event.pressed:
-			initial_points[event.index] = event.position
-			current_points[event.index] = event.position
+			current_points[event.index] = event
 		else:
-			initial_points.erase(event.index)
 			current_points.erase(event.index)
 		init_pos = offset
 		init_rot = rotation
 		init_zoom = zoom
-	if event is InputEventScreenDrag:
-		current_points[event.index] = event.position
+	elif event is InputEventScreenDrag:
+		current_points[event.index] = event
 		var curr: Array = current_points.values()
-		var start: Array = initial_points.values()
 		if current_points.size() == 1: # Pan only
-			var delta_t: Vector2 = start[0] - curr[0]
-			offset = init_pos + delta_t.rotated(init_rot) / init_zoom
+			offset += event.relative.rotated(init_rot) / init_zoom
 		if current_points.size() == 2: # Zoom, Rotate
-			var curr_vec: Vector2 = curr[1] - curr[0]
-			var start_vec: Vector2 = start[1] - start[0]
+			var vec1: Vector2 = curr[1].position - curr[0].position
+			var vec2: Vector2 = curr[1].position - curr[0].position + event.relative
 
-			var r: float = curr_vec.angle_to(start_vec)
-			var s: Vector2 = Vector2.ONE * (curr_vec.length() / start_vec.length())
+			var r: float = vec1.angle_to(vec2)
+			var s: Vector2 = Vector2.ONE * (vec2.length() / vec1.length())
 
-			rotation = init_rot + r
-			zoom = init_zoom * s
+			rotation += r
+			zoom *= s
 
 func board_selecting() -> bool:
 	return board != null and (board.board_player.is_selecting() or board.board_player.object_queued())
