@@ -5,7 +5,7 @@
 [node name="ImportConfigFileOpen" type="FileDialog"]
 title = "Open a File"
 initial_position = 2
-size = Vector2i(1280, 1280)
+size = Vector2i(1318, 1280)
 unresizable = true
 borderless = true
 content_scale_size = Vector2i(640, 360)
