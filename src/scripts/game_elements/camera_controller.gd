@@ -61,7 +61,7 @@ func _input(event: InputEvent) -> void:
 
 			rotation += r
 			# zoom *= s
-			offset = (-(center1 - offset)).rotated(r) + center2
+			offset = ((center1 - offset)).rotated(r) - center2
 
 func board_selecting() -> bool:
 	return board != null and (board.board_player.is_selecting() or board.board_player.object_queued())
