@@ -53,11 +53,15 @@ func _input(event: InputEvent) -> void:
 			var vec1: Vector2 = current_points[my].position - current_points[other].position
 			var vec2: Vector2 = current_points[my].position + event.relative - current_points[other].position
 
+			var center1: Vector2 = current_points[other].position + vec1 / 2.0
+			var center2: Vector2 = current_points[other].position + vec2 / 2.0
+
 			var r: float = vec2.angle_to(vec1)
 			var s: Vector2 = Vector2.ONE * (vec2.length() / vec1.length())
 
 			rotation += r
-			zoom *= s
+			# zoom *= s
+			offset = (-(center1 - offset)).rotated(r) + center2
 
 func board_selecting() -> bool:
 	return board != null and (board.board_player.is_selecting() or board.board_player.object_queued())
