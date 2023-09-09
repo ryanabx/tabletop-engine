@@ -53,7 +53,7 @@ func _input(event: InputEvent) -> void:
 			var vec1: Vector2 = current_points[my].position - current_points[other].position
 			var vec2: Vector2 = current_points[my].position + event.relative - current_points[other].position
 
-			var r: float = vec1.angle_to(vec2)
+			var r: float = vec2.angle_to(vec1)
 			var s: Vector2 = Vector2.ONE * (vec2.length() / vec1.length())
 
 			rotation += r
