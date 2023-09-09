@@ -30,6 +30,7 @@ func _game_loaded(_board: Board) -> void:
 func _input(event: InputEvent) -> void:
 	if board_selecting():
 		return
+	event = make_input_local(event)
 	if event is InputEventScreenTouch:
 		if event.pressed:
 			current_points[event.index] = event
@@ -61,8 +62,9 @@ func _input(event: InputEvent) -> void:
 
 			rotation += r
 			# zoom *= s
-			# (-(center1 - offset)).rotated(r) + center2
-			offset = (-(center1 - offset)).rotated(r) - center2
+			# (offset - center1).rotated(r) + center2 rotation working
+			print("Center1: ",center1, " :: Center2: ",center2)
+			offset = (offset - center1).rotated(r) + center2
 
 func board_selecting() -> bool:
 	return board != null and (board.board_player.is_selecting() or board.board_player.object_queued())
