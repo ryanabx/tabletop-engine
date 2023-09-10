@@ -68,7 +68,7 @@ func _input(event: InputEvent) -> void:
 			# (p1-c1).rotated(delta_angle) * delta_scale + c2
 			var delta_position: Vector2 = c_relative.rotated(rotation + delta_angle) * (zoom * delta_scale)
 
-			position += delta_position
+			position -= delta_position
 			rotation += delta_angle
 			zoom *= delta_scale
 
