@@ -6,10 +6,6 @@ var camera_transform: Transform2D = transform
 var initial_points: Dictionary = {}
 var current_points: Dictionary = {}
 
-var init_pos: Vector2 = Vector2.ZERO
-var init_rot: float = 0.0
-var init_zoom: Vector2 = Vector2.ONE
-
 const MOVEMENT_SPEED: float = 2000.0
 const ROTATION_SPEED: float = 2.0
 
@@ -36,13 +32,10 @@ func _input(event: InputEvent) -> void:
 			current_points[event.index] = event
 		else:
 			current_points.erase(event.index)
-		init_pos = offset
-		init_rot = rotation
-		init_zoom = zoom
 	elif event is InputEventScreenDrag:
 		current_points[event.index] = event
 		if current_points.size() == 1: # Pan only
-			offset -= event.relative.rotated(init_rot) / init_zoom
+			global_position -= event.relative.rotated(rotation) / zoom
 		if current_points.size() == 2: # Zoom, Rotate
 			var other: int
 			var my: int = event.index
@@ -50,22 +43,30 @@ func _input(event: InputEvent) -> void:
 				other = current_points.keys()[1]
 			else:
 				other = current_points.keys()[0]
+			# Initial constants
+			var a1: Vector2 = current_points[my]
+			var b1: Vector2 = current_points[other]
+			var a2: Vector2 = initial_points[my]
+			var b2: Vector2 = initial_points[other]
 
-			var vec1: Vector2 = current_points[my].position - current_points[other].position
-			var vec2: Vector2 = current_points[my].position + event.relative - current_points[other].position
+			var v1: Vector2 = b1 - a1
+			var v2: Vector2 = b2 - a2
 
-			var center1: Vector2 = current_points[other].position + vec1 / 2.0
-			var center2: Vector2 = current_points[other].position + vec2 / 2.0
+			var c1: Vector2 = a1 + (v1/2.0)
+			var c2: Vector2 = a2 + (v2/2.0)
 
-			var r: float = vec2.angle_to(vec1)
-			var s: Vector2 = Vector2.ONE * (vec2.length() / vec1.length())
+			var p1: Vector2 = global_position
 
-			rotation += r
-			zoom *= s
-			# (offset - center1).rotated(r) + center2 rotation working
-			# ((offset - center1).rotated(r) / s) + ((center1 - center2) / s) + center2 zoom working
-			print("Center1: ",center1, " :: Center2: ",center2)
-			offset = ((offset - center1).rotated(r) / s) + ((center1 - center2) / s) + center2
+			var delta_angle: float = v1.angle_to(v2)
+
+			var delta_scale: Vector2 = Vector2.ONE * (v2.length() / v1.length())
+
+			var new_global_position: Vector2 = (p1-c1).rotated(delta_angle) * delta_scale + c2
+
+			global_position = new_global_position
+			rotation += delta_angle
+			zoom *= delta_scale
+
 
 func board_selecting() -> bool:
 	return board != null and (board.board_player.is_selecting() or board.board_player.object_queued())
@@ -81,7 +82,7 @@ func desktop_events(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_zoom_out"):
 		zoom /= 1.1
 	
-	offset += (Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED * delta).rotated(rotation)
+	global_position += (Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED * delta).rotated(rotation)
 
 	if board == null or not board.board_player.is_selecting():
 		rotation += Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise") * ROTATION_SPEED * delta
