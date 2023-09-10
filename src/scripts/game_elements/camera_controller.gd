@@ -71,7 +71,7 @@ func _input(event: InputEvent) -> void:
 			zoom *= delta_scale
 
 func _draw() -> void:
-	for evt: InputEvent in current_points:
+	for evt: InputEvent in current_points.values():
 		draw_circle(evt.position, 10, Color.BLACK)
 
 func board_selecting() -> bool:
