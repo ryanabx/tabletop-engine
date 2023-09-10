@@ -44,10 +44,10 @@ func _input(event: InputEvent) -> void:
 			else:
 				other = current_points.keys()[0]
 			# Initial constants
-			var a1: Vector2 = current_points[my]
-			var b1: Vector2 = current_points[other]
-			var a2: Vector2 = initial_points[my]
-			var b2: Vector2 = initial_points[other]
+			var a1: Vector2 = current_points[my].position
+			var b1: Vector2 = current_points[other].position
+			var a2: Vector2 = initial_points[my].position
+			var b2: Vector2 = initial_points[other].position
 
 			var v1: Vector2 = b1 - a1
 			var v2: Vector2 = b2 - a2
