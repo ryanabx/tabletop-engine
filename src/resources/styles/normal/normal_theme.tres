@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=9 format=3 uid="uid://dw0yemfv3fuew"]
+[gd_resource type="Theme" load_steps=10 format=3 uid="uid://dw0yemfv3fuew"]
 
 [ext_resource type="StyleBox" uid="uid://coivf0s107s78" path="res://src/resources/styles/normal/default_disabled.tres" id="1_hh4yh"]
 [ext_resource type="StyleBox" uid="uid://bj2jgphoodcke" path="res://src/resources/styles/normal/default_focus.tres" id="1_jjxor"]
@@ -7,6 +7,8 @@
 [ext_resource type="StyleBox" uid="uid://di4up4la8wnpc" path="res://src/resources/styles/normal/default_pressed.tres" id="4_ugbxp"]
 [ext_resource type="StyleBox" uid="uid://b0d1wu223o5i8" path="res://src/resources/styles/normal/normal_panel.tres" id="5_bqieb"]
 [ext_resource type="StyleBox" uid="uid://b4u5wbjml4djw" path="res://src/resources/styles/normal/normal_popup_panel.tres" id="6_cjqma"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bhkja"]
 
 [sub_resource type="FontVariation" id="FontVariation_y6dps"]
 opentype_features = {
@@ -46,4 +48,9 @@ PopupMenu/constants/item_start_padding = 24
 PopupMenu/constants/v_separation = 24
 PopupMenu/styles/hover = ExtResource("2_03x4b")
 PopupMenu/styles/panel = ExtResource("6_cjqma")
+TabContainer/styles/panel = SubResource("StyleBoxEmpty_bhkja")
+TabContainer/styles/tab_disabled = ExtResource("1_hh4yh")
+TabContainer/styles/tab_hovered = ExtResource("2_03x4b")
+TabContainer/styles/tab_selected = ExtResource("4_ugbxp")
+TabContainer/styles/tab_unselected = ExtResource("3_mfxiq")
 VBoxContainer/constants/separation = 20

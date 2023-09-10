@@ -60,21 +60,18 @@ func _input(event: InputEvent) -> void:
 
 			var c_relative: Vector2 = c2 - c1
 
-			var p1: Vector2 = position
-
 			var delta_angle: float = v2.angle_to(v1)
 
 			var delta_scale: Vector2 = Vector2.ONE * (v2.length() / v1.length())
-			# (p1-c1).rotated(delta_angle) * delta_scale + c2
 			var delta_position: Vector2 = c_relative.rotated(rotation + delta_angle) # * (zoom * delta_scale)
 
 			position -= delta_position
 			rotation += delta_angle
 			zoom *= delta_scale
 
-func _draw() -> void:
-	for evt: InputEvent in current_points.values():
-		draw_circle(evt.position, 100, Color.BLACK)
+# func _draw() -> void:
+# 	for evt: InputEvent in current_points.values():
+# 		draw_circle(evt.position, 100, Color.BLACK)
 
 func board_selecting() -> bool:
 	return board != null and (board.board_player.is_selecting() or board.board_player.object_queued())
@@ -106,4 +103,4 @@ func _process(delta: float) -> void:
 	if Utils.is_desktop_platform():
 		desktop_events(delta)
 	zoom = zoom.clamp(Vector2(0.2, 0.2), Vector2(10.0, 10.0))
-	queue_redraw()
+	# queue_redraw()
