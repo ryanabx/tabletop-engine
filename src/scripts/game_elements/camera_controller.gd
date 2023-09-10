@@ -35,7 +35,7 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventScreenDrag:
 		current_points[event.index] = event
 		if current_points.size() == 1: # Pan only
-			position -= event.relative.rotated(rotation) / zoom
+			position -= event.relative.rotated(rotation) * zoom
 		if current_points.size() == 2: # Zoom, Rotate
 			var other: int
 			var my: int = event.index
@@ -58,15 +58,17 @@ func _input(event: InputEvent) -> void:
 			var c1: Vector2 = a1 + (v1/2.0)
 			var c2: Vector2 = a2 + (v2/2.0)
 
+			var c_relative: Vector2 = c2 - c1
+
 			var p1: Vector2 = position
 
 			var delta_angle: float = v2.angle_to(v1)
 
 			var delta_scale: Vector2 = Vector2.ONE * (v2.length() / v1.length())
+			# (p1-c1).rotated(delta_angle) * delta_scale + c2
+			var delta_position: Vector2 = c_relative.rotated(rotation + delta_angle) * (zoom * delta_scale)
 
-			var new_position: Vector2 = (p1-c1).rotated(delta_angle) * delta_scale + c2
-
-			position = new_position
+			position += delta_position
 			rotation += delta_angle
 			zoom *= delta_scale
 
