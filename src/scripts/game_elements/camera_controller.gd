@@ -41,13 +41,16 @@ func _input(event: InputEvent) -> void:
 			var my: int = event.index
 			if current_points.keys().find(event.index) == 0:
 				other = current_points.keys()[1]
-			else:
+			elif current_points.keys().find(event.index) == 0:
 				other = current_points.keys()[0]
+			else:
+				print("Can't find key with index ",event.index, ", keys: ",current_points.keys())
+				return
 			# Initial constants
 			var a1: Vector2 = current_points[my].position
 			var b1: Vector2 = current_points[other].position
-			var a2: Vector2 = initial_points[my].position
-			var b2: Vector2 = initial_points[other].position
+			var a2: Vector2 = current_points[my].position + current_points[my].relative
+			var b2: Vector2 = current_points[other].position
 
 			var v1: Vector2 = b1 - a1
 			var v2: Vector2 = b2 - a2
