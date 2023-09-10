@@ -64,7 +64,7 @@ func _input(event: InputEvent) -> void:
 
 			var delta_scale: Vector2 = Vector2.ONE * (v2.length() / v1.length())
 
-			var new_global_position: Vector2 = (p1-c1).rotated(delta_angle) * delta_scale + c2
+			var new_global_position: Vector2 = (-c1).rotated(delta_angle) * delta_scale + c2
 
 			global_position = new_global_position
 			rotation += delta_angle
