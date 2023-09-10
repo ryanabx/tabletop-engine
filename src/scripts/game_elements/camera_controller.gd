@@ -72,7 +72,7 @@ func _input(event: InputEvent) -> void:
 
 func _draw() -> void:
 	for evt: InputEvent in current_points.values():
-		draw_circle(evt.position, 10, Color.BLACK)
+		draw_circle(evt.position, 100, Color.BLACK)
 
 func board_selecting() -> bool:
 	return board != null and (board.board_player.is_selecting() or board.board_player.object_queued())
