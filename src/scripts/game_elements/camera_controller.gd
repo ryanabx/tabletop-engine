@@ -60,7 +60,7 @@ func _input(event: InputEvent) -> void:
 
 			var p1: Vector2 = global_position
 
-			var delta_angle: float = v1.angle_to(v2)
+			var delta_angle: float = v2.angle_to(v1)
 
 			var delta_scale: Vector2 = Vector2.ONE * (v2.length() / v1.length())
 
