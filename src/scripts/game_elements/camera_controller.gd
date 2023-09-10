@@ -35,7 +35,7 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventScreenDrag:
 		current_points[event.index] = event
 		if current_points.size() == 1: # Pan only
-			global_position -= event.relative.rotated(rotation) / zoom
+			position -= event.relative.rotated(rotation) / zoom
 		if current_points.size() == 2: # Zoom, Rotate
 			var other: int
 			var my: int = event.index
@@ -58,15 +58,15 @@ func _input(event: InputEvent) -> void:
 			var c1: Vector2 = a1 + (v1/2.0)
 			var c2: Vector2 = a2 + (v2/2.0)
 
-			var p1: Vector2 = global_position
+			var p1: Vector2 = position
 
 			var delta_angle: float = v2.angle_to(v1)
 
 			var delta_scale: Vector2 = Vector2.ONE * (v2.length() / v1.length())
 
-			var new_global_position: Vector2 = (-c1).rotated(delta_angle) * delta_scale + c2
+			var new_position: Vector2 = (p1-c1).rotated(delta_angle) * delta_scale + c2
 
-			global_position = new_global_position
+			position = new_position
 			rotation += delta_angle
 			zoom *= delta_scale
 
@@ -85,7 +85,7 @@ func desktop_events(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_zoom_out"):
 		zoom /= 1.1
 	
-	global_position += (Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED * delta).rotated(rotation)
+	position += (Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED * delta).rotated(rotation)
 
 	if board == null or not board.board_player.is_selecting():
 		rotation += Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise") * ROTATION_SPEED * delta
