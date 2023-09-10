@@ -41,7 +41,7 @@ func _input(event: InputEvent) -> void:
 			var my: int = event.index
 			if current_points.keys().find(event.index) == 0:
 				other = current_points.keys()[1]
-			elif current_points.keys().find(event.index) == 0:
+			elif current_points.keys().find(event.index) == 1:
 				other = current_points.keys()[0]
 			else:
 				print("Can't find key with index ",event.index, ", keys: ",current_points.keys())
