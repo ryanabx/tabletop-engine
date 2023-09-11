@@ -180,3 +180,33 @@ class FirebaseManager extends Node:
 		await req.request_completed
 		req.queue_free()
 		return JSON.parse_string(PackedByteArray(response[3]).get_string_from_utf8())
+
+
+class SignalingServerPeer extends Node:
+	var wsp := WebSocketPeer.new()
+	var url: String
+
+	func _init(_url: String) -> void:
+		url = str("ws://",_url)
+	
+	func _ready() -> void:
+		wsp.connect_to_url(url)
+
+	func _process(_delta: float) -> void:
+		wsp.poll()
+		var state := wsp.get_ready_state()
+		if state == WebSocketPeer.STATE_OPEN:
+			while wsp.get_available_packet_count():
+				var msg: String = wsp.get_packet().get_string_from_utf8()
+				_process_packet(msg)
+		elif state == WebSocketPeer.STATE_CLOSING:
+			# Keep polling to achieve proper close.
+			pass
+		elif state == WebSocketPeer.STATE_CLOSED:
+			var code := wsp.get_close_code()
+			var reason := wsp.get_close_reason()
+			print("WebSocket closed with code: %d, reason %s. Clean: %s" % [code, reason, code != -1])
+			set_process(false) # Stop processing.
+	
+	func _process_packet(msg: String) -> void:
+		pass
