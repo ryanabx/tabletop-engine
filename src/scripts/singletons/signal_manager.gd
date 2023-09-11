@@ -50,3 +50,5 @@ signal mplay_offer_percentage(pc: float)
 signal mplay_connection_result(result: bool)
 signal mplay_establishing_connection()
 signal mplay_go_to_wait()
+
+signal client_code_received(code: String)

@@ -1,180 +1,21 @@
 extends Node
 
-var current_connection: WebRTCMultiplayerPeer = null
-var wip_connection: WebRTCPeerConnection = null
-var wip_packet: Dictionary
 var unique_id: int
-var connection_type: String = "Neither"
-var wip_code: String = ""
 
-# var req := HTTPRequest.new()
+const FIREBASE_API_URL = "https://tt-framework-default-rtdb.firebaseio.com/server-list"
+
+var req := HTTPRequest.new()
 
 func _ready() -> void:
 	multiplayer.peer_connected.connect(peer_connected)
 	multiplayer.peer_disconnected.connect(peer_disconnected)
+	add_child(req)
 
 func close_connection() -> void:
-	if current_connection != null:
-		current_connection.close()
-		Utils.multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
+	if multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
+		multiplayer.multiplayer_peer.close()
+		multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 		print("Connection closed")
-
-func cancel_peer_connection() -> void:
-	wip_connection.close()
-	reset_wip()
-
-func initialize_server() -> void:
-	close_connection()
-	connection_type = "Server"
-	current_connection = WebRTCMultiplayerPeer.new()
-	current_connection.create_server()
-	Utils.multiplayer.multiplayer_peer = current_connection
-
-func add_client() -> void:
-	wip_code = Utils.random_string(6)
-	match GameProperties.multiplayer_method:
-		GameProperties.MultiplayerMethod.P2P:
-			add_client_p2p()
-		GameProperties.MultiplayerMethod.P2P_SHORTENED:
-			add_client_p2p_shortened()
-
-func add_client_p2p() -> void:
-	reset_wip()
-	print("[Server] Adding new client.")
-	# Unique id for client
-	wip_packet.id = unique_id
-	wip_connection.initialize(Globals.RTC_CONFIG)
-	Utils.multiplayer.multiplayer_peer.add_peer(wip_connection, wip_packet.id)
-	unique_id += 1
-	await server_offer()
-	await gather_ice_candidates_p2p()
-	# ICE Candidates
-	print("[Server] Gathered ", wip_packet.ice_candidates.size(), " ice candidates... Encoding packet...")
-	SignalManager.mplay_code_created.emit(encode_packet(wip_packet))
-	# Wait for client to respond
-	var code: String = await SignalManager.mplay_code_received
-	# Found peer code
-	var _packet: Dictionary = decode_packet(code)
-	wip_connection.set_remote_description(_packet.sdp[0], _packet.sdp[1])
-	for ice_candidate: Array in _packet.ice_candidates:
-		wip_connection.add_ice_candidate(ice_candidate[0], ice_candidate[1], ice_candidate[2])
-	print("[Server] Done")
-	await SignalManager.mplay_go_to_wait
-	var result: bool = await wait_for_connection()
-	if result == true:
-		SignalManager.mplay_connection_result.emit(result)
-	return
-
-func gather_ice_candidates_p2p() -> bool:
-	var timeout: float = 0.0
-	var timer_amt: float = 0.3
-	while wip_connection.get_gathering_state() != wip_connection.GATHERING_STATE_COMPLETE and timeout < Globals.ICE_TIMEOUT:
-		await Utils.get_tree().create_timer(timer_amt).timeout
-		print("Number of ICE candidates gathered: ", wip_packet.ice_candidates.size(), " current state: ",wip_connection.get_gathering_state(), ", timeout: ",timeout)
-		if wip_connection.get_gathering_state() == wip_connection.GATHERING_STATE_GATHERING:
-			timeout += timer_amt
-		SignalManager.mplay_offer_percentage.emit(timeout / Globals.ICE_TIMEOUT)
-	return true
-
-func server_offer() -> bool:
-	# Server creates offer
-	wip_connection.create_offer()
-	# Session Description Protocol
-	var sdp: Array = await wip_connection.session_description_created
-	print("[",connection_type,"] New SDP created: ", sdp)
-	wip_packet.sdp = sdp
-	wip_connection.set_local_description(sdp[0], sdp[1])
-	return true
-
-func add_server() -> void:
-	wip_code = Utils.random_string(6)
-	match GameProperties.multiplayer_method:
-		GameProperties.MultiplayerMethod.P2P:
-			add_server_p2p()
-		GameProperties.MultiplayerMethod.P2P_SHORTENED:
-			add_server_p2p_shortened()
-
-func add_server_p2p() -> void:
-	connection_type = "Client"
-	reset_wip()
-	print("[Client] Connecting to server")
-	print("[Client] Waiting for code from user...")
-	var code: String = await SignalManager.mplay_code_received
-	# Found server code
-	var _packet: Dictionary = decode_packet(code)
-	initialize_client(_packet.id)
-	wip_connection.set_remote_description(_packet.sdp[0], _packet.sdp[1])
-	var sdp: Array = await wip_connection.session_description_created
-	wip_packet.sdp = sdp
-	wip_connection.set_local_description(sdp[0], sdp[1])
-	for ice_candidate: Array in _packet.ice_candidates:
-		wip_connection.add_ice_candidate(ice_candidate[0], ice_candidate[1], ice_candidate[2])
-	await gather_ice_candidates_p2p()
-	await Utils.get_tree().create_timer(0.5).timeout
-	print("[Client] Gathered ", wip_packet.ice_candidates.size(), " ice candidates... Encoding packet...")
-	SignalManager.mplay_code_created.emit(encode_packet(wip_packet))
-	await SignalManager.mplay_go_to_wait
-	var result: bool = await wait_for_connection()
-	SignalManager.mplay_connection_result.emit(result)
-	return
-
-func code_wait_loop() -> void:
-	while wip_connection.get_connection_state() not in [wip_connection.STATE_CONNECTED, wip_connection.STATE_CLOSED]:
-		await Utils.get_tree().create_timer(0.5).timeout
-		print("Current connection state: ",wip_connection.get_connection_state())
-
-func wait_for_connection() -> bool:
-	SignalManager.mplay_establishing_connection.emit()
-	while wip_connection.get_connection_state() not in [wip_connection.STATE_CONNECTED, wip_connection.STATE_CLOSED]:
-		await Utils.get_tree().create_timer(0.5).timeout
-		print("Current connection state: ",wip_connection.get_connection_state())
-	return wip_connection.get_connection_state() == wip_connection.STATE_CONNECTED
-
-func initialize_client(id: int) -> void:
-	connection_type = "Client"
-	current_connection = WebRTCMultiplayerPeer.new()
-	current_connection.create_client(id)
-	wip_connection.initialize(Globals.RTC_CONFIG)
-	current_connection.add_peer(wip_connection, 1)
-	Utils.multiplayer.multiplayer_peer = current_connection
-
-func encode_packet(_packet: Dictionary) -> String:
-	var _string: String = Utils.FileManager.decode_string(Utils.FileManager.compress_dictionary(_packet))
-	return _string
-
-func decode_packet(_string: String) -> Dictionary:
-	return Utils.FileManager.decompress_to_dictionary(Utils.FileManager.encode_string(_string))
-
-func ice_candidate_created(media: String, index: int, _name: String) -> void:
-	match GameProperties.multiplayer_method:
-		GameProperties.MultiplayerMethod.P2P:
-			var ice_candidate: Array = [media, index, _name]
-			print("[",connection_type,"] New ice candidate for connection: ", ice_candidate)
-			wip_packet.ice_candidates.append(ice_candidate)
-		GameProperties.MultiplayerMethod.P2P_SHORTENED:
-			var req := Utils.req
-			var result := req.request(str(Globals.FIREBASE_API_URL,"/",wip_code,"/ICE_CANDIDATES"),
-			PackedStringArray(), HTTPClient.METHOD_POST, JSON.stringify(
-				{
-					"media": media,
-					"index": index,
-					"name": _name
-				}
-			))
-			if result != OK:
-				print("Problem with the request")
-
-func reset_wip() -> void:
-	# Reset packet
-	wip_packet = {
-		"sdp": "", "id": 0, "ice_candidates": []
-	}
-	wip_code = ""
-	# Reset connection variable
-	if wip_connection != null:
-		wip_connection.ice_candidate_created.disconnect(ice_candidate_created)
-	wip_connection = WebRTCPeerConnection.new()
-	wip_connection.ice_candidate_created.connect(ice_candidate_created)
 
 func peer_connected(id: int) -> void:
 	print("Hello, peer ",id)
@@ -182,79 +23,145 @@ func peer_connected(id: int) -> void:
 func peer_disconnected(id: int) -> void:
 	print("Goodbye, peer ",id)
 
-func add_server_p2p_shortened() -> void:
+func create_server() -> void:
+	unique_id = RandomNumberGenerator.new().randi_range(2, 2147483647)
+	add_peer_p2p_shortened(WebRTCPeerConnection.new(), true, "")
+
+func create_client(code: String) -> void:
 	unique_id = 1
-	add_peer_p2p_shortened(WebRTCPeerConnection.new(), true)
+	add_peer_p2p_shortened(WebRTCPeerConnection.new(), false, code)
 
-func add_client_p2p_shortened() -> void:
-	unique_id = RandomNumberGenerator.new().randi_range(2, 4000)
-	add_peer_p2p_shortened(WebRTCPeerConnection.new(), false)
-
-func add_peer_p2p_shortened(connection: WebRTCPeerConnection, is_server: bool) -> void:
+func add_peer_p2p_shortened(connection: WebRTCPeerConnection, is_server: bool = true, code: String = "") -> void:
+	print("Is server: ",is_server, ", code: ",code)
 	var fbase_manager := FirebaseManager.new()
+	add_child(fbase_manager)
 	SignalManager.mplay_code_created.emit(fbase_manager.code)
+	print("New code created: ",fbase_manager.code)
 	connection.session_description_created.connect(
 		func(_type: String, _sdp: String) -> void:
 			connection.set_local_description(_type, _sdp)
+			print("New local sdp: ", _type, ", ", _sdp)
 			fbase_manager.add_sdp(_type, _sdp, unique_id)
 			)
 	connection.ice_candidate_created.connect(
 		func(_media: String, _index: int, _name: String) -> void:
+			print("New ice candidate!: ", _media, ", ", _index, ", ", _name)
 			fbase_manager.add_ice_candidate(_media, _index, _name)
 			)
-	if is_server:
+	if is_server: # Server initial setup
+		print("SERVER: Creating offer, adding multiplayer peer")
+		if not multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
+			var new_peer := WebRTCMultiplayerPeer.new()
+			new_peer.create_server()
+			multiplayer.multiplayer_peer = new_peer
+		multiplayer.multiplayer_peer.add_peer(connection, unique_id)
 		connection.create_offer()
-	var peer_code: String = await SignalManager.mplay_code_received
+		code = await SignalManager.client_code_received
+	# Polling loop
 	while connection.get_connection_state() not in [connection.STATE_CONNECTED, connection.STATE_CLOSED]:
+		print("Polling...")
 		await get_tree().create_timer(2).timeout
-		var results := await fbase_manager.poll_database(peer_code)
+		var results := await fbase_manager.poll_database(code)
 		if not results.is_empty():
+			print("Found results! ",results)
+			if "ID" in results and not is_server: # Client initial setup
+				print("Received ID")
+				var new_peer := WebRTCMultiplayerPeer.new()
+				new_peer.create_client(results.ID)
+				multiplayer.multiplayer_peer = new_peer
+				multiplayer.multiplayer_peer.add_peer(connection, 1)
 			if "SDP" in results:
-				multiplayer.multiplayer_peer.add_peer(connection, results.SDP[2])
-				connection.set_remote_description(results.SDP[0], results.SDP[1])
+				print("Received remote description")
+				connection.set_remote_description(results.SDP.type, results.SDP.sdp)
 			if "ICE_CANDIDATES" in results:
-				for candidate: Array in results.ICE_CANDIDATES:
-					connection.add_ice_candidate(candidate[0], candidate[1], candidate[2])
+				print("Received ", results.ICE_CANDIDATES.values().size(), " ice candidates")
+				for candidate: Dictionary in results.ICE_CANDIDATES.values():
+					connection.add_ice_candidate(candidate.media, candidate.index, candidate.name)
 	if connection.get_connection_state() == connection.STATE_CONNECTED:
 		print("Connected successfully!")
 	else:
 		print("Connection failed...")
+	fbase_manager.queue_free()
 
-class FirebaseManager:
-	var req := HTTPRequest.new()
+func http_get_json(url: String) -> Dictionary:
+	var result := req.request(
+		url,
+		PackedStringArray(), HTTPClient.METHOD_GET
+	)
+	if result != OK:
+		print_connect_error("Getting Server List")
+		return {}
+	var data: Array = await req.request_completed
+	if PackedByteArray(data[3]).get_string_from_utf8() == "null":
+		return {}
+	
+	var obj: Dictionary = JSON.parse_string(PackedByteArray(data[3]).get_string_from_utf8())
+	print(obj)
+	return obj
+
+func get_server_list() -> Array:
+	var result: Dictionary = await http_get_json(str(FIREBASE_API_URL,".json"))
+	return result.keys()
+
+func print_connect_error(msg: String) -> void:
+	print("There was a problem contacting the firebase server: ",msg)
+
+class FirebaseManager extends Node:
 	var code := Utils.random_string(6)
-	const FIREBASE_API_URL = "https://tt-framework-default-rtdb.firebaseio.com/codes"
+	const FIREBASE_API_URL = "https://tt-framework-default-rtdb.firebaseio.com/server-list"
 
 	func add_sdp(_type: String, _sdp: String, _id: int) -> bool:
+		var req := HTTPRequest.new()
+		add_child(req)
 		print("Posting SDP to Firebase: %s, %s" % [_type, _sdp])
-		var sdp: Array = [_type, _sdp, _id]
+		var sdp: Dictionary = {
+			"type": _type,
+			"sdp": _sdp,
+			"ID": _id
+		}
 		var result := req.request(
-			str(FIREBASE_API_URL,"/",code),
+			str(FIREBASE_API_URL,"/",code,".json"),
 			PackedStringArray(),
 			HTTPClient.METHOD_PUT, JSON.stringify({"SDP": sdp})
 		)
 		if result != OK:
 			print("There was a problem contacting the firebase server to PUT SDP.")
+			req.queue_free()
 			return false
+		await req.request_completed
+		print("Success PUT ICE SDP!")
+		req.queue_free()
 		return true
 
 	func add_ice_candidate(_media: String, _index: int, _name: String) -> bool:
+		var req := HTTPRequest.new()
+		add_child(req)
 		print("Posting ICE Candidate to Firebase: %s, %d, %s" % [_media, _index, _name])
-		var ice_request: Array = [_media, _index, _name]
+		var ice_request: Dictionary = {
+			"media": _media,
+			"index": _index,
+			"name": _name,
+		}
 		var result := req.request(
-			str(FIREBASE_API_URL,"/",code,"/ICE_REQUESTS"),
+			str(FIREBASE_API_URL,"/",code,"/ICE_REQUESTS.json"),
 			PackedStringArray(),
 			HTTPClient.METHOD_POST, JSON.stringify(ice_request)
 		)
 		if result != OK:
-			print("There was a problem contacting the firebase server to POST ice_candidate.")
+			print("There was a problem contacting the firebase server to PUT ICE CANDIDATE.")
+			req.queue_free()
 			return false
+		await req.request_completed
+		print("Success PUT ICE CANDIDATE!")
+		req.queue_free()
 		return true
 	
 	func poll_database(_code: String) -> Dictionary:
+		var req := HTTPRequest.new()
+		add_child(req)
 		print("Polling from Firebase code %s" % [_code])
 		var result := req.request(
-			str(FIREBASE_API_URL, "/",_code), PackedStringArray(),
+			str(FIREBASE_API_URL, "/",_code,".json"), PackedStringArray(),
 			HTTPClient.METHOD_GET, ""
 		)
 		if result != OK:
@@ -262,13 +169,14 @@ class FirebaseManager:
 			return {}
 		var response: Array = await req.request_completed
 		print("Received response: ",response)
-		if response[3] == "":
+		if PackedByteArray(response[3]).get_string_from_utf8() == "null":
 			return {}
 		result = req.request(
-			str(FIREBASE_API_URL,"/",_code), PackedStringArray(),
+			str(FIREBASE_API_URL,"/",_code,".json"), PackedStringArray(),
 			HTTPClient.METHOD_DELETE, ""
 		)
 		if result != OK:
 			print("There was a problem deleting peer data from firebase server.")
 		await req.request_completed
-		return JSON.parse_string(response[3])
+		req.queue_free()
+		return JSON.parse_string(PackedByteArray(response[3]).get_string_from_utf8())

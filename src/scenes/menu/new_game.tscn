@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://c6y4ttibwy3ay"]
+[gd_scene load_steps=15 format=3 uid="uid://c6y4ttibwy3ay"]
 
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="1_g3g4g"]
 [ext_resource type="PackedScene" uid="uid://xkoglw4lu6ab" path="res://src/scenes/ui/background.tscn" id="1_lbcxe"]
@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://bsnynahp005eg" path="res://src/resources/assets/ui/refresh.svg" id="4_ymada"]
 [ext_resource type="Texture2D" uid="uid://4beyn2jx8qy6" path="res://src/resources/assets/ui/trash.svg" id="7_wh1a7"]
 [ext_resource type="Theme" uid="uid://bnnf8du3wbin8" path="res://src/resources/styles/normal/normal_scaled_down.tres" id="9_h5t8p"]
+[ext_resource type="Texture2D" uid="uid://cu648p40sig4d" path="res://src/resources/assets/ui/times.svg" id="13_ljwlr"]
 [ext_resource type="PackedScene" uid="uid://fq6oqa0p4pa3" path="res://src/scenes/ui/download_config_panel.tscn" id="13_x3agj"]
 
 [node name="NewGame" type="Control"]
@@ -45,6 +46,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="Config" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Options"]
+visible = false
 layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Config"]
@@ -97,13 +99,12 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="Multiplayer" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Options"]
-visible = false
 layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer"]
 layout_mode = 2
 
-[node name="OpenGames" type="ItemList" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer"]
+[node name="ServerList" type="ItemList" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
@@ -111,20 +112,41 @@ size_flags_vertical = 3
 [node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/HBoxContainer"]
+[node name="ConnectClientButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Connect Client"
+text = "Client"
 
-[node name="Button2" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/HBoxContainer"]
+[node name="CreateServerButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Create Server"
+text = "Server"
 
-[node name="Button3" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/HBoxContainer"]
+[node name="ClientCodeEntry" type="LineEdit" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
+placeholder_text = "Client Code"
+alignment = 1
+max_length = 6
+
+[node name="RefreshServerListings" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
 icon = ExtResource("4_ymada")
+icon_alignment = 1
+expand_icon = true
+
+[node name="ServerCancelButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+icon = ExtResource("13_ljwlr")
 icon_alignment = 1
 expand_icon = true
 
@@ -169,5 +191,10 @@ visible = false
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Config/VBoxContainer/HBoxContainer2/LoadConfURL" to="." method="_on_load_conf_url_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Config/VBoxContainer/HBoxContainer2/RefreshConfList" to="." method="_on_refresh_conf_list_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Config/VBoxContainer/HBoxContainer2/DeleteSelected" to="." method="_on_delete_selected_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/HBoxContainer/ConnectClientButton" to="." method="_on_connect_client_button_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/HBoxContainer/CreateServerButton" to="." method="_on_create_server_button_pressed"]
+[connection signal="text_submitted" from="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/HBoxContainer/ClientCodeEntry" to="." method="_on_client_code_entry_text_submitted"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/HBoxContainer/RefreshServerListings" to="." method="_on_refresh_server_listings_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/HBoxContainer/ServerCancelButton" to="." method="_on_server_cancel_button_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/ReadyButton" to="." method="_on_ready_pressed"]
