@@ -185,9 +185,11 @@ class FirebaseManager extends Node:
 class SignalingServerPeer extends Node:
 	var wsp := WebSocketPeer.new()
 	var url: String
+	var channel: String
 
-	func _init(_url: String) -> void:
+	func _init(_url: String, _channel: String) -> void:
 		url = str("ws://",_url)
+		channel = _channel
 	
 	func _ready() -> void:
 		wsp.connect_to_url(url)
@@ -207,6 +209,14 @@ class SignalingServerPeer extends Node:
 			var reason := wsp.get_close_reason()
 			print("WebSocket closed with code: %d, reason %s. Clean: %s" % [code, reason, code != -1])
 			set_process(false) # Stop processing.
+			queue_free()
 	
 	func _process_packet(msg: String) -> void:
+		var _dict: Dictionary = JSON.parse_string(msg)
+		if _dict == null:
+			print("Could not parse msg: ",msg)
+			return
+		_process_packet_json(_dict)
+	
+	func _process_packet_json(_dict: Dictionary) -> void:
 		pass
