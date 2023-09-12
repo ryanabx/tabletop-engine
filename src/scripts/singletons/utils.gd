@@ -224,5 +224,5 @@ func _process(_delta: float) -> void:
 	if Utils.current_safe_area != DisplayServer.get_display_safe_area():
 		Utils.on_screen_orientation_changed()
 	
-	if multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
-		multiplayer.poll()
+	# if multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
+	# 	multiplayer.poll()
