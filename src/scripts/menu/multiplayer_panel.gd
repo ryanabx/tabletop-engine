@@ -6,6 +6,8 @@ extends MarginContainer
 @onready var mesh := $VBoxContainer/Connect/Mesh
 @onready var console := $VBoxContainer/Console
 
+@onready var seal := $VBoxContainer/Options/Seal
+
 func _ready() -> void:
 	add_child(client)
 	client.lobby_joined.connect(self._lobby_joined)
@@ -19,9 +21,13 @@ func _ready() -> void:
 	multiplayer.peer_connected.connect(self._mp_peer_connected)
 	multiplayer.peer_disconnected.connect(self._mp_peer_disconnected)
 
+func _process(_delta: float) -> void:
+	seal.disabled = multiplayer.multiplayer_peer == null or multiplayer.multiplayer_peer is OfflineMultiplayerPeer or not multiplayer.is_server()
+
+
 
 @rpc("any_peer", "call_local")
-func ping(argument: String) -> void:
+func ping(argument: float) -> void:
 	_log("[Multiplayer] Ping from peer %d: arg: %s" % [multiplayer.get_remote_sender_id(), argument])
 
 
@@ -41,7 +47,7 @@ func _mp_peer_disconnected(id: int) -> void:
 	_log("[Multiplayer] Peer %d disconnected" % id)
 
 
-func _connected(id: int) -> void:
+func _connected(id: int, _mesh: bool) -> void:
 	_log("[Signaling] Server connected with ID: %d" % id)
 
 

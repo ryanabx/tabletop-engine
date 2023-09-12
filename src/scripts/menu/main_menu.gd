@@ -11,7 +11,6 @@ func _ready() -> void:
 	for i: Node in get_tree().get_nodes_in_group("hi"):
 		pass
 	Globals.load_this_game = PackedByteArray([])
-	MultiplayerManager.close_connection()
 
 func _on_new_game_pressed() -> void:
 	SignalManager.scene_transition.emit("res://src/scenes/menu/new_game.tscn")

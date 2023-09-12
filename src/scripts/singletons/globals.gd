@@ -6,17 +6,7 @@ const DEFAULT_MAX_PLAYERS: int = 4
 
 const GRAB_THRESHOLD: float = 40.0
 
-var CODE_CHARS: String = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
-
-const ICE_TIMEOUT: float = 5
-
-const PASTEBIN_API_KEY: String = "hU0AYwp4BVxVzAmTzdl9KgRJ-Lr8J4OA"
-
-const PASTEBIN_API_POST_URL: String = "https://pastebin.com/api/api_post.php"
-const PASTEBIN_API_GET_URL: String = "https://pastebin.com/raw"
-
-
-const RTC_CONFIG: Dictionary = {
+const ICE_SERVERS: Dictionary = {
 	"iceServers": [
 		{
 			"urls": [
