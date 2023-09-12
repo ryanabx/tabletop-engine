@@ -108,7 +108,7 @@ layout_mode = 2
 [node name="Host" type="LineEdit" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/Connect"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "ws://localhost:9080"
+text = "wss://obf-server-signaling.onrender.com"
 placeholder_text = "Host"
 alignment = 1
 
