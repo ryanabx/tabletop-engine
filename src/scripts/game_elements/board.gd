@@ -145,13 +145,17 @@ func _new_game_object_rpc(type: GameObjectType, properties: Dictionary) -> void:
 	c.board = self
 	for prop: String in properties:
 		c.set(prop, properties[prop])
+	c.name = "%d_%s_%d" % [multiplayer.get_unique_id(),GAME_OBJECT_TYPE_STRING[type],counter]
+	counter += 1
 	board_objects.add_child(c)
+	c.set_multiplayer_authority(multiplayer.get_remote_sender_id())
 	return
 
 @rpc("any_peer", "call_remote", "reliable")
 func _new_serialized_game_object_rpc(obj: Dictionary) -> void:
 	var game_object: GameObject = dict_to_inst(obj)
 	board_objects.add_child(game_object)
+	game_object.set_multiplayer_authority(multiplayer.get_remote_sender_id())
 
 ####################
 ### Config stuff ###
