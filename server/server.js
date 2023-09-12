@@ -26,6 +26,8 @@ const STR_INVALID_CMD = 'Invalid command';
 const STR_TOO_MANY_PEERS = 'Too many peers connected';
 const STR_INVALID_TRANSFER_MODE = 'Invalid transfer mode, must be text';
 
+const CODE_SIZE = 6
+
 const CMD = {
 	JOIN: 0, // eslint-disable-line sort-keys
 	ID: 1, // eslint-disable-line sort-keys
@@ -47,7 +49,7 @@ function randomId() {
 
 function randomSecret() {
 	let out = '';
-	for (let i = 0; i < 16; i++) {
+	for (let i = 0; i < CODE_SIZE; i++) {
 		out += ALFNUM[randomInt(0, ALFNUM.length - 1)];
 	}
 	return out;

@@ -5,12 +5,10 @@ var image_up: String = ""
 var image_down: String = ""
 var types: Array = []
 
-var _face_up: bool = false
 var face_up: bool:
-	get:
-		return _face_up
 	set(val):
-		_face_up = val
+		face_up = val
+		add_to_property_changes("face_up", val)
 		_refresh_image()
 
 var grab_offset: Vector2 = Vector2.ZERO
@@ -56,3 +54,10 @@ func _on_deselect(_event: InputEvent) -> void:
 
 func _on_multiplayer_synchronizer_synchronized() -> void:
 	_refresh_image()
+
+
+func serialize() -> Dictionary:
+	var _dict: Dictionary = {}
+	for prop in ["shape", "size", "image_up", "image_down", "types"]:
+		_dict[prop] = get(prop)
+	return _dict

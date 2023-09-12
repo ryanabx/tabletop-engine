@@ -8,6 +8,16 @@ var size: Vector2 = Vector2.ONE
 
 var def_font: Font = null
 
+enum GameObjectType {
+	PIECE,
+	COLLECTION,
+	MAX
+}
+
+const GAME_OBJECT_TYPE_STRING = [
+	"piece", "collection", "max"
+]
+
 # Children
 @onready var board_player: BoardPlayer = $BoardPlayer
 @onready var board_objects: Node2D = $BoardObjects
@@ -102,13 +112,46 @@ var ready_players: Array = []
 #####################
 
 ## Creates new game object on the board
-func new_game_object(type: GDScript, properties: Dictionary) -> GameObject:
-	var c: GameObject = type.new()
+func new_game_object(type: GameObjectType, properties: Dictionary) -> GameObject:
+	var c: GameObject
+	match type:
+		GameObjectType.PIECE:
+			c = Piece.new()
+		GameObjectType.COLLECTION:
+			c = Collection.new()
+		GameObjectType.MAX:
+			print("Can't instantiate type MAX")
+			return
+	c.board = self
 	for prop: String in properties:
 		c.set(prop, properties[prop])
-	c.board = self
 	board_objects.add_child(c)
+	# RPC
+	_new_game_object_rpc.rpc(type, properties)
 	return c
+
+@rpc("any_peer", "call_remote", "reliable")
+func _new_game_object_rpc(type: GameObjectType, properties: Dictionary) -> void:
+	var c: GameObject
+	match type:
+		GameObjectType.PIECE:
+			c = Piece.new()
+		GameObjectType.COLLECTION:
+			c = Collection.new()
+		GameObjectType.MAX:
+			print("Can't instantiate type MAX")
+			return
+	
+	c.board = self
+	for prop: String in properties:
+		c.set(prop, properties[prop])
+	board_objects.add_child(c)
+	return
+
+@rpc("any_peer", "call_remote", "reliable")
+func _new_serialized_game_object_rpc(obj: Dictionary) -> void:
+	var game_object: GameObject = dict_to_inst(obj)
+	board_objects.add_child(game_object)
 
 ####################
 ### Config stuff ###
@@ -149,3 +192,7 @@ func game_load_finished() -> void:
 @rpc("authority", "call_local", "reliable")			
 func game_load_started() -> void:
 	SignalManager.game_load_started.emit()
+
+
+func _on_sync_timer_timeout() -> void:
+	SignalManager.property_sync.emit()

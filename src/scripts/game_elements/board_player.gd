@@ -140,7 +140,6 @@ func drag_input(event: InputEvent) -> void:
 
 func move_objects_to(pos: Vector2) -> void:
 	if is_selecting():
-		get_selected_object().auth = multiplayer.get_unique_id()
 		get_selected_object().position = (pos - get_selected_object().grab_offset).clamp(board.border.position, board.border.end)
 
 func compare_by_z_index(a: Dictionary, b: Dictionary) -> bool:
@@ -181,6 +180,7 @@ func _swap(pc1: Piece, contents: Dictionary) -> void:
 
 func select_object(obj: Selectable) -> void:
 	deselect()
+	obj.authority = multiplayer.get_unique_id()
 	obj.move_self_to_top()
 	selected_object = obj
 	obj.selected = true
@@ -193,7 +193,7 @@ func queue_select_object(obj: Selectable) -> void:
 	hold_timer.start()
 
 func stack_selection_to_item(item: Selectable) -> void:
-	item.auth = multiplayer.get_unique_id()
+	item.authority = multiplayer.get_unique_id()
 	if item is Collection:
 		stack_on_collection(item)
 	elif item is Piece:
@@ -205,7 +205,6 @@ func stack_on_collection(item: Collection) -> void:
 		item.add_piece(get_selected_object())
 	elif is_selecting_collection():
 		item.inside.append_array(get_selected_object().inside)
-		item.call_inside_changed()
 		get_selected_object().clear_inside()
 
 func stack_on_piece(item: Piece) -> void:
@@ -214,21 +213,20 @@ func stack_on_piece(item: Piece) -> void:
 		get_selected_object().add_piece(item, true)
 	elif is_selecting_piece():
 		var collection: Collection = board.new_game_object(
-			Collection,
+			Board.GameObjectType.COLLECTION,
 			{
 				"name": board.unique_name("newcoll"),
 				"position": item.position,
 				"rotation": item.rotation
 			}
 		)
-		collection.auth = multiplayer.get_unique_id()
 		collection.add_piece(get_selected_object())
 		collection.add_piece(item)
 
 func _select_collection(collection: Collection) -> void:
 	if collection.permanent:
 		var new_collection: Collection = collection.board.new_game_object(
-			Collection,
+			Board.GameObjectType.COLLECTION,
 			{
 				"name": collection.board.unique_name("newcoll"),
 				"position": collection.position,
@@ -236,7 +234,6 @@ func _select_collection(collection: Collection) -> void:
 			}
 		)
 		new_collection.inside = collection.inside
-		new_collection.call_inside_changed()
 		collection.clear_inside()
 		collection = new_collection
 	grab_position = collection.position

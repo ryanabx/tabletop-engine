@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://c6y4ttibwy3ay"]
+[gd_scene load_steps=15 format=3 uid="uid://c6y4ttibwy3ay"]
 
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="1_g3g4g"]
 [ext_resource type="PackedScene" uid="uid://xkoglw4lu6ab" path="res://src/scenes/ui/background.tscn" id="1_lbcxe"]
@@ -13,61 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://4beyn2jx8qy6" path="res://src/resources/assets/ui/trash.svg" id="7_wh1a7"]
 [ext_resource type="Script" path="res://src/scripts/menu/multiplayer_panel.gd" id="8_txr3i"]
 [ext_resource type="Theme" uid="uid://bnnf8du3wbin8" path="res://src/resources/styles/normal/normal_scaled_down.tres" id="9_h5t8p"]
-[ext_resource type="StyleBox" uid="uid://coivf0s107s78" path="res://src/resources/styles/normal/default_disabled.tres" id="9_i1ijx"]
-[ext_resource type="StyleBox" uid="uid://bj2jgphoodcke" path="res://src/resources/styles/normal/default_focus.tres" id="10_n4tqa"]
-[ext_resource type="StyleBox" uid="uid://droy86s0j0bmv" path="res://src/resources/styles/normal/default_hover.tres" id="11_6c6js"]
-[ext_resource type="StyleBox" uid="uid://dwt8eepamxiqe" path="res://src/resources/styles/normal/default_normal.tres" id="12_dw45y"]
-[ext_resource type="StyleBox" uid="uid://di4up4la8wnpc" path="res://src/resources/styles/normal/default_pressed.tres" id="13_1vh5q"]
 [ext_resource type="PackedScene" uid="uid://fq6oqa0p4pa3" path="res://src/scenes/ui/download_config_panel.tscn" id="13_x3agj"]
-[ext_resource type="StyleBox" uid="uid://b0d1wu223o5i8" path="res://src/resources/styles/normal/normal_panel.tres" id="14_r4q3d"]
-[ext_resource type="StyleBox" uid="uid://b4u5wbjml4djw" path="res://src/resources/styles/normal/normal_popup_panel.tres" id="15_ps04d"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bhkja"]
-
-[sub_resource type="FontVariation" id="FontVariation_y6dps"]
-opentype_features = {
-1667329140: 0
-}
-
-[sub_resource type="Theme" id="Theme_x1mht"]
-default_base_scale = 1.0
-default_font = SubResource("FontVariation_y6dps")
-default_font_size = 64
-Button/styles/disabled = ExtResource("9_i1ijx")
-Button/styles/focus = ExtResource("10_n4tqa")
-Button/styles/hover = ExtResource("11_6c6js")
-Button/styles/normal = ExtResource("12_dw45y")
-Button/styles/pressed = ExtResource("13_1vh5q")
-HBoxContainer/constants/separation = 20
-ItemList/constants/outline_size = 1
-ItemList/font_sizes/font_size = 84
-MarginContainer/constants/margin_bottom = 30
-MarginContainer/constants/margin_left = 30
-MarginContainer/constants/margin_right = 30
-MarginContainer/constants/margin_top = 30
-MenuBar/styles/disabled = ExtResource("9_i1ijx")
-MenuBar/styles/focus = ExtResource("10_n4tqa")
-MenuBar/styles/hover = ExtResource("11_6c6js")
-MenuBar/styles/normal = ExtResource("12_dw45y")
-MenuBar/styles/pressed = ExtResource("13_1vh5q")
-MenuButton/styles/disabled = ExtResource("9_i1ijx")
-MenuButton/styles/focus = ExtResource("10_n4tqa")
-MenuButton/styles/hover = ExtResource("11_6c6js")
-MenuButton/styles/normal = ExtResource("12_dw45y")
-MenuButton/styles/pressed = ExtResource("13_1vh5q")
-Panel/styles/panel = ExtResource("14_r4q3d")
-PanelContainer/styles/panel = ExtResource("14_r4q3d")
-PopupMenu/constants/item_end_padding = 24
-PopupMenu/constants/item_start_padding = 24
-PopupMenu/constants/v_separation = 24
-PopupMenu/styles/hover = ExtResource("11_6c6js")
-PopupMenu/styles/panel = ExtResource("15_ps04d")
-TabContainer/styles/panel = SubResource("StyleBoxEmpty_bhkja")
-TabContainer/styles/tab_disabled = ExtResource("9_i1ijx")
-TabContainer/styles/tab_hovered = ExtResource("11_6c6js")
-TabContainer/styles/tab_selected = ExtResource("13_1vh5q")
-TabContainer/styles/tab_unselected = ExtResource("12_dw45y")
-VBoxContainer/constants/separation = 20
 
 [node name="NewGame" type="Control"]
 layout_mode = 3
@@ -93,6 +39,8 @@ layout_mode = 2
 [node name="Options" type="TabContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_font_sizes/font_size = 48
+tab_alignment = 1
 
 [node name="Config" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Options"]
 layout_mode = 2
@@ -153,7 +101,6 @@ script = ExtResource("8_txr3i")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer"]
 layout_mode = 2
-theme = SubResource("Theme_x1mht")
 
 [node name="Connect" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer"]
 layout_mode = 2

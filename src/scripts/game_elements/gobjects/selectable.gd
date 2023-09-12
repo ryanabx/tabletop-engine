@@ -17,10 +17,11 @@ func _ready() -> void:
 	collision_polygon = CollisionPolygon2D.new()
 	collision_polygon.polygon = get_gobject_transform() * self.shape
 	area2d.add_child(collision_polygon)
+	super._ready()
 
 var selected: bool = false:
 	set(val):
-		auth = multiplayer.get_unique_id()
+		authority = multiplayer.get_unique_id()
 		if val == true:
 			selected = true
 			area2d.collision_layer = 2

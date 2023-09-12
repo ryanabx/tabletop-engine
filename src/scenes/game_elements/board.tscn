@@ -15,3 +15,9 @@ script = ExtResource("2_ax2hd")
 
 [node name="BoardPlayer" type="Node2D" parent="."]
 script = ExtResource("3_33r4j")
+
+[node name="SyncTimer" type="Timer" parent="."]
+wait_time = 0.05
+autostart = true
+
+[connection signal="timeout" from="SyncTimer" to="." method="_on_sync_timer_timeout"]

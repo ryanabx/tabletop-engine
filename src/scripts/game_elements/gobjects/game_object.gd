@@ -6,26 +6,47 @@ var size: Vector2 = Vector2.ONE
 
 var board: Board
 
-var auth: int:
+var property_changes: Dictionary = {}
+
+var authority: int:
     get:
         return get_multiplayer_authority()
     set(val):
-        if auth != val:
-            print("MY_ID: ",multiplayer.get_unique_id()," SET_AUTH: ",val," ON ",get_name())
-            set_multiplayer_authority(val)
-            if val == multiplayer.get_unique_id():
-                set_authority.rpc(val)
+        # print("Setting multiplayer authority to ",val)
+        if is_inside_tree() and multiplayer.get_unique_id() == val and authority != val:
+            set_authority.rpc(multiplayer.get_unique_id())
+        set_multiplayer_authority(val)
+
+func _set(property: StringName, value: Variant) -> bool:
+    add_to_property_changes(property, value)
+    return false
+
+func add_to_property_changes(property: StringName, value: Variant) -> void:
+    if is_inside_tree() and is_multiplayer_authority():
+        property_changes[property] = value
+        if property == "inside":
+            print("Setting inside to prop changes!")
+
+@rpc("authority", "call_remote", "reliable")
+func _property_changes_sync_rpc(props: Dictionary) -> void:
+    for prop: String in props.keys():
+        if prop == "inside":
+            # print("Setting inside here!")
+            var new_inside: Array[Dictionary] = []
+            new_inside.assign(props[prop])
+            props[prop] = new_inside
+        set(prop, props[prop])
+
+@rpc("any_peer", "call_remote", "reliable")
+func set_authority(id: int) -> void:
+    authority = id
 
 var index: int:
     get:
         return get_index()
     set(val):
         get_parent().move_child(self, val)
-        print("Moving self to ",val)
-
-@rpc("any_peer","call_remote","reliable")
-func set_authority(id: int) -> void:
-    auth = id
+        add_to_property_changes("index", val)
 
 ## Moves this object to the top of the draw order
 func move_self_to_top() -> void:
@@ -49,3 +70,13 @@ func get_rect() -> Rect2:
 
 func get_gobject_transform() -> Transform2D:
     return Transform2D().scaled(size)
+
+func _ready() -> void:
+    SignalManager.property_sync.connect(_sync_properties)
+
+func _sync_properties() -> void:
+    if is_multiplayer_authority() and not property_changes.is_empty():
+        if "inside" in property_changes:
+            print("Property changes has inside!")
+        _property_changes_sync_rpc.rpc(property_changes)
+    property_changes = {}
