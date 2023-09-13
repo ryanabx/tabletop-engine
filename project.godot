@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Open Tabletop Framework"
+config/name="Tabletop Framework"
 config/description="A 2-dimensional virtual tabletop for all! Create board game configurations which can be loaded in and played with friends online or in person!"
 config/version="0.0.1"
 run/main_scene="res://src/scenes/menu/main_menu.tscn"
