@@ -126,6 +126,7 @@ alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 editable = false
+virtual_keyboard_enabled = false
 
 [node name="Options" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer"]
 layout_mode = 2
