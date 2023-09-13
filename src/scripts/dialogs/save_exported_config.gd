@@ -14,6 +14,9 @@ func export_config_created(_bytes: PackedByteArray) -> void:
 	
 
 func fpath_selected(path: String) -> void:
+	if path.rfind(Globals.CONFIG_EXTENSION) != len(path) - len(Globals.CONFIG_EXTENSION):
+		print("Adding file extension")
+		path = path + Globals.CONFIG_EXTENSION
 	print("File selected! ",path)
 	var f: FileAccess = FileAccess.open(path, FileAccess.WRITE)
 	f.store_buffer(bytes)
