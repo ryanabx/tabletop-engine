@@ -26,6 +26,9 @@ func _ready() -> void:
 func erase_self() -> void:
 	queue_free()
 
+func get_shareable_properties() -> Array:
+	return super.get_shareable_properties() + ["image_up", "image_down", "types", "face_up"]
+
 # Private methods
 
 func _refresh_image() -> void:

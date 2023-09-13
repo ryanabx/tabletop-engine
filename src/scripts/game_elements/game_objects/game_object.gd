@@ -22,10 +22,13 @@ func _set(property: StringName, value: Variant) -> bool:
     return false
 
 func add_to_property_changes(property: StringName, value: Variant) -> void:
-    if is_inside_tree() and is_multiplayer_authority():
+    if is_inside_tree() and property in get_shareable_properties() and is_multiplayer_authority():
         property_changes[property] = value
-        if property == "inside":
-            print("Setting inside to prop changes!")
+
+func get_shareable_properties() -> Array:
+    return [
+        "shape", "size", "position", "rotation"
+    ]
 
 @rpc("authority", "call_remote", "reliable")
 func _property_changes_sync_rpc(props: Dictionary) -> void:

@@ -22,6 +22,9 @@ func deserialize_piece(_dict: Dictionary) -> Piece:
 		_dict
 	)
 
+func get_shareable_properties() -> Array:
+	return super.get_shareable_properties() + ["inside", "permanent", "face_up"]
+
 func _ready() -> void:
 	# Sprite stuff
 	sprite = Sprite2D.new()
