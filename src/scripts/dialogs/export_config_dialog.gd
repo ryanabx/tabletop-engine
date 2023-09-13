@@ -8,9 +8,9 @@ func _ready() -> void:
 
 
 func filepath_selected(fpath: String) -> void:
-	var bytes: PackedByteArray = TabletopGame.export_obgf_from_file(fpath)
+	var bytes: PackedByteArray = TabletopGame.export_from_file(fpath)
 	if bytes.is_empty():
-		print("Problem creating obgf config")
+		print("Problem creating %s config" % Globals.CONFIG_EXTENSION)
 		return
 	SignalManager.export_config_created.emit(bytes)
 	

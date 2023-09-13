@@ -213,7 +213,7 @@ func stack_on_piece(item: Piece) -> void:
 		get_selected_object().add_piece(item, true)
 	elif is_selecting_piece():
 		var collection: Collection = board.new_game_object(
-			Board.GameObjectType.COLLECTION,
+			Board.GameObjectType.DECK,
 			{
 				"name": board.unique_name("newcoll"),
 				"position": item.position,
@@ -226,7 +226,7 @@ func stack_on_piece(item: Piece) -> void:
 func _select_collection(collection: Collection) -> void:
 	if collection.permanent:
 		var new_collection: Collection = collection.board.new_game_object(
-			Board.GameObjectType.COLLECTION,
+			Board.GameObjectType.DECK,
 			{
 				"name": collection.board.unique_name("newcoll"),
 				"position": collection.position,

@@ -127,11 +127,9 @@ var tabletop_manager: BoardManager = null
 # FILE PATHS
 
 const CONFIG_REPO: String = "user://configs"
-const CONFIG_EXTENSION: String = ".obgf"
+const CONFIG_EXTENSION: String = ".tbt"
 
-const DEFAULT_CONFIG_PATH: String = "res://configs/default.obgf"
-
-const DOWNLOAD_FILE_PATH: String = "user://downloaded_file.obgf"
+const DEFAULT_CONFIG_PATH: String = "res://configs/default%s" % CONFIG_EXTENSION
 
 const SETTINGS_PATH: String = "user://settings.json"
 

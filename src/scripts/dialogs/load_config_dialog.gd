@@ -34,7 +34,7 @@ func f_decided_web(args: Array) -> void:
 	file_decided(buf)
 
 func file_decided(buf: PackedByteArray) -> void:
-	var config: TabletopGame = TabletopGame.import_obgf(buf)
+	var config: TabletopGame = TabletopGame.import_config(buf)
 	
 	Utils.FileManager.create_dir(Globals.CONFIG_REPO)
 

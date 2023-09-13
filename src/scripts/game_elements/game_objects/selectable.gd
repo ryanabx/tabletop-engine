@@ -7,6 +7,8 @@ extends GameObject
 # Shareable properties
 var lock_state: bool = false
 
+var grab_offset: Vector2 = Vector2.ZERO
+
 func _ready() -> void:
 	# Collision stuff
 	area2d = Area2D.new()

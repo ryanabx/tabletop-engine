@@ -11,8 +11,6 @@ var face_up: bool:
 		add_to_property_changes("face_up", val)
 		_refresh_image()
 
-
-var grab_offset: Vector2 = Vector2.ZERO
 @onready var sprite: Sprite2D
 
 func _ready() -> void:

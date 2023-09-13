@@ -6,6 +6,6 @@
 initial_position = 2
 size = Vector2i(1385, 1280)
 access = 2
-filters = PackedStringArray("*.obgf")
+filters = PackedStringArray("*.tbt")
 use_native_dialog = true
 script = ExtResource("1_gj2h3")

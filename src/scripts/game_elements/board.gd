@@ -10,12 +10,13 @@ var def_font: Font = null
 
 enum GameObjectType {
 	PIECE,
-	COLLECTION,
+	DECK,
+	HAND,
 	MAX
 }
 
 const GAME_OBJECT_TYPE_STRING = [
-	"piece", "collection", "max"
+	"piece", "deck", "hand", "max"
 ]
 
 # Children
@@ -110,20 +111,23 @@ var ready_players: Array = []
 #####################
 ### RPC functions ###
 #####################
+func instantiate_by_type(type: GameObjectType) -> GDScript:
+	match type:
+		GameObjectType.PIECE:
+			return Piece
+		GameObjectType.DECK:
+			return Deck
+		GameObjectType.HAND:
+			return Hand
+	print("WARNING: None of the above types specified")
+	return GameObject
 
 ## Creates new game object on the board
 func new_game_object(type: GameObjectType, properties: Dictionary) -> GameObject:
 	var c: GameObject
 	properties.name = "%d_%s_%d" % [multiplayer.get_unique_id(),GAME_OBJECT_TYPE_STRING[type],counter]
 	counter += 1
-	match type:
-		GameObjectType.PIECE:
-			c = Piece.new()
-		GameObjectType.COLLECTION:
-			c = Collection.new()
-		GameObjectType.MAX:
-			print("Can't instantiate type MAX")
-			return
+	c = instantiate_by_type(type).new()
 	c.board = self
 	for prop: String in properties:
 		c.set(prop, properties[prop])
@@ -136,14 +140,7 @@ func new_game_object(type: GameObjectType, properties: Dictionary) -> GameObject
 @rpc("any_peer", "call_remote", "reliable")
 func _new_game_object_rpc(type: GameObjectType, properties: Dictionary) -> void:
 	var c: GameObject
-	match type:
-		GameObjectType.PIECE:
-			c = Piece.new()
-		GameObjectType.COLLECTION:
-			c = Collection.new()
-		GameObjectType.MAX:
-			print("Can't instantiate type MAX")
-			return
+	c = instantiate_by_type(type).new()
 	c.board = self
 	for prop: String in properties:
 		c.set(prop, properties[prop])

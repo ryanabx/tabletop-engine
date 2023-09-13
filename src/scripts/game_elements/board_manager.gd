@@ -67,7 +67,7 @@ func receive_config_part(bytes: PackedByteArray, final: bool) -> void:
 		spawn_board()
 
 func spawn_board() -> void:
-	var gc: TabletopGame = TabletopGame.import_obgf(config_bytes)
+	var gc: TabletopGame = TabletopGame.import_config(config_bytes)
 	var board_new: Board = load("res://src/scenes/game_elements/board.tscn").instantiate()
 	board_new.game = gc
 	board_new.name = gc.export_settings().name

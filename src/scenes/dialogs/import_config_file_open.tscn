@@ -12,6 +12,6 @@ content_scale_size = Vector2i(640, 360)
 ok_button_text = "Open"
 file_mode = 0
 access = 2
-filters = PackedStringArray("*.obgf")
+filters = PackedStringArray("*.tbt")
 use_native_dialog = true
 script = ExtResource("1_x5evh")

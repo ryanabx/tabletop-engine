@@ -114,7 +114,7 @@ class FileManager:
 		for fname: String in directory.get_files():
 			var split_fname: PackedStringArray = fname.rsplit(".",1)
 			print(split_fname[0], ", ", split_fname[1])
-			if fname.rsplit(".",1)[-1] == "obgf":
+			if fname.rsplit(".",1)[-1] == Globals.CONFIG_EXTENSION.substr(1):
 				configs.append(split_fname[0])
 		
 		return configs
@@ -166,7 +166,7 @@ class FileManager:
 			return false
 		print("Looking for fpath ",fpath)
 		create_dir(Globals.CONFIG_REPO)
-		var conf: TabletopGame = TabletopGame.import_obgf(bytes)
+		var conf: TabletopGame = TabletopGame.import_config(bytes)
 
 		var conf_path: String = str(Globals.CONFIG_REPO, "/",conf.export_settings().name,Globals.CONFIG_EXTENSION)
 

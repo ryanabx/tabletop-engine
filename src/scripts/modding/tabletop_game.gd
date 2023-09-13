@@ -63,17 +63,17 @@ func can_take_piece_off(_collection: Collection) -> bool:
 
 # IMPORTING AND EXPORTING CONFIGURATIONS
 
-## Import an obgf file from a file path
-static func import_obgf_from_file(fname: String) -> TabletopGame:
+## Import an config file from a file path
+static func import_from_file(fname: String) -> TabletopGame:
 	if not FileAccess.file_exists(fname):
 		print("File not found at ",fname)
 		return null
-	return import_obgf(FileAccess.get_file_as_bytes(fname))
+	return import_config(FileAccess.get_file_as_bytes(fname))
 
-## Import obgf
+## Import config
 ## WARNING: ALLOWS ARBITRARY CODE TO BE RAN,
 ## WAITING/HOPING FOR GDSCRIPT SANDBOXING IN THE FUTURE
-static func import_obgf(bytes: PackedByteArray) -> TabletopGame:
+static func import_config(bytes: PackedByteArray) -> TabletopGame:
 	var config: Dictionary = bytes_to_var(bytes.decompress_dynamic(-1, 3))
 	var sc: GDScript = GDScript.new()
 	sc.set_source_code(config.script)
@@ -84,8 +84,8 @@ static func import_obgf(bytes: PackedByteArray) -> TabletopGame:
 	obj.set_images(config.include_images)
 	return obj
 
-## Export obgf from a config file
-static func export_obgf_from_file(fname: String) -> PackedByteArray:
+## Export config from a config file
+static func export_from_file(fname: String) -> PackedByteArray:
 	fname = fname.replace("\\", "/")
 	if not FileAccess.file_exists(fname):
 		print("File not found at ",fname)
@@ -93,10 +93,10 @@ static func export_obgf_from_file(fname: String) -> PackedByteArray:
 	var scr_text: String = FileAccess.get_file_as_string(fname)
 	var dir_path: String = fname.rsplit("/",false,1)[0]
 	print("File name: ",fname, " :: Directory path: ",dir_path)
-	return export_obgf(scr_text, dir_path)
+	return export_config(scr_text, dir_path)
 
-## Export obgf
-static func export_obgf(scr_text: String, dir_path: String) -> PackedByteArray:
+## Export config
+static func export_config(scr_text: String, dir_path: String) -> PackedByteArray:
 	var sc: GDScript = GDScript.new()
 	sc.set_source_code(scr_text)
 	sc.reload()
