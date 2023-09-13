@@ -59,7 +59,6 @@ func load_game_config() -> void:
 			break
 		beg += MTU
 		end += MTU
-	print("host_loaded_config")
 
 @rpc("authority","call_remote","reliable")
 func receive_config_part(bytes: PackedByteArray, final: bool) -> void:
@@ -68,7 +67,6 @@ func receive_config_part(bytes: PackedByteArray, final: bool) -> void:
 		spawn_board()
 
 func spawn_board() -> void:
-	print("Spawning board: ", config_bytes.size())
 	var gc: TabletopGame = TabletopGame.import_obgf(config_bytes)
 	var board_new: Board = load("res://src/scenes/game_elements/board.tscn").instantiate()
 	board_new.game = gc

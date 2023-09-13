@@ -112,7 +112,6 @@ class FileManager:
 		var directory: DirAccess = DirAccess.open(Globals.CONFIG_REPO)
 
 		for fname: String in directory.get_files():
-			print(fname)
 			var split_fname: PackedStringArray = fname.rsplit(".",1)
 			print(split_fname[0], ", ", split_fname[1])
 			if fname.rsplit(".",1)[-1] == "obgf":
@@ -211,7 +210,6 @@ func on_screen_orientation_changed() -> void:
 	var margin_t: int = orientation_extents.position.y
 	var margin_r: int = w_size.x - orientation_extents.size.x - margin_l
 	var margin_b: int = w_size.y - orientation_extents.size.y - margin_t
-	print("SAFE AREA CHANGED to: ", orientation_extents, ", w_size: ", w_size, ", margin_l: ", margin_l, ", margin_t: ", margin_t, ", margin_r: ", margin_r, ", margin_b: ", margin_b)
 	Globals.safe_margin_l = margin_l
 	Globals.safe_margin_t = margin_t
 	Globals.safe_margin_r = margin_r

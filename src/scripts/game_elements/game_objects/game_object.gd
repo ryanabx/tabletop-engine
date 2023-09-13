@@ -1,6 +1,7 @@
 class_name GameObject
 extends Node2D
 
+# Shareable properties
 var shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)])
 var size: Vector2 = Vector2.ONE
 
@@ -79,7 +80,5 @@ func _ready() -> void:
 
 func _sync_properties() -> void:
     if is_multiplayer_authority() and not property_changes.is_empty():
-        if "inside" in property_changes:
-            print("Property changes has inside!")
         _property_changes_sync_rpc.rpc(property_changes)
     property_changes = {}

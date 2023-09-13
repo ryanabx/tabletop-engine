@@ -27,7 +27,6 @@ func refresh_list() -> void:
 	config_list.add_item("Default Config")
 	for conf: String in Utils.FileManager.get_available_configs():
 		config_list.add_item(conf)
-	print("Config list refreshed!")
 
 
 func _on_ready_pressed() -> void:

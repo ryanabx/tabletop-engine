@@ -4,6 +4,7 @@ extends GameObject
 @onready var collision_polygon: CollisionPolygon2D
 @onready var area2d: Area2D
 
+# Shareable properties
 var lock_state: bool = false
 
 func _ready() -> void:

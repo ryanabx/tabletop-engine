@@ -1,18 +1,18 @@
 class_name Piece
 extends Selectable
 
+# Shareable properties
 var image_up: String = ""
 var image_down: String = ""
 var types: Array = []
-
 var face_up: bool:
 	set(val):
 		face_up = val
 		add_to_property_changes("face_up", val)
 		_refresh_image()
 
-var grab_offset: Vector2 = Vector2.ZERO
 
+var grab_offset: Vector2 = Vector2.ZERO
 @onready var sprite: Sprite2D
 
 func _ready() -> void:
@@ -33,7 +33,6 @@ func get_shareable_properties() -> Array:
 
 func _refresh_image() -> void:
 	if image_up == "" or image_down == "":
-		print("Image up or image down is empty")
 		return
 	if board == null or board.game == null\
 		or not image_up in board.game.include_images or not image_down\

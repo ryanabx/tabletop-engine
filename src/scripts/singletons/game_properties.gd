@@ -29,7 +29,6 @@ var select_type: SelectType = SelectType.DRAG
 var multiplayer_method: MultiplayerMethod = MultiplayerMethod.P2P_SHORTENED
 
 func _ready() -> void:
-	print("HI")
 	load_settings()
 
 func load_settings() -> void:
@@ -38,7 +37,7 @@ func load_settings() -> void:
 		var settings_dict: Dictionary = JSON.parse_string(settings_str)
 		for prop: String in settings_dict.keys():
 			set(prop, settings_dict[prop])
-	print("Settings loaded!")
+	# print("Settings loaded!")
 
 func save_settings() -> void:
 	var settings_dict: Dictionary = {}
@@ -48,4 +47,4 @@ func save_settings() -> void:
 	var s_save: FileAccess = FileAccess.open(Globals.SETTINGS_PATH, FileAccess.WRITE)
 	s_save.store_string(settings_str)
 	s_save.close()
-	print("Settings saved!")
+	# print("Settings saved!")

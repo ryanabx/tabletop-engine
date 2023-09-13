@@ -1,12 +1,12 @@
 class_name Collection
 extends Selectable
 
+# Shareable properties
 var inside: Array[Dictionary] = []
 var permanent: bool = false
 var face_up: bool = false
 
 var grab_offset: Vector2 = Vector2.ZERO
-
 @onready var sprite: Sprite2D
 @onready var count: Label
 
