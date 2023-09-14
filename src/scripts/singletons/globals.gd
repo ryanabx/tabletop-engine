@@ -7,75 +7,75 @@ const DEFAULT_MAX_PLAYERS: int = 4
 const GRAB_THRESHOLD: float = 40.0
 
 const ICE_SERVERS: Dictionary = {
-	"iceServers": [
-		{
-			"urls": [
-				"stun.l.google.com:19302",
-				"iphone-stun.strato-iphone.de:3478",
-				"numb.viagenie.ca:3478",
-				"s1.taraba.net:3478",
-				"s2.taraba.net:3478",
-				"stun.12connect.com:3478",
-				"stun.12voip.com:3478",
-				"stun.1und1.de:3478",
-				"stun.2talk.co.nz:3478",
-				"stun.2talk.com:3478",
-				"stun.3clogic.com:3478",
-				"stun.3cx.com:3478",
-				"stun.a-mm.tv:3478",
-				"stun.aa.net.uk:3478",
-				"stun.acrobits.cz:3478"
-				]
-		},
-		{
-		"urls": ["stun:stun.relay.metered.ca:80"]
-	  	},
-		{
-			"urls": 'turn:numb.viagenie.ca',
-			"credential": 'muazkh',
-			"username": 'webrtc@live.com'
-		},
-		{
-			"urls": 'turn:192.158.29.39:3478?transport=udp',
-			"credential": 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-			"username": '28224511:1379330808'
-		},
-		{
-			"urls": 'turn:192.158.29.39:3478?transport=tcp',
-			"credential": 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-			"username": '28224511:1379330808'
-		},
-		{
-			"urls": 'turn:turn.bistri.com:80',
-			"credential": 'homeo',
-			"username": 'homeo'
-		},
-		{
-			"urls": 'turn:turn.anyfirewall.com:443?transport=tcp',
-			"credential": 'webrtc',
-			"username": 'webrtc'
-		},
-	  	{
-			"urls": "turn:a.relay.metered.ca:80",
-			"username": "b7153991e76085c83420f473",
-			"credential": "S7apm/MC4QIFJG4C",
-		},
-		{
-			"urls": "turn:a.relay.metered.ca:80?transport=tcp",
-			"username": "b7153991e76085c83420f473",
-			"credential": "S7apm/MC4QIFJG4C",
-		},
-		{
-			"urls": "turn:a.relay.metered.ca:443",
-			"username": "b7153991e76085c83420f473",
-			"credential": "S7apm/MC4QIFJG4C",
-		},
-		{
-			"urls": "turn:a.relay.metered.ca:443?transport=tcp",
-			"username": "b7153991e76085c83420f473",
-			"credential": "S7apm/MC4QIFJG4C",
-		}
-	]
+    "iceServers": [
+        {
+            "urls": [
+                "stun.l.google.com:19302",
+                "iphone-stun.strato-iphone.de:3478",
+                "numb.viagenie.ca:3478",
+                "s1.taraba.net:3478",
+                "s2.taraba.net:3478",
+                "stun.12connect.com:3478",
+                "stun.12voip.com:3478",
+                "stun.1und1.de:3478",
+                "stun.2talk.co.nz:3478",
+                "stun.2talk.com:3478",
+                "stun.3clogic.com:3478",
+                "stun.3cx.com:3478",
+                "stun.a-mm.tv:3478",
+                "stun.aa.net.uk:3478",
+                "stun.acrobits.cz:3478"
+                ]
+        },
+        {
+        "urls": ["stun:stun.relay.metered.ca:80"]
+          },
+        {
+            "urls": 'turn:numb.viagenie.ca',
+            "credential": 'muazkh',
+            "username": 'webrtc@live.com'
+        },
+        {
+            "urls": 'turn:192.158.29.39:3478?transport=udp',
+            "credential": 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+            "username": '28224511:1379330808'
+        },
+        {
+            "urls": 'turn:192.158.29.39:3478?transport=tcp',
+            "credential": 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+            "username": '28224511:1379330808'
+        },
+        {
+            "urls": 'turn:turn.bistri.com:80',
+            "credential": 'homeo',
+            "username": 'homeo'
+        },
+        {
+            "urls": 'turn:turn.anyfirewall.com:443?transport=tcp',
+            "credential": 'webrtc',
+            "username": 'webrtc'
+        },
+          {
+            "urls": "turn:a.relay.metered.ca:80",
+            "username": "b7153991e76085c83420f473",
+            "credential": "S7apm/MC4QIFJG4C",
+        },
+        {
+            "urls": "turn:a.relay.metered.ca:80?transport=tcp",
+            "username": "b7153991e76085c83420f473",
+            "credential": "S7apm/MC4QIFJG4C",
+        },
+        {
+            "urls": "turn:a.relay.metered.ca:443",
+            "username": "b7153991e76085c83420f473",
+            "credential": "S7apm/MC4QIFJG4C",
+        },
+        {
+            "urls": "turn:a.relay.metered.ca:443?transport=tcp",
+            "username": "b7153991e76085c83420f473",
+            "credential": "S7apm/MC4QIFJG4C",
+        }
+    ]
 }
 
 var load_this_game: PackedByteArray = PackedByteArray([])
@@ -143,19 +143,19 @@ const COLOR_SELECTION_BOX_BORDER: Color = Color.BLUE
 const COLOR_SELECTION_BOX: Color = COLOR_SELECTION_BOX_BORDER * COLOR_TRANSPARENT_HIGHLIGHT
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_exit_fullscreen") and DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+    if event.is_action_pressed("ui_exit_fullscreen") and DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
+        DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 
 func set_current_tabletop(tabletop: Board) -> void:
-	current_tabletop = tabletop
+    current_tabletop = tabletop
 
 func set_shared_tabletop_manager(tt: BoardManager) -> void:
-	tabletop_manager = tt
+    tabletop_manager = tt
 
 func get_current_game() -> TabletopGame:
-	if current_tabletop == null:
-		return null
-	return current_tabletop.game
+    if current_tabletop == null:
+        return null
+    return current_tabletop.game
 
 class Player:
-	static var ID: int = 0
+    static var ID: int = 0
