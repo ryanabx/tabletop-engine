@@ -2,10 +2,10 @@ class_name Hand
 extends Collection
 
 enum VisibilitySetting {
-    ALL_PLAYERS,
-    DESIGNATED_PLAYERS,
-    NOT_DESIGNATED_PLAYERS,
-    NO_PLAYERS
+    ALL,
+    DESIGNATED,
+    NOT_DESIGNATED,
+    NONE
 }
 
 enum SizeOption {
@@ -16,7 +16,7 @@ enum SizeOption {
 }
 
 # Shareable properties
-var visibility: VisibilitySetting = VisibilitySetting.DESIGNATED_PLAYERS
+var visibility: VisibilitySetting = VisibilitySetting.DESIGNATED
 var designated_players: Array[int] = []
 var size_option: SizeOption = SizeOption.FIXED_LAYER
 
@@ -29,6 +29,27 @@ func _draw() -> void:
 
 func _draw_fixed() -> void:
     pass
+
+## Draws a piece from data at a certain position
+func _draw_piece(_data: Dictionary, _position: Vector2, _size: Vector2 = Vector2.ZERO) -> void:
+    if _size == Vector2.ZERO:
+        _size = _data.size
+    
+    var _texture: Texture2D = board.get_image(_data.face_up if can_view() else _data.face_down)
+    
+    draw_texture_rect(_texture, Rect2(_position, _size), false)
+
+func can_view() -> bool:
+    match visibility:
+        VisibilitySetting.ALL:
+            return true
+        VisibilitySetting.NONE:
+            return false
+        VisibilitySetting.DESIGNATED:
+            return Globals.Player.ID in designated_players
+        VisibilitySetting.NOT_DESIGNATED:
+            return Globals.Player.ID not in designated_players
+    return false
 
 func _process(delta: float) -> void:
     queue_redraw()

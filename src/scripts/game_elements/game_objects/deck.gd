@@ -38,7 +38,7 @@ func _process(_delta: float) -> void:
     if top_pc.size != size:
         size = top_pc.size
         collision_polygon.set_polygon(get_gobject_transform() * self.shape)
-    sprite.texture = board.game.include_images[top_pc.image_up] if face_up else board.game.include_images[top_pc.image_down]
+    sprite.texture = board.get_image(top_pc.image_up) if face_up else board.get_image(top_pc.image_down)
     sprite.scale = size / sprite.texture.get_size()
 
 func _draw() -> void:

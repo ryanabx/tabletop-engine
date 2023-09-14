@@ -32,10 +32,9 @@ func get_shareable_properties() -> Array:
 func _refresh_image() -> void:
     if image_up == "" or image_down == "":
         return
-    if board == null or board.game == null\
-        or not image_up in board.game.include_images or not image_down\
-        in board.game.include_images or not is_instance_valid(sprite):
-        return
+    if board == null or board.game == null or board.get_image(image_up) == null or board.get_image(image_down) == null\
+        or not is_instance_valid(sprite):
+            return
     
     sprite.texture = board.game.include_images[image_up] if face_up else board.game.include_images[image_down]
     sprite.scale = size / sprite.texture.get_size()

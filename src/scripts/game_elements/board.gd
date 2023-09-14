@@ -42,6 +42,16 @@ var counter: int = 0
 func _draw() -> void:
     draw_board_bg()
 
+
+func get_image(path: String) -> Texture2D:
+    if game == null:
+        return null
+    if game.include_images == null:
+        return null
+    if not path in game.include_images:
+        return null
+    return game.include_images[path]
+
 ## Draw the background specified
 func draw_board_bg() -> void:
     draw_rect(border, Color.WHITE, false, Globals.OUTLINE_THICKNESS)
