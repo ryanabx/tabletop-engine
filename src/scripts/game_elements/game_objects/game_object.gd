@@ -67,10 +67,10 @@ func get_main_transform() -> Transform2D:
     return Transform2D(rotation, size, 0.0, position)
 
 func get_rect_extents() -> Rect2:
-    return Rect2(position - scale / 2, scale)
+    return Rect2(position - size / 2, size)
 
 func get_rect() -> Rect2:
-    return Rect2(-scale / 2, scale)
+    return Rect2(-size / 2, size)
 
 func get_gobject_transform() -> Transform2D:
     return Transform2D().scaled(size)
@@ -82,3 +82,6 @@ func _sync_properties() -> void:
     if is_multiplayer_authority() and not property_changes.is_empty():
         _property_changes_sync_rpc.rpc(property_changes)
     property_changes = {}
+
+func _process(_delta: float) -> void:
+    pass

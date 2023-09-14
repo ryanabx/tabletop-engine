@@ -22,6 +22,12 @@ func _ready() -> void:
     super._ready()
 
 func add_piece(piece: Piece, back: bool = false) -> void:
+    if back:
+        _add_piece_at(piece, 0)
+    else:
+        _add_piece_at(piece, inside.size())
+
+func _add_piece_at(piece: Piece, _index: int) -> void:
     if not board.game.can_stack_piece(piece, self):
         return
     authority = multiplayer.get_unique_id()
@@ -29,12 +35,8 @@ func add_piece(piece: Piece, back: bool = false) -> void:
     
     var pc_d: Dictionary = serialize_piece(piece)
     piece.erase_self.rpc()
-    if back:
-        inside.push_front(pc_d)
-        add_to_property_changes("inside", inside)
-    else:
-        inside.push_back(pc_d)
-        add_to_property_changes("inside", inside)
+    inside.insert(_index, pc_d)
+    add_to_property_changes("inside", inside)
 
 func remove_from_top() -> Piece:
     if not board.game.can_take_piece_off(self):
@@ -75,3 +77,6 @@ func _on_deselect(_event:InputEvent) -> void:
     if board.board_player.is_selecting():
         if selected == false:
             board.board_player.stack_selection_to_item(self)
+
+func _process(delta: float) -> void:
+    super._process(delta)

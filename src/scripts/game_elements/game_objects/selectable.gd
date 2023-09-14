@@ -36,3 +36,6 @@ var selected: bool = false:
             area2d.collision_layer = 1
     get:
         return selected
+
+func _process(delta: float) -> void:
+    super._process(delta)
