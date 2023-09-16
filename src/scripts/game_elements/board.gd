@@ -93,7 +93,7 @@ func get_game_objects() -> Array[GameObject]:
 
 func clear_board() -> void:
     for obj: GameObject in get_game_objects():
-        obj.erase_self.rpc()
+        obj.erase_self.rpc(true)
 
 func unique_name(s: String) -> String:
     var n: String = str(multiplayer.get_unique_id(),s,counter)
@@ -177,10 +177,15 @@ func _new_game_object_rpc(type: GameObjectType, properties: Dictionary) -> void:
 ### Config stuff ###
 ####################
 
+func run_action(action: int) -> void:
+    game.run_action(game.get_actions()[action])
+
 ## Called when the board is initialized
 func _ready() -> void:
     board_player.board = self
     highlights.board = self
+
+    SignalManager.run_action.connect(run_action)
 
     background_sprite = Sprite2D.new()
     background_sprite.z_index = -10

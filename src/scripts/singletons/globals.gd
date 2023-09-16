@@ -6,6 +6,8 @@ const DEFAULT_MAX_PLAYERS: int = 4
 
 const GRAB_THRESHOLD: float = 40.0
 
+const COLLECTION_OUTLINE: int = 2
+
 const ICE_SERVERS: Dictionary = {
     "iceServers": [
         {

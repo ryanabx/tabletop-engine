@@ -21,7 +21,7 @@ func _ready() -> void:
     super._ready()
 
 @rpc("any_peer","call_local","reliable")
-func erase_self() -> void:
+func erase_self(_recursive: bool = false) -> void:
     queue_free()
 
 func get_shareable_properties() -> Array:

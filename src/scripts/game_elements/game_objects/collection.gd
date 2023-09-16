@@ -64,9 +64,9 @@ func shuffle() -> void:
 	add_to_property_changes("inside", inside)
 
 @rpc("authority","call_local","reliable")
-func erase_self() -> void:
+func erase_self(recursive: bool = false) -> void:
 	for obj: Dictionary in inside:
-		if is_multiplayer_authority():
+		if not recursive and is_multiplayer_authority():
 			deserialize_piece(obj)
 	queue_free()
 

@@ -42,7 +42,7 @@ func _process(_delta: float) -> void:
     sprite.scale = size / sprite.texture.get_size()
 
 func _draw() -> void:
-    draw_polyline(collision_polygon.polygon + PackedVector2Array([collision_polygon.polygon[0]]), Color.WHITE, 2)
+    draw_polyline(collision_polygon.polygon + PackedVector2Array([collision_polygon.polygon[0]]), Color.WHITE, Globals.COLLECTION_OUTLINE)
 
 func add_piece(piece: Piece, back: bool = false) -> void:
     if not board.game.can_stack_piece(piece, self):
