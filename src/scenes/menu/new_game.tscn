@@ -203,6 +203,14 @@ mouse_filter = 2
 [node name="DownloadConfigPanel" parent="." instance=ExtResource("13_x3agj")]
 visible = false
 
+[node name="ImportConfigNotice" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = ""
+initial_position = 2
+size = Vector2i(1000, 720)
+dialog_text = "Warning! Configurations can run potentially dangerous code on your device! Make sure you trust the source of this configuration!"
+dialog_autowrap = true
+
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Config/VBoxContainer/HBoxContainer2/LoadConfFile" to="." method="_on_load_conf_file_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Config/VBoxContainer/HBoxContainer2/LoadConfURL" to="." method="_on_load_conf_url_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Config/VBoxContainer/HBoxContainer2/RefreshConfList" to="." method="_on_refresh_conf_list_pressed"]

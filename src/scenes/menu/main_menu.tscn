@@ -56,7 +56,7 @@ text = "Settings"
 [node name="Quit" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-text = "Quit"
+text = "Exit Game"
 
 [node name="HBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2

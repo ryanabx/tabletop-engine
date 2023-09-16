@@ -7,7 +7,7 @@ extends Control
 
 func _ready() -> void:
     Globals.load_this_game = PackedByteArray([])
-    SignalManager.config_added.connect(refresh_list)
+    SignalManager.config_added.connect(config_added)
     if not Utils.is_desktop_platform():
         from_file_button.hide()
     refresh_list()
@@ -21,6 +21,11 @@ func _process(_delta: float) -> void:
 func _on_back_button_pressed() -> void:
     SignalManager.scene_transition.emit("res://src/scenes/menu/main_menu.tscn")
 
+func config_added() -> void:
+    %ImportConfigNotice.popup()
+    await %ImportConfigNotice.visibility_changed
+    %ImportConfigNotice.hide()
+    refresh_list()
 
 func refresh_list() -> void:
     config_list.clear()
