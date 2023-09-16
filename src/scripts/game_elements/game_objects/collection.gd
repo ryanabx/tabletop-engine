@@ -38,7 +38,7 @@ func _add_piece_at(piece: Piece, _index: int) -> void:
     inside.insert(_index, pc_d)
     add_to_property_changes("inside", inside)
 
-func remove_from_top(_position: Vector2) -> Piece:
+func remove_from_top(_position: Vector2 = Vector2.ZERO) -> Piece:
     if inside.size() == 0:
         return null
     return _remove_piece_at(inside.size() - 1)

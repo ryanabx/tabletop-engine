@@ -88,33 +88,6 @@ popup/item_0/id = 0
 popup/item_1/text = "Click"
 popup/item_1/id = 1
 
-[node name="Multiplayer" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Multiplayer"]
-layout_mode = 2
-text = "Multiplayer"
-horizontal_alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Multiplayer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Multiplayer/HBoxContainer"]
-layout_mode = 2
-text = "Connection method:"
-
-[node name="ConnectionMethod" type="OptionButton" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Multiplayer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-alignment = 1
-item_count = 2
-selected = 0
-popup/item_0/text = "P2P Shortened"
-popup/item_0/id = 0
-popup/item_1/text = "P2P"
-popup/item_1/id = 1
-
 [node name="ConfigTools" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
@@ -154,6 +127,5 @@ size = Vector2i(1318, 1280)
 
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/View/HBoxContainer/ToggleFullscreen" to="." method="_on_toggle_fullscreen_pressed"]
 [connection signal="item_selected" from="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Controls/HBoxContainer/SelectingObjects" to="." method="_on_selecting_objects_item_selected"]
-[connection signal="item_selected" from="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Multiplayer/HBoxContainer/ConnectionMethod" to="." method="_on_connection_method_item_selected"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/ConfigTools/HBoxContainer/ExportConfig" to="." method="_on_export_config_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]

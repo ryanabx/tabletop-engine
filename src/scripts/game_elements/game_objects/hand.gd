@@ -23,7 +23,7 @@ var _droppable_index: int = -1
 
 # Shareable properties
 var visibility: VisibilitySetting = VisibilitySetting.DESIGNATED
-var designated_players: Array[int] = []
+var designated_players: Array = []
 var size_option: SizeOption = SizeOption.FIXED_LAYER
 
 var size_pieces: Vector2 = Vector2.ONE
@@ -74,9 +74,9 @@ func can_view() -> bool:
         VisibilitySetting.NONE:
             return false
         VisibilitySetting.DESIGNATED:
-            return Globals.Player.ID in designated_players
+            return designated_players.has(Globals.Player.ID + 1)
         VisibilitySetting.NOT_DESIGNATED:
-            return Globals.Player.ID not in designated_players
+            return not designated_players.has(Globals.Player.ID + 1)
     return false
 
 func add_piece(piece: Piece, back: bool = false) -> void:
@@ -86,7 +86,7 @@ func add_piece(piece: Piece, back: bool = false) -> void:
     
     super._add_piece_at(piece, _droppable_index)
 
-func remove_from_top(pos: Vector2) -> Piece:
+func remove_from_top(pos: Vector2 = Vector2.ZERO) -> Piece:
     var _piece: Piece
     _find_selectable_piece(pos, false)
     if _selectable_piece == -1:

@@ -82,7 +82,7 @@ func get_collections(a: Array) -> Array[Collection]:
 
 func get_gobject(n: String) -> GameObject:
     var o: GameObject = board_objects.get_node_or_null(n)
-    if o == null or o.get_parent() != self:
+    if o == null or o.get_parent() != board_objects:
         return null
     return o
 
@@ -99,6 +99,19 @@ func unique_name(s: String) -> String:
     var n: String = str(multiplayer.get_unique_id(),s,counter)
     counter += 1
     return n
+
+func move_piece(from: Collection, to: Collection, from_ind: int = -1, to_ind: int = -1) -> void:
+    var pc: Piece
+    if from_ind != -1:
+        pc = from._remove_piece_at(from_ind)
+    else:
+        pc = from.remove_from_top()
+    
+    if to_ind != -1:
+        to._add_piece_at(pc, to_ind)
+    else:
+        to.add_piece(pc)
+    
 
 ####################
 ### Main process ###
@@ -135,8 +148,9 @@ func instantiate_by_type(type: GameObjectType) -> GDScript:
 ## Creates new game object on the board
 func new_game_object(type: GameObjectType, properties: Dictionary) -> GameObject:
     var c: GameObject
-    properties.name = "%d_%s_%d" % [multiplayer.get_unique_id(),GAME_OBJECT_TYPE_STRING[type],counter]
-    counter += 1
+    if not "name" in properties:
+        properties.name = "%d_%s_%d" % [multiplayer.get_unique_id(),GAME_OBJECT_TYPE_STRING[type],counter]
+        counter += 1
     c = instantiate_by_type(type).new()
     c.board = self
     for prop: String in properties:
@@ -144,6 +158,7 @@ func new_game_object(type: GameObjectType, properties: Dictionary) -> GameObject
     board_objects.add_child(c)
     # RPC
     _new_game_object_rpc.rpc(type, properties)
+    print(c.name)
     c.set_multiplayer_authority(multiplayer.get_unique_id())
     return c
 

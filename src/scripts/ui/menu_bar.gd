@@ -47,6 +47,7 @@ func tabletop_menu() -> void:
         menu.get_popup().add_item("Quit", 1)
 
 func set_player(index: int) -> void:
+    print("Setting player to ", index)
     Globals.Player.ID = index
 
 func run_action(index: int) -> void:
