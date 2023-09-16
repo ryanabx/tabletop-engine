@@ -24,6 +24,8 @@ const GAME_OBJECT_TYPE_STRING = [
 @onready var board_objects: Node2D = $BoardObjects
 @onready var highlights: Node2D = $Highlights
 
+var number_of_players: int
+
 var background_sprite: Sprite2D
 
 # Board properties
@@ -180,8 +182,18 @@ func _new_game_object_rpc(type: GameObjectType, properties: Dictionary) -> void:
 func run_action(action: int) -> void:
     game.run_action(game.get_actions()[action])
 
+func set_player_id() -> void:
+    var full_array: PackedInt32Array = PackedInt32Array(multiplayer.get_peers())
+    full_array.append(multiplayer.get_unique_id())
+    number_of_players = full_array.size()
+    full_array.sort()
+    Globals.Player.ID = full_array.find(multiplayer.get_unique_id())
+    print("My player ID is: ",Globals.Player.ID, "!")
+
 ## Called when the board is initialized
 func _ready() -> void:
+    set_player_id()
+    
     board_player.board = self
     highlights.board = self
 
