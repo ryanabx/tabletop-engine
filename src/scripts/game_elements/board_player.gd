@@ -129,7 +129,7 @@ func drag_input(event: InputEvent) -> void:
     if object_queued() and event.position.distance_to(grab_position) > Globals.GRAB_THRESHOLD:
         hold_timer.stop()
         if collection_queued() and board.game.can_take_piece_off(get_queued_object()):
-            var pc: Piece = get_queued_object().remove_from_top(grab_position)
+            var pc: Piece = get_queued_object().remove_from_top(get_queued_object().to_local(grab_position))
             # pc.position = get_queued_object().position
             # pc.rotation = get_queued_object().rotation
             select_object(pc)

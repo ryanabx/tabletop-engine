@@ -111,9 +111,11 @@ func _find_selectable_piece(pos: Vector2, check_boundaries: bool = true) -> void
         _selectable_piece = -1
         _droppable_index = -1
         return
+
+    var check = ((pos.x + (size.x / 2.0) - (size_pieces.x / 2.0)) / (size.x - size_pieces.x)) * inside.size()
     
-    _selectable_piece = clampi(floori((pos.x + (size.x / 2.0)) / size.x * (inside.size())), 0, inside.size())
-    _droppable_index = clampi(roundi(((pos.x + (size.x / 2.0)) / size.x * (inside.size()))), 0, inside.size())
+    _selectable_piece = clampi(floori(check), 0, inside.size())
+    _droppable_index = clampi(roundi(check), 0, inside.size())
     print(_droppable_index, ":: ", _selectable_piece)
 
     # print("selectable object set to ",_selectable_piece)

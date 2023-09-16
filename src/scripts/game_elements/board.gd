@@ -123,7 +123,7 @@ func _process(_delta: float) -> void:
 
 ## Self explanatory
 func clamp_camera() -> void:
-    get_parent().camera_controller.offset = get_parent().camera_controller.offset.clamp(border.position, border.end)
+    get_parent().camera_controller.position = get_parent().camera_controller.position.clamp(border.position, border.end)
 
 ########################
 ### Multiplayer sync ###
