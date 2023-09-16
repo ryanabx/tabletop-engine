@@ -37,7 +37,7 @@ func player_menu() -> void:
     player.name = "Player"
     menu.get_popup().add_child(player)
     menu.get_popup().add_submenu_item("Player", "Player")
-    for i: int in range(board.game.settings().max_players):
+    for i: int in range(board.number_of_players):
         player.add_item(str("Player ",i+1))
 
 func tabletop_menu() -> void:
