@@ -99,7 +99,7 @@ func remove_from_top(pos: Vector2 = Vector2.ZERO) -> Piece:
     _piece.position = get_global_mouse_position()
     _piece.rotation = rotation
     _piece.grab_offset = Vector2.ZERO
-    _piece.face_up = true
+    _piece.face_up = face_up
     return _piece
 
 func _find_spacing_interval() -> void:

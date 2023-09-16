@@ -5,6 +5,7 @@ extends Selectable
 var image_up: String = ""
 var image_down: String = ""
 var types: Array = []
+
 var face_up: bool:
     set(val):
         face_up = val

@@ -43,7 +43,8 @@ func init_collection_menu() -> void:
     orientation_menu.add_item("Face up", 5)
     orientation_menu.add_item("Face down", 6)
     orientation_menu.add_item("Flip selection", 1)
-    add_child(orientation_menu)
+    if not collection.lock_state:
+        add_child(orientation_menu)
     orientation_menu.name = "orientation"
     add_submenu_item("Set Orientation", "orientation", 7)
     var ordering_menu := PopupMenu.new()

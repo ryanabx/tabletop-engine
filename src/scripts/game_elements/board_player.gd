@@ -136,7 +136,6 @@ func drag_input(event: InputEvent) -> void:
         elif piece_queued():
             select_object(get_queued_object())
     move_objects_to(event.position)
-    
 
 func move_objects_to(pos: Vector2) -> void:
     if is_selecting():
@@ -230,7 +229,8 @@ func _select_collection(collection: Collection) -> void:
             {
                 "name": collection.board.unique_name("newcoll"),
                 "position": collection.position,
-                "rotation": collection.rotation
+                "rotation": collection.rotation,
+                "face_up": collection.face_up
             }
         )
         new_collection.inside = collection.inside

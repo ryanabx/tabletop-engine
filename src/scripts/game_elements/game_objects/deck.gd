@@ -2,13 +2,12 @@ class_name Deck
 extends Collection
 
 var permanent: bool = false
-var face_up: bool = false
 
 @onready var sprite: Sprite2D
 @onready var count: Label
 
 func get_shareable_properties() -> Array:
-    return super.get_shareable_properties() + ["permanent", "face_up"]
+    return super.get_shareable_properties() + ["permanent"]
 
 func _ready() -> void:
     _init_children()

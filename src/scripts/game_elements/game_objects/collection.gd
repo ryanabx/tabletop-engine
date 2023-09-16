@@ -3,6 +3,7 @@ extends Selectable
 
 # Shareable properties
 var inside: Array[Dictionary] = []
+var face_up: bool = false
 
 func serialize_piece(pc: Piece) -> Dictionary:
     return pc.serialize()
@@ -16,7 +17,7 @@ func deserialize_piece(_dict: Dictionary) -> Piece:
     )
 
 func get_shareable_properties() -> Array:
-    return super.get_shareable_properties() + ["inside"]
+    return super.get_shareable_properties() + ["inside", "face_up"]
 
 func _ready() -> void:
     super._ready()
