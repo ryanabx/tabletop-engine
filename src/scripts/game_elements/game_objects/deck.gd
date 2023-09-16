@@ -53,8 +53,8 @@ func add_piece(piece: Piece, back: bool = false) -> void:
     
     super.add_piece(piece, back)
 
-func remove_from_top() -> Piece:
-    var pc: Piece = super.remove_from_top()
+func remove_from_top(pos: Vector2) -> Piece:
+    var pc: Piece = super.remove_from_top(pos)
     if inside.is_empty() and not permanent:
         erase_self.rpc()
     return pc

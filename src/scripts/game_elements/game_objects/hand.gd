@@ -18,7 +18,8 @@ enum SizeOption {
 var layering_factor: float = 0.9
 
 var _spacing_interval: float = 1.0
-var _selectable_object: int = -1
+var _selectable_piece: int = -1
+var _droppable_index: int = -1
 
 # Shareable properties
 var visibility: VisibilitySetting = VisibilitySetting.DESIGNATED
@@ -41,8 +42,22 @@ func _draw() -> void:
 func _draw_pieces() -> void:
     var i: int = 0
     for pc: Dictionary in inside:
-        _draw_piece(pc, (i == _selectable_object), Vector2(-size.x / 2.0 + i * _spacing_interval, -size.y / 2.0))
+        if i == _selectable_piece:
+            i += 1
+            continue
+        # (size.x - size_pieces.x / 2.0) / (inside.size())
+        var card_position: Vector2 = Vector2(
+            lerp(get_rect().position.x + size_pieces.x / 2.0, get_rect().end.x - size_pieces.x / 2.0, (i + 0.5) / inside.size()),
+            get_rect().get_center().y
+        )
+        _draw_piece(pc, (i == _selectable_piece), card_position)
         i += 1
+    if _selectable_piece != -1 and _selectable_piece < inside.size():
+        var card_position: Vector2 = Vector2(
+            lerp(get_rect().position.x + size_pieces.x / 2.0, get_rect().end.x - size_pieces.x / 2.0, (_selectable_piece + 0.5) / inside.size()),
+            get_rect().get_center().y
+        )
+        _draw_piece(inside[_selectable_piece], true, card_position)
 
 ## Draws a piece from data at a certain position
 func _draw_piece(_data: Dictionary, selectable: bool, _position: Vector2, _size: Vector2 = size_pieces) -> void:
@@ -50,7 +65,7 @@ func _draw_piece(_data: Dictionary, selectable: bool, _position: Vector2, _size:
         _size = _size * 1.1
     var _texture: Texture2D = board.get_image(_data.image_up if can_view() else _data.image_down)
     
-    draw_texture_rect(_texture, Rect2(_position, _size), false)
+    draw_texture_rect(_texture, Rect2(_position - _size / 2, _size), false)
 
 func can_view() -> bool:
     match visibility:
@@ -65,28 +80,43 @@ func can_view() -> bool:
     return false
 
 func add_piece(piece: Piece, back: bool = false) -> void:
-    if _selectable_object == -1:
+    if _droppable_index == -1:
         super.add_piece(piece, back)
         return
     
-    _add_piece_at(piece, _selectable_object)
+    super._add_piece_at(piece, _droppable_index)
+
+func remove_from_top(pos: Vector2) -> Piece:
+    var _piece: Piece
+    _find_selectable_piece(pos, false)
+    if _selectable_piece == -1:
+        _piece = super.remove_from_top(pos)
+    else:
+        _piece = super._remove_piece_at(_selectable_piece)
+    _piece.position = get_global_mouse_position()
+    _piece.rotation = rotation
+    _piece.grab_offset = Vector2.ZERO
+    _piece.face_up = true
+    return _piece
 
 func _find_spacing_interval() -> void:
     match size_option:
         SizeOption.GROW_FIXED:
             _spacing_interval = size_pieces.x * layering_factor
             if _spacing_interval * inside.size() > size.x:
-                _spacing_interval = size.x / inside.size()
+                _spacing_interval = (size.x - size_pieces.x / 2.0) / (inside.size())
 
-func _find_selectable_piece(_position: Vector2) -> void:
-    if absf(_position.y) > size.y / 2.0 or absf(_position.x) > (size.x + size_pieces.x) / 2.0:
-        _selectable_object = -1
+func _find_selectable_piece(pos: Vector2, check_boundaries: bool = true) -> void:
+    if check_boundaries and (absf(pos.y) > size.y / 2.0 or absf(pos.x) > (size.x / 2.0)):
+        _selectable_piece = -1
+        _droppable_index = -1
         return
     
-    _selectable_object = floor(((_position.x + (size.x / 2.0)) / (_spacing_interval * inside.size())) * inside.size())
-    if _selectable_object < 0 or _selectable_object >= inside.size():
-        _selectable_object = -1
-    print("selectable object set to ",_selectable_object)
+    _selectable_piece = clampi(floori((pos.x + (size.x / 2.0)) / size.x * (inside.size())), 0, inside.size())
+    _droppable_index = clampi(roundi(((pos.x + (size.x / 2.0)) / size.x * (inside.size()))), 0, inside.size())
+    print(_droppable_index, ":: ", _selectable_piece)
+
+    # print("selectable object set to ",_selectable_piece)
 
 func _process(delta: float) -> void:
     queue_redraw()

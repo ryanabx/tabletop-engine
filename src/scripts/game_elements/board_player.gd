@@ -129,9 +129,9 @@ func drag_input(event: InputEvent) -> void:
     if object_queued() and event.position.distance_to(grab_position) > Globals.GRAB_THRESHOLD:
         hold_timer.stop()
         if collection_queued() and board.game.can_take_piece_off(get_queued_object()):
-            var pc: Piece = get_queued_object().remove_from_top()
-            pc.position = get_queued_object().position
-            pc.rotation = get_queued_object().rotation
+            var pc: Piece = get_queued_object().remove_from_top(grab_position)
+            # pc.position = get_queued_object().position
+            # pc.rotation = get_queued_object().rotation
             select_object(pc)
         elif piece_queued():
             select_object(get_queued_object())
@@ -224,7 +224,7 @@ func stack_on_piece(item: Piece) -> void:
         collection.add_piece(item)
 
 func _select_collection(collection: Collection) -> void:
-    if collection.permanent:
+    if collection is Hand or collection.permanent:
         var new_collection: Collection = collection.board.new_game_object(
             Board.GameObjectType.DECK,
             {

@@ -38,14 +38,21 @@ func _add_piece_at(piece: Piece, _index: int) -> void:
     inside.insert(_index, pc_d)
     add_to_property_changes("inside", inside)
 
-func remove_from_top() -> Piece:
+func remove_from_top(_position: Vector2) -> Piece:
+    if inside.size() == 0:
+        return null
+    return _remove_piece_at(inside.size() - 1)
+
+func _remove_piece_at(_index: int) -> Piece:
     if not board.game.can_take_piece_off(self):
         return null
     authority = multiplayer.get_unique_id()
-    var pc_d: Dictionary = inside.pop_back()
+    var pc_d: Dictionary = inside.pop_at(_index)
     add_to_property_changes("inside", inside)
     var piece: Piece = deserialize_piece(pc_d)
     piece.authority = multiplayer.get_unique_id()
+    piece.position = position
+    piece.rotation = rotation
     return piece
 
 func get_inside() -> Array[Dictionary]:
