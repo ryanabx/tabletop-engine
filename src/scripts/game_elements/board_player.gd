@@ -215,7 +215,6 @@ func stack_on_piece(item: Piece) -> void:
         var collection: Collection = board.new_game_object(
             Board.GameObjectType.DECK,
             {
-                "name": board.unique_name("newcoll"),
                 "position": item.position,
                 "rotation": item.rotation
             }
@@ -228,7 +227,6 @@ func _select_collection(collection: Collection) -> void:
         var new_collection: Collection = collection.board.new_game_object(
             Board.GameObjectType.DECK,
             {
-                "name": collection.board.unique_name("newcoll"),
                 "position": collection.position,
                 "rotation": collection.rotation,
                 "face_up": collection.face_up

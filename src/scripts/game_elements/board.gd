@@ -95,12 +95,8 @@ func get_game_objects() -> Array[GameObject]:
 
 func clear_board() -> void:
     for obj: GameObject in get_game_objects():
+        obj.authority = multiplayer.get_unique_id()
         obj.erase_self.rpc(true)
-
-func unique_name(s: String) -> String:
-    var n: String = str(multiplayer.get_unique_id(),s,counter)
-    counter += 1
-    return n
 
 func move_piece(from: Collection, to: Collection, from_ind: int = -1, to_ind: int = -1) -> void:
     var pc: Piece
