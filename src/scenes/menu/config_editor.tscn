@@ -63,11 +63,28 @@ layout_mode = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer"]
+[node name="Tabs" type="TabContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Config Editor"
+size_flags_vertical = 3
 
-[node name="CodeEdit" type="CodeEdit" parent="SafeMargins/MarginContainer/VBoxContainer"]
+[node name="Code" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Code"]
+layout_mode = 2
+
+[node name="CodeEditorLabel" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Code/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Code Editor"
+horizontal_alignment = 1
+
+[node name="Button" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Code/HBoxContainer"]
+layout_mode = 2
+text = "GDScript Reference"
+flat = true
+
+[node name="CodeEdit" type="CodeEdit" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Code"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 26
@@ -87,6 +104,14 @@ indent_automatic = true
 auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
 
+[node name="Imports" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
+visible = false
+layout_mode = 2
+
+[node name="Export Settings" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
+visible = false
+layout_mode = 2
+
 [node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
@@ -97,6 +122,11 @@ size_flags_horizontal = 0
 size_flags_vertical = 8
 icon = ExtResource("3_fva16")
 expand_icon = true
+
+[node name="SaveConfig" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Save Config"
 
 [node name="FadeRect" parent="." instance=ExtResource("5_gxamv")]
 layout_mode = 1
