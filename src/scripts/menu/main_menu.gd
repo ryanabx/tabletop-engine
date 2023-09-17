@@ -13,8 +13,8 @@ func _ready() -> void:
     Globals.load_this_game = PackedByteArray([])
 
 func _process(_delta: float) -> void:
-    %ButtonFlow.vertical = get_viewport_rect().size.y > get_viewport_rect().size.x
-
+    # %ButtonFlow.vertical = get_viewport_rect().size.y > get_viewport_rect().size.x
+    pass
 
 func _on_new_game_pressed() -> void:
     SignalManager.scene_transition.emit("res://src/scenes/menu/new_game.tscn")

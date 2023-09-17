@@ -1,0 +1,150 @@
+[gd_scene load_steps=9 format=3 uid="uid://dbpkcwga3251w"]
+
+[ext_resource type="Script" path="res://src/scripts/ui/components/config_selector.gd" id="1_0cw62"]
+[ext_resource type="Texture2D" uid="uid://dp7xutrajl5fw" path="res://src/resources/assets/ui/folder.svg" id="1_mshcn"]
+[ext_resource type="Texture2D" uid="uid://c867hwqrtf2an" path="res://src/resources/assets/ui/download.svg" id="2_wr7ge"]
+[ext_resource type="Texture2D" uid="uid://bsnynahp005eg" path="res://src/resources/assets/ui/refresh.svg" id="3_ef6m5"]
+[ext_resource type="Texture2D" uid="uid://4beyn2jx8qy6" path="res://src/resources/assets/ui/trash.svg" id="4_u4ikq"]
+[ext_resource type="Script" path="res://src/scripts/dialogs/load_config_dialog.gd" id="5_7n77b"]
+[ext_resource type="Script" path="res://src/scripts/ui/download_config_panel.gd" id="6_i7acy"]
+[ext_resource type="Texture2D" uid="uid://c4sv5wkd2de3o" path="res://src/resources/assets/ui/paste.svg" id="7_mfx0p"]
+
+[node name="ConfigSelector" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+script = ExtResource("1_0cw62")
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(0, 152)
+layout_mode = 2
+
+[node name="LoadConfFile" type="Button" parent="HBoxContainer2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(152, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("1_mshcn")
+icon_alignment = 1
+expand_icon = true
+
+[node name="LoadConfURL" type="Button" parent="HBoxContainer2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(152, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("2_wr7ge")
+icon_alignment = 1
+expand_icon = true
+
+[node name="RefreshConfList" type="Button" parent="HBoxContainer2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(152, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("3_ef6m5")
+icon_alignment = 1
+expand_icon = true
+
+[node name="DeleteSelected" type="Button" parent="HBoxContainer2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(152, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("4_u4ikq")
+icon_alignment = 1
+expand_icon = true
+
+[node name="ConfigList" type="ItemList" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ImportConfigFileOpen" type="FileDialog" parent="."]
+title = "Open a File"
+initial_position = 2
+size = Vector2i(1318, 1280)
+unresizable = true
+borderless = true
+content_scale_size = Vector2i(640, 360)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.tbt")
+use_native_dialog = true
+script = ExtResource("5_7n77b")
+
+[node name="DownloadConfigPanel" type="PopupPanel" parent="."]
+initial_position = 2
+size = Vector2i(920, 640)
+script = ExtResource("6_i7acy")
+
+[node name="Control" type="Control" parent="DownloadConfigPanel"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 916.0
+offset_bottom = 636.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="DownloadConfigPanel/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DownloadConfigPanel/Control/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="DownloadConfigPanel/Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Download Config"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="DownloadConfigPanel/Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="URLEdit" type="LineEdit" parent="DownloadConfigPanel/Control/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "URL"
+
+[node name="PasteLink" type="Button" parent="DownloadConfigPanel/Control/MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+icon = ExtResource("7_mfx0p")
+icon_alignment = 1
+expand_icon = true
+
+[node name="Download" type="Button" parent="DownloadConfigPanel/Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Download"
+
+[node name="Cancel" type="Button" parent="DownloadConfigPanel/Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Cancel"
+
+[node name="ImportConfigNotice" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = ""
+initial_position = 2
+size = Vector2i(1000, 720)
+dialog_text = "Warning! Configurations can run potentially dangerous code on your device! Make sure you trust the source of this configuration!"
+dialog_autowrap = true
+
+[connection signal="pressed" from="HBoxContainer2/LoadConfFile" to="." method="_on_load_conf_file_pressed"]
+[connection signal="pressed" from="HBoxContainer2/LoadConfURL" to="." method="_on_load_conf_url_pressed"]
+[connection signal="pressed" from="HBoxContainer2/RefreshConfList" to="." method="_on_refresh_conf_list_pressed"]
+[connection signal="pressed" from="HBoxContainer2/DeleteSelected" to="." method="_on_delete_selected_pressed"]
+[connection signal="pressed" from="DownloadConfigPanel/Control/MarginContainer/VBoxContainer/HBoxContainer/PasteLink" to="DownloadConfigPanel" method="_on_paste_link_pressed" flags=18]
+[connection signal="pressed" from="DownloadConfigPanel/Control/MarginContainer/VBoxContainer/Download" to="DownloadConfigPanel" method="_on_download_pressed" flags=18]
+[connection signal="pressed" from="DownloadConfigPanel/Control/MarginContainer/VBoxContainer/Cancel" to="DownloadConfigPanel" method="_on_cancel_pressed" flags=18]

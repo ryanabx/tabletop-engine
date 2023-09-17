@@ -8,37 +8,44 @@ var include_images: Dictionary
 ## Use this function to set your settings object
 func _init() -> void:
     # NOTE: To be implemented by the configuration creator
+    assert(false, "Not implemented")
     pass
 
 ## This function returns the configuration settings for this Tabletop Game
 func export_settings() -> Dictionary:
     # NOTE: To be implemented by the configuration creator
+    assert(false, "Not implemented")
     return {}
 
 ## Regular settings used by the game
 func settings() -> Dictionary:
     # NOTE: To be implemented by the configuration creator
+    assert(false, "Not implemented")
     return {}
 
 ## Initializes the Tabletop Game
 func add_board(_board: Board) -> void:
     # NOTE: To be implemented by the configuration creator
+    assert(false, "Not implemented")
     pass
 
 ## Called when the board wants the game to start. Should be used to create all the initial game objects
 func game_start() -> void:
     # NOTE: To be implemented by the configuration creator
+    assert(false, "Not implemented")
     pass
 
 ## Returns the list of user actions 
 func get_actions() -> Array[String]:
     # NOTE: To be implemented by the configuration creator
+    assert(false, "Not implemented")
     return []
 
 ## Runs a specified action based off the action string, retrieved from get_actions()
 ## should return true if the action was successful, false otherwise
 func run_action(_action: String) -> bool:
     # NOTE: To be implemented by the configuration creator
+    assert(false, "Not implemented")
     return false
 
 ## Sets images from the ImageIncludes in this config
@@ -47,7 +54,10 @@ func set_images(imgs: Dictionary) -> void:
     for img: String in imgs.keys():
         var n_img: Image = Image.new()
         n_img.load_webp_from_buffer(imgs[img])
-        include_images[img] = ImageTexture.create_from_image(n_img)
+        get_images()[img] = ImageTexture.create_from_image(n_img)
+
+func get_images() -> Dictionary:
+    return get_images()
 
 # OVERRIDABLE FUNCTIONS
 
@@ -81,7 +91,7 @@ static func import_config(bytes: PackedByteArray) -> TabletopGame:
     var obj := TabletopGame.new()
     obj.set_script(sc)
 
-    obj.set_images(config.include_images)
+    obj.set_images(config.get_images())
     return obj
 
 ## Export config from a config file
@@ -121,7 +131,7 @@ static func export_config(scr_text: String, dir_path: String) -> PackedByteArray
                 continue
             # Add file to includes
             config.include[str(folder,"/",fname)] = FileAccess.get_file_as_bytes(str(dir_path,"/",folder,"/",fname))
-    # Add images to include_images
+    # Add images to get_images()
     for folder: String in obj.export_settings().include_image_folders:
         var folder_open: DirAccess = DirAccess.open(str(dir_path,"/",folder))
         if folder_open == null:

@@ -37,7 +37,7 @@ func _refresh_image() -> void:
         or not is_instance_valid(sprite):
             return
     
-    sprite.texture = board.game.include_images[image_up] if face_up else board.game.include_images[image_down]
+    sprite.texture = board.game.get_images()[image_up] if face_up else board.game.get_images()[image_down]
     sprite.scale = size / sprite.texture.get_size()
 
 func can_access() -> bool:

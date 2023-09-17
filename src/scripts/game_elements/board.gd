@@ -32,7 +32,7 @@ var background_sprite: Sprite2D
 var background: String = "":
     set(val):
         background = val
-        background_sprite.set_texture(game.include_images[background])
+        background_sprite.set_texture(game.get_images()[background])
         background_sprite.scale = border.size / background_sprite.texture.get_size()
     get:
         return background
@@ -48,11 +48,11 @@ func _draw() -> void:
 func get_image(path: String) -> Texture2D:
     if game == null:
         return null
-    if game.include_images == null:
+    if game.get_images() == null:
         return null
-    if not path in game.include_images:
+    if not path in game.get_images():
         return null
-    return game.include_images[path]
+    return game.get_images()[path]
 
 ## Draw the background specified
 func draw_board_bg() -> void:

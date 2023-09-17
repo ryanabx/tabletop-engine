@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://fq6oqa0p4pa3"]
+[gd_scene load_steps=3 format=3 uid="uid://c70ia0j5g4yor"]
 
 [ext_resource type="Script" path="res://src/scripts/ui/download_config_panel.gd" id="1_3vy0d"]
 [ext_resource type="Texture2D" uid="uid://c4sv5wkd2de3o" path="res://src/resources/assets/ui/paste.svg" id="2_fmic5"]
@@ -16,8 +16,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 4.0
 offset_top = 4.0
-offset_right = -4.0
-offset_bottom = -4.0
+offset_right = 916.0
+offset_bottom = 636.0
 grow_horizontal = 2
 grow_vertical = 2
 
