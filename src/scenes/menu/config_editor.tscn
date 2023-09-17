@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dw8r2fcefgfpk"]
+[gd_scene load_steps=8 format=3 uid="uid://dw8r2fcefgfpk"]
 
 [ext_resource type="Script" path="res://src/scripts/menu/config_editor.gd" id="1_6vcsj"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/safe_margins.tscn" id="2_e8vj6"]
@@ -6,6 +6,8 @@
 [ext_resource type="CodeHighlighter" uid="uid://cf45343koir7" path="res://src/resources/codeedit/config_editor._highlightingtres.tres" id="4_7266s"]
 [ext_resource type="PackedScene" uid="uid://dbpkcwga3251w" path="res://src/scenes/ui/components/config_selector.tscn" id="4_qs4ra"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="5_gxamv"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_4ehyt"]
 
 [node name="ConfigEditor" type="Control"]
 layout_mode = 3
@@ -137,6 +139,7 @@ placeholder_text = "Config Name"
 [node name="Panel" type="Panel" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_4ehyt")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox"]
 layout_mode = 2
@@ -173,6 +176,20 @@ size = Vector2i(1193, 564)
 access = 2
 use_native_dialog = true
 
+[node name="OverwriteDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+initial_position = 2
+size = Vector2i(1000, 980)
+dialog_text = "Warning: You are about to overwrite the current config being edited. Is this okay?"
+dialog_autowrap = true
+
+[node name="ConfigLoadedAlert" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "Config Loaded"
+initial_position = 2
+size = Vector2i(720, 720)
+dialog_text = "Configuration loaded!"
+
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Config List/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Config List/VBoxContainer/HBoxContainer/ImportConfig" to="." method="_on_import_configuration_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox/HBoxContainer/ImportImages" to="." method="_on_import_images_pressed"]
@@ -180,3 +197,4 @@ use_native_dialog = true
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox/HBoxContainer/SaveConfiguration" to="." method="_on_save_configuration_pressed"]
 [connection signal="files_selected" from="ImportImagesDialog" to="." method="_on_import_images_dialog_files_selected"]
 [connection signal="file_selected" from="SaveConfigDialog" to="." method="_on_save_config_dialog_file_selected"]
+[connection signal="confirmed" from="OverwriteDialog" to="." method="_on_overwrite_dialog_confirmed"]

@@ -8,6 +8,8 @@ extends Control
 @onready var import_images_dialog: FileDialog = %ImportImagesDialog
 @onready var save_config_dialog: FileDialog = %SaveConfigDialog
 @onready var config_name: LineEdit = %ConfigName
+@onready var overwrite_dialog: ConfirmationDialog = %OverwriteDialog
+@onready var config_loaded_alert: AcceptDialog = %ConfigLoadedAlert
 
 
 @onready var gallery_image_scene: PackedScene = preload("res://src/scenes/ui/components/gallery_image.tscn")
@@ -38,6 +40,7 @@ func refresh_from_loaded(tbt: TabletopGame) -> void:
     print("Setting images")
     refresh_images(tbt.get_images())
     config_name.text = tbt.name
+    config_loaded_alert.popup()
 
 func refresh_images(images: Dictionary) -> void:
     # Remove all previous images
@@ -58,12 +61,15 @@ func add_images(images: Array) -> void:
 
 
 func _on_import_configuration_pressed() -> void:
-    import_config_to_editor()
+    if config_code.text != "" or config_name.text != "" or not image_list.get_children().is_empty():
+        overwrite_dialog.popup()
+    else:
+        import_config_to_editor()
 
 func import_config_to_editor() -> void:
     print("Getting selected config")
     var current_config: TabletopGame = config_selector.get_selected_config()
-    print("Refreshign from loaded")
+    print("Refreshing from loaded")
     refresh_from_loaded(current_config)
 
 
@@ -124,3 +130,7 @@ func _on_save_config_dialog_file_selected(path: String) -> void:
     f.store_buffer(bytes)
     f.close()
     print("Config created at ", path)
+
+
+func _on_overwrite_dialog_confirmed() -> void:
+    import_config_to_editor()
