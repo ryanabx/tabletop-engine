@@ -1,7 +1,6 @@
-[gd_scene load_steps=15 format=3 uid="uid://c6y4ttibwy3ay"]
+[gd_scene load_steps=14 format=3 uid="uid://c6y4ttibwy3ay"]
 
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="1_g3g4g"]
-[ext_resource type="PackedScene" uid="uid://xkoglw4lu6ab" path="res://src/scenes/ui/background.tscn" id="1_lbcxe"]
 [ext_resource type="Script" path="res://src/scripts/menu/new_game.gd" id="1_pyp32"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/safe_margins.tscn" id="3_4l57n"]
 [ext_resource type="Texture2D" uid="uid://pgsxe1dk7qmx" path="res://src/resources/assets/ui/arrow-to-left.svg" id="3_ccqel"]
@@ -23,9 +22,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_pyp32")
-
-[node name="Background" parent="." instance=ExtResource("1_lbcxe")]
-layout_mode = 1
 
 [node name="SafeMargins" parent="." instance=ExtResource("3_4l57n")]
 layout_mode = 1

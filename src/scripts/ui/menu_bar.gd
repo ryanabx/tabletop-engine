@@ -7,6 +7,7 @@ extends MenuButton
 var board: Board = null
 
 func _ready() -> void:
+    get_popup().submenu_popup_delay = 0.0
     SignalManager.game_load_finished.connect(set_board)
 
 func set_board(_b: Board) -> void:

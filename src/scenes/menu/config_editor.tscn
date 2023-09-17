@@ -1,46 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://dw8r2fcefgfpk"]
+[gd_scene load_steps=6 format=3 uid="uid://dw8r2fcefgfpk"]
 
 [ext_resource type="Script" path="res://src/scripts/menu/config_editor.gd" id="1_6vcsj"]
-[ext_resource type="PackedScene" uid="uid://xkoglw4lu6ab" path="res://src/scenes/ui/background.tscn" id="1_jlso0"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/safe_margins.tscn" id="2_e8vj6"]
 [ext_resource type="Texture2D" uid="uid://pgsxe1dk7qmx" path="res://src/resources/assets/ui/arrow-to-left.svg" id="3_fva16"]
+[ext_resource type="CodeHighlighter" uid="uid://cf45343koir7" path="res://src/resources/codeedit/config_editor._highlightingtres.tres" id="4_7266s"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="5_gxamv"]
-
-[sub_resource type="CodeHighlighter" id="CodeHighlighter_8vx4m"]
-number_color = Color(0.709804, 0.34902, 0.313726, 1)
-symbol_color = Color(0.74902, 0.690196, 0.337255, 1)
-function_color = Color(0.411765, 0.647059, 0.6, 1)
-member_variable_color = Color(0.443137, 0.564706, 0.576471, 1)
-keyword_colors = {
-"Array": Color(0.701961, 0.439216, 0.439216, 1),
-"Dictionary": Color(0.701961, 0.439216, 0.439216, 1),
-"Rect2": Color(0.701961, 0.439216, 0.439216, 1),
-"String": Color(0.701961, 0.439216, 0.439216, 1),
-"Vector2": Color(0.701961, 0.439216, 0.439216, 1),
-"bool": Color(0.701961, 0.439216, 0.439216, 1),
-"class_name": Color(0.839216, 0.654902, 0.745098, 1),
-"const": Color(0.839216, 0.654902, 0.745098, 1),
-"extends": Color(0.839216, 0.654902, 0.745098, 1),
-"false": Color(0.639216, 0.192157, 0.192157, 1),
-"float": Color(0.701961, 0.439216, 0.439216, 1),
-"for": Color(0.839216, 0.654902, 0.745098, 1),
-"func": Color(0.839216, 0.654902, 0.745098, 1),
-"in": Color(0.839216, 0.654902, 0.745098, 1),
-"int": Color(0.701961, 0.439216, 0.439216, 1),
-"match": Color(0.839216, 0.654902, 0.745098, 1),
-"null": Color(0.639216, 0.192157, 0.192157, 1),
-"return": Color(0.839216, 0.654902, 0.745098, 1),
-"true": Color(0.639216, 0.192157, 0.192157, 1),
-"var": Color(0.839216, 0.654902, 0.745098, 1),
-"while": Color(0.839216, 0.654902, 0.745098, 1)
-}
-member_keyword_colors = {
-"board": Color(0.14902, 0.486275, 0.572549, 1)
-}
-color_regions = {
-"\" \"": Color(0.572549, 0.870588, 0.698039, 1),
-"' '": Color(0.572549, 0.870588, 0.698039, 1)
-}
 
 [node name="ConfigEditor" type="Control"]
 layout_mode = 3
@@ -50,9 +14,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_6vcsj")
-
-[node name="Background" parent="." instance=ExtResource("1_jlso0")]
-layout_mode = 1
 
 [node name="SafeMargins" parent="." instance=ExtResource("2_e8vj6")]
 layout_mode = 1
@@ -81,7 +42,7 @@ highlight_all_occurrences = true
 highlight_current_line = true
 draw_tabs = true
 draw_spaces = true
-syntax_highlighter = SubResource("CodeHighlighter_8vx4m")
+syntax_highlighter = ExtResource("4_7266s")
 minimap_draw = true
 line_folding = true
 gutters_draw_bookmarks = true

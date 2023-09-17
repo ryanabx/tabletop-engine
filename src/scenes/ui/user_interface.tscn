@@ -72,15 +72,11 @@ metadata/_edit_use_anchors_ = true
 
 [node name="MenuButton" type="MenuButton" parent="SafeMargins/TopBar/HBoxContainer/MenuPanel"]
 layout_mode = 2
+icon = ExtResource("7_f3h7v")
+flat = false
 icon_alignment = 1
 expand_icon = true
 script = ExtResource("2_fos3n")
-
-[node name="TextureRect" type="TextureRect" parent="SafeMargins/TopBar/HBoxContainer/MenuPanel"]
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("7_f3h7v")
-expand_mode = 1
 
 [node name="FadeRect" parent="." instance=ExtResource("6_aaf8p")]
 layout_mode = 1

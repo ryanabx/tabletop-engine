@@ -1,8 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://dlnv5bicqv8ih"]
+[gd_scene load_steps=4 format=3 uid="uid://dlnv5bicqv8ih"]
 
 [ext_resource type="Script" path="res://src/scripts/menu/main_menu.gd" id="1_1pq65"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="2_62p08"]
-[ext_resource type="PackedScene" uid="uid://xkoglw4lu6ab" path="res://src/scenes/ui/background.tscn" id="2_yycfv"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/safe_margins.tscn" id="3_o4qee"]
 
 [node name="MainMenu" type="Control"]
@@ -14,9 +13,6 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_1pq65")
 metadata/_edit_lock_ = true
-
-[node name="Background" parent="." instance=ExtResource("2_yycfv")]
-layout_mode = 1
 
 [node name="SafeMargins" parent="." instance=ExtResource("3_o4qee")]
 layout_mode = 1
