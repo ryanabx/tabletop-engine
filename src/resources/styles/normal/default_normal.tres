@@ -12,3 +12,6 @@ border_width_right = 4
 border_width_bottom = 4
 border_color = Color(0.352941, 0.352941, 0.352941, 1)
 border_blend = true
+shadow_color = Color(0, 0, 0, 0.392157)
+shadow_size = 16
+shadow_offset = Vector2(8, 8)
