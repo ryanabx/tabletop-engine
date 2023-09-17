@@ -38,6 +38,27 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Select Config"]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="BackButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Select Config/HBoxContainer"]
+custom_minimum_size = Vector2(164, 164)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+icon = ExtResource("3_ccqel")
+expand_icon = true
+
+[node name="ReadyButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Select Config/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Ready"
+icon = ExtResource("4_lry2e")
+icon_alignment = 2
+expand_icon = true
+
 [node name="Multiplayer" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Options"]
 visible = false
 layout_mode = 2
@@ -110,35 +131,14 @@ text = "Ping"
 icon_alignment = 1
 expand_icon = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 8
-
-[node name="BackButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(164, 164)
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 8
-icon = ExtResource("3_ccqel")
-expand_icon = true
-
-[node name="ReadyButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Ready"
-icon = ExtResource("4_lry2e")
-icon_alignment = 2
-expand_icon = true
-
 [node name="FadeRect" parent="." instance=ExtResource("1_g3g4g")]
 layout_mode = 1
 mouse_filter = 2
 
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Select Config/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Select Config/HBoxContainer/ReadyButton" to="." method="_on_ready_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/Options/Start" to="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer" method="_on_start_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/Options/Stop" to="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer" method="_on_stop_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/Options/Peers" to="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer" method="_on_peers_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/Options/Seal" to="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer" method="_on_seal_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/Options/Ping" to="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer" method="_on_ping_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/ReadyButton" to="." method="_on_ready_pressed"]

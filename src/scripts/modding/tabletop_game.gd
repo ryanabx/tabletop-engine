@@ -4,48 +4,43 @@ extends RefCounted
 
 var board: Board
 var include_images: Dictionary
-
-## Use this function to set your settings object
-func _init() -> void:
-    # NOTE: To be implemented by the configuration creator
-    assert(false, "Not implemented")
-    pass
+var name: String = ""
 
 ## This function returns the configuration settings for this Tabletop Game
 func export_settings() -> Dictionary:
     # NOTE: To be implemented by the configuration creator
-    assert(false, "Not implemented")
+    # assert(false, "Not implemented")
     return {}
 
 ## Regular settings used by the game
 func settings() -> Dictionary:
     # NOTE: To be implemented by the configuration creator
-    assert(false, "Not implemented")
+    # assert(false, "Not implemented")
     return {}
 
 ## Initializes the Tabletop Game
 func add_board(_board: Board) -> void:
     # NOTE: To be implemented by the configuration creator
-    assert(false, "Not implemented")
+    # assert(false, "Not implemented")
     pass
 
 ## Called when the board wants the game to start. Should be used to create all the initial game objects
 func game_start() -> void:
     # NOTE: To be implemented by the configuration creator
-    assert(false, "Not implemented")
+    # assert(false, "Not implemented")
     pass
 
 ## Returns the list of user actions 
 func get_actions() -> Array[String]:
     # NOTE: To be implemented by the configuration creator
-    assert(false, "Not implemented")
+    # assert(false, "Not implemented")
     return []
 
 ## Runs a specified action based off the action string, retrieved from get_actions()
 ## should return true if the action was successful, false otherwise
 func run_action(_action: String) -> bool:
     # NOTE: To be implemented by the configuration creator
-    assert(false, "Not implemented")
+    # assert(false, "Not implemented")
     return false
 
 ## Sets images from the ImageIncludes in this config
@@ -54,10 +49,10 @@ func set_images(imgs: Dictionary) -> void:
     for img: String in imgs.keys():
         var n_img: Image = Image.new()
         n_img.load_webp_from_buffer(imgs[img])
-        get_images()[img] = ImageTexture.create_from_image(n_img)
+        include_images[img] = ImageTexture.create_from_image(n_img)
 
 func get_images() -> Dictionary:
-    return get_images()
+    return include_images
 
 # OVERRIDABLE FUNCTIONS
 
@@ -85,13 +80,17 @@ static func import_from_file(fname: String) -> TabletopGame:
 ## WAITING/HOPING FOR GDSCRIPT SANDBOXING IN THE FUTURE
 static func import_config(bytes: PackedByteArray) -> TabletopGame:
     var config: Dictionary = bytes_to_var(bytes.decompress_dynamic(-1, 3))
+    return _get_tabletop_game(config)
+
+static func _get_tabletop_game(config: Dictionary) -> TabletopGame:
     var sc: GDScript = GDScript.new()
     sc.set_source_code(config.script)
     sc.reload()
     var obj := TabletopGame.new()
     obj.set_script(sc)
+    obj.name = config.name
 
-    obj.set_images(config.get_images())
+    obj.set_images(config.include_images)
     return obj
 
 ## Export config from a config file
@@ -103,10 +102,23 @@ static func export_from_file(fname: String) -> PackedByteArray:
     var scr_text: String = FileAccess.get_file_as_string(fname)
     var dir_path: String = fname.rsplit("/",false,1)[0]
     print("File name: ",fname, " :: Directory path: ",dir_path)
-    return export_config(scr_text, dir_path)
+    return export_config_old(scr_text, dir_path)
+
+static func export_config(source_code: String, images: Dictionary, game_name: String) -> PackedByteArray:
+    var config: Dictionary = {}
+    config.name = game_name
+    config.include_images = images
+    config.script = source_code
+    if not source_validation(config):
+        return []
+    return var_to_bytes(config).compress(3)
+
+static func source_validation(config: Dictionary) -> bool:
+    var tabletop: TabletopGame = _get_tabletop_game(config)
+    return tabletop != null
 
 ## Export config
-static func export_config(scr_text: String, dir_path: String) -> PackedByteArray:
+static func export_config_old(scr_text: String, dir_path: String) -> PackedByteArray:
     var sc: GDScript = GDScript.new()
     sc.set_source_code(scr_text)
     sc.reload()

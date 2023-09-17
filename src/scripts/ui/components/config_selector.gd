@@ -59,8 +59,10 @@ func _on_load_conf_url_pressed() -> void:
 func get_selected_config_bytes() -> PackedByteArray:
     if is_selecting_config():
         if is_selecting_default_config():
+            print("Getting default config")
             return Utils.FileManager.get_file_bytes(Globals.DEFAULT_CONFIG_PATH)
         else:
+            print("Getting given config")
             return Utils.FileManager.get_file_bytes(get_config_file_path(get_currently_selected_config()))
     return []
 

@@ -6,24 +6,23 @@ func _ready() -> void:
     req = HTTPRequest.new()
     add_child(req)
 
-func load_images_into_array(image_strings: Array, image_directory: String) -> Array:
+func load_images_into_array(image_strings: Array) -> Array:
     var result: Array = []
     for image_path: String in image_strings:
-        var _image := Image.new()
-        var _err := _image.load(image_directory + image_path)
-        if _err != OK:
-            print("Failed to load image: ",image_directory + image_path)
-            return []
-        var _texture := ImageTexture.new()
-        _texture = ImageTexture.create_from_image(_image)
+        var _texture: Texture2D = load_texture_from_fname(image_path)
+        if _texture == null:
+            continue
         result.append(_texture)
     return result
 
 func load_texture_from_string(fname: String, image_directory: String) -> Texture2D:
+    return load_texture_from_fname(image_directory + fname)
+
+func load_texture_from_fname(fname: String) -> Texture2D:
     var _image := Image.new()
-    var _err := _image.load(image_directory + fname)
+    var _err := _image.load(fname)
     if _err != OK:
-        print("Failed to load image: ",image_directory + fname)
+        print("Failed to load image: ",fname)
         return null
     var _texture := ImageTexture.new()
     _texture = ImageTexture.create_from_image(_image)
