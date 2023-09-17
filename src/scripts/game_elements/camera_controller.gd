@@ -7,7 +7,7 @@ var initial_points: Dictionary = {}
 var current_points: Dictionary = {}
 
 const MOVEMENT_SPEED: float = 2000.0
-const ROTATION_SPEED: float = 2.0
+const ROTATION_SPEED: float = 2.5
 
 var initial_mouse_pos: Vector2 = Vector2.ZERO
 var initial_camera_pos: Vector2 = Vector2.ZERO

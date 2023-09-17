@@ -68,7 +68,6 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="Code" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
-visible = false
 layout_mode = 2
 
 [node name="CodeVBox" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Code"]
@@ -77,7 +76,7 @@ layout_mode = 2
 [node name="CodeEdit" type="CodeEdit" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Code/CodeVBox"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 48
 highlight_all_occurrences = true
 highlight_current_line = true
 draw_tabs = true
@@ -95,6 +94,7 @@ auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
 
 [node name="Imports" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
+visible = false
 layout_mode = 2
 
 [node name="ImportsVBox" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports"]
