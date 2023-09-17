@@ -61,6 +61,10 @@ text = "Import Configuration"
 [node name="Code" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
 visible = false
 layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
 
 [node name="CodeVBox" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Code"]
 layout_mode = 2
@@ -100,16 +104,18 @@ layout_mode = 2
 alignment = 1
 
 [node name="ImportFiles" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox/HBoxContainer"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Import Files"
 
-[node name="ImportImages" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox/HBoxContainer"]
+[node name="ImportImagesButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Import Images"
 
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox"]
+[node name="ImportImagesLabel" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Imported Images:"
 horizontal_alignment = 1
@@ -131,10 +137,23 @@ layout_mode = 2
 [node name="SettingsVBox" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings"]
 layout_mode = 2
 
-[node name="ConfigName" type="LineEdit" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox"]
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox"]
+layout_mode = 2
+text = "Configure settings"
+horizontal_alignment = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox/HBoxContainer2"]
+layout_mode = 2
+text = "Tabletop Name: "
+
+[node name="ConfigName" type="LineEdit" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
-placeholder_text = "Config Name"
+size_flags_horizontal = 3
+placeholder_text = "Tabletop Name"
 
 [node name="Panel" type="Panel" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox"]
 layout_mode = 2
@@ -192,7 +211,7 @@ dialog_text = "Configuration loaded!"
 
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Config List/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Config List/VBoxContainer/HBoxContainer/ImportConfig" to="." method="_on_import_configuration_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox/HBoxContainer/ImportImages" to="." method="_on_import_images_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox/HBoxContainer/ImportImagesButton" to="." method="_on_import_images_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox/HBoxContainer/SaveConfiguration" to="." method="_on_save_configuration_pressed"]
 [connection signal="files_selected" from="ImportImagesDialog" to="." method="_on_import_images_dialog_files_selected"]

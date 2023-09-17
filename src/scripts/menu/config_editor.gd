@@ -10,6 +10,7 @@ extends Control
 @onready var config_name: LineEdit = %ConfigName
 @onready var overwrite_dialog: ConfirmationDialog = %OverwriteDialog
 @onready var config_loaded_alert: AcceptDialog = %ConfigLoadedAlert
+@onready var import_images_label: Label = %ImportImagesLabel
 
 
 @onready var gallery_image_scene: PackedScene = preload("res://src/scenes/ui/components/gallery_image.tscn")
@@ -20,6 +21,7 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float):
     import_config.disabled = not config_selector.is_selecting_config()
+    import_images_label.text = "Imported images (%s)" % image_list.get_child_count()
 
 
 func _on_back_button_pressed():
