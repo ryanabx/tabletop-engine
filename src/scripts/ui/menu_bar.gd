@@ -7,7 +7,6 @@ extends MenuButton
 var board: Board = null
 
 func _ready() -> void:
-    tabletop_menu()
     SignalManager.game_load_finished.connect(set_board)
 
 func set_board(_b: Board) -> void:
@@ -20,6 +19,7 @@ func set_board(_b: Board) -> void:
         await actions.tree_exited
     player_menu()
     actions_menu()
+    tabletop_menu()
 
 func actions_menu() -> void:
     actions = PopupMenu.new()
@@ -42,7 +42,7 @@ func player_menu() -> void:
 
 func tabletop_menu() -> void:
     menu.get_popup().id_pressed.connect(tabletop_pressed)
-    menu.get_popup().add_item("Exit Game", 0)
+    menu.get_popup().add_item(str("Exit ", board.game.export_settings().name), 0)
     if not Utils.is_mobile_platform():
         menu.get_popup().add_item("Exit Tabletop Framework", 1)
 

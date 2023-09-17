@@ -67,24 +67,14 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Code" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
+[node name="Code" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
+visible = false
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Code"]
+[node name="CodeVBox" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Code"]
 layout_mode = 2
 
-[node name="CodeEditorLabel" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Code/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Code Editor"
-horizontal_alignment = 1
-
-[node name="Button" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Code/HBoxContainer"]
-layout_mode = 2
-text = "GDScript Reference"
-flat = true
-
-[node name="CodeEdit" type="CodeEdit" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Code"]
+[node name="CodeEdit" type="CodeEdit" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Code/CodeVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 26
@@ -104,11 +94,31 @@ indent_automatic = true
 auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
 
-[node name="Imports" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
-visible = false
+[node name="Imports" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
 layout_mode = 2
 
-[node name="Export Settings" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
+[node name="ImportsVBox" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="ImportFiles" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Import Files"
+
+[node name="ImportImages" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Import Images"
+
+[node name="ImportsList" type="ItemList" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Settings" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
 visible = false
 layout_mode = 2
 
