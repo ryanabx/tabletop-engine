@@ -1,8 +1,12 @@
-[gd_scene load_steps=4 format=3 uid="uid://dlnv5bicqv8ih"]
+[gd_scene load_steps=8 format=3 uid="uid://dlnv5bicqv8ih"]
 
 [ext_resource type="Script" path="res://src/scripts/menu/main_menu.gd" id="1_1pq65"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="2_62p08"]
+[ext_resource type="Texture2D" uid="uid://cyd74v1etxj2a" path="res://src/resources/assets/ui/play.svg" id="3_1vqd7"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/safe_margins.tscn" id="3_o4qee"]
+[ext_resource type="Texture2D" uid="uid://dbpyib0osxmuy" path="res://src/resources/assets/ui/gear.svg" id="4_b7mlp"]
+[ext_resource type="Texture2D" uid="uid://b13sa65um5jk" path="res://src/resources/assets/ui/folder_icon.svg" id="5_atquh"]
+[ext_resource type="Texture2D" uid="uid://cu648p40sig4d" path="res://src/resources/assets/ui/times.svg" id="6_w7hdg"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -22,7 +26,6 @@ layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 40
 
 [node name="MarginContainer" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -34,41 +37,57 @@ text = "Tabletop Framework"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="VBoxContainer" type="GridContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 3
-
-[node name="NewGame" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="ButtonFlow" type="BoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(1000, 0)
 layout_mode = 2
 size_flags_vertical = 3
-text = "New Game"
+theme_override_constants/separation = 40
+alignment = 1
+vertical = true
 
-[node name="Settings" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="NewGame" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/ButtonFlow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(1000, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "Settings"
+theme_override_font_sizes/font_size = 64
+icon = ExtResource("3_1vqd7")
+icon_alignment = 1
+expand_icon = true
 
-[node name="Configurations" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="Settings" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/ButtonFlow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(1000, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "Configurations"
+theme_override_font_sizes/font_size = 64
+icon = ExtResource("4_b7mlp")
+icon_alignment = 1
+expand_icon = true
 
-[node name="Quit" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="Configurations" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/ButtonFlow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(1000, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "Exit Game"
+theme_override_font_sizes/font_size = 64
+icon = ExtResource("5_atquh")
+icon_alignment = 1
+expand_icon = true
+
+[node name="Quit" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/ButtonFlow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 64
+icon = ExtResource("6_w7hdg")
+icon_alignment = 1
+expand_icon = true
 
 [node name="HBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
+alignment = 1
 
 [node name="Version" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
@@ -76,18 +95,20 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 34
 text = "Version x.x.x"
+horizontal_alignment = 1
 
 [node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 34
 text = "Copyright ryanabx 2023"
+horizontal_alignment = 1
 
 [node name="FadeRect" parent="." instance=ExtResource("2_62p08")]
 layout_mode = 1
 mouse_filter = 2
 
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/NewGame" to="." method="_on_new_game_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/Configurations" to="." method="_on_configurations_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/ButtonFlow/NewGame" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/ButtonFlow/Settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/ButtonFlow/Configurations" to="." method="_on_configurations_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/ButtonFlow/Quit" to="." method="_on_quit_pressed"]
