@@ -99,6 +99,11 @@ layout_mode = 2
 [node name="ImportsVBox" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports"]
 layout_mode = 2
 
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox"]
+layout_mode = 2
+text = "Configure imported images"
+horizontal_alignment = 1
+
 [node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox"]
 layout_mode = 2
 alignment = 1
