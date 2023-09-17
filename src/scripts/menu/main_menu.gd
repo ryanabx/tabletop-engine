@@ -22,3 +22,7 @@ func _on_quit_pressed() -> void:
 
 func _on_settings_pressed() -> void:
     SignalManager.scene_transition.emit("res://src/scenes/menu/settings.tscn")
+
+
+func _on_configurations_pressed():
+    SignalManager.scene_transition.emit("res://src/scenes/menu/config_editor.tscn")

@@ -53,6 +53,11 @@ layout_mode = 2
 size_flags_vertical = 3
 text = "Settings"
 
+[node name="Configurations" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Configurations"
+
 [node name="Quit" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
@@ -79,4 +84,5 @@ mouse_filter = 2
 
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/NewGame" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/Configurations" to="." method="_on_configurations_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
