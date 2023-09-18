@@ -1,6 +1,11 @@
 class_name Deck
 extends Collection
+## deck.gd
+## 
+## Defines a generic [class Collection] that acts like a stack of pieces.
+## The [class Deck] will dissapear if no pieces are in it, unless [member Deck.permanent] is set to [true]
 
+## If set to [true], this [class Deck] will not disappear when [member Collection.inside] is empty.
 var permanent: bool = false
 
 @onready var sprite: Sprite2D
@@ -55,7 +60,7 @@ func add_piece(piece: Piece, back: bool = false) -> void:
 func remove_from_top(pos: Vector2 = Vector2.ZERO) -> Piece:
     var pc: Piece = super.remove_from_top(pos)
     if inside.is_empty() and not permanent:
-        erase_self.rpc()
+        _erase_rpc.rpc()
     return pc
 
 func flip() -> void:
@@ -65,7 +70,7 @@ func flip() -> void:
 func clear_inside() -> void:
     super.clear_inside()
     if not permanent:
-        erase_self.rpc()
+        _erase_rpc.rpc()
 
 func deserialize_piece(_dict: Dictionary) -> Piece:
     _dict.face_up = face_up

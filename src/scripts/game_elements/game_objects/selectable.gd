@@ -1,10 +1,15 @@
 class_name Selectable
 extends GameObject
+## selectable.gd
+##
+## Defines an object that can be selected and moved by the player.
 
 @onready var collision_polygon: CollisionPolygon2D
 @onready var area2d: Area2D
 
 # Shareable properties
+
+## Whether or not state variables are locked, despite being selected or moved.
 var lock_state: bool = false
 
 var grab_offset: Vector2 = Vector2.ZERO
@@ -23,7 +28,7 @@ func _ready() -> void:
     super._ready()
 
 func get_shareable_properties() -> Array:
-    return super.get_shareable_properties() + ["lock_state"]
+    return super.get_shareable_properties() + ["lock_state"] # TODO: Add selected to shareable properties
 
 var selected: bool = false:
     set(val):

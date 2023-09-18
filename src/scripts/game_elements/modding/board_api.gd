@@ -27,17 +27,17 @@ const GAME_OBJECT_TYPE_STRING = [
 ### Public functions, usable by modders ###
 
 ## Creates a new object on the board, and returns a pointer to that object.
-## Takes a [param type] from [enum BoardAPI.GameObjectType].
+## Takes a [param type] from [enum BoardAPI.GameObjectType], to define the type of object to be created.
 ## A list of modifiable GameObject properties can be found in each GameObject's reference.
-static func new_object(type: GameObjectType, properties: Dictionary) -> GameObjectAPI:
-    return _wrap_game_object(_board.new_game_object(type, properties))
+static func new_object(type: GameObjectType, properties: Dictionary) -> GameObject:
+    return _board.new_game_object(type, properties)
 
 ## Finds and erases a specified GameObject by name.
 ## Use [param recursive] to specify whether nested game objects should
 ## be erased too.
 ## Returns [true] if the operation was successful, [false] otherwise.
 static func erase_object(name: String, recursive: bool = false) -> bool:
-    var obj: GameObjectAPI = get_object(name)
+    var obj: GameObject = get_object(name)
     if obj == null:
         return false
     obj.erase(recursive)
@@ -45,23 +45,17 @@ static func erase_object(name: String, recursive: bool = false) -> bool:
 
 ## Finds a specified GameObject by name.
 ## Returns [null] if the GameObject cannot be found.
-static func get_object(name: String) -> GameObjectAPI:
-    return _wrap_game_object(_board.get_gobject(name))
+static func get_object(name: String) -> GameObject:
+    return _board.get_gobject(name)
+
+## Finds a specified GameObject by index.
+## Returns [null] if the index is out of bounds.
+## 
+static func get_object_by_index(index: int) -> GameObject:
+    return _board.board_objects.get_children()[index]
 
 
 # Private functions, only for use by the internals
-
-static func _wrap_game_object(obj: GameObject) -> GameObjectAPI:
-    if obj == null:
-        return null
-    match obj.object_type:
-        GameObjectType.PIECE:
-            return PieceAPI.new(obj)
-        GameObjectType.DECK:
-            return DeckAPI.new(obj)
-        GameObjectType.HAND:
-            return HandAPI.new(obj)
-    return GameObjectAPI.new(obj)
 
 static func _set_board(board: Board) -> void:
     _board = board

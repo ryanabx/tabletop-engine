@@ -1,11 +1,19 @@
 class_name GameObject
 extends Node2D
+## game_object.gd
+## 
+## Base game object class. Represents a singular entity on the board.
+## 
 
 # Shareable properties
+
+## Represents the shape of an object, given a set of points.
 var shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)])
+## Represents the size of an object. Works with [param shape] to make the shape's boundaries on the board.
 var size: Vector2 = Vector2.ONE
 
 var board: Board
+
 
 var property_changes: Dictionary = {}
 
@@ -15,7 +23,6 @@ var authority: int:
     get:
         return get_multiplayer_authority()
     set(val):
-        # print("Setting multiplayer authority to ",val)
         if is_inside_tree() and multiplayer.get_unique_id() == val and authority != val:
             set_authority.rpc(multiplayer.get_unique_id())
         set_multiplayer_authority(val)
@@ -87,3 +94,11 @@ func _sync_properties() -> void:
 
 func _process(_delta: float) -> void:
     pass
+
+## Erase this game object.
+func erase(recursive: bool = false) -> void:
+    _erase_rpc.rpc(recursive)
+
+@rpc("authority","call_local","reliable")
+func _erase_rpc(_recursive: bool) -> void:
+    queue_free()

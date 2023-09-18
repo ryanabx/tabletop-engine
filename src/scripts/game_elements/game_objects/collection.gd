@@ -1,8 +1,15 @@
 class_name Collection
 extends Selectable
+## collection.gd
+##
+## Defines an object that contains pieces within it.
+
 
 # Shareable properties
+## The list of serialized pieces that are inside this collection.
 var inside: Array[Dictionary] = []
+## Determines whether the pieces inside the collection come out face up or not.
+## If [member Selectable.lock_state] is true, the collection's [member face_up] value remains constant.
 var face_up: bool = false
 
 func serialize_piece(pc: Piece) -> Dictionary:
@@ -35,7 +42,7 @@ func _add_piece_at(piece: Piece, _index: int) -> void:
     piece.authority = multiplayer.get_unique_id()
     
     var pc_d: Dictionary = serialize_piece(piece)
-    piece.erase_self.rpc()
+    piece._erase_rpc.rpc()
     inside.insert(_index, pc_d)
     add_to_property_changes("inside", inside)
 
@@ -65,7 +72,7 @@ func shuffle() -> void:
     add_to_property_changes("inside", inside)
 
 @rpc("authority","call_local","reliable")
-func erase_self(recursive: bool = false) -> void:
+func _erase_rpc(recursive: bool = false) -> void:
     for obj: Dictionary in inside:
         if not recursive and is_multiplayer_authority():
             deserialize_piece(obj)

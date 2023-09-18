@@ -1,6 +1,15 @@
 class_name Hand
 extends Collection
+## hand.gd
+##
+## Defines a [class Collection] which displays its pieces in a row.
+## Often useful for player's hands within a game.
 
+## Types of visibility for a hand.[br]
+## [member Hand.VisibilitySetting.ALL] Every player can see what's in the hand.
+## [member Hand.VisibilitySetting.DESIGNATED] Only players designated in [member Hand.designated_players] can view.
+## [member Hand.VisibilitySetting.NOT_DESIGNATED] Opposite of [member Hand.VisibilitySetting.DESIGNATED].
+## [member Hand.VisibilitySetting.NONE] No player can view what's in the hand.
 enum VisibilitySetting {
     ALL,
     DESIGNATED,
@@ -15,6 +24,8 @@ enum SizeOption {
     GROW_UNLIMITED
 }
 
+## Determines the overlap between pieces when space is not limited.
+## When space is limited (i.e. too many pieces), then this option is ignored.
 var layering_factor: float = 0.9
 
 var _spacing_interval: float = 1.0
@@ -22,10 +33,14 @@ var _selectable_piece: int = -1
 var _droppable_index: int = -1
 
 # Shareable properties
+## Determines the visibility of the hand. See [enum Hand.VisibilitySetting]
 var visibility: VisibilitySetting = VisibilitySetting.DESIGNATED
+## If visibility is set to [member Hand.VisibilitySetting.DESIGNATED] or [member Hand.VisibilitySetting.NOT_DESIGNATED],
+## the visibility will be determined by the player numbers defined here.
 var designated_players: Array = []
 var size_option: SizeOption = SizeOption.FIXED_LAYER
 
+## Determines the fixed size of each [class Piece] displayed in this hand.
 var size_pieces: Vector2 = Vector2.ONE
 
 func get_shareable_properties() -> Array:
