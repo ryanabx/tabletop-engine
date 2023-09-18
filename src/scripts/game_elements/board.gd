@@ -1,23 +1,17 @@
 class_name Board
 extends Node2D
+## Board is the main class interfaced with by any TabletopGame.
+## 
+## The board contains utility functions that are used for operating on the currently running tabletop.
 
-# Tabletop Game Loaded
+## The currently running tabletop game script. If you are modding, this is the current game (your script)
 var game: TabletopGame = null
 
-var size: Vector2 = Vector2.ONE
+# ## 
+# var size: Vector2 = Vector2.ONE
 
-var def_font: Font = null
 
-enum GameObjectType {
-    PIECE,
-    DECK,
-    HAND,
-    MAX
-}
 
-const GAME_OBJECT_TYPE_STRING = [
-    "piece", "deck", "hand", "max"
-]
 
 # Children
 @onready var board_player: BoardPlayer = $BoardPlayer
@@ -44,7 +38,7 @@ var counter: int = 0
 func _draw() -> void:
     draw_board_bg()
 
-
+##
 func get_image(path: String) -> Texture2D:
     if game == null:
         return null
@@ -132,22 +126,22 @@ var ready_players: Array = []
 #####################
 ### RPC functions ###
 #####################
-func instantiate_by_type(type: GameObjectType) -> GDScript:
+func instantiate_by_type(type: BoardAPI.GameObjectType) -> GDScript:
     match type:
-        GameObjectType.PIECE:
+        BoardAPI.GameObjectType.PIECE:
             return Piece
-        GameObjectType.DECK:
+        BoardAPI.GameObjectType.DECK:
             return Deck
-        GameObjectType.HAND:
+        BoardAPI.GameObjectType.HAND:
             return Hand
     print("WARNING: None of the above types specified")
     return GameObject
 
 ## Creates new game object on the board
-func new_game_object(type: GameObjectType, properties: Dictionary) -> GameObject:
+func new_game_object(type: BoardAPI.GameObjectType, properties: Dictionary) -> GameObject:
     var c: GameObject
     if not "name" in properties:
-        properties.name = "%d_%s_%d" % [multiplayer.get_unique_id(),GAME_OBJECT_TYPE_STRING[type],counter]
+        properties.name = "%d_%s_%d" % [multiplayer.get_unique_id(),BoardAPI.GAME_OBJECT_TYPE_STRING[type],counter]
         counter += 1
     c = instantiate_by_type(type).new()
     c.board = self
@@ -161,7 +155,7 @@ func new_game_object(type: GameObjectType, properties: Dictionary) -> GameObject
     return c
 
 @rpc("any_peer", "call_remote", "reliable")
-func _new_game_object_rpc(type: GameObjectType, properties: Dictionary) -> void:
+func _new_game_object_rpc(type: BoardAPI.GameObjectType, properties: Dictionary) -> void:
     var c: GameObject
     c = instantiate_by_type(type).new()
     c.board = self
@@ -204,7 +198,6 @@ func _ready() -> void:
 
     game.add_board(self)
     is_ready.rpc_id(1, multiplayer.get_unique_id())
-    def_font = ThemeDB.fallback_font
 
 @rpc("any_peer","call_local","reliable")
 func is_ready(id: int) -> void:

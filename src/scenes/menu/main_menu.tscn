@@ -60,8 +60,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 64
+text = "Start"
 icon = ExtResource("3_1vqd7")
 icon_alignment = 1
+vertical_icon_alignment = 2
 expand_icon = true
 
 [node name="AspectRatioContainer2" type="AspectRatioContainer" parent="SafeMargins/MarginContainer/VBoxContainer/AspectRatioContainer/ButtonFlow"]
@@ -75,8 +77,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 64
+text = "Tabletops"
 icon = ExtResource("5_atquh")
 icon_alignment = 1
+vertical_icon_alignment = 2
 expand_icon = true
 
 [node name="AspectRatioContainer3" type="AspectRatioContainer" parent="SafeMargins/MarginContainer/VBoxContainer/AspectRatioContainer/ButtonFlow"]
@@ -90,8 +94,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 64
+text = "Settings"
 icon = ExtResource("4_b7mlp")
 icon_alignment = 1
+vertical_icon_alignment = 2
 expand_icon = true
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="SafeMargins/MarginContainer/VBoxContainer/AspectRatioContainer/ButtonFlow"]
@@ -105,8 +111,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 64
+text = "Quit"
 icon = ExtResource("6_w7hdg")
 icon_alignment = 1
+vertical_icon_alignment = 2
 expand_icon = true
 
 [node name="HBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
