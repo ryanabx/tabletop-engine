@@ -4,6 +4,7 @@ extends Selectable
 ## 
 ## Represents a singular game piece. Typically extended into separate piece types.
 
+# TODO: Piece split into multiple types
 
 # Shareable properties
 var image_up: String = ""
