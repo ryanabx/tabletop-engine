@@ -89,7 +89,7 @@ func get_game_objects() -> Array[GameObject]:
 
 func clear_board() -> void:
     for obj: GameObject in get_game_objects():
-        obj.authority = multiplayer.get_unique_id()
+        obj._authority = multiplayer.get_unique_id()
         obj._erase_rpc.rpc(true)
 
 func move_piece(from: Collection, to: Collection, from_ind: int = -1, to_ind: int = -1) -> void:

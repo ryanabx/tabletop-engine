@@ -25,8 +25,8 @@ func _ready() -> void:
 func _erase_rpc(_recursive: bool = false) -> void:
     queue_free()
 
-func get_shareable_properties() -> Array:
-    return super.get_shareable_properties() + ["image_up", "image_down", "types", "face_up"]
+func _get_shareable_properties() -> Array:
+    return super._get_shareable_properties() + ["image_up", "image_down", "types", "face_up"]
 
 # Private methods
 

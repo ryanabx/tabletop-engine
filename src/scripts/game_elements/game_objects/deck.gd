@@ -11,8 +11,8 @@ var permanent: bool = false
 @onready var sprite: Sprite2D
 @onready var count: Label
 
-func get_shareable_properties() -> Array:
-    return super.get_shareable_properties() + ["permanent"]
+func _get_shareable_properties() -> Array:
+    return super._get_shareable_properties() + ["permanent"]
 
 func _ready() -> void:
     _init_children()
@@ -64,14 +64,14 @@ func remove_from_top(pos: Vector2 = Vector2.ZERO) -> Piece:
     return pc
 
 func flip() -> void:
-    authority = multiplayer.get_unique_id()
+    _authority = multiplayer.get_unique_id()
     face_up = not face_up
 
-func clear_inside() -> void:
-    super.clear_inside()
+func _clear_inside() -> void:
+    super._clear_inside()
     if not permanent:
         _erase_rpc.rpc()
 
-func deserialize_piece(_dict: Dictionary) -> Piece:
+func _deserialize_piece(_dict: Dictionary) -> Piece:
     _dict.face_up = face_up
-    return super.deserialize_piece(_dict)
+    return super._deserialize_piece(_dict)

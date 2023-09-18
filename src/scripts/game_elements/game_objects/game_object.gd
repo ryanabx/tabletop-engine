@@ -11,19 +11,20 @@ extends Node2D
 var shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)])
 ## Represents the size of an object. Works with [param shape] to make the shape's boundaries on the board.
 var size: Vector2 = Vector2.ONE
-
-var board: Board
-
-
-var property_changes: Dictionary = {}
-
+## Represents the type of the object. It is preferred to use this method of finding out the object type.
+## See [enum BoardAPI.GameObjectType]
 var object_type: BoardAPI.GameObjectType
 
-var authority: int:
+# Private Variables
+
+var _property_changes: Dictionary = {}
+var board: Board # TODO: Make private with _
+
+var _authority: int:
     get:
         return get_multiplayer_authority()
     set(val):
-        if is_inside_tree() and multiplayer.get_unique_id() == val and authority != val:
+        if is_inside_tree() and multiplayer.get_unique_id() == val and _authority != val:
             set_authority.rpc(multiplayer.get_unique_id())
         set_multiplayer_authority(val)
 
@@ -32,10 +33,10 @@ func _set(property: StringName, value: Variant) -> bool:
     return false
 
 func add_to_property_changes(property: StringName, value: Variant) -> void:
-    if is_inside_tree() and property in get_shareable_properties() and is_multiplayer_authority():
-        property_changes[property] = value
+    if is_inside_tree() and property in _get_shareable_properties() and is_multiplayer_authority():
+        _property_changes[property] = value
 
-func get_shareable_properties() -> Array:
+func _get_shareable_properties() -> Array:
     return [
         "shape", "size", "position", "rotation"
     ]
@@ -52,7 +53,7 @@ func _property_changes_sync_rpc(props: Dictionary) -> void:
 
 @rpc("any_peer", "call_remote", "reliable")
 func set_authority(id: int) -> void:
-    authority = id
+    _authority = id
 
 var index: int:
     get:
@@ -88,9 +89,9 @@ func _ready() -> void:
     SignalManager.property_sync.connect(_sync_properties)
 
 func _sync_properties() -> void:
-    if is_multiplayer_authority() and not property_changes.is_empty():
-        _property_changes_sync_rpc.rpc(property_changes)
-    property_changes = {}
+    if is_multiplayer_authority() and not _property_changes.is_empty():
+        _property_changes_sync_rpc.rpc(_property_changes)
+    _property_changes = {}
 
 func _process(_delta: float) -> void:
     pass

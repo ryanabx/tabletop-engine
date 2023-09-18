@@ -43,8 +43,8 @@ var size_option: SizeOption = SizeOption.FIXED_LAYER
 ## Determines the fixed size of each [class Piece] displayed in this hand.
 var size_pieces: Vector2 = Vector2.ONE
 
-func get_shareable_properties() -> Array:
-    return super.get_shareable_properties() + [
+func _get_shareable_properties() -> Array:
+    return super._get_shareable_properties() + [
         "visibility", "designated_players",
         "size_option", "size_pieces",
         "layering_factor"]

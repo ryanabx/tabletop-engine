@@ -27,12 +27,12 @@ func _ready() -> void:
     area2d.add_child(collision_polygon)
     super._ready()
 
-func get_shareable_properties() -> Array:
-    return super.get_shareable_properties() + ["lock_state"] # TODO: Add selected to shareable properties
+func _get_shareable_properties() -> Array:
+    return super._get_shareable_properties() + ["lock_state"] # TODO: Add selected to shareable properties
 
 var selected: bool = false:
     set(val):
-        authority = multiplayer.get_unique_id()
+        _authority = multiplayer.get_unique_id()
         if val == true:
             selected = true
             area2d.collision_layer = 2

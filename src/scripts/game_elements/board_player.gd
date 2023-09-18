@@ -179,7 +179,7 @@ func _swap(pc1: Piece, contents: Dictionary) -> void:
 
 func select_object(obj: Selectable) -> void:
     deselect()
-    obj.authority = multiplayer.get_unique_id()
+    obj._authority = multiplayer.get_unique_id()
     obj.move_self_to_top()
     selected_object = obj
     obj.selected = true
@@ -192,7 +192,7 @@ func queue_select_object(obj: Selectable) -> void:
     hold_timer.start()
 
 func stack_selection_to_item(item: Selectable) -> void:
-    item.authority = multiplayer.get_unique_id()
+    item._authority = multiplayer.get_unique_id()
     if item is Collection:
         stack_on_collection(item)
     elif item is Piece:
@@ -205,7 +205,7 @@ func stack_on_collection(item: Collection) -> void:
     elif is_selecting_collection():
         item.inside.append_array(get_selected_object().inside)
         item.add_to_property_changes("inside",item.inside)
-        get_selected_object().clear_inside()
+        get_selected_object()._clear_inside()
 
 func stack_on_piece(item: Piece) -> void:
     if is_selecting_collection():
@@ -235,7 +235,7 @@ func _select_collection(collection: Collection) -> void:
         new_collection.inside = collection.inside
         new_collection.add_to_property_changes("inside", new_collection.inside)
         
-        collection.clear_inside()
+        collection._clear_inside()
         collection = new_collection
     grab_position = collection.position
     select_object(collection)
