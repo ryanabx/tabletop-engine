@@ -1,5 +1,9 @@
 class_name Piece
 extends Selectable
+## piece.gd
+## 
+## Represents a singular game piece. Typically extended into separate piece types.
+
 
 # Shareable properties
 var image_up: String = ""
@@ -40,23 +44,16 @@ func _refresh_image() -> void:
     sprite.texture = board.game.get_images()[image_up] if face_up else board.game.get_images()[image_down]
     sprite.scale = size / sprite.texture.get_size()
 
-func can_access() -> bool:
-    return true
-
-var amount: int = 0
-
 func _on_select(_event:InputEvent) -> void:
     board.board_player.queue_select_object(self)
 
 func _on_deselect(_event: InputEvent) -> void:
-    if can_access():
-        board.board_player.stack_selection_to_item(self)
+    board.board_player.stack_selection_to_item(self)
 
 func _on_multiplayer_synchronizer_synchronized() -> void:
     _refresh_image()
 
-
-func serialize() -> Dictionary:
+func _serialize() -> Dictionary:
     var _dict: Dictionary = {}
     for prop in ["shape", "size", "image_up", "image_down", "types"]:
         _dict[prop] = get(prop)

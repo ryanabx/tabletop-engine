@@ -39,7 +39,7 @@ func shuffle() -> void:
 # Private methods
 
 func _serialize_piece(pc: Piece) -> Dictionary:
-    return pc.serialize()
+    return pc._serialize()
 
 func _deserialize_piece(_dict: Dictionary) -> Piece:
     _dict.position = position

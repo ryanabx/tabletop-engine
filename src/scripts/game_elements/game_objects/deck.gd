@@ -11,6 +11,28 @@ var permanent: bool = false
 @onready var sprite: Sprite2D
 @onready var count: Label
 
+func add_piece(piece: Piece, back: bool = false) -> void:
+    if not board.game.can_stack_piece(piece, self):
+        return
+    
+    if not lock_state and not back:
+        face_up = piece.face_up
+    
+    super.add_piece(piece, back)
+
+func remove_from_top(pos: Vector2 = Vector2.ZERO) -> Piece:
+    var pc: Piece = super.remove_from_top(pos)
+    if inside.is_empty() and not permanent:
+        _erase_rpc.rpc()
+    return pc
+
+## Flips the deck
+func flip() -> void:
+    _authority = multiplayer.get_unique_id()
+    face_up = not face_up
+
+# Private methods
+
 func _get_shareable_properties() -> Array:
     return super._get_shareable_properties() + ["permanent"]
 
@@ -47,25 +69,6 @@ func _process(_delta: float) -> void:
 
 func _draw() -> void:
     draw_polyline(collision_polygon.polygon + PackedVector2Array([collision_polygon.polygon[0]]), Color.WHITE, Globals.COLLECTION_OUTLINE)
-
-func add_piece(piece: Piece, back: bool = false) -> void:
-    if not board.game.can_stack_piece(piece, self):
-        return
-    
-    if not lock_state and not back:
-        face_up = piece.face_up
-    
-    super.add_piece(piece, back)
-
-func remove_from_top(pos: Vector2 = Vector2.ZERO) -> Piece:
-    var pc: Piece = super.remove_from_top(pos)
-    if inside.is_empty() and not permanent:
-        _erase_rpc.rpc()
-    return pc
-
-func flip() -> void:
-    _authority = multiplayer.get_unique_id()
-    face_up = not face_up
 
 func _clear_inside() -> void:
     super._clear_inside()
