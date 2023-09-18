@@ -9,6 +9,8 @@ var board: Board
 
 var property_changes: Dictionary = {}
 
+var object_type: BoardAPI.GameObjectType
+
 var authority: int:
     get:
         return get_multiplayer_authority()

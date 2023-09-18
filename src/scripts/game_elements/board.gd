@@ -145,6 +145,7 @@ func new_game_object(type: BoardAPI.GameObjectType, properties: Dictionary) -> G
         counter += 1
     c = instantiate_by_type(type).new()
     c.board = self
+    c.object_type = type
     for prop: String in properties:
         c.set(prop, properties[prop])
     board_objects.add_child(c)
@@ -159,6 +160,7 @@ func _new_game_object_rpc(type: BoardAPI.GameObjectType, properties: Dictionary)
     var c: GameObject
     c = instantiate_by_type(type).new()
     c.board = self
+    c.object_type = type
     for prop: String in properties:
         c.set(prop, properties[prop])
     board_objects.add_child(c)
