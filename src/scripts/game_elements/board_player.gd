@@ -213,7 +213,7 @@ func stack_on_piece(item: Piece) -> void:
         get_selected_object().add_piece(item, true)
     elif is_selecting_piece():
         var collection: Collection = board.new_game_object(
-            BoardAPI.GameObjectType.DECK,
+            Board.GameObjectType.DECK,
             {
                 "position": item.position,
                 "rotation": item.rotation
@@ -225,7 +225,7 @@ func stack_on_piece(item: Piece) -> void:
 func _select_collection(collection: Collection) -> void:
     if collection is Hand or collection.permanent:
         var new_collection: Collection = collection.board.new_game_object(
-            BoardAPI.GameObjectType.DECK,
+            Board.GameObjectType.DECK,
             {
                 "position": collection.position,
                 "rotation": collection.rotation,

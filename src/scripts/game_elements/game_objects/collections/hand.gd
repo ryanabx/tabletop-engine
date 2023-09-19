@@ -81,7 +81,7 @@ func _draw_pieces() -> void:
 func _draw_piece(_data: Dictionary, selectable: bool, _position: Vector2, _size: Vector2 = size_pieces) -> void:
     if selectable:
         _size = _size * 1.1
-    var _texture: Texture2D = board.get_image(_data.image_up if can_view() else _data.image_down)
+    var _texture: Texture2D = board._get_image(_data.image_up if can_view() else _data.image_down)
     
     draw_texture_rect(_texture, Rect2(_position - _size / 2, _size), false)
 
@@ -92,9 +92,9 @@ func can_view() -> bool:
         VisibilitySetting.NONE:
             return false
         VisibilitySetting.DESIGNATED:
-            return designated_players.has(Globals.Player.ID + 1)
+            return designated_players.has(board.player_id + 1)
         VisibilitySetting.NOT_DESIGNATED:
-            return not designated_players.has(Globals.Player.ID + 1)
+            return not designated_players.has(board.player_id + 1)
     return false
 
 func add_piece(piece: Piece, back: bool = false) -> void:

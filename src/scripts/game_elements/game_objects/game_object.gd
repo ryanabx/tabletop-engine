@@ -12,8 +12,8 @@ var shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(
 ## Represents the size of an object. Works with [param shape] to make the shape's boundaries on the board.
 var size: Vector2 = Vector2.ONE
 ## Represents the type of the object. It is preferred to use this method of finding out the object type.
-## See [enum BoardAPI.GameObjectType]
-var object_type: BoardAPI.GameObjectType
+## See [enum Board.GameObjectType]
+var object_type: Board.GameObjectType
 
 # Private Variables
 

@@ -101,7 +101,7 @@ func get_images() -> Dictionary:
         if i.text in res:
             print("Duplicate name detected! ", i.text)
             return {}
-        res[i.text] = i.texture.get_image().save_webp_to_buffer()
+        res[i.text] = i.texture._get_image().save_webp_to_buffer()
     return res
 
 func get_conf_name() -> String:

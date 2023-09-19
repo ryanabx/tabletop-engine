@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=16 format=3 uid="uid://dw0yemfv3fuew"]
+[gd_resource type="Theme" load_steps=17 format=3 uid="uid://dw0yemfv3fuew"]
 
 [ext_resource type="StyleBox" uid="uid://coivf0s107s78" path="res://src/resources/styles/normal/default_disabled.tres" id="1_hh4yh"]
 [ext_resource type="StyleBox" uid="uid://bj2jgphoodcke" path="res://src/resources/styles/normal/default_focus.tres" id="1_jjxor"]
@@ -7,6 +7,7 @@
 [ext_resource type="StyleBox" uid="uid://di4up4la8wnpc" path="res://src/resources/styles/normal/default_pressed.tres" id="4_ugbxp"]
 [ext_resource type="StyleBox" uid="uid://b0d1wu223o5i8" path="res://src/resources/styles/normal/normal_panel.tres" id="5_bqieb"]
 [ext_resource type="StyleBox" uid="uid://b4u5wbjml4djw" path="res://src/resources/styles/normal/normal_popup_panel.tres" id="6_cjqma"]
+[ext_resource type="FontFile" uid="uid://bhd5ype7joy8w" path="res://src/resources/VeraMono.ttf" id="6_k2d5h"]
 [ext_resource type="StyleBox" uid="uid://c5wnffielngj5" path="res://src/resources/styles/square/square_disabled.tres" id="8_and1q"]
 [ext_resource type="StyleBox" uid="uid://d2ipeqath8imw" path="res://src/resources/styles/square/panel.tres" id="8_qu67q"]
 [ext_resource type="StyleBox" uid="uid://cb2l0pgk1ae22" path="res://src/resources/styles/square/square_hover.tres" id="9_yf6l0"]
@@ -16,6 +17,7 @@
 [ext_resource type="StyleBox" uid="uid://cmkrrye2eb73e" path="res://src/resources/styles/normal/window_border.tres" id="14_p1pc2"]
 
 [sub_resource type="FontVariation" id="FontVariation_y6dps"]
+base_font = ExtResource("6_k2d5h")
 opentype_features = {
 1667329140: 0
 }
@@ -29,6 +31,7 @@ Button/styles/focus = ExtResource("1_jjxor")
 Button/styles/hover = ExtResource("2_03x4b")
 Button/styles/normal = ExtResource("3_mfxiq")
 Button/styles/pressed = ExtResource("4_ugbxp")
+CodeEdit/fonts/font = SubResource("FontVariation_y6dps")
 HBoxContainer/constants/separation = 20
 ItemList/constants/outline_size = 1
 ItemList/font_sizes/font_size = 84

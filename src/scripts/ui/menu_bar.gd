@@ -49,7 +49,7 @@ func tabletop_menu() -> void:
 
 func set_player(index: int) -> void:
     print("Setting player to ", index)
-    Globals.Player.ID = index
+    board.player_id = index
 
 func run_action(index: int) -> void:
     SignalManager.run_action.emit(index)

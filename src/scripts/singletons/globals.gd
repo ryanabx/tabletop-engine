@@ -159,6 +159,3 @@ func get_current_game() -> TabletopGame:
     if current_tabletop == null:
         return null
     return current_tabletop.game
-
-class Player:
-    static var ID: int = 0

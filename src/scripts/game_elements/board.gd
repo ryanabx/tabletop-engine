@@ -10,7 +10,20 @@ var game: TabletopGame = null
 # ## 
 # var size: Vector2 = Vector2.ONE
 
+## Enumeration of the types that a GameObject can be.
+## [member Board.GameObjectType.MAX] defines the end of the enum, and can't be used
+## to instantiate a GameObject.
+enum GameObjectType {
+    PIECE,
+    DECK,
+    HAND,
+    MAX
+}
 
+## Companion constant to [enum Board.GameObjectType] that defines strings for each type.
+const GAME_OBJECT_TYPE_STRING = [
+    "piece", "deck", "hand"
+]
 
 
 # Children
@@ -18,16 +31,21 @@ var game: TabletopGame = null
 @onready var board_objects: Node2D = $BoardObjects
 @onready var highlights: Node2D = $Highlights
 
+## A reference to the number of players currently in-game.
 var number_of_players: int
 
-var background_sprite: Sprite2D
+var player_id: int
+
+# Private variables
+
+var _background_sprite: Sprite2D
 
 # Board properties
 var background: String = "":
     set(val):
         background = val
-        background_sprite.set_texture(game.get_images()[background])
-        background_sprite.scale = border.size / background_sprite.texture.get_size()
+        _background_sprite.set_texture(_get_image(background))
+        _background_sprite.scale = border.size / _background_sprite.texture.get_size()
     get:
         return background
 
@@ -35,63 +53,33 @@ var border: Rect2 = Rect2(0,0,0,0)
 
 var counter: int = 0
 
-func _draw() -> void:
-    draw_board_bg()
-
-##
-func get_image(path: String) -> Texture2D:
-    if game == null:
-        return null
-    if game.get_images() == null:
-        return null
-    if not path in game.get_images():
-        return null
-    return game.get_images()[path]
-
 ## Draw the background specified
-func draw_board_bg() -> void:
+func _draw_board_bg() -> void:
     draw_rect(border, Color.WHITE, false, Globals.OUTLINE_THICKNESS)
 
-func get_piece(n: String) -> Piece:
-    var pc: Piece = board_objects.get_node_or_null(n)
-    return pc
-
-func get_pieces(a: Array) -> Array[Piece]:
-    var pcs: Array[Piece] = []
-    for _a: String in a:
-        var pc: Piece = get_piece(_a)
-        if pc != null:
-            pcs.append(pc)
-    return pcs
-
-func get_collection(n: String) -> Collection:
-    var c: Collection = board_objects.get_node_or_null(n)
-    return c
-
-func get_collections(a: Array) -> Array[Collection]:
-    var cs: Array[Collection] = []
-    for _a: String in a:
-        var c: Collection = get_collection(_a)
-        if c != null:
-            cs.append(c)
-    return cs
-
-func get_gobject(n: String) -> GameObject:
+## Finds a specified GameObject by name.
+## Returns [null] if the GameObject cannot be found.
+func get_object(n: String) -> GameObject:
     var o: GameObject = board_objects.get_node_or_null(n)
     if o == null or o.get_parent() != board_objects:
         return null
     return o
 
-func get_game_objects() -> Array[GameObject]:
+## Gets a list of all game objects.
+func get_all_objects() -> Array[GameObject]:
     var res: Array[GameObject] = []
     res.assign(board_objects.get_children())
     return res
 
+## Erases all the game objects on the board.
 func clear_board() -> void:
-    for obj: GameObject in get_game_objects():
+    for obj: GameObject in get_all_objects():
         obj._authority = multiplayer.get_unique_id()
         obj._erase_rpc.rpc(true)
 
+## Moves a piece from [param from] to [param to].
+## Optionally specify [param from_ind] as the index to take from, and
+## [param to_ind] as the index to put in.
 func move_piece(from: Collection, to: Collection, from_ind: int = -1, to_ind: int = -1) -> void:
     var pc: Piece
     if from_ind != -1:
@@ -103,47 +91,21 @@ func move_piece(from: Collection, to: Collection, from_ind: int = -1, to_ind: in
         to._add_piece_at(pc, to_ind)
     else:
         to.add_piece(pc)
-    
 
-####################
-### Main process ###
-####################
+## Finds a specified GameObject by index.
+## Returns [null] if the index is out of bounds.
+func get_object_by_index(index: int) -> GameObject:
+    return board_objects.get_children()[index]
 
-func _process(_delta: float) -> void:
-    clamp_camera()
-    queue_redraw()
-
-## Self explanatory
-func clamp_camera() -> void:
-    get_parent().camera_controller.position = get_parent().camera_controller.position.clamp(border.position, border.end)
-
-########################
-### Multiplayer sync ###
-########################
-
-var ready_players: Array = []
-
-#####################
-### RPC functions ###
-#####################
-func instantiate_by_type(type: BoardAPI.GameObjectType) -> GDScript:
-    match type:
-        BoardAPI.GameObjectType.PIECE:
-            return Piece
-        BoardAPI.GameObjectType.DECK:
-            return Deck
-        BoardAPI.GameObjectType.HAND:
-            return Hand
-    print("WARNING: None of the above types specified")
-    return GameObject
-
-## Creates new game object on the board
-func new_game_object(type: BoardAPI.GameObjectType, properties: Dictionary) -> GameObject:
+## Creates a new object on the board, and returns a pointer to that object.
+## Takes a [param type] from [enum Board.GameObjectType], to define the type of object to be created.
+## A list of modifiable GameObject properties can be found in each GameObject's reference.
+func new_game_object(type: Board.GameObjectType, properties: Dictionary) -> GameObject:
     var c: GameObject
     if not "name" in properties:
-        properties.name = "%d_%s_%d" % [multiplayer.get_unique_id(),BoardAPI.GAME_OBJECT_TYPE_STRING[type],counter]
+        properties.name = "%d_%s_%d" % [multiplayer.get_unique_id(),Board.GAME_OBJECT_TYPE_STRING[type],counter]
         counter += 1
-    c = instantiate_by_type(type).new()
+    c = _instantiate_by_type(type).new()
     c.board = self
     c.object_type = type
     for prop: String in properties:
@@ -155,10 +117,55 @@ func new_game_object(type: BoardAPI.GameObjectType, properties: Dictionary) -> G
     c.set_multiplayer_authority(multiplayer.get_unique_id())
     return c
 
+## Finds and erases a specified GameObject by name.
+## Use [param recursive] to specify whether nested game objects should
+## be erased too.
+## Returns [true] if the operation was successful, [false] otherwise.
+func erase_object(object_name: String, recursive: bool = false) -> bool:
+    var obj: GameObject = get_object(object_name)
+    if obj == null:
+        return false
+    obj.erase(recursive)
+    return true
+
+func _process(_delta: float) -> void:
+    _clamp_camera()
+    queue_redraw()
+
+func _clamp_camera() -> void:
+    get_parent().camera_controller.position = get_parent().camera_controller.position.clamp(border.position, border.end)
+
+func _draw() -> void:
+    _draw_board_bg()
+
+
+func _get_image(path: String) -> Texture2D:
+    if game == null:
+        return null
+    if game.get_images() == null:
+        return null
+    if not path in game.get_images():
+        return null
+    return game.get_images()[path]
+
+var _ready_players: Array = []
+
+
+func _instantiate_by_type(type: Board.GameObjectType) -> GDScript:
+    match type:
+        Board.GameObjectType.PIECE:
+            return Piece
+        Board.GameObjectType.DECK:
+            return Deck
+        Board.GameObjectType.HAND:
+            return Hand
+    print("WARNING: None of the above types specified")
+    return GameObject
+
 @rpc("any_peer", "call_remote", "reliable")
-func _new_game_object_rpc(type: BoardAPI.GameObjectType, properties: Dictionary) -> void:
+func _new_game_object_rpc(type: Board.GameObjectType, properties: Dictionary) -> void:
     var c: GameObject
-    c = instantiate_by_type(type).new()
+    c = _instantiate_by_type(type).new()
     c.board = self
     c.object_type = type
     for prop: String in properties:
@@ -167,60 +174,55 @@ func _new_game_object_rpc(type: BoardAPI.GameObjectType, properties: Dictionary)
     c.set_multiplayer_authority(multiplayer.get_remote_sender_id())
     return
 
-####################
-### Config stuff ###
-####################
-
 func run_action(action: int) -> void:
     game.run_action(game.get_actions()[action])
 
-func set_player_id() -> void:
+func _set_player_id() -> void:
     var full_array: PackedInt32Array = PackedInt32Array(multiplayer.get_peers())
     full_array.append(multiplayer.get_unique_id())
     number_of_players = full_array.size()
     full_array.sort()
-    Globals.Player.ID = full_array.find(multiplayer.get_unique_id())
-    print("My player ID is: ",Globals.Player.ID, "!")
+    player_id = full_array.find(multiplayer.get_unique_id())
+    print("My player ID is: ",player_id, "!")
 
 ## Called when the board is initialized
 func _ready() -> void:
-    set_player_id()
+    _set_player_id()
     
     board_player.board = self
     highlights.board = self
 
     SignalManager.run_action.connect(run_action)
 
-    background_sprite = Sprite2D.new()
-    background_sprite.z_index = -10
-    add_child(background_sprite)
+    _background_sprite = Sprite2D.new()
+    _background_sprite.z_index = -10
+    add_child(_background_sprite)
     
     get_viewport().set_physics_object_picking(true)
     get_viewport().set_physics_object_picking_sort(true)
 
     game.add_board(self)
-    is_ready.rpc_id(1, multiplayer.get_unique_id())
+    _is_ready.rpc_id(1, multiplayer.get_unique_id())
 
 @rpc("any_peer","call_local","reliable")
-func is_ready(id: int) -> void:
+func _is_ready(id: int) -> void:
     if multiplayer.is_server():
-        ready_players.append(id)
-        if ready_players.size() == multiplayer.get_peers().size() + 1:
+        _ready_players.append(id)
+        if _ready_players.size() == multiplayer.get_peers().size() + 1:
             game.game_start()
-            game_load_finished.rpc()
+            _game_load_finished.rpc()
 
 @rpc("authority", "call_local", "unreliable")
-func game_percent_loaded(pc: float) -> void:
+func _game_percent_loaded(pc: float) -> void:
     SignalManager.game_percent_loaded.emit(pc)
 
 @rpc("authority", "call_local", "reliable")
-func game_load_finished() -> void:
+func _game_load_finished() -> void:
     SignalManager.game_load_finished.emit(self)
 
 @rpc("authority", "call_local", "reliable")            
-func game_load_started() -> void:
+func _game_load_started() -> void:
     SignalManager.game_load_started.emit()
-
 
 func _on_sync_timer_timeout() -> void:
     SignalManager.property_sync.emit()
