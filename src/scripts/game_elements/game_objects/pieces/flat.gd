@@ -36,6 +36,7 @@ func _serialize() -> Dictionary:
     var _dict: Dictionary = super._serialize()
     _dict.image_up = image_up
     _dict.image_down = image_down
+    _dict.face_up = face_up
     return _dict
 
 func _ready() -> void:
@@ -43,3 +44,4 @@ func _ready() -> void:
     _sprite = Sprite2D.new()
     add_child(_sprite)
     _refresh_image()
+    super._ready()

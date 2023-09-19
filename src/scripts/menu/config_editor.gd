@@ -23,7 +23,6 @@ func _process(_delta: float):
     import_config.disabled = not config_selector.is_selecting_config()
     import_images_label.text = "Imported images (%s)" % image_list.get_child_count()
 
-
 func _on_back_button_pressed():
     SignalManager.scene_transition.emit("res://src/scenes/menu/main_menu.tscn")
 
@@ -32,15 +31,14 @@ func clear_config() -> void:
     refresh_images({})
     config_name.text = ""
 
-
-func refresh_from_loaded(tbt: TabletopGame) -> void:
+func refresh_from_loaded(tbt: Dictionary) -> void:
     if tbt == null:
         clear_config()
         return
     print("Config code setting text")
-    config_code.text = tbt.get_script().source_code
+    config_code.text = tbt.script
     print("Setting images")
-    refresh_images(tbt.get_images())
+    refresh_images(tbt.include_images)
     config_name.text = tbt.name
     config_loaded_alert.popup()
 
@@ -48,12 +46,13 @@ func refresh_images(images: Dictionary) -> void:
     # Remove all previous images
     for i in image_list.get_children():
         i.queue_free()
-    
-    for key in images.keys():
+    # Add new images
+    for img: String in images.keys():
+        var n_img: Image = Image.new()
+        n_img.load_webp_from_buffer(images[img])
         var gallery_image: GalleryImage = gallery_image_scene.instantiate()
-        gallery_image._set_type(images[key], key)
+        gallery_image._set_type(ImageTexture.create_from_image(n_img), img)
         image_list.add_child(gallery_image)
-        print("Adding image ",key)
 
 func add_images(images: Array) -> void:
     for image in images:
@@ -70,7 +69,7 @@ func _on_import_configuration_pressed() -> void:
 
 func import_config_to_editor() -> void:
     print("Getting selected config")
-    var current_config: TabletopGame = config_selector.get_selected_config()
+    var current_config: Dictionary = config_selector.get_config_data()
     print("Refreshing from loaded")
     refresh_from_loaded(current_config)
 
@@ -101,7 +100,7 @@ func get_images() -> Dictionary:
         if i.text in res:
             print("Duplicate name detected! ", i.text)
             return {}
-        res[i.text] = i.texture._get_image().save_webp_to_buffer()
+        res[i.text] = i.texture.get_image().save_webp_to_buffer()
     return res
 
 func get_conf_name() -> String:

@@ -28,4 +28,5 @@ func _serialize() -> Dictionary:
     _dict.shape = shape
     _dict.size = size
     _dict.types = types
+    _dict.object_type = object_type
     return _dict

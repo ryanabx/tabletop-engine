@@ -8,8 +8,6 @@ func _ready() -> void:
     version.text = str("Version: ",ProjectSettings.get_setting("application/config/version"))
     if Utils.is_mobile_platform():
         quit_button.hide()
-    for i: Node in get_tree().get_nodes_in_group("hi"):
-        pass
     Globals.load_this_game = PackedByteArray([])
 
 func _process(_delta: float) -> void:

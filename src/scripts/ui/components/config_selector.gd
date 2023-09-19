@@ -66,8 +66,15 @@ func get_selected_config_bytes() -> PackedByteArray:
             return Utils.FileManager.get_file_bytes(get_config_file_path(get_currently_selected_config()))
     return []
 
+func get_config_data() -> Dictionary:
+    var _bytes := get_selected_config_bytes()
+    if _bytes.is_empty():
+        return {}
+    var config: Dictionary = bytes_to_var(_bytes.decompress_dynamic(-1, 3))
+    return config
+
 func get_selected_config() -> TabletopGame:
-    var _bytes = get_selected_config_bytes()
+    var _bytes := get_selected_config_bytes()
     if _bytes.is_empty():
         return null
     return TabletopGame.import_config(_bytes)

@@ -14,15 +14,16 @@ var game: TabletopGame = null
 ## [member Board.GameObjectType.MAX] defines the end of the enum, and can't be used
 ## to instantiate a GameObject.
 enum GameObjectType {
-    PIECE,
+    FLAT,
     DECK,
     HAND,
     MAX
 }
 
+
 ## Companion constant to [enum Board.GameObjectType] that defines strings for each type.
 const GAME_OBJECT_TYPE_STRING = [
-    "piece", "deck", "hand"
+    "flat", "deck", "hand"
 ]
 
 
@@ -52,10 +53,6 @@ var background: String = "":
 var border: Rect2 = Rect2(0,0,0,0)
 
 var counter: int = 0
-
-## Draw the background specified
-func _draw_board_bg() -> void:
-    draw_rect(border, Color.WHITE, false, Globals.OUTLINE_THICKNESS)
 
 ## Finds a specified GameObject by name.
 ## Returns [null] if the GameObject cannot be found.
@@ -113,7 +110,6 @@ func new_game_object(type: Board.GameObjectType, properties: Dictionary) -> Game
     board_objects.add_child(c)
     # RPC
     _new_game_object_rpc.rpc(type, properties)
-    print(c.name)
     c.set_multiplayer_authority(multiplayer.get_unique_id())
     return c
 
@@ -138,6 +134,8 @@ func _clamp_camera() -> void:
 func _draw() -> void:
     _draw_board_bg()
 
+func _draw_board_bg() -> void:
+    draw_rect(border, Color.WHITE, false, Globals.OUTLINE_THICKNESS)
 
 func _get_image(path: String) -> Texture2D:
     if game == null:
@@ -153,8 +151,8 @@ var _ready_players: Array = []
 
 func _instantiate_by_type(type: Board.GameObjectType) -> GDScript:
     match type:
-        Board.GameObjectType.PIECE:
-            return Piece
+        Board.GameObjectType.FLAT:
+            return Flat
         Board.GameObjectType.DECK:
             return Deck
         Board.GameObjectType.HAND:

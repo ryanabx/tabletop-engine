@@ -68,13 +68,6 @@ func can_take_piece_off(_collection: Collection) -> bool:
 
 # IMPORTING AND EXPORTING CONFIGURATIONS
 
-## Import an config file from a file path
-static func import_from_file(fname: String) -> TabletopGame:
-    if not FileAccess.file_exists(fname):
-        print("File not found at ",fname)
-        return null
-    return import_config(FileAccess.get_file_as_bytes(fname))
-
 ## Import config
 ## WARNING: ALLOWS ARBITRARY CODE TO BE RAN,
 ## WAITING/HOPING FOR GDSCRIPT SANDBOXING IN THE FUTURE

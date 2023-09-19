@@ -45,7 +45,7 @@ func _deserialize_piece(_dict: Dictionary) -> Piece:
     _dict.position = position
     _dict.rotation = rotation
     return board.new_game_object(
-        board.GameObjectType.PIECE,
+        _dict.object_type,
         _dict
     )
 
@@ -87,7 +87,7 @@ func _add_piece_at(piece: Piece, _index: int) -> void:
     piece._authority = multiplayer.get_unique_id()
     
     var pc_d: Dictionary = _serialize_piece(piece)
-    piece._erase_rpc.rpc()
+    piece._erase_rpc.rpc(false)
     inside.insert(_index, pc_d)
     add_to_property_changes("inside", inside)
 

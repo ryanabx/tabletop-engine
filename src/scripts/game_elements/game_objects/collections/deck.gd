@@ -23,7 +23,7 @@ func add_piece(piece: Piece, back: bool = false) -> void:
 func remove_from_top(pos: Vector2 = Vector2.ZERO) -> Piece:
     var pc: Piece = super.remove_from_top(pos)
     if inside.is_empty() and not permanent:
-        _erase_rpc.rpc()
+        _erase_rpc.rpc(false)
     return pc
 
 ## Flips the deck
@@ -73,7 +73,7 @@ func _draw() -> void:
 func _clear_inside() -> void:
     super._clear_inside()
     if not permanent:
-        _erase_rpc.rpc()
+        _erase_rpc.rpc(false)
 
 func _deserialize_piece(_dict: Dictionary) -> Piece:
     _dict.face_up = face_up

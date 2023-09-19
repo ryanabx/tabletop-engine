@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=17 format=3 uid="uid://dw0yemfv3fuew"]
+[gd_resource type="Theme" load_steps=21 format=3 uid="uid://dw0yemfv3fuew"]
 
 [ext_resource type="StyleBox" uid="uid://coivf0s107s78" path="res://src/resources/styles/normal/default_disabled.tres" id="1_hh4yh"]
 [ext_resource type="StyleBox" uid="uid://bj2jgphoodcke" path="res://src/resources/styles/normal/default_focus.tres" id="1_jjxor"]
@@ -6,10 +6,11 @@
 [ext_resource type="StyleBox" uid="uid://dwt8eepamxiqe" path="res://src/resources/styles/normal/default_normal.tres" id="3_mfxiq"]
 [ext_resource type="StyleBox" uid="uid://di4up4la8wnpc" path="res://src/resources/styles/normal/default_pressed.tres" id="4_ugbxp"]
 [ext_resource type="StyleBox" uid="uid://b0d1wu223o5i8" path="res://src/resources/styles/normal/normal_panel.tres" id="5_bqieb"]
-[ext_resource type="StyleBox" uid="uid://b4u5wbjml4djw" path="res://src/resources/styles/normal/normal_popup_panel.tres" id="6_cjqma"]
 [ext_resource type="FontFile" uid="uid://bhd5ype7joy8w" path="res://src/resources/VeraMono.ttf" id="6_k2d5h"]
 [ext_resource type="StyleBox" uid="uid://c5wnffielngj5" path="res://src/resources/styles/square/square_disabled.tres" id="8_and1q"]
 [ext_resource type="StyleBox" uid="uid://d2ipeqath8imw" path="res://src/resources/styles/square/panel.tres" id="8_qu67q"]
+[ext_resource type="StyleBox" uid="uid://bgk5yqh70lo7l" path="res://src/resources/styles/normal/popup_hover.tres" id="8_wtaq0"]
+[ext_resource type="StyleBox" uid="uid://dknasup760eyk" path="res://src/resources/styles/normal/normal_panel_selected.tres" id="9_ldn30"]
 [ext_resource type="StyleBox" uid="uid://cb2l0pgk1ae22" path="res://src/resources/styles/square/square_hover.tres" id="9_yf6l0"]
 [ext_resource type="StyleBox" uid="uid://rgwijyxjepi3" path="res://src/resources/styles/square/square_selected.tres" id="10_apqsv"]
 [ext_resource type="StyleBox" uid="uid://dm0jm26ivxjc3" path="res://src/resources/styles/square/square_unselected.tres" id="11_fswvw"]
@@ -21,6 +22,12 @@ base_font = ExtResource("6_k2d5h")
 opentype_features = {
 1667329140: 0
 }
+
+[sub_resource type="FontVariation" id="FontVariation_bg0to"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l7enw"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_r7pqb"]
 
 [resource]
 default_font = SubResource("FontVariation_y6dps")
@@ -34,7 +41,12 @@ Button/styles/pressed = ExtResource("4_ugbxp")
 CodeEdit/fonts/font = SubResource("FontVariation_y6dps")
 HBoxContainer/constants/separation = 20
 ItemList/constants/outline_size = 1
-ItemList/font_sizes/font_size = 84
+ItemList/font_sizes/font_size = 64
+ItemList/fonts/font = SubResource("FontVariation_bg0to")
+ItemList/styles/hovered = ExtResource("8_wtaq0")
+ItemList/styles/panel = ExtResource("5_bqieb")
+ItemList/styles/selected = ExtResource("9_ldn30")
+ItemList/styles/selected_focus = ExtResource("9_ldn30")
 LineEdit/font_sizes/font_size = 64
 LineEdit/styles/focus = ExtResource("1_jjxor")
 LineEdit/styles/normal = ExtResource("3_mfxiq")
@@ -43,23 +55,14 @@ MarginContainer/constants/margin_bottom = 30
 MarginContainer/constants/margin_left = 30
 MarginContainer/constants/margin_right = 30
 MarginContainer/constants/margin_top = 30
-MenuBar/styles/disabled = ExtResource("1_hh4yh")
-MenuBar/styles/focus = ExtResource("1_jjxor")
-MenuBar/styles/hover = ExtResource("2_03x4b")
-MenuBar/styles/normal = ExtResource("3_mfxiq")
-MenuBar/styles/pressed = ExtResource("4_ugbxp")
-MenuButton/styles/disabled = ExtResource("1_hh4yh")
-MenuButton/styles/focus = ExtResource("1_jjxor")
-MenuButton/styles/hover = ExtResource("2_03x4b")
-MenuButton/styles/normal = ExtResource("3_mfxiq")
-MenuButton/styles/pressed = ExtResource("4_ugbxp")
 Panel/styles/panel = ExtResource("8_qu67q")
-PanelContainer/styles/panel = ExtResource("5_bqieb")
-PopupMenu/constants/item_end_padding = 24
-PopupMenu/constants/item_start_padding = 24
+PopupMenu/constants/item_end_padding = 30
+PopupMenu/constants/item_start_padding = 30
 PopupMenu/constants/v_separation = 24
-PopupMenu/styles/hover = ExtResource("2_03x4b")
-PopupMenu/styles/panel = ExtResource("6_cjqma")
+PopupMenu/styles/hover = ExtResource("8_wtaq0")
+PopupMenu/styles/panel = ExtResource("5_bqieb")
+PopupMenu/styles/panel_disabled = SubResource("StyleBoxEmpty_l7enw")
+PopupPanel/styles/panel = SubResource("StyleBoxEmpty_r7pqb")
 TabContainer/styles/panel = ExtResource("8_qu67q")
 TabContainer/styles/tab_disabled = ExtResource("8_and1q")
 TabContainer/styles/tab_hovered = ExtResource("9_yf6l0")
