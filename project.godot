@@ -19,7 +19,6 @@ boot_splash/bg_color=Color(0.164706, 0.172549, 0.192157, 1)
 boot_splash/image="res://assets/banners/banner.png"
 config/icon="res://assets/icons/icon_transparent.png"
 config/windows_native_icon="res://assets/icons/Windows/icon_windows.ico"
-boot_splash/minimum_display_time=50
 
 [autoload]
 
@@ -42,6 +41,7 @@ window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=6
 window/ios/allow_high_refresh_rate=false
+window/ios/hide_status_bar=false
 
 [filesystem]
 

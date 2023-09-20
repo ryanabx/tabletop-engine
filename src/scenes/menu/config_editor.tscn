@@ -31,20 +31,20 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Config List" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
+[node name="Load From Config" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Config List"]
+[node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Load From Config"]
 layout_mode = 2
 
-[node name="ConfigSelector" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Config List/VBoxContainer" instance=ExtResource("4_qs4ra")]
+[node name="ConfigSelector" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Load From Config/VBoxContainer" instance=ExtResource("4_qs4ra")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Config List/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Load From Config/VBoxContainer"]
 layout_mode = 2
 
-[node name="BackButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Config List/VBoxContainer/HBoxContainer"]
+[node name="BackButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Load From Config/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(164, 164)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -52,7 +52,7 @@ size_flags_vertical = 8
 icon = ExtResource("3_fva16")
 expand_icon = true
 
-[node name="ImportConfig" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Config List/VBoxContainer/HBoxContainer"]
+[node name="ImportConfig" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Load From Config/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -92,44 +92,44 @@ indent_automatic = true
 auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
 
-[node name="Imports" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
+[node name="Files" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
 visible = false
 layout_mode = 2
 
-[node name="ImportsVBox" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports"]
+[node name="ImportsVBox" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Files"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox"]
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Files/ImportsVBox"]
 layout_mode = 2
 text = "Configure imported images"
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox"]
+[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Files/ImportsVBox"]
 layout_mode = 2
 alignment = 1
 
-[node name="ImportFiles" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox/HBoxContainer"]
+[node name="ImportFiles" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Files/ImportsVBox/HBoxContainer"]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Import Files"
 
-[node name="ImportImagesButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox/HBoxContainer"]
+[node name="ImportImagesButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Files/ImportsVBox/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Import Images"
 
-[node name="ImportImagesLabel" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox"]
+[node name="ImportImagesLabel" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Files/ImportsVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Imported Images:"
 horizontal_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox"]
+[node name="ScrollContainer" type="ScrollContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Files/ImportsVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ImageList" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox/ScrollContainer"]
+[node name="ImageList" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Files/ImportsVBox/ScrollContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -214,9 +214,9 @@ initial_position = 2
 size = Vector2i(720, 720)
 dialog_text = "Configuration loaded!"
 
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Config List/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Config List/VBoxContainer/HBoxContainer/ImportConfig" to="." method="_on_import_configuration_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Imports/ImportsVBox/HBoxContainer/ImportImagesButton" to="." method="_on_import_images_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Load From Config/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Load From Config/VBoxContainer/HBoxContainer/ImportConfig" to="." method="_on_import_configuration_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Files/ImportsVBox/HBoxContainer/ImportImagesButton" to="." method="_on_import_images_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox/HBoxContainer/SaveConfiguration" to="." method="_on_save_configuration_pressed"]
 [connection signal="files_selected" from="ImportImagesDialog" to="." method="_on_import_images_dialog_files_selected"]
