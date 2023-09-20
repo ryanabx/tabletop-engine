@@ -74,7 +74,7 @@ func _on_select(_event:InputEvent) -> void:
 
 func _on_deselect(_event:InputEvent) -> void:
     if board.board_player.is_selecting():
-        if selected == false:
+        if selected == 0:
             board.board_player.stack_selection_to_item(self)
 
 func _process(delta: float) -> void:

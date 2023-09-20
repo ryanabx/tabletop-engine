@@ -179,11 +179,12 @@ func _swap(pc1: Piece, contents: Dictionary) -> void:
 
 func select_object(obj: Selectable) -> void:
     deselect()
-    obj._authority = multiplayer.get_unique_id()
-    obj.move_self_to_top()
-    selected_object = obj
-    obj.selected = true
-    obj.grab_offset = grab_position - obj.position
+    if obj.selected == 0:
+        obj._authority = multiplayer.get_unique_id()
+        obj.move_self_to_top()
+        selected_object = obj
+        obj.selected = multiplayer.get_unique_id()
+        obj.grab_offset = grab_position - obj.position
 
 func queue_select_object(obj: Selectable) -> void:
     deselect()
@@ -247,8 +248,9 @@ func deselect() -> void:
     dequeue_object()
 
 func deselect_object() -> void:
-    if is_selecting():
-        get_selected_object().selected = false
+    if is_selecting() and get_selected_object().selected == multiplayer.get_unique_id():
+        get_selected_object()._authority = multiplayer.get_unique_id()
+        get_selected_object().selected = 0
     selected_object = null
 
 func dequeue_object() -> void:

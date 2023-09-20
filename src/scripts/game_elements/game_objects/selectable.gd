@@ -28,19 +28,25 @@ func _ready() -> void:
     super._ready()
 
 func _get_shareable_properties() -> Array:
-    return super._get_shareable_properties() + ["lock_state"] # TODO: Add selected to shareable properties
+    return super._get_shareable_properties() + ["lock_state", "selected"] # TODO: Add selected to shareable properties
 
-var selected: bool = false:
+var selected: int = 0:
     set(val):
         _authority = multiplayer.get_unique_id()
-        if val == true:
-            selected = true
+        selected = val
+        if val != 0:
             area2d.collision_layer = 2
         else:
-            selected = false
             area2d.collision_layer = 1
     get:
         return selected
+
+func _on_select(_event:InputEvent) -> void:
+    if selected == 0:
+        board.board_player.queue_select_object(self)
+
+func _on_deselect(_event: InputEvent) -> void:
+    board.board_player.stack_selection_to_item(self)
 
 func _process(delta: float) -> void:
     super._process(delta)

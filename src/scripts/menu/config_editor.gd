@@ -19,11 +19,11 @@ func _ready() -> void:
     save_config_dialog.filters = PackedStringArray([str("*",Globals.CONFIG_EXTENSION)])
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float):
+func _process(_delta: float) -> void:
     import_config.disabled = not config_selector.is_selecting_config()
     import_images_label.text = "Imported images (%s)" % image_list.get_child_count()
 
-func _on_back_button_pressed():
+func _on_back_button_pressed() -> void:
     SignalManager.scene_transition.emit("res://src/scenes/menu/main_menu.tscn")
 
 func clear_config() -> void:
@@ -55,7 +55,7 @@ func refresh_images(images: Dictionary) -> void:
         image_list.add_child(gallery_image)
 
 func add_images(images: Array) -> void:
-    for image in images:
+    for image: Texture2D in images:
         var gallery_image: GalleryImage = gallery_image_scene.instantiate()
         gallery_image._set_type(image, "untitled")
         image_list.add_child(gallery_image)
