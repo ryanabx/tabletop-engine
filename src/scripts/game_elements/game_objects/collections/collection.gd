@@ -19,6 +19,14 @@ func add_piece(piece: Piece, back: bool = false) -> void:
     else:
         _add_piece_at(piece, inside.size())
 
+## Adds a given [param coll] to the collection.
+## Added to the front by default, use [param back] to specify.
+func add_collection(coll: Collection, back: bool = false) -> void:
+    if back:
+        _add_collection_at(coll, 0)
+    else:
+        _add_collection_at(coll, inside.size())
+
 ## Remove a piece from the top of the collection.
 ## [param position] specifies the position that the player is removing the piece from.
 func remove_from_top(_position: Vector2 = Vector2.ZERO) -> Piece:
@@ -81,7 +89,7 @@ func _process(delta: float) -> void:
     super._process(delta)
 
 func _add_piece_at(piece: Piece, _index: int) -> void:
-    if not board.game.can_stack_piece(piece, self):
+    if not board.game.can_stack(piece, self):
         return
     _authority = multiplayer.get_unique_id()
     piece._authority = multiplayer.get_unique_id()
@@ -90,6 +98,16 @@ func _add_piece_at(piece: Piece, _index: int) -> void:
     piece._erase_rpc.rpc(false)
     inside.insert(_index, pc_d)
     add_to_property_changes("inside", inside)
+
+func _add_collection_at(coll: Collection, _index: int) -> void:
+    if not board.game.can_stack(coll, self):
+        return
+    if _index == inside.size():
+        inside.append_array(coll.inside)
+    else:
+        inside = inside.slice(0, _index) + coll.inside + inside.slice(_index, 0)
+    add_to_property_changes("inside",inside)
+    coll._clear_inside()
 
 func _remove_piece_at(_index: int) -> Piece:
     if not board.game.can_take_piece_off(self):

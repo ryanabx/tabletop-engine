@@ -12,7 +12,7 @@ var permanent: bool = false
 @onready var count: Label
 
 func add_piece(piece: Piece, back: bool = false) -> void:
-    if not board.game.can_stack_piece(piece, self):
+    if not board.game.can_stack(piece, self):
         return
     
     if not lock_state and not back:

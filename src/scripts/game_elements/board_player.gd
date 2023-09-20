@@ -204,9 +204,7 @@ func stack_on_collection(item: Collection) -> void:
     if is_selecting_piece():
         item.add_piece(get_selected_object())
     elif is_selecting_collection():
-        item.inside.append_array(get_selected_object().inside)
-        item.add_to_property_changes("inside",item.inside)
-        get_selected_object()._clear_inside()
+        item.add_collection(get_selected_object())
 
 func stack_on_piece(item: Piece) -> void:
     if is_selecting_collection():

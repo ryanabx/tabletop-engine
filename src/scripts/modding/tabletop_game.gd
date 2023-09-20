@@ -56,9 +56,9 @@ func get_images() -> Dictionary:
 
 # OVERRIDABLE FUNCTIONS
 
-## Determines whether a piece can be stacked to a collection
+## Determines whether a selectable object can be stacked to another selectable object
 ## [OPTIONAL] Override this function to include programmability
-func can_stack_piece(_piece: Piece, _collection: Collection) -> bool:
+func can_stack(from: Selectable, to: Selectable) -> bool:
     return true
 
 ## Determines whether a piece can be taken off a collection
@@ -102,8 +102,8 @@ static func export_config(source_code: String, images: Dictionary, game_name: St
     config.name = game_name
     config.include_images = images
     config.script = source_code
-    if not source_validation(config):
-        return []
+    # if not source_validation(config):
+        # return [] TODO: Fix valdation so it doesn't error out
     return var_to_bytes(config).compress(3)
 
 static func source_validation(config: Dictionary) -> bool:

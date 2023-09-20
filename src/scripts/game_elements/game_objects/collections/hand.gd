@@ -104,6 +104,13 @@ func add_piece(piece: Piece, back: bool = false) -> void:
     
     super._add_piece_at(piece, _droppable_index)
 
+func add_collection(coll: Collection, back: bool = false) -> void:
+    if _droppable_index == -1:
+        super.add_collection(coll, back)
+        return
+    
+    super._add_collection_at(coll, _droppable_index)
+
 func remove_from_top(pos: Vector2 = Vector2.ZERO) -> Piece:
     var _piece: Piece
     _find_selectable_piece(pos, false)
