@@ -81,35 +81,58 @@ func touch_input(event: InputEvent) -> void:
         input_events.erase(event.index)
     if select_index != -1 and event.index != select_index and input_events.size() > 1:
         return
-    
     if event.double_tap == false:
         single_tap_input(event)
     elif input_events.size() == 1:
         double_tap_input(event)
 
 func single_tap_input(event: InputEvent) -> void:
+    if event.pressed and input_events.size() == 1: # Tap pressed
+        # print("Tap Pressed")
+        if board.touch_type == Board.TouchType.DRAG:
+            tap_pressed_drag(event)
+        elif board.touch_type == Board.TouchType.TAP:
+            tap_pressed_tap(event)
+    elif not event.pressed and event.index == select_index: # Tap released
+        # print("Tap Released")
+        if board.touch_type == Board.TouchType.DRAG:
+            tap_released_drag(event)
+        elif board.touch_type == Board.TouchType.TAP:
+            tap_released_tap(event)
+
+func tap_pressed_drag(event: InputEvent) -> void:
     var params: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
     params.position = get_local_mouse_position()
     params.collide_with_areas = true
     params.collide_with_bodies = false
     params.collision_mask = 1
-    if event.pressed and input_events.size() == 1:
-        # print("Tap Pressed")
-        grab_position = event.position
+    grab_position = event.position
+    var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
+    if results.size() > 0:
+        results.sort_custom(compare_by_z_index)
+        select_index = event.index
+        results[0].collider.get_parent()._on_select(event)
+
+func tap_pressed_tap(event: InputEvent) -> void:
+    pass
+
+func tap_released_drag(event: InputEvent) -> void:
+    var params: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
+    params.position = get_local_mouse_position()
+    params.collide_with_areas = true
+    params.collide_with_bodies = false
+    params.collision_mask = 1
+    call_deferred("deselect")
+    if is_selecting():
         var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
         if results.size() > 0:
             results.sort_custom(compare_by_z_index)
-            select_index = event.index
-            results[0].collider.get_parent()._on_select(event)
-    elif not event.pressed and event.index == select_index:
-        # print("Tap Released")
-        call_deferred("deselect")
-        if is_selecting():
-            var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
-            if results.size() > 0:
-                results.sort_custom(compare_by_z_index)
-                print(results[0].collider.get_parent().get_name())
-                results[0].collider.get_parent()._on_deselect(event)
+            print(results[0].collider.get_parent().get_name())
+            results[0].collider.get_parent()._on_deselect(event)
+
+func tap_released_tap(event: InputEvent) -> void:
+    pass
+
 
 func double_tap_input(event: InputEvent) -> void:
     if event.pressed:
