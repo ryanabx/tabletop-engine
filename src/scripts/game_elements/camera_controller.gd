@@ -68,6 +68,8 @@ func _input(event: InputEvent) -> void:
             position -= delta_position
             rotation += delta_angle
             zoom *= delta_scale
+    if board != null:
+        position = position.clamp(board.border.position, board.border.end)
 
 # func _draw() -> void:
 #     for evt: InputEvent in current_points.values():
@@ -88,7 +90,8 @@ func desktop_events(delta: float) -> void:
         zoom /= 1.1
     
     position += (Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED * delta).rotated(rotation)
-
+    if board != null:
+        position = position.clamp(board.border.position, board.border.end)
     if board == null or not board.board_player.is_selecting():
         rotation += Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise") * ROTATION_SPEED * delta
     else:
@@ -104,3 +107,4 @@ func _process(delta: float) -> void:
         desktop_events(delta)
     zoom = zoom.clamp(Vector2(0.2, 0.2), Vector2(10.0, 10.0))
     # queue_redraw()
+

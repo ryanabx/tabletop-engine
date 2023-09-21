@@ -10,7 +10,6 @@ highlight_current_line = true
 draw_tabs = true
 draw_spaces = true
 syntax_highlighter = ExtResource("1_nxt4c")
-scroll_smooth = true
 scroll_past_end_of_file = true
 minimap_draw = true
 line_folding = true

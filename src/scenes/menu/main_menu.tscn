@@ -30,10 +30,11 @@ layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="SafeMargins/MarginContainer/Layout"]
 layout_mode = 2
-size_flags_vertical = 6
+size_flags_vertical = 8
 
 [node name="Label" type="RichTextLabel" parent="SafeMargins/MarginContainer/Layout/MarginContainer"]
 layout_mode = 2
+size_flags_vertical = 8
 theme_override_font_sizes/normal_font_size = 84
 bbcode_enabled = true
 text = "[center]Tabletop
@@ -240,26 +241,6 @@ text_overrun_behavior = 3
 icon_alignment = 1
 vertical_icon_alignment = 2
 expand_icon = true
-
-[node name="HBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer/Layout"]
-layout_mode = 2
-size_flags_vertical = 3
-alignment = 1
-
-[node name="Version" type="Label" parent="SafeMargins/MarginContainer/Layout/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 34
-text = "Version x.x.x"
-horizontal_alignment = 1
-
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/Layout/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 34
-text = "Copyright ryanabx 2023"
-horizontal_alignment = 1
 
 [node name="FadeRect" parent="." instance=ExtResource("2_62p08")]
 layout_mode = 1

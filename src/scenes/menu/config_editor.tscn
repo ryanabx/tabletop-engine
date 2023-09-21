@@ -173,14 +173,12 @@ ok_button_text = "Open"
 file_mode = 1
 access = 2
 filters = PackedStringArray("*.png", "*.webp", "*.jpg", "*.jpeg", "*.bmp", "*.svg", "*")
-show_hidden_files = false
 use_native_dialog = true
 
 [node name="SaveConfigDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true
 size = Vector2i(1193, 564)
 access = 2
-show_hidden_files = false
 use_native_dialog = true
 
 [node name="OverwriteDialog" type="ConfirmationDialog" parent="."]

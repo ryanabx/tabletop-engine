@@ -1,10 +1,7 @@
 extends Control
 
-@onready var version := %Version
-
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-    version.text = str("Version: ",ProjectSettings.get_setting("application/config/version"))
     if not Utils.is_desktop_platform():
         %DesktopButtons.hide()
         %MobileButtons.show()
@@ -28,4 +25,4 @@ func _on_configurations_pressed() -> void:
 
 
 func _on_about_pressed() -> void:
-    pass # Replace with function body.
+    SignalManager.scene_transition.emit("res://src/scenes/menu/about.tscn")

@@ -138,11 +138,7 @@ func erase_object(object_name: String, recursive: bool = false) -> bool:
     return true
 
 func _process(_delta: float) -> void:
-    _clamp_camera()
     queue_redraw()
-
-func _clamp_camera() -> void:
-    get_parent().camera_controller.position = get_parent().camera_controller.position.clamp(border.position, border.end)
 
 func _draw() -> void:
     _draw_board_bg()
