@@ -8,6 +8,7 @@ var coordinates_labels: Array
 @onready var padding_panel: Panel = $PaddingPanel
 
 @onready var input_mode_button: Button = %InputModeButton
+@onready var touch_type_button: Button = %TouchTypeButton
 
 var game_name: String = "untitled"
 var game_ip_addr: String = "local"
@@ -20,6 +21,10 @@ var board: Board = null
 
 @onready var input_mode_textures: Array[Texture2D] = [
     image_1, image_2
+]
+
+@onready var touch_types: Array[String] = [
+    "Tap", "Drag"
 ]
 
 func _ready() -> void:
@@ -52,6 +57,7 @@ func _process(_delta: float) -> void:
         game_name = Globals.get_current_game().export_settings().name
     if board != null:
         input_mode_button.icon = input_mode_textures[board.input_mode]
+        touch_type_button.text = touch_types[board.touch_type]
     
 
 var drag_window: bool = false
@@ -66,4 +72,13 @@ func _on_input_setting_pressed() -> void:
         return
     elif board.input_mode == Board.InputMode.SELECT:
         board.input_mode = Board.InputMode.CAMERA
+        return
+
+
+func _on_touch_type_button_pressed() -> void:
+    if board.touch_type == Board.TouchType.DRAG:
+        board.touch_type = Board.TouchType.TAP
+        return
+    elif board.touch_type == Board.TouchType.TAP:
+        board.touch_type = Board.TouchType.DRAG
         return

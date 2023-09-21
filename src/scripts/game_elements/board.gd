@@ -31,6 +31,11 @@ enum InputMode {
     SELECT
 }
 
+enum TouchType {
+    TAP,
+    DRAG
+}
+
 
 # Children
 @onready var board_player: BoardPlayer = $BoardPlayer
@@ -43,6 +48,7 @@ var number_of_players: int
 var player_id: int
 
 var input_mode: InputMode = InputMode.SELECT
+var touch_type: TouchType = TouchType.DRAG
 
 # Private variables
 

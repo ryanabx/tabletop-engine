@@ -72,7 +72,6 @@ alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/TopBar"]
 layout_mode = 2
-theme_override_constants/separation = 30
 
 [node name="MenuPanel" type="PanelContainer" parent="SafeMargins/TopBar/HBoxContainer"]
 custom_minimum_size = Vector2(128, 128)
@@ -87,13 +86,17 @@ icon_alignment = 1
 expand_icon = true
 script = ExtResource("2_fos3n")
 
-[node name="MenuPanel2" type="PanelContainer" parent="SafeMargins/TopBar/HBoxContainer"]
-custom_minimum_size = Vector2(128, 128)
+[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/TopBar/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="MenuPanel2" type="PanelContainer" parent="SafeMargins/TopBar/HBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_h871r")
 metadata/_edit_use_anchors_ = true
 
-[node name="InputModeButton" type="Button" parent="SafeMargins/TopBar/HBoxContainer/MenuPanel2"]
+[node name="InputModeButton" type="Button" parent="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel2"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_8220w")
@@ -102,8 +105,25 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
+[node name="MenuPanel3" type="PanelContainer" parent="SafeMargins/TopBar/HBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_h871r")
+metadata/_edit_use_anchors_ = true
+
+[node name="TouchTypeButton" type="Button" parent="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel3"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+theme_override_styles/focus = SubResource("StyleBoxEmpty_8220w")
+text = "Drag"
+flat = true
+icon_alignment = 1
+expand_icon = true
+
 [node name="FadeRect" parent="." instance=ExtResource("6_aaf8p")]
 layout_mode = 1
 mouse_filter = 2
 
-[connection signal="pressed" from="SafeMargins/TopBar/HBoxContainer/MenuPanel2/InputModeButton" to="." method="_on_input_setting_pressed"]
+[connection signal="pressed" from="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel2/InputModeButton" to="." method="_on_input_setting_pressed"]
+[connection signal="pressed" from="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel3/TouchTypeButton" to="." method="_on_touch_type_button_pressed"]

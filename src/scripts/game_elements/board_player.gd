@@ -60,6 +60,10 @@ func collection_queued() -> bool:
 ######################
 
 func _input(event: InputEvent) -> void:
+    if board.input_mode == Board.InputMode.CAMERA:
+        input_events = {}
+        deselect()
+        return
     var ev: InputEvent = make_input_local(event)
     if ev.is_action_pressed("game_flip"):
         if is_selecting() and not get_selected_object().lock_state:
@@ -70,10 +74,6 @@ func _input(event: InputEvent) -> void:
         drag_input(ev)
     
 func touch_input(event: InputEvent) -> void:
-    if board.input_mode == Board.InputMode.CAMERA:
-        input_events = {}
-        deselect()
-        return
     if event.pressed:
         input_events[event.index] = event
     else:
