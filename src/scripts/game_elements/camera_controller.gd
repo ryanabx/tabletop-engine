@@ -3,7 +3,6 @@ extends Camera2D
 
 var camera_transform: Transform2D = transform
 
-var initial_points: Dictionary = {}
 var current_points: Dictionary = {}
 
 const MOVEMENT_SPEED: float = 2000.0
@@ -24,7 +23,8 @@ func _game_loaded(_board: Board) -> void:
     board = _board
 
 func _input(event: InputEvent) -> void:
-    if board_selecting():
+    if board != null and board.input_mode == Board.InputMode.SELECT:
+        current_points = {}
         return
     event = make_input_local(event)
     if event is InputEventScreenTouch:

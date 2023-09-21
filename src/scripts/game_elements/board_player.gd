@@ -70,6 +70,10 @@ func _input(event: InputEvent) -> void:
         drag_input(ev)
     
 func touch_input(event: InputEvent) -> void:
+    if board.input_mode == Board.InputMode.CAMERA:
+        input_events = {}
+        deselect()
+        return
     if event.pressed:
         input_events[event.index] = event
     else:

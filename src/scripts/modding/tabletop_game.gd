@@ -58,7 +58,7 @@ func get_images() -> Dictionary:
 
 ## Determines whether a selectable object can be stacked to another selectable object
 ## [OPTIONAL] Override this function to include programmability
-func can_stack(from: Selectable, to: Selectable) -> bool:
+func can_stack(_from: Selectable, _to: Selectable) -> bool:
     return true
 
 ## Determines whether a piece can be taken off a collection

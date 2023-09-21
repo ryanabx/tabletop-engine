@@ -26,6 +26,11 @@ const GAME_OBJECT_TYPE_STRING = [
     "flat", "deck", "hand"
 ]
 
+enum InputMode {
+    CAMERA,
+    SELECT
+}
+
 
 # Children
 @onready var board_player: BoardPlayer = $BoardPlayer
@@ -36,6 +41,8 @@ const GAME_OBJECT_TYPE_STRING = [
 var number_of_players: int
 
 var player_id: int
+
+var input_mode: InputMode = InputMode.SELECT
 
 # Private variables
 

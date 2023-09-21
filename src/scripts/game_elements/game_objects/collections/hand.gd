@@ -132,7 +132,7 @@ func _find_spacing_interval() -> void:
                 _spacing_interval = (size.x - size_pieces.x / 2.0) / (inside.size())
 
 func _find_selectable_piece(pos: Vector2, check_boundaries: bool = true) -> void:
-    if check_boundaries and (absf(pos.y) > size.y / 2.0 or absf(pos.x) > (size.x / 2.0)):
+    if board.input_mode == Board.InputMode.CAMERA or (check_boundaries and (absf(pos.y) > size.y / 2.0 or absf(pos.x) > (size.x / 2.0))):
         _selectable_piece = -1
         _droppable_index = -1
         return

@@ -1,10 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://ma7a666pl2us"]
+[gd_scene load_steps=9 format=3 uid="uid://ma7a666pl2us"]
 
 [ext_resource type="Script" path="res://src/scripts/ui/user_interface.gd" id="1_u2rch"]
 [ext_resource type="Script" path="res://src/scripts/ui/menu_bar.gd" id="2_fos3n"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/safe_margins.tscn" id="2_i3s0x"]
+[ext_resource type="Texture2D" uid="uid://c4ngtvr2jxp2o" path="res://src/resources/assets/ui/move.svg" id="3_6psu3"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="6_aaf8p"]
 [ext_resource type="Texture2D" uid="uid://cnxcvuvev4a5d" path="res://src/resources/assets/ui/burger-menu.svg" id="7_f3h7v"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_h871r"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8220w"]
 
 [node name="UserInterface" type="Control"]
 layout_mode = 3
@@ -50,16 +55,20 @@ custom_minimum_size = Vector2(0, 128)
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="SafeMargins/TopBar"]
+[node name="HBoxContainer3" type="HBoxContainer" parent="SafeMargins/TopBar"]
 layout_mode = 2
 alignment = 1
 
-[node name="GameInfo" type="Label" parent="SafeMargins/TopBar/HBoxContainer2"]
+[node name="GameInfo" type="Label" parent="SafeMargins/TopBar/HBoxContainer3"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Game: Untitled"
 horizontal_alignment = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="SafeMargins/TopBar"]
+layout_mode = 2
+alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/TopBar"]
 layout_mode = 2
@@ -78,6 +87,23 @@ icon_alignment = 1
 expand_icon = true
 script = ExtResource("2_fos3n")
 
+[node name="MenuPanel2" type="PanelContainer" parent="SafeMargins/TopBar/HBoxContainer"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_h871r")
+metadata/_edit_use_anchors_ = true
+
+[node name="InputModeButton" type="Button" parent="SafeMargins/TopBar/HBoxContainer/MenuPanel2"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_8220w")
+icon = ExtResource("3_6psu3")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
 [node name="FadeRect" parent="." instance=ExtResource("6_aaf8p")]
 layout_mode = 1
 mouse_filter = 2
+
+[connection signal="pressed" from="SafeMargins/TopBar/HBoxContainer/MenuPanel2/InputModeButton" to="." method="_on_input_setting_pressed"]
