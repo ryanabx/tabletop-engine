@@ -68,16 +68,19 @@ func _input(event: InputEvent) -> void:
     if ev.is_action_pressed("game_flip"):
         if is_selecting() and not get_selected_object().lock_state:
             get_selected_object().face_up = not get_selected_object().face_up
-    if ev is InputEventScreenTouch:
-        touch_input(ev)
-    elif ev is InputEventScreenDrag:
-        drag_input(ev)
+    if board.touch_type == Board.TouchType.DRAG:
+        if ev is InputEventScreenTouch:
+            touch_input(ev)
+        elif ev is InputEventScreenDrag:
+            drag_input(ev)
     
 func touch_input(event: InputEvent) -> void:
     if event.pressed:
         input_events[event.index] = event
     else:
         input_events.erase(event.index)
+    if select_index != -1 and event.index != select_index and input_events.size() > 1:
+        return
     
     if event.double_tap == false:
         single_tap_input(event)
@@ -124,7 +127,6 @@ func double_tap_input(event: InputEvent) -> void:
             elif results[0].collider.get_parent() is Piece:
                 SignalManager.game_menu_create_piece.emit(results[0].collider.get_parent())
             deselect()
-
 
 func drag_input(event: InputEvent) -> void:
     input_events[event.index] = event

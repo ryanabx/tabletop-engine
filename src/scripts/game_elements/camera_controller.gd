@@ -107,4 +107,3 @@ func _process(delta: float) -> void:
         desktop_events(delta)
     zoom = zoom.clamp(Vector2(0.2, 0.2), Vector2(10.0, 10.0))
     # queue_redraw()
-
