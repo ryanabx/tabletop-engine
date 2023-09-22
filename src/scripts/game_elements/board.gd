@@ -48,7 +48,7 @@ var number_of_players: int
 var player_id: int
 
 var input_mode: InputMode = InputMode.SELECT
-var touch_type: TouchType = TouchType.DRAG
+var touch_type: TouchType = TouchType.DRAG if not Utils.is_mobile_platform() else TouchType.TAP
 
 # Private variables
 

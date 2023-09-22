@@ -4,6 +4,8 @@ extends Selectable
 ##
 ## Defines an object that contains pieces within it.
 
+var types: Array = [] # Currently just for compatibility. TODO: Remove
+
 # Shareable properties
 ## The list of serialized pieces that are inside this collection.
 var inside: Array[Dictionary] = []
@@ -31,6 +33,7 @@ func add_collection(coll: Collection, back: bool = false) -> void:
 ## [param position] specifies the position that the player is removing the piece from.
 func remove_from_top(_position: Vector2 = Vector2.ZERO) -> Piece:
     if inside.size() == 0:
+        print("Inside size is 0")
         return null
     return _remove_piece_at(inside.size() - 1)
 
@@ -76,7 +79,7 @@ func _clear_inside() -> void:
     add_to_property_changes("inside", inside)
 
 func _on_select(_event:InputEvent) -> void:
-    if get_inside().is_empty():
+    if get_inside().is_empty() or selected != 0 or queued != 0:
         return
     board.board_player.queue_select_object(self)
 
@@ -105,7 +108,7 @@ func _add_collection_at(coll: Collection, _index: int) -> void:
     if _index == inside.size():
         inside.append_array(coll.inside)
     else:
-        inside = inside.slice(0, _index) + coll.inside + inside.slice(_index, 0)
+        inside = inside.slice(0, _index) + coll.inside + inside.slice(_index, inside.size())
     add_to_property_changes("inside",inside)
     coll._clear_inside()
 

@@ -32,6 +32,8 @@ var _spacing_interval: float = 1.0
 var _selectable_piece: int = -1
 var _droppable_index: int = -1
 
+var _card_to_select: int = -1
+
 # Shareable properties
 ## Determines the visibility of the hand. See [enum Hand.VisibilitySetting]
 var visibility: VisibilitySetting = VisibilitySetting.DESIGNATED
@@ -85,6 +87,13 @@ func _draw_piece(_data: Dictionary, selectable: bool, _position: Vector2, _size:
     
     draw_texture_rect(_texture, Rect2(_position - _size / 2, _size), false)
 
+func _get_selected_range() -> Rect2:
+    var card_position: Vector2 = Vector2(
+            lerp(get_rect().position.x + size_pieces.x / 2.0, get_rect().end.x - size_pieces.x / 2.0, (_selectable_piece + 0.5) / inside.size()),
+            get_rect().get_center().y
+    )
+    return Rect2(to_global(card_position - size_pieces / 2.0), size_pieces * 1.1)
+
 func can_view() -> bool:
     match visibility:
         VisibilitySetting.ALL:
@@ -113,7 +122,8 @@ func add_collection(coll: Collection, back: bool = false) -> void:
 
 func remove_from_top(pos: Vector2 = Vector2.ZERO) -> Piece:
     var _piece: Piece
-    _find_selectable_piece(pos, false)
+    if _card_to_select == -1:
+        _find_selectable_piece(pos, false)
     if _selectable_piece == -1:
         _piece = super.remove_from_top(pos)
     else:
@@ -147,5 +157,17 @@ func _find_selectable_piece(pos: Vector2, check_boundaries: bool = true) -> void
 func _process(delta: float) -> void:
     queue_redraw()
     _find_spacing_interval()
-    _find_selectable_piece(get_local_mouse_position())
+    if queued == 0 and selected == 0:
+        _card_to_select = -1
+        _find_selectable_piece(get_local_mouse_position())
+    else:
+        _selectable_piece = _card_to_select
     super._process(delta)
+
+func _on_select(_event:InputEvent) -> void:
+    if get_inside().is_empty() or selected != 0 or queued != 0:
+        return
+    board.board_player.queue_select_object(self)
+    _find_selectable_piece(get_local_mouse_position())
+    _card_to_select = _selectable_piece
+    print("Selectable piece found and locked: ",_card_to_select)

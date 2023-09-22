@@ -28,7 +28,7 @@ func _ready() -> void:
     super._ready()
 
 func _get_shareable_properties() -> Array:
-    return super._get_shareable_properties() + ["lock_state", "selected"] # TODO: Add selected to shareable properties
+    return super._get_shareable_properties() + ["lock_state", "selected", "queued"]
 
 var selected: int = 0:
     set(val):
@@ -41,8 +41,15 @@ var selected: int = 0:
     get:
         return selected
 
+var queued: int = 0:
+    set(val):
+        _authority = multiplayer.get_unique_id()
+        queued = val
+    get:
+        return queued
+
 func _on_select(_event:InputEvent) -> void:
-    if selected == 0:
+    if selected == 0 and queued == 0:
         board.board_player.queue_select_object(self)
 
 func _on_deselect(_event: InputEvent) -> void:

@@ -4,6 +4,8 @@ extends Node2D
 var selected_object: Selectable = null
 var queued_object: Selectable = null
 
+# var holding_object: bool = false
+
 var grab_position: Vector2 = Vector2.ZERO
 
 var board: Board
@@ -13,6 +15,8 @@ var hold_timer: Timer
 var physics_state: PhysicsDirectSpaceState2D
 
 var select_index: int = -1
+
+var _taps_since_selecting: int = 0
 
 var input_events: Dictionary = {}
 
@@ -38,22 +42,22 @@ func get_queued_object() -> Selectable:
     return queued_object
 
 func is_selecting() -> bool:
-    return selected_object != null
+    return selected_object != null and is_instance_valid(selected_object)
 
 func object_queued() -> bool:
-    return queued_object != null
+    return queued_object != null and is_instance_valid(queued_object)
 
 func is_selecting_piece() -> bool:
-    return selected_object != null and selected_object is Piece
+    return is_selecting() and selected_object is Piece
 
 func piece_queued() -> bool:
-    return queued_object != null and queued_object is Piece
+    return object_queued() and queued_object is Piece
 
 func is_selecting_collection() -> bool:
-    return selected_object != null and selected_object is Collection
+    return is_selecting() and selected_object is Collection
 
 func collection_queued() -> bool:
-    return queued_object != null and queued_object is Collection
+    return object_queued() and queued_object is Collection
 
 ######################
 ### Input Handling ###
@@ -68,11 +72,10 @@ func _input(event: InputEvent) -> void:
     if ev.is_action_pressed("game_flip"):
         if is_selecting() and not get_selected_object().lock_state:
             get_selected_object().face_up = not get_selected_object().face_up
-    if board.touch_type == Board.TouchType.DRAG:
-        if ev is InputEventScreenTouch:
-            touch_input(ev)
-        elif ev is InputEventScreenDrag:
-            drag_input(ev)
+    if ev is InputEventScreenTouch:
+        touch_input(ev)
+    elif ev is InputEventScreenDrag:
+        drag_input(ev)
     
 func touch_input(event: InputEvent) -> void:
     if event.pressed:
@@ -81,6 +84,9 @@ func touch_input(event: InputEvent) -> void:
         input_events.erase(event.index)
     if select_index != -1 and event.index != select_index and input_events.size() > 1:
         return
+    if event.pressed:
+        _taps_since_selecting += 1
+        print("Tapped since selecting!")
     if event.double_tap == false:
         single_tap_input(event)
     elif input_events.size() == 1:
@@ -88,68 +94,86 @@ func touch_input(event: InputEvent) -> void:
 
 func single_tap_input(event: InputEvent) -> void:
     if event.pressed and input_events.size() == 1: # Tap pressed
-        # print("Tap Pressed")
+        print("Tap Pressed: ", board.touch_type)
         if board.touch_type == Board.TouchType.DRAG:
             tap_pressed_drag(event)
         elif board.touch_type == Board.TouchType.TAP:
             tap_pressed_tap(event)
-    elif not event.pressed and event.index == select_index: # Tap released
-        # print("Tap Released")
-        if board.touch_type == Board.TouchType.DRAG:
+    elif not event.pressed: # Tap released
+        print("Tap Released: ", board.touch_type)
+        if board.touch_type == Board.TouchType.DRAG and event.index == select_index:
             tap_released_drag(event)
         elif board.touch_type == Board.TouchType.TAP:
             tap_released_tap(event)
 
 func tap_pressed_drag(event: InputEvent) -> void:
-    var params: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
-    params.position = get_local_mouse_position()
-    params.collide_with_areas = true
-    params.collide_with_bodies = false
-    params.collision_mask = 1
-    grab_position = event.position
-    var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
-    if results.size() > 0:
-        results.sort_custom(compare_by_z_index)
-        select_index = event.index
-        results[0].collider.get_parent()._on_select(event)
-
-func tap_pressed_tap(event: InputEvent) -> void:
-    pass
+    _select_with_event(event)
 
 func tap_released_drag(event: InputEvent) -> void:
-    var params: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
-    params.position = get_local_mouse_position()
-    params.collide_with_areas = true
-    params.collide_with_bodies = false
-    params.collision_mask = 1
-    call_deferred("deselect")
     if is_selecting():
-        var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
-        if results.size() > 0:
-            results.sort_custom(compare_by_z_index)
-            print(results[0].collider.get_parent().get_name())
-            results[0].collider.get_parent()._on_deselect(event)
+        _deselect_with_event(event)
+    hold_timer.stop()
+
+func tap_pressed_tap(event: InputEvent) -> void:
+    print("Tap pressed tap")
+    if object_queued():
+        if _get_collider_at_position(get_local_mouse_position(), 1) != get_queued_object():
+            deselect()
+        else:
+            print("Hold timer started")
+            grab_position = event.position
+            hold_timer.start()
 
 func tap_released_tap(event: InputEvent) -> void:
-    pass
+    print("Tap released tap")
+    if not is_selecting() and not object_queued():
+        print("Select with event")
+        _select_with_event(event)
+    elif is_selecting() and _get_collider_at_position(get_local_mouse_position(), 2) != get_selected_object():
+        _deselect_with_event(event)
+    elif object_queued() and _get_collider_at_position() != get_queued_object():
+        deselect()
+    hold_timer.stop()
 
+func _select_with_event(event: InputEvent) -> void:
+    var collider: Selectable = _get_collider_at_position()
+    if collider != null:
+        grab_position = event.position
+        select_index = event.index
+        collider._on_select(event)
+
+func _deselect_with_event(event: InputEvent) -> void:
+    var collider: Selectable = _get_collider_at_position()
+    if collider != null:
+        collider._on_deselect(event)
+    deselect()
 
 func double_tap_input(event: InputEvent) -> void:
     if event.pressed:
+        if board.touch_type == Board.TouchType.TAP and _taps_since_selecting < 2:
+            print("Not a double tap! %d" % _taps_since_selecting)
+            return
         # print("Double tap")
-        var params: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
-        params.position = get_local_mouse_position()
-        params.collide_with_areas = true
-        params.collide_with_bodies = false
-        params.collision_mask = 1
-        var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
-        if not results.is_empty():
-            results.sort_custom(compare_by_z_index)
-            if results[0].collider.get_parent() is Collection:
-                SignalManager.game_menu_create_collection.emit(results[0].collider.get_parent())
-            elif results[0].collider.get_parent() is Piece:
-                SignalManager.game_menu_create_piece.emit(results[0].collider.get_parent())
+        print("Succeeded! %d :: %d" % [_taps_since_selecting, board.touch_type])
+        var collider: Selectable = _get_collider_at_position()
+        if collider != null:
+            if collider is Collection:
+                SignalManager.game_menu_create_collection.emit(collider)
+            elif collider is Piece:
+                SignalManager.game_menu_create_piece.emit(collider)
             deselect()
+
+func _get_collider_at_position(pos: Vector2 = get_local_mouse_position(), collision_mask: int = 1) -> Selectable:
+    var params: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
+    params.position = pos
+    params.collide_with_areas = true
+    params.collide_with_bodies = false
+    params.collision_mask = 1
+    var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
+    if results.size() > 0:
+        results.sort_custom(compare_by_z_index)
+        return results[0].collider.get_parent() as Selectable
+    return null
 
 func drag_input(event: InputEvent) -> void:
     input_events[event.index] = event
@@ -159,8 +183,6 @@ func drag_input(event: InputEvent) -> void:
         hold_timer.stop()
         if collection_queued() and board.game.can_take_piece_off(get_queued_object()):
             var pc: Piece = get_queued_object().remove_from_top(get_queued_object().to_local(grab_position))
-            # pc.position = get_queued_object().position
-            # pc.rotation = get_queued_object().rotation
             select_object(pc)
         elif piece_queued():
             select_object(get_queued_object())
@@ -208,18 +230,22 @@ func _swap(pc1: Piece, contents: Dictionary) -> void:
 
 func select_object(obj: Selectable) -> void:
     deselect()
-    if obj.selected == 0:
-        obj._authority = multiplayer.get_unique_id()
-        obj.move_self_to_top()
-        selected_object = obj
-        obj.selected = multiplayer.get_unique_id()
-        obj.grab_offset = grab_position - obj.position
+    obj._authority = multiplayer.get_unique_id()
+    obj.move_self_to_top()
+    selected_object = obj
+    obj.selected = multiplayer.get_unique_id()
+    obj.grab_offset = grab_position - obj.position
 
 func queue_select_object(obj: Selectable) -> void:
-    deselect()
-    obj.move_self_to_top()
-    queued_object = obj
-    hold_timer.start()
+    if object_queued():
+        deselect()
+    if obj.queued == 0 and obj.selected == 0:
+        _taps_since_selecting = 0
+        print("Taps since selecting = 0")
+        obj.move_self_to_top()
+        queued_object = obj
+        obj.queued = multiplayer.get_unique_id()
+        hold_timer.start()
 
 func stack_selection_to_item(item: Selectable) -> void:
     item._authority = multiplayer.get_unique_id()
@@ -278,11 +304,14 @@ func deselect_object() -> void:
     if is_selecting() and get_selected_object().selected == multiplayer.get_unique_id():
         get_selected_object()._authority = multiplayer.get_unique_id()
         get_selected_object().selected = 0
-    selected_object = null
+        selected_object = null
 
 func dequeue_object() -> void:
-    if object_queued():
-        get_queued_object().selected = false
+    if object_queued() and get_queued_object().queued == multiplayer.get_unique_id():
+        _taps_since_selecting = 0
+        print("Taps since selecting = 0")
+        get_queued_object()._authority = multiplayer.get_unique_id()
+        get_queued_object().queued = 0
         queued_object = null
 
 func rotate_selection(amount: float, axis: float) -> void:
