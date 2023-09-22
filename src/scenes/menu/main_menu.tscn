@@ -25,233 +25,59 @@ layout_mode = 1
 [node name="MarginContainer" type="MarginContainer" parent="SafeMargins"]
 layout_mode = 2
 
-[node name="Layout" type="VBoxContainer" parent="SafeMargins/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer"]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="SafeMargins/MarginContainer/Layout"]
-layout_mode = 2
-size_flags_vertical = 8
-
-[node name="Label" type="RichTextLabel" parent="SafeMargins/MarginContainer/Layout/MarginContainer"]
-layout_mode = 2
-size_flags_vertical = 8
-theme_override_font_sizes/normal_font_size = 84
-bbcode_enabled = true
-text = "[center]Tabletop
-Framework[/center]"
-fit_content = true
-
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="SafeMargins/MarginContainer/Layout"]
+[node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-ratio = 1.5
 
-[node name="DesktopButtons" type="VBoxContainer" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer"]
-unique_name_in_owner = true
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Tabletop Framework"
+horizontal_alignment = 1
+
+[node name="NewGame" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 0
-alignment = 1
-
-[node name="Row1" type="HBoxContainer" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/DesktopButtons"]
-custom_minimum_size = Vector2(0, 300)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 10
-theme_override_constants/separation = 0
-
-[node name="Play" type="AspectRatioContainer" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/DesktopButtons/Row1"]
-custom_minimum_size = Vector2(600, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-size_flags_stretch_ratio = 2.0
-ratio = 2.0
-
-[node name="NewGame" type="Button" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/DesktopButtons/Row1/Play"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
 text = "Play"
 icon = ExtResource("3_1vqd7")
-text_overrun_behavior = 3
-icon_alignment = 1
-vertical_icon_alignment = 2
 expand_icon = true
 
-[node name="Tabletops" type="AspectRatioContainer" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/DesktopButtons/Row1"]
-custom_minimum_size = Vector2(600, 0)
+[node name="Tabletops" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
 size_flags_vertical = 3
-ratio = 2.0
-
-[node name="Configurations" type="Button" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/DesktopButtons/Row1/Tabletops"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
 text = "Tabletops"
 icon = ExtResource("5_atquh")
-text_overrun_behavior = 3
-icon_alignment = 1
-vertical_icon_alignment = 2
 expand_icon = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/DesktopButtons"]
-custom_minimum_size = Vector2(0, 300)
+[node name="Settings" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 2
-theme_override_constants/separation = 0
-
-[node name="About" type="AspectRatioContainer" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/DesktopButtons/HBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-size_flags_horizontal = 3
 size_flags_vertical = 3
-
-[node name="About" type="Button" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/DesktopButtons/HBoxContainer/About"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "About"
-icon = ExtResource("7_pbghq")
-text_overrun_behavior = 3
-icon_alignment = 1
-vertical_icon_alignment = 2
-expand_icon = true
-
-[node name="Settings" type="AspectRatioContainer" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/DesktopButtons/HBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="Settings" type="Button" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/DesktopButtons/HBoxContainer/Settings"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
 text = "Settings"
 icon = ExtResource("4_b7mlp")
-text_overrun_behavior = 3
-icon_alignment = 1
-vertical_icon_alignment = 2
 expand_icon = true
 
-[node name="Quit" type="AspectRatioContainer" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/DesktopButtons/HBoxContainer"]
-custom_minimum_size = Vector2(600, 0)
+[node name="About" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
 size_flags_vertical = 3
-ratio = 2.0
+text = "About"
+icon = ExtResource("7_pbghq")
+expand_icon = true
 
-[node name="QuitButton" type="Button" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/DesktopButtons/HBoxContainer/Quit"]
+[node name="Quit" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+size_flags_vertical = 3
 text = "Quit"
 icon = ExtResource("6_w7hdg")
-icon_alignment = 1
-vertical_icon_alignment = 2
-expand_icon = true
-
-[node name="MobileButtons" type="VBoxContainer" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 0
-alignment = 1
-
-[node name="Row1" type="HBoxContainer" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/MobileButtons"]
-custom_minimum_size = Vector2(0, 300)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 10
-theme_override_constants/separation = 0
-
-[node name="Play" type="AspectRatioContainer" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/MobileButtons/Row1"]
-custom_minimum_size = Vector2(600, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-size_flags_stretch_ratio = 2.0
-ratio = 2.0
-
-[node name="NewGame" type="Button" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/MobileButtons/Row1/Play"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "Play"
-icon = ExtResource("3_1vqd7")
-text_overrun_behavior = 3
-icon_alignment = 1
-vertical_icon_alignment = 2
-expand_icon = true
-
-[node name="Tabletops" type="AspectRatioContainer" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/MobileButtons/Row1"]
-custom_minimum_size = Vector2(600, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-ratio = 2.0
-
-[node name="Configurations" type="Button" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/MobileButtons/Row1/Tabletops"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "Tabletops"
-icon = ExtResource("5_atquh")
-text_overrun_behavior = 3
-icon_alignment = 1
-vertical_icon_alignment = 2
-expand_icon = true
-
-[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/MobileButtons"]
-custom_minimum_size = Vector2(0, 300)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 2
-theme_override_constants/separation = 0
-
-[node name="About" type="AspectRatioContainer" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/MobileButtons/HBoxContainer"]
-custom_minimum_size = Vector2(600, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-ratio = 2.0
-
-[node name="About" type="Button" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/MobileButtons/HBoxContainer/About"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "About"
-icon = ExtResource("7_pbghq")
-text_overrun_behavior = 3
-icon_alignment = 1
-vertical_icon_alignment = 2
-expand_icon = true
-
-[node name="Settings" type="AspectRatioContainer" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/MobileButtons/HBoxContainer"]
-custom_minimum_size = Vector2(600, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-ratio = 2.0
-
-[node name="Settings" type="Button" parent="SafeMargins/MarginContainer/Layout/AspectRatioContainer/MobileButtons/HBoxContainer/Settings"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "Settings"
-icon = ExtResource("4_b7mlp")
-text_overrun_behavior = 3
-icon_alignment = 1
-vertical_icon_alignment = 2
 expand_icon = true
 
 [node name="FadeRect" parent="." instance=ExtResource("2_62p08")]
 layout_mode = 1
 mouse_filter = 2
 
-[connection signal="pressed" from="SafeMargins/MarginContainer/Layout/AspectRatioContainer/DesktopButtons/Row1/Play/NewGame" to="." method="_on_new_game_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/Layout/AspectRatioContainer/DesktopButtons/Row1/Tabletops/Configurations" to="." method="_on_configurations_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/Layout/AspectRatioContainer/DesktopButtons/HBoxContainer/About/About" to="." method="_on_about_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/Layout/AspectRatioContainer/DesktopButtons/HBoxContainer/Settings/Settings" to="." method="_on_settings_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/Layout/AspectRatioContainer/DesktopButtons/HBoxContainer/Quit/QuitButton" to="." method="_on_quit_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/Layout/AspectRatioContainer/MobileButtons/Row1/Play/NewGame" to="." method="_on_new_game_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/Layout/AspectRatioContainer/MobileButtons/Row1/Tabletops/Configurations" to="." method="_on_configurations_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/Layout/AspectRatioContainer/MobileButtons/HBoxContainer/About/About" to="." method="_on_about_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/Layout/AspectRatioContainer/MobileButtons/HBoxContainer/Settings/Settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/NewGame" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/Tabletops" to="." method="_on_tabletops_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/About" to="." method="_on_about_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
