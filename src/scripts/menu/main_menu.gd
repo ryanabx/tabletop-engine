@@ -2,10 +2,6 @@ extends Control
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-    if not Utils.is_desktop_platform():
-        %DesktopButtons.hide()
-        %MobileButtons.show()
-
     Globals.load_this_game = PackedByteArray([])
 
 func _on_new_game_pressed() -> void:
