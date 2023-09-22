@@ -38,6 +38,7 @@ var selected: int = 0:
             area2d.collision_layer = 2
         else:
             area2d.collision_layer = 1
+        add_to_property_changes("selected", selected)
     get:
         return selected
 
@@ -45,6 +46,7 @@ var queued: int = 0:
     set(val):
         _authority = multiplayer.get_unique_id()
         queued = val
+        add_to_property_changes("queued", queued)
     get:
         return queued
 
