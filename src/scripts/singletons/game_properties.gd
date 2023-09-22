@@ -23,7 +23,6 @@ var fullscreen: bool:
         return (DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN)
 
 # In-game settings
-var select_type: SelectType = SelectType.DRAG
 
 # Multiplayer connection settings
 var multiplayer_method: MultiplayerMethod = MultiplayerMethod.P2P_SHORTENED
@@ -36,7 +35,8 @@ func load_settings() -> void:
         var settings_str: String = FileAccess.get_file_as_string(Globals.SETTINGS_PATH)
         var settings_dict: Dictionary = JSON.parse_string(settings_str)
         for prop: String in settings_dict.keys():
-            set(prop, settings_dict[prop])
+            if prop in self:
+                set(prop, settings_dict[prop])
     # print("Settings loaded!")
 
 func save_settings() -> void:

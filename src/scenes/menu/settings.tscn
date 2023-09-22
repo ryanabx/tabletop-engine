@@ -69,25 +69,6 @@ layout_mode = 2
 text = "Controls"
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Controls"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Controls/HBoxContainer"]
-layout_mode = 2
-text = "Selecting objects: "
-
-[node name="SelectingObjects" type="OptionButton" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Controls/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-alignment = 1
-item_count = 2
-selected = 0
-popup/item_0/text = "Drag"
-popup/item_0/id = 0
-popup/item_1/text = "Click"
-popup/item_1/id = 1
-
 [node name="ConfigTools" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
@@ -126,6 +107,5 @@ size = Vector2i(1318, 1280)
 [node name="SaveExportedConfig" parent="." instance=ExtResource("7_70qvt")]
 
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/View/HBoxContainer/ToggleFullscreen" to="." method="_on_toggle_fullscreen_pressed"]
-[connection signal="item_selected" from="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Controls/HBoxContainer/SelectingObjects" to="." method="_on_selecting_objects_item_selected"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/ConfigTools/HBoxContainer/ExportConfig" to="." method="_on_export_config_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]

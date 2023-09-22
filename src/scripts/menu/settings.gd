@@ -4,7 +4,6 @@ extends Control
 @onready var config_tools: VBoxContainer = $SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/ConfigTools
 
 func _ready() -> void:
-	%SelectingObjects.selected = GameProperties.select_type
 	if Utils.is_mobile_platform():
 		view_menu.hide()
 	if Utils.is_web_platform():
@@ -24,8 +23,3 @@ func _on_toggle_fullscreen_pressed() -> void:
 
 func _on_export_config_pressed() -> void:
 	SignalManager.create_export_config_dialog.emit()
-
-
-func _on_selecting_objects_item_selected(index: int) -> void:
-	GameProperties.select_type = (index as GameProperties.SelectType)
-	settings_updated()
