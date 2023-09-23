@@ -30,6 +30,9 @@ func remove_from_top(pos: Vector2 = Vector2.ZERO) -> Piece:
 func flip() -> void:
     _authority = multiplayer.get_unique_id()
     face_up = not face_up
+    inside.reverse()
+    add_to_property_changes("inside",inside)
+
 
 # Private methods
 
