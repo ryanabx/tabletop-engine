@@ -3,7 +3,7 @@ extends Control
 @onready var view_menu: VBoxContainer = $SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/View
 
 func _ready() -> void:
-	if Utils.is_mobile_platform():
+	if Platform.is_mobile_platform():
 		view_menu.hide()
 
 func settings_updated() -> void:

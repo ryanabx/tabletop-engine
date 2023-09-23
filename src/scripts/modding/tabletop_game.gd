@@ -119,7 +119,7 @@ static func export_config_old(scr_text: String, dir_path: String) -> PackedByteA
     obj.set_script(sc)
     obj._init()
     var config: Dictionary = {}
-    config.name = obj.export_settings().name
+    config.name = obj.name
     # Add includes
     config.include = {}
     config.include_images = {}

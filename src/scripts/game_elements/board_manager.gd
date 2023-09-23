@@ -78,7 +78,7 @@ func spawn_board() -> void:
     var gc: TabletopGame = TabletopGame.import_config(config_bytes)
     var board_new: Board = load("res://src/scenes/game_elements/board.tscn").instantiate()
     board_new.game = gc
-    board_new.name = gc.export_settings().name
+    board_new.name = gc.name
     Global.set_current_tabletop(board_new)
     
     add_child(board_new)

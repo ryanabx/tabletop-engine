@@ -57,9 +57,8 @@ func update_loading_percent(pc: float) -> void:
 func _process(_delta: float) -> void:
     # fps_counter.text = str(Engine.get_frames_per_second(), " FPS")
     game_info.text = str("Game: ",game_name)
-    if Global.get_current_game() != null:
-        game_name = Global.get_current_game().export_settings().name
     if board != null:
+        game_name = board.game.name
         input_mode_button.icon = input_mode_textures[board.input_mode]
         touch_type_button.text = touch_types[board.touch_type]
     
@@ -122,8 +121,8 @@ func player_menu() -> void:
 
 func tabletop_menu() -> void:
     menu_bar.get_popup().id_pressed.connect(tabletop_pressed)
-    menu_bar.get_popup().add_item(str("Exit ", board.game.export_settings().name), 0)
-    if not Utils.is_mobile_platform():
+    menu_bar.get_popup().add_item(str("Exit ", board.game.name), 0)
+    if not Platform.is_mobile_platform():
         menu_bar.get_popup().add_item("Exit Tabletop Framework", 1)
 
 func set_player(index: int) -> void:

@@ -134,14 +134,3 @@ const COLOR_HIGHLIGHTED: Color = Color.ALICE_BLUE * COLOR_TRANSPARENT_HIGHLIGHT
 const COLOR_PERMANENT: Color = Color.BLACK
 const COLOR_SELECTION_BOX_BORDER: Color = Color.BLUE
 const COLOR_SELECTION_BOX: Color = COLOR_SELECTION_BOX_BORDER * COLOR_TRANSPARENT_HIGHLIGHT
-
-static func set_current_tabletop(tabletop: Board) -> void:
-    current_tabletop = tabletop
-
-static func set_shared_tabletop_manager(tt: BoardManager) -> void:
-    tabletop_manager = tt
-
-static func get_current_game() -> TabletopGame:
-    if current_tabletop == null:
-        return null
-    return current_tabletop.game

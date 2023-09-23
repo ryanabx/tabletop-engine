@@ -81,7 +81,7 @@ func _on_import_images_pressed() -> void:
 func _on_import_images_dialog_files_selected(paths: PackedStringArray) -> void:
     # print("Importing images: ",paths)
 
-    var new_images: Array = Utils.load_images_into_array(paths)
+    var new_images: Array = Platform.load_images_into_array(paths)
     if new_images.is_empty():
         print("Something went wrong loading images")
         return
