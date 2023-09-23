@@ -103,7 +103,7 @@ func desktop_events(delta: float) -> void:
         rotation_degrees = roundf(rotation_degrees / 45.0) * 45.0
 
 func _process(delta: float) -> void:
-    if Platform.is_desktop_platform():
+    if Global.is_desktop_platform():
         desktop_events(delta)
     zoom = zoom.clamp(Vector2(0.2, 0.2), Vector2(10.0, 10.0))
     # queue_redraw()

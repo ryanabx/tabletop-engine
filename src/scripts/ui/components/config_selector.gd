@@ -9,7 +9,7 @@ func _ready() -> void:
     Global.load_this_game = PackedByteArray([])
     refresh_list()
     %ImportConfigFile.file_selected.connect(add_from_filepath)
-    if not Platform.is_desktop_platform():
+    if not Global.is_desktop_platform():
         from_file_button.hide()
 
 func _process(_delta: float) -> void:
@@ -147,7 +147,7 @@ func _on_download_config_pressed() -> void:
 func _on_paste_link_pressed() -> void:
     %URLEdit.text = DisplayServer.clipboard_get()
 
-# Previously in Platform.FileManager...
+# Previously in Global.FileManager...
 
 func download_file_from_url(url: String) -> bool:
         var file: PackedByteArray = await download_file(url)

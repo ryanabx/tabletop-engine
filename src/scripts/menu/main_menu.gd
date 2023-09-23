@@ -3,6 +3,7 @@ extends Control
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
     Global.load_this_game = PackedByteArray([])
+    Global.load_settings()
 
 func _on_new_game_pressed() -> void:
     $FadeRect.scene_transition.emit("res://src/scenes/menu/new_game.tscn")

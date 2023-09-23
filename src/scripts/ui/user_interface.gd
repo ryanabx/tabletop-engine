@@ -122,7 +122,7 @@ func player_menu() -> void:
 func tabletop_menu() -> void:
     menu_bar.get_popup().id_pressed.connect(tabletop_pressed)
     menu_bar.get_popup().add_item(str("Exit ", board.game.name), 0)
-    if not Platform.is_mobile_platform():
+    if not Global.is_mobile_platform():
         menu_bar.get_popup().add_item("Exit Tabletop Framework", 1)
 
 func set_player(index: int) -> void:

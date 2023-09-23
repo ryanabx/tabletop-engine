@@ -113,10 +113,6 @@ const OBJECT_HIGHLIGHT_COLOR: Color = Color.WHITE
 const GAME_VERSION: String = "0.0.1"
 const CURRENT_API_VERSION: int = 1
 
-static var current_tabletop: Board = null
-
-static var tabletop_manager: BoardManager = null
-
 # FILE PATHS
 
 const CONFIG_REPO: String = "user://configs"
@@ -134,3 +130,54 @@ const COLOR_HIGHLIGHTED: Color = Color.ALICE_BLUE * COLOR_TRANSPARENT_HIGHLIGHT
 const COLOR_PERMANENT: Color = Color.BLACK
 const COLOR_SELECTION_BOX_BORDER: Color = Color.BLUE
 const COLOR_SELECTION_BOX: Color = COLOR_SELECTION_BOX_BORDER * COLOR_TRANSPARENT_HIGHLIGHT
+
+static func is_desktop_platform() -> bool:
+    return [
+        "Windows", "macOS", "Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD"
+    ].has(OS.get_name())
+
+static func is_web_platform() -> bool:
+    return [
+        "Web"
+    ].has(OS.get_name())
+
+static func is_mobile_platform() -> bool:
+    return [
+        "iOS", "Android"
+    ].has(OS.get_name())
+
+const DEFAULT_USER_SETTINGS: Dictionary = {
+    "fullscreen": false
+}
+
+static var _user_settings: Dictionary = DEFAULT_USER_SETTINGS.duplicate(true)
+
+static func set_user_setting(setting: String, value: Variant) -> void:
+    if setting not in DEFAULT_USER_SETTINGS:
+        return
+    if setting == "fullscreen":
+        DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if value else DisplayServer.WINDOW_MODE_WINDOWED)
+    if DEFAULT_USER_SETTINGS[setting] != value:
+        _user_settings[setting] = value
+    else:
+        _user_settings.erase(setting)
+
+static func get_user_setting(setting: String) -> Variant:
+    if setting in _user_settings:
+        return _user_settings[setting]
+    elif setting in DEFAULT_USER_SETTINGS:
+        return DEFAULT_USER_SETTINGS[setting]
+    return null
+
+static func load_settings() -> void:
+    if FileAccess.file_exists(Global.SETTINGS_PATH):
+        var settings_str: String = FileAccess.get_file_as_string(Global.SETTINGS_PATH)
+        var settings_dict: Dictionary = JSON.parse_string(settings_str)
+        for prop: String in settings_dict.keys():
+            set_user_setting(prop, settings_dict[prop])
+
+static func save_settings() -> void:
+    var settings_str: String = JSON.stringify(_user_settings)
+    var s_save: FileAccess = FileAccess.open(Global.SETTINGS_PATH, FileAccess.WRITE)
+    s_save.store_string(settings_str)
+    s_save.close()
