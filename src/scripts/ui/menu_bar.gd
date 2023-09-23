@@ -8,7 +8,7 @@ var board: Board = null
 
 func _ready() -> void:
     get_popup().submenu_popup_delay = 0.0
-    SignalManager.game_load_finished.connect(set_board)
+    GameManager.game_load_finished.connect(set_board)
 
 func set_board(_b: Board) -> void:
     board = _b
@@ -52,9 +52,9 @@ func set_player(index: int) -> void:
     board.player_id = index
 
 func run_action(index: int) -> void:
-    SignalManager.run_action.emit(index)
+    GameManager.run_action.emit(index)
 
 func tabletop_pressed(id: int) -> void:
     match id:
-        0: SignalManager.scene_transition.emit("res://src/scenes/menu/main_menu.tscn")
+        0: GameManager.scene_transition.emit("res://src/scenes/menu/main_menu.tscn")
         1: get_tree().quit()

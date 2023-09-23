@@ -34,7 +34,7 @@ func stop() -> void:
 
 func _create_peer(id: int) -> WebRTCPeerConnection:
     var peer: WebRTCPeerConnection = WebRTCPeerConnection.new()
-    peer.initialize(Globals.ICE_SERVERS)
+    peer.initialize(Global.ICE_SERVERS)
     peer.session_description_created.connect(self._offer_created.bind(id))
     peer.ice_candidate_created.connect(self._new_ice_candidate.bind(id))
     rtc_mp.add_peer(peer, id)

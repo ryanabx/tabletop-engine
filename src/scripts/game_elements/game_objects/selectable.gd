@@ -52,10 +52,10 @@ var queued: int = 0:
 
 func _on_select(_event:InputEvent) -> void:
     if selected == 0 and queued == 0:
-        board.board_player.queue_select_object(self)
+        board.get_player().queue_select_object(self)
 
 func _on_deselect(_event: InputEvent) -> void:
-    board.board_player.stack_selection_to_item(self)
+    board.get_player().stack_selection_to_item(self)
 
 func _process(delta: float) -> void:
     super._process(delta)

@@ -20,13 +20,6 @@ boot_splash/image="res://assets/banners/banner.png"
 config/icon="res://assets/icons/icon_transparent.png"
 config/windows_native_icon="res://assets/icons/Windows/icon_windows.ico"
 
-[autoload]
-
-Globals="*res://src/scripts/singletons/globals.gd"
-Utils="*res://src/scripts/singletons/utils.gd"
-SignalManager="*res://src/scripts/singletons/signal_manager.gd"
-GameProperties="*res://src/scripts/singletons/game_properties.gd"
-
 [debug]
 
 gdscript/warnings/untyped_declaration=1

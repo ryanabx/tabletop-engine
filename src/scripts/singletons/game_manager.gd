@@ -1,5 +1,22 @@
 extends Node
 
+var request: HTTPRequest
+
+func _ready() -> void:
+    GameProperties.load_settings()
+    request = HTTPRequest.new()
+    add_child(request)
+
+func _input(event: InputEvent) -> void:
+    if event.is_action_pressed("ui_exit_fullscreen") and DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
+        DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+        GameProperties.save_settings()
+
+func _process(delta: float) -> void:
+    if Utils.current_safe_area != DisplayServer.get_display_safe_area():
+        Utils.on_screen_orientation_changed()
+
+
 # Game menu creation
 signal game_menu_create_piece(piece: Piece)
 signal game_menu_create_collection(collection: Collection)
@@ -8,12 +25,7 @@ signal game_menu_destroy()
 # Menubar Signals
 signal create_load_config_dialog()
 signal create_export_config_dialog()
-signal open_multiplayer_menu()
 signal run_action(index: int)
-
-# Camera move
-signal camera_move_start()
-signal camera_move_end()
 
 # Dialogs
 signal server_add_peer()

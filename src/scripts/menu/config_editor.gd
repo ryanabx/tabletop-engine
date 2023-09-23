@@ -16,7 +16,7 @@ extends Control
 @onready var gallery_image_scene: PackedScene = preload("res://src/scenes/ui/components/gallery_image.tscn")
 
 func _ready() -> void:
-    save_config_dialog.filters = PackedStringArray([str("*",Globals.CONFIG_EXTENSION)])
+    save_config_dialog.filters = PackedStringArray([str("*",Global.CONFIG_EXTENSION)])
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -24,7 +24,7 @@ func _process(_delta: float) -> void:
     import_images_label.text = "Imported images (%s)" % image_list.get_child_count()
 
 func _on_back_button_pressed() -> void:
-    SignalManager.scene_transition.emit("res://src/scenes/menu/main_menu.tscn")
+    $FadeRect.scene_transition.emit("res://src/scenes/menu/main_menu.tscn")
 
 func clear_config() -> void:
     config_code.text = ""
@@ -115,14 +115,14 @@ func export_data() -> PackedByteArray:
         return []
     var bytes: PackedByteArray = TabletopGame.export_config(src_code, images, conf_name)
     if bytes.is_empty():
-        print("Problem creating %s config" % Globals.CONFIG_EXTENSION)
+        print("Problem creating %s config" % Global.CONFIG_EXTENSION)
         return []
     return bytes
 
 func _on_save_config_dialog_file_selected(path: String) -> void:
-    if path.rfind(Globals.CONFIG_EXTENSION) != len(path) - len(Globals.CONFIG_EXTENSION):
+    if path.rfind(Global.CONFIG_EXTENSION) != len(path) - len(Global.CONFIG_EXTENSION):
         print("Adding file extension")
-        path = path + Globals.CONFIG_EXTENSION
+        path = path + Global.CONFIG_EXTENSION
     print("File selected! ",path)
     var bytes: PackedByteArray = export_data()
     if bytes.is_empty():

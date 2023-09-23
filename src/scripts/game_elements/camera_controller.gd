@@ -17,7 +17,7 @@ var clamp1: Vector2
 var clamp2: Vector2
 
 func _ready() -> void:
-    SignalManager.game_load_finished.connect(_game_loaded)
+    GameManager.game_load_finished.connect(_game_loaded)
 
 func _game_loaded(_board: Board) -> void:
     board = _board
@@ -69,14 +69,14 @@ func _input(event: InputEvent) -> void:
             rotation += delta_angle
             zoom *= delta_scale
     if board != null:
-        position = position.clamp(board.border.position, board.border.end)
+        position = position.clamp(-board.size/2, board.size/2)
 
 # func _draw() -> void:
 #     for evt: InputEvent in current_points.values():
 #         draw_circle(evt.position, 100, Color.BLACK)
 
 func board_selecting() -> bool:
-    return board != null and (board.board_player.is_selecting() or board.board_player.object_queued())
+    return board != null and (board.get_player().is_selecting() or board.get_player().object_queued())
 
 func desktop_events(delta: float) -> void:
     if Input.is_action_pressed("camera_zoom_in"):
@@ -91,11 +91,11 @@ func desktop_events(delta: float) -> void:
     
     position += (Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED * delta).rotated(rotation)
     if board != null:
-        position = position.clamp(board.border.position, board.border.end)
-    if board == null or not board.board_player.is_selecting():
+        position = position.clamp(-board.size/2, board.size/2)
+    if board == null or not board.get_player().is_selecting():
         rotation += Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise") * ROTATION_SPEED * delta
     else:
-        board.board_player.rotate_selection(
+        board.get_player().rotate_selection(
             Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise") * ROTATION_SPEED * delta,
             Input.get_axis("camera_rotate_clockwise", "camera_rotate_counterclockwise")
         )

@@ -20,7 +20,7 @@ func notify_ready(id: int) -> void:
         peer_ready.emit(id)
 
 func _ready() -> void:
-    Globals.set_shared_tabletop_manager(self)
+    Global.set_shared_tabletop_manager(self)
     if multiplayer.is_server():
         make_tabletop()
     else:
@@ -46,7 +46,7 @@ func load_game_config() -> void:
     if not multiplayer.is_server():
         return
     
-    config_bytes = Globals.load_this_game
+    config_bytes = Global.load_this_game
     
     var beg: int = 0
     var end: int = MTU
@@ -71,7 +71,7 @@ func spawn_board() -> void:
     var board_new: Board = load("res://src/scenes/game_elements/board.tscn").instantiate()
     board_new.game = gc
     board_new.name = gc.export_settings().name
-    Globals.set_current_tabletop(board_new)
+    Global.set_current_tabletop(board_new)
     
     add_child(board_new)
     board = board_new

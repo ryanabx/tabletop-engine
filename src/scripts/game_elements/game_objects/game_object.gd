@@ -86,7 +86,7 @@ func get_gobject_transform() -> Transform2D:
     return Transform2D().scaled(size)
 
 func _ready() -> void:
-    SignalManager.property_sync.connect(_sync_properties)
+    GameManager.property_sync.connect(_sync_properties)
 
 func _sync_properties() -> void:
     if is_multiplayer_authority() and not _property_changes.is_empty():

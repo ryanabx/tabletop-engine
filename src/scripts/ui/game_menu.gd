@@ -5,8 +5,8 @@ var piece: Piece = null
 var collection: Collection = null
 
 func _ready() -> void:
-    SignalManager.game_menu_create_piece.connect(_on_menu_created)
-    SignalManager.game_menu_create_collection.connect(_on_collection_menu_created)
+    GameManager.game_menu_create_piece.connect(_on_menu_created)
+    GameManager.game_menu_create_collection.connect(_on_collection_menu_created)
     hide()
     popup_hide.connect(_on_popup_hide)
 
@@ -43,7 +43,7 @@ func init_collection_menu() -> void:
     var orientation_menu := PopupMenu.new()
     orientation_menu.add_item("Face up", 5)
     orientation_menu.add_item("Face down", 6)
-    orientation_menu.add_item("Flip selection", 1)
+    orientation_menu.add_item("Flip", 1)
     orientation_menu.name = "orientation"
     add_child(orientation_menu)
     if not collection.lock_state:
@@ -93,4 +93,4 @@ func _on_clicked_from_collection(id: int) -> void:
         8: collection.shuffle()
 
 func _on_popup_hide() -> void:
-    SignalManager.game_menu_destroy.emit()
+    GameManager.game_menu_destroy.emit()

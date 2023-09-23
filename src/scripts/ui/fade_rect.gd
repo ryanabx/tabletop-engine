@@ -4,9 +4,11 @@ var fade_in_timer: Timer
 var fade_out_timer: Timer
 var scene: String = ""
 
+signal scene_transition(scn: String)
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-    SignalManager.scene_transition.connect(_on_scene_transition)
+    scene_transition.connect(_on_scene_transition)
     show()
     fade_in_timer = Timer.new()
     fade_out_timer = Timer.new()
@@ -15,8 +17,8 @@ func _ready() -> void:
     fade_out_timer.timeout.connect(_on_fade_timer_timeout)
     fade_in_timer.one_shot = true
     fade_out_timer.one_shot = true
-    fade_in_timer.wait_time = Globals.TRANSITION_TIME_IN
-    fade_out_timer.wait_time = Globals.TRANSITION_TIME_OUT
+    fade_in_timer.wait_time = Global.TRANSITION_TIME_IN
+    fade_out_timer.wait_time = Global.TRANSITION_TIME_OUT
     fade_in_timer.start()
 
 func _process(_delta: float) -> void:

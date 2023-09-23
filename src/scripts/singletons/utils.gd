@@ -1,12 +1,7 @@
+class_name Utils
 extends Node
 
-var req: HTTPRequest
-
-func _ready() -> void:
-    req = HTTPRequest.new()
-    add_child(req)
-
-func load_images_into_array(image_strings: Array) -> Array:
+static func load_images_into_array(image_strings: Array) -> Array:
     var result: Array = []
     for image_path: String in image_strings:
         var _texture: Texture2D = load_texture_from_fname(image_path)
@@ -15,10 +10,10 @@ func load_images_into_array(image_strings: Array) -> Array:
         result.append(_texture)
     return result
 
-func load_texture_from_string(fname: String, image_directory: String) -> Texture2D:
+static func load_texture_from_string(fname: String, image_directory: String) -> Texture2D:
     return load_texture_from_fname(image_directory + fname)
 
-func load_texture_from_fname(fname: String) -> Texture2D:
+static func load_texture_from_fname(fname: String) -> Texture2D:
     var _image := Image.new()
     var _err := _image.load(fname)
     if _err != OK:
@@ -28,10 +23,10 @@ func load_texture_from_fname(fname: String) -> Texture2D:
     _texture = ImageTexture.create_from_image(_image)
     return _texture
 
-func rect_with_padding(rct: Rect2, padding: float) -> Rect2:
+static func rect_with_padding(rct: Rect2, padding: float) -> Rect2:
     return Rect2(rct.position - Vector2(padding, padding), rct.size + Vector2(padding * 2, padding * 2))
 
-func load_json_from_file(fname: String) -> Dictionary:
+static func load_json_from_file(fname: String) -> Dictionary:
     if FileAccess.file_exists(fname):
         var data_file := FileAccess.open(fname, FileAccess.READ)
         var parsed_result: Variant = JSON.parse_string(data_file.get_as_text())
@@ -44,17 +39,17 @@ func load_json_from_file(fname: String) -> Dictionary:
         print("File not found: ",fname)
         return {}
 
-func random_string(length: int) -> String:
-    return generate_word(Globals.CODE_CHARS, length)
+static func random_string(length: int) -> String:
+    return generate_word(Global.CODE_CHARS, length)
 
-func generate_word(chars: String, length: int) -> String:
+static func generate_word(chars: String, length: int) -> String:
     var word: String = ""
     var n_char := len(chars)
     for i: int in range(length):
         word += chars[randi()% n_char]
     return word
 
-func load_images_from_directory(dir: String) -> Dictionary:
+static func load_images_from_directory(dir: String) -> Dictionary:
     var textures: Dictionary = {}
     var directory_access := DirAccess.open(dir)
     if directory_access.dir_exists("."):
@@ -66,7 +61,7 @@ func load_images_from_directory(dir: String) -> Dictionary:
                     textures[fname] = _tx
     return textures
 
-func has_any(arr1: Array[Variant], arr2: Array[Variant]) -> bool:
+static func has_any(arr1: Array[Variant], arr2: Array[Variant]) -> bool:
     for x: Variant in arr1:
         for y: Variant in arr2:
             if x == y:
@@ -74,8 +69,8 @@ func has_any(arr1: Array[Variant], arr2: Array[Variant]) -> bool:
     return false
 
 @rpc("any_peer", "call_remote", "reliable")
-func go_to_scene(fpath: String) -> void:
-    SignalManager.scene_transition.emit(fpath)
+static func go_to_scene(fpath: String) -> void:
+    GameManager.scene_transition.emit(fpath)
 
 
 class FileManager:
@@ -102,18 +97,18 @@ class FileManager:
         DirAccess.make_dir_absolute(dir)
 
     static func get_available_configs() -> Array[String]:
-        if not DirAccess.dir_exists_absolute(Globals.CONFIG_REPO):
+        if not DirAccess.dir_exists_absolute(Global.CONFIG_REPO):
             print("Directory doesn't exist!")
             return []
         
         var configs: Array[String] = []
 
-        var directory: DirAccess = DirAccess.open(Globals.CONFIG_REPO)
+        var directory: DirAccess = DirAccess.open(Global.CONFIG_REPO)
 
         for fname: String in directory.get_files():
             var split_fname: PackedStringArray = fname.rsplit(".",1)
             print(split_fname[0], ", ", split_fname[1])
-            if fname.rsplit(".",1)[-1] == Globals.CONFIG_EXTENSION.substr(1):
+            if fname.rsplit(".",1)[-1] == Global.CONFIG_EXTENSION.substr(1):
                 configs.append(split_fname[0])
         
         return configs
@@ -139,23 +134,22 @@ class FileManager:
         return validate_downloaded_file(fpath)
 
     static func download_file(url: String) -> String:
-        var req: HTTPRequest = Utils.req
-        req.download_file = Globals.DOWNLOAD_FILE_PATH
-        var res: int = req.request(url)
+        Manager.request.download_file = Global.DOWNLOAD_FILE_PATH
+        var res: int = Manager.request.request(url)
         if res != OK:
-            req.queue_free()
+            Manager.request.queue_free()
             print("Error when making httprequest: ", res)
             return ""
-        print("Downloading ", req.get_body_size(), " bytes from ", url)
-        var result: Array = await req.request_completed
+        print("Downloading ", Manager.request.get_body_size(), " bytes from ", url)
+        var result: Array = await Manager.request.request_completed
         print("Download completed: ",result)
-        req.queue_free()
+        Manager.request.queue_free()
         if result[1] == 303:
             var new_url: String = result[2][5].split("Location: ", false, 1)[0]
             print("303 ERROR, going to url ", new_url)
             return await download_file(new_url)
-        req.download_file = ""
-        return Globals.DOWNLOAD_FILE_PATH
+        Manager.request.download_file = ""
+        return Global.DOWNLOAD_FILE_PATH
 
     static func validate_downloaded_file(fpath: String) -> bool:
         var bytes: PackedByteArray = get_file_bytes(fpath)
@@ -164,10 +158,10 @@ class FileManager:
             delete_file(fpath)
             return false
         print("Looking for fpath ",fpath)
-        create_dir(Globals.CONFIG_REPO)
+        create_dir(Global.CONFIG_REPO)
         var conf: TabletopGame = TabletopGame.import_config(bytes)
 
-        var conf_path: String = str(Globals.CONFIG_REPO, "/",conf.export_settings().name,Globals.CONFIG_EXTENSION)
+        var conf_path: String = str(Global.CONFIG_REPO, "/",conf.export_settings().name,Global.CONFIG_EXTENSION)
 
         Utils.delete_file(conf_path)
         
@@ -184,24 +178,24 @@ class FileManager:
         delete_file(fpath)
         return true
 
-var current_safe_area: Rect2i = Rect2i(0, 0, 0, 0)
+static var current_safe_area: Rect2i = Rect2i(0, 0, 0, 0)
 
-func is_desktop_platform() -> bool:
+static func is_desktop_platform() -> bool:
     return [
         "Windows", "macOS", "Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD"
     ].has(OS.get_name())
 
-func is_web_platform() -> bool:
+static func is_web_platform() -> bool:
     return [
         "Web"
     ].has(OS.get_name())
 
-func is_mobile_platform() -> bool:
+static func is_mobile_platform() -> bool:
     return [
         "iOS", "Android"
     ].has(OS.get_name())
 
-func on_screen_orientation_changed() -> void:
+static func on_screen_orientation_changed() -> void:
     var w_size: Vector2i = DisplayServer.screen_get_size(DisplayServer.get_primary_screen())
     var orientation_extents: Rect2i = DisplayServer.get_display_safe_area()
     
@@ -209,17 +203,14 @@ func on_screen_orientation_changed() -> void:
     var margin_t: int = orientation_extents.position.y
     var margin_r: int = w_size.x - orientation_extents.size.x - margin_l
     var margin_b: int = w_size.y - orientation_extents.size.y - margin_t
-    Globals.safe_margin_l = margin_l
-    Globals.safe_margin_t = margin_t
-    Globals.safe_margin_r = margin_r
-    Globals.safe_margin_b = margin_b
+    Global.safe_margin_l = margin_l
+    Global.safe_margin_t = margin_t
+    Global.safe_margin_r = margin_r
+    Global.safe_margin_b = margin_b
     current_safe_area = DisplayServer.get_display_safe_area()
-    SignalManager.orientation_changed.emit()
+    GameManager.orientation_changed.emit()
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-    if Utils.current_safe_area != DisplayServer.get_display_safe_area():
-        Utils.on_screen_orientation_changed()
+
     
     # if multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
     #     multiplayer.poll()

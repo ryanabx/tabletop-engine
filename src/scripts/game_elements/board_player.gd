@@ -158,9 +158,9 @@ func double_tap_input(event: InputEvent) -> void:
         var collider: Selectable = _get_collider_at_position()
         if collider != null:
             if collider is Collection:
-                SignalManager.game_menu_create_collection.emit(collider)
+                GameManager.game_menu_create_collection.emit(collider)
             elif collider is Piece:
-                SignalManager.game_menu_create_piece.emit(collider)
+                GameManager.game_menu_create_piece.emit(collider)
             deselect()
 
 func _get_collider_at_position(pos: Vector2 = get_local_mouse_position(), collision_mask: int = 1) -> Selectable:
@@ -179,7 +179,7 @@ func drag_input(event: InputEvent) -> void:
     input_events[event.index] = event
     if select_index != event.index:
         return
-    if object_queued() and event.position.distance_to(grab_position) > Globals.GRAB_THRESHOLD:
+    if object_queued() and event.position.distance_to(grab_position) > Global.GRAB_THRESHOLD:
         hold_timer.stop()
         if collection_queued() and board.game.can_take_piece_off(get_queued_object()):
             var pc: Piece = get_queued_object().remove_from_top(get_queued_object().to_local(grab_position))
@@ -190,7 +190,7 @@ func drag_input(event: InputEvent) -> void:
 
 func move_objects_to(pos: Vector2) -> void:
     if is_selecting():
-        get_selected_object().position = (pos - get_selected_object().grab_offset).clamp(board.border.position, board.border.end)
+        get_selected_object().position = (pos - get_selected_object().grab_offset).clamp(-board.size/2, board.size/2)
 
 func compare_by_z_index(a: Dictionary, b: Dictionary) -> bool:
     return a.collider.get_parent().index > b.collider.get_parent().index

@@ -1,3 +1,4 @@
+class_name GameProperties
 extends Node
 
 enum SelectType {
@@ -7,12 +8,12 @@ enum MultiplayerMethod {
     P2P_SHORTENED, P2P
 }
 
-var properties: Array[String] = [
+static var properties: Array[String] = [
     "fullscreen", "select_type", "multiplayer_method"
 ]
 
 # View settings
-var fullscreen: bool:
+static var fullscreen: bool:
     set(val):
         if val == true:
             DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
@@ -25,26 +26,23 @@ var fullscreen: bool:
 # In-game settings
 
 # Multiplayer connection settings
-var multiplayer_method: MultiplayerMethod = MultiplayerMethod.P2P_SHORTENED
+static var multiplayer_method: MultiplayerMethod = MultiplayerMethod.P2P_SHORTENED
 
-func _ready() -> void:
-    load_settings()
-
-func load_settings() -> void:
-    if FileAccess.file_exists(Globals.SETTINGS_PATH):
-        var settings_str: String = FileAccess.get_file_as_string(Globals.SETTINGS_PATH)
+static func load_settings() -> void:
+    if FileAccess.file_exists(Global.SETTINGS_PATH):
+        var settings_str: String = FileAccess.get_file_as_string(Global.SETTINGS_PATH)
         var settings_dict: Dictionary = JSON.parse_string(settings_str)
         for prop: String in settings_dict.keys():
-            if prop in self:
-                set(prop, settings_dict[prop])
+            if prop in GameProperties:
+                GameProperties.set_static(prop, settings_dict[prop])
     # print("Settings loaded!")
 
-func save_settings() -> void:
+static func save_settings() -> void:
     var settings_dict: Dictionary = {}
     for prop: String in properties:
-        settings_dict[prop] = get(prop)
+        settings_dict[prop] = get_static(prop)
     var settings_str: String = JSON.stringify(settings_dict)
-    var s_save: FileAccess = FileAccess.open(Globals.SETTINGS_PATH, FileAccess.WRITE)
+    var s_save: FileAccess = FileAccess.open(Global.SETTINGS_PATH, FileAccess.WRITE)
     s_save.store_string(settings_str)
     s_save.close()
     # print("Settings saved!")

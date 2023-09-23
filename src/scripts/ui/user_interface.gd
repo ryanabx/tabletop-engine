@@ -28,14 +28,14 @@ var board: Board = null
 ]
 
 func _ready() -> void:
-    SignalManager.game_percent_loaded.connect(update_loading_percent)
-    SignalManager.game_load_started.connect(show_loading)
-    SignalManager.game_load_finished.connect(hide_loading)
-    SignalManager.orientation_changed.connect(orientation_changed)
+    GameManager.game_percent_loaded.connect(update_loading_percent)
+    GameManager.game_load_started.connect(show_loading)
+    GameManager.game_load_finished.connect(hide_loading)
+    GameManager.orientation_changed.connect(orientation_changed)
     orientation_changed()
 
 func orientation_changed() -> void:
-    padding_panel.custom_minimum_size.y = Globals.safe_margin_t + 2
+    padding_panel.custom_minimum_size.y = Global.safe_margin_t + 2
 
 func show_loading() -> void:
     print("Game load started")
@@ -53,8 +53,8 @@ func update_loading_percent(pc: float) -> void:
 func _process(_delta: float) -> void:
     # fps_counter.text = str(Engine.get_frames_per_second(), " FPS")
     game_info.text = str("Game: ",game_name)
-    if Globals.get_current_game() != null:
-        game_name = Globals.get_current_game().export_settings().name
+    if Global.get_current_game() != null:
+        game_name = Global.get_current_game().export_settings().name
     if board != null:
         input_mode_button.icon = input_mode_textures[board.input_mode]
         touch_type_button.text = touch_types[board.touch_type]
@@ -62,9 +62,6 @@ func _process(_delta: float) -> void:
 
 var drag_window: bool = false
 var start_position: Vector2 = Vector2.ZERO
-
-func _on_multiplayer_button_pressed() -> void:
-    SignalManager.open_multiplayer_menu.emit()
 
 func _on_input_setting_pressed() -> void:
     if board.input_mode == Board.InputMode.CAMERA:

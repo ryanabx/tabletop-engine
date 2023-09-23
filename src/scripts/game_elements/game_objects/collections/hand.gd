@@ -55,7 +55,7 @@ func _get_shareable_properties() -> Array:
 func _draw() -> void:
     draw_rect(get_rect(), Color.BLACK * Color(1.0, 1.0, 1.0, 0.3))
     if can_view():
-        draw_rect(get_rect(), Color.WHITE * Color(1.0, 1.0, 1.0, 0.3), false, Globals.COLLECTION_OUTLINE)
+        draw_rect(get_rect(), Color.WHITE * Color(1.0, 1.0, 1.0, 0.3), false, Global.COLLECTION_OUTLINE)
     _draw_pieces()
 
 
@@ -167,7 +167,7 @@ func _process(delta: float) -> void:
 func _on_select(_event:InputEvent) -> void:
     if get_inside().is_empty() or selected != 0 or queued != 0:
         return
-    board.board_player.queue_select_object(self)
+    board.get_player().queue_select_object(self)
     _find_selectable_piece(get_local_mouse_position())
     _card_to_select = _selectable_piece
     print("Selectable piece found and locked: ",_card_to_select)

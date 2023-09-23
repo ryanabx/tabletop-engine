@@ -1,5 +1,5 @@
-# GLOBALS SINGLETON - Contains constants related to theming and open boardgame framework details
-extends Node
+class_name Global
+extends RefCounted
 
 # MULTIPLAYER
 const DEFAULT_MAX_PLAYERS: int = 4
@@ -80,24 +80,15 @@ const ICE_SERVERS: Dictionary = {
     ]
 }
 
-var load_this_game: PackedByteArray = PackedByteArray([])
+static var load_this_game: PackedByteArray = PackedByteArray([])
 
-var safe_margin_l: int = 0
-var safe_margin_t: int = 0
-var safe_margin_r: int = 0
-var safe_margin_b: int = 0
-
-# GAME MODE
-
-enum GAME_MODE {SINGLEPLAYER, MULTIPLAYER}
+static var safe_margin_l: int = 0
+static var safe_margin_t: int = 0
+static var safe_margin_r: int = 0
+static var safe_margin_b: int = 0
 
 const TRANSITION_TIME_IN: float = 0.075
 const TRANSITION_TIME_OUT: float = 0.075
-
-var game_mode: GAME_MODE = GAME_MODE.SINGLEPLAYER
-
-var piece_id: int = 0
-var collection_id: int = 0
 
 # THEMING GLOBALS
 
@@ -122,9 +113,9 @@ const OBJECT_HIGHLIGHT_COLOR: Color = Color.WHITE
 const GAME_VERSION: String = "0.0.1"
 const CURRENT_API_VERSION: int = 1
 
-var current_tabletop: Board = null
+static var current_tabletop: Board = null
 
-var tabletop_manager: BoardManager = null
+static var tabletop_manager: BoardManager = null
 
 # FILE PATHS
 
@@ -144,18 +135,13 @@ const COLOR_PERMANENT: Color = Color.BLACK
 const COLOR_SELECTION_BOX_BORDER: Color = Color.BLUE
 const COLOR_SELECTION_BOX: Color = COLOR_SELECTION_BOX_BORDER * COLOR_TRANSPARENT_HIGHLIGHT
 
-func _input(event: InputEvent) -> void:
-    if event.is_action_pressed("ui_exit_fullscreen") and DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
-        DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-        GameProperties.save_settings()
-
-func set_current_tabletop(tabletop: Board) -> void:
+static func set_current_tabletop(tabletop: Board) -> void:
     current_tabletop = tabletop
 
-func set_shared_tabletop_manager(tt: BoardManager) -> void:
+static func set_shared_tabletop_manager(tt: BoardManager) -> void:
     tabletop_manager = tt
 
-func get_current_game() -> TabletopGame:
+static func get_current_game() -> TabletopGame:
     if current_tabletop == null:
         return null
     return current_tabletop.game

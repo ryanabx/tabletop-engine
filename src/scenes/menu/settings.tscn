@@ -1,12 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://c2aks78wf35pe"]
+[gd_scene load_steps=6 format=3 uid="uid://c2aks78wf35pe"]
 
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="1_0uyf7"]
 [ext_resource type="Script" path="res://src/scripts/menu/settings.gd" id="1_6gtrg"]
 [ext_resource type="PackedScene" uid="uid://xkoglw4lu6ab" path="res://src/scenes/ui/background.tscn" id="1_tj7dc"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/safe_margins.tscn" id="2_868ow"]
 [ext_resource type="Texture2D" uid="uid://pgsxe1dk7qmx" path="res://src/resources/assets/ui/arrow-to-left.svg" id="5_efvg1"]
-[ext_resource type="PackedScene" uid="uid://43h6btll8hg2" path="res://src/scenes/dialogs/export_config_dialog.tscn" id="6_qwpln"]
-[ext_resource type="PackedScene" uid="uid://ce2b2jb8a3lp8" path="res://src/scenes/dialogs/save_exported_config.tscn" id="7_70qvt"]
 
 [node name="Settings" type="Control"]
 layout_mode = 3
@@ -61,30 +59,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Toggle Fullscreen"
 
-[node name="Controls" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/Controls"]
-layout_mode = 2
-text = "Controls"
-horizontal_alignment = 1
-
-[node name="ConfigTools" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/ConfigTools"]
-layout_mode = 2
-text = "Configuration Tools"
-horizontal_alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/ConfigTools"]
-layout_mode = 2
-
-[node name="ExportConfig" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/ConfigTools/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Export Config"
-
 [node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
@@ -101,11 +75,5 @@ layout_mode = 2
 anchors_preset = 0
 mouse_filter = 2
 
-[node name="ExportConfigDialog" parent="." instance=ExtResource("6_qwpln")]
-size = Vector2i(1318, 1280)
-
-[node name="SaveExportedConfig" parent="." instance=ExtResource("7_70qvt")]
-
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/View/HBoxContainer/ToggleFullscreen" to="." method="_on_toggle_fullscreen_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/ConfigTools/HBoxContainer/ExportConfig" to="." method="_on_export_config_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]

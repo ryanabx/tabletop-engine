@@ -169,6 +169,7 @@ mouse_filter = 2
 [node name="ImportImagesDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true
 title = "Open File(s)"
+initial_position = 2
 ok_button_text = "Open"
 file_mode = 1
 access = 2
@@ -177,6 +178,7 @@ use_native_dialog = true
 
 [node name="SaveConfigDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true
+initial_position = 2
 size = Vector2i(1193, 564)
 access = 2
 use_native_dialog = true

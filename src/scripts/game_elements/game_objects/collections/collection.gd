@@ -81,12 +81,12 @@ func _clear_inside() -> void:
 func _on_select(_event:InputEvent) -> void:
     if get_inside().is_empty() or selected != 0 or queued != 0:
         return
-    board.board_player.queue_select_object(self)
+    board.get_player().queue_select_object(self)
 
 func _on_deselect(_event:InputEvent) -> void:
-    if board.board_player.is_selecting():
+    if board.get_player().is_selecting():
         if selected == 0:
-            board.board_player.stack_selection_to_item(self)
+            board.get_player().stack_selection_to_item(self)
 
 func _process(delta: float) -> void:
     super._process(delta)
