@@ -1,7 +1,6 @@
-[gd_scene load_steps=9 format=3 uid="uid://ma7a666pl2us"]
+[gd_scene load_steps=8 format=3 uid="uid://ma7a666pl2us"]
 
 [ext_resource type="Script" path="res://src/scripts/ui/user_interface.gd" id="1_u2rch"]
-[ext_resource type="Script" path="res://src/scripts/ui/menu_bar.gd" id="2_fos3n"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/safe_margins.tscn" id="2_i3s0x"]
 [ext_resource type="Texture2D" uid="uid://c4ngtvr2jxp2o" path="res://src/resources/assets/ui/move.svg" id="3_6psu3"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/fade_rect.tscn" id="6_aaf8p"]
@@ -79,12 +78,12 @@ layout_mode = 2
 metadata/_edit_use_anchors_ = true
 
 [node name="MenuButton" type="MenuButton" parent="SafeMargins/TopBar/HBoxContainer/MenuPanel"]
+unique_name_in_owner = true
 layout_mode = 2
 icon = ExtResource("7_f3h7v")
 flat = false
 icon_alignment = 1
 expand_icon = true
-script = ExtResource("2_fos3n")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/TopBar/HBoxContainer"]
 layout_mode = 2

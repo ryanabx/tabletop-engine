@@ -40,20 +40,3 @@ signal config_file_opened(fname: String)
 signal download_config_popup()
 
 signal export_config_created(bytes: PackedByteArray)
-
-
-# Game Loading
-signal game_percent_loaded(pc: float)
-signal game_load_started()
-signal game_load_finished(board: Board)
-
-# Scene Transition
-signal scene_transition(scene: String)
-
-# Configs
-signal config_added()
-
-
-# Multiplayer
-
-signal property_sync()

@@ -68,10 +68,6 @@ static func has_any(arr1: Array[Variant], arr2: Array[Variant]) -> bool:
                 return true
     return false
 
-@rpc("any_peer", "call_remote", "reliable")
-static func go_to_scene(fpath: String) -> void:
-    GameManager.scene_transition.emit(fpath)
-
 
 class FileManager:
     ## Compresses dictionary through Gzip compression
@@ -195,7 +191,7 @@ static func is_mobile_platform() -> bool:
         "iOS", "Android"
     ].has(OS.get_name())
 
-static func on_screen_orientation_changed() -> void:
+func on_screen_orientation_changed() -> void:
     var w_size: Vector2i = DisplayServer.screen_get_size(DisplayServer.get_primary_screen())
     var orientation_extents: Rect2i = DisplayServer.get_display_safe_area()
     
@@ -208,9 +204,3 @@ static func on_screen_orientation_changed() -> void:
     Global.safe_margin_r = margin_r
     Global.safe_margin_b = margin_b
     current_safe_area = DisplayServer.get_display_safe_area()
-    GameManager.orientation_changed.emit()
-
-
-    
-    # if multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
-    #     multiplayer.poll()

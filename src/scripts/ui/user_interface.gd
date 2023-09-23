@@ -10,6 +10,8 @@ var coordinates_labels: Array
 @onready var input_mode_button: Button = %InputModeButton
 @onready var touch_type_button: Button = %TouchTypeButton
 
+@onready var menu_bar: MenuButton = %MenuButton
+
 var game_name: String = "untitled"
 var game_ip_addr: String = "local"
 
@@ -28,11 +30,12 @@ var board: Board = null
 ]
 
 func _ready() -> void:
-    GameManager.game_percent_loaded.connect(update_loading_percent)
-    GameManager.game_load_started.connect(show_loading)
-    GameManager.game_load_finished.connect(hide_loading)
-    GameManager.orientation_changed.connect(orientation_changed)
+    get_tree().get_root().game_percent_loaded.connect(update_loading_percent)
+    get_tree().get_root().game_load_started.connect(show_loading)
+    get_tree().get_root().game_load_finished.connect(set_board)
+    $SafeMargins.orientation_changed.connect(orientation_changed)
     orientation_changed()
+    menu_bar.get_popup().submenu_popup_delay = 0.0
 
 func orientation_changed() -> void:
     padding_panel.custom_minimum_size.y = Global.safe_margin_t + 2
@@ -41,10 +44,11 @@ func show_loading() -> void:
     print("Game load started")
     $SafeMargins/LoadingBarContainer.show()
 
-func hide_loading(_board: Board) -> void:
+func set_board(_board: Board) -> void:
     board = _board
     print("Game load finished")
     $SafeMargins/LoadingBarContainer.hide()
+    setup_menu_bar()
 
 func update_loading_percent(pc: float) -> void:
     print("Game load at ",pc)
@@ -79,3 +83,57 @@ func _on_touch_type_button_pressed() -> void:
     elif board.touch_type == Board.TouchType.TAP:
         board.touch_type = Board.TouchType.DRAG
         return
+
+# Menu Bar
+
+@onready var player: PopupMenu
+@onready var actions: PopupMenu
+    
+
+func setup_menu_bar() -> void:
+    if player != null:
+        player.queue_free()
+        await player.tree_exited
+    if actions != null:
+        actions.queue_free()
+        await actions.tree_exited
+    player_menu()
+    actions_menu()
+    tabletop_menu()
+
+func actions_menu() -> void:
+    actions = PopupMenu.new()
+    actions.index_pressed.connect(run_action)
+    actions.name = "Actions"
+    for i: String in board.game.get_actions():
+        actions.add_item(i)
+    menu_bar.get_popup().add_child(actions)
+    menu_bar.get_popup().add_submenu_item("Actions", "Actions")
+
+
+func player_menu() -> void:
+    player = PopupMenu.new()
+    player.index_pressed.connect(set_player)
+    player.name = "Player"
+    menu_bar.get_popup().add_child(player)
+    menu_bar.get_popup().add_submenu_item("Player", "Player")
+    for i: int in range(board.number_of_players):
+        player.add_item(str("Player ",i+1))
+
+func tabletop_menu() -> void:
+    menu_bar.get_popup().id_pressed.connect(tabletop_pressed)
+    menu_bar.get_popup().add_item(str("Exit ", board.game.export_settings().name), 0)
+    if not Utils.is_mobile_platform():
+        menu_bar.get_popup().add_item("Exit Tabletop Framework", 1)
+
+func set_player(index: int) -> void:
+    print("Setting player to ", index)
+    board.player_id = index
+
+func run_action(index: int) -> void:
+    board.run_action(index)
+
+func tabletop_pressed(id: int) -> void:
+    match id:
+        0: %FadeRect.scene_transition.emit("res://src/scenes/menu/main_menu.tscn")
+        1: get_tree().quit()

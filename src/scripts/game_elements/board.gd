@@ -51,6 +51,8 @@ var input_mode: InputMode = InputMode.SELECT
 ## The selected touch type by the user. See [enum TouchType].
 var touch_type: TouchType = TouchType.DRAG if not Utils.is_mobile_platform() else TouchType.TAP
 
+signal property_sync()
+
 # Board properties
 var background: String = "":
     set(val):
@@ -67,6 +69,10 @@ var _background_sprite: Sprite2D
 @onready var _board_player: BoardPlayer = $BoardPlayer
 @onready var _board_objects: Node2D = $BoardObjects
 @onready var _highlights: Node2D = $Highlights
+
+# Private signals
+signal _game_menu_create(obj: Selectable)
+signal _game_menu_destroy()
 
 var _counter: int = 0
 
@@ -203,8 +209,6 @@ func _ready() -> void:
     _board_player.board = self
     _highlights.board = self
 
-    GameManager.run_action.connect(run_action)
-
     _background_sprite = Sprite2D.new()
     _background_sprite.z_index = -10
     add_child(_background_sprite)
@@ -225,15 +229,15 @@ func _is_ready(id: int) -> void:
 
 @rpc("authority", "call_local", "unreliable")
 func _game_percent_loaded(pc: float) -> void:
-    GameManager.game_percent_loaded.emit(pc)
+    get_tree().get_root().game_percent_loaded.emit(pc)
 
 @rpc("authority", "call_local", "reliable")
 func _game_load_finished() -> void:
-    GameManager.game_load_finished.emit(self)
+    get_tree().get_root().game_load_finished.emit(self)
 
 @rpc("authority", "call_local", "reliable")            
 func _game_load_started() -> void:
-    GameManager.game_load_started.emit()
+    get_tree().get_root().game_load_started.emit()
 
 func _on_sync_timer_timeout() -> void:
-    GameManager.property_sync.emit()
+    property_sync.emit()

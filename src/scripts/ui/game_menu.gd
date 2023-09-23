@@ -4,11 +4,15 @@ extends PopupMenu
 var piece: Piece = null
 var collection: Collection = null
 
+var _board: Board = null
+
 func _ready() -> void:
-    GameManager.game_menu_create_piece.connect(_on_menu_created)
-    GameManager.game_menu_create_collection.connect(_on_collection_menu_created)
     hide()
     popup_hide.connect(_on_popup_hide)
+
+func _game_load_finished(board: Board):
+    _board = board
+    _board._game_menu_create.connect(_on_menu_created)
 
 func reset_menu() -> void:
     set_position(Vector2.ZERO)
@@ -20,7 +24,13 @@ func reset_menu() -> void:
     clear()
     set_position(get_viewport().get_mouse_position())
 
-func _on_menu_created(pc: Piece) -> void:
+func _on_menu_created(obj: Selectable) -> void:
+    if obj is Piece:
+        _on_piece_menu_created(obj as Piece)
+    elif obj is Collection:
+        _on_collection_menu_created(obj as Collection)
+
+func _on_piece_menu_created(pc: Piece) -> void:
     reset_menu()
     piece = pc
     collection = null
@@ -93,4 +103,5 @@ func _on_clicked_from_collection(id: int) -> void:
         8: collection.shuffle()
 
 func _on_popup_hide() -> void:
-    GameManager.game_menu_destroy.emit()
+    if _board:
+        _board._game_menu_destroy.emit()

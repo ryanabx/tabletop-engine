@@ -5,6 +5,11 @@ var board: Board = null
 
 const MTU = 1476
 
+# Signals
+
+signal game_load_finished(board: Board)
+
+
 # Crucial base operation nodes
 @onready var user_interface: UserInterface = $UserInterfaceLayer/UserInterface
 @onready var camera_controller: CameraController = $CameraController
@@ -13,22 +18,25 @@ var config_bytes: PackedByteArray = PackedByteArray([])
 
 var peers_ready: int = 0
 signal peer_ready(id: int)
+signal server_ready()
 
 @rpc("any_peer","call_remote","reliable")
 func notify_ready(id: int) -> void:
     if multiplayer.is_server():
         peer_ready.emit(id)
+    elif id == 1:
+        server_ready.emit()
 
 func _ready() -> void:
     Global.set_shared_tabletop_manager(self)
     if multiplayer.is_server():
+        notify_ready.rpc(1)
         make_tabletop()
     else:
+        await server_ready
         notify_ready.rpc(multiplayer.get_unique_id())
 
 func make_tabletop() -> void:
-    if multiplayer.get_peers().size() > 0:
-        Utils.go_to_scene.rpc("res://src/scenes/game_elements/board_manager.tscn")
     while peers_ready != multiplayer.get_peers().size():
         var id: int = await peer_ready
         print("Peer ",id, " is ready!")

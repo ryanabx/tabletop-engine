@@ -17,7 +17,7 @@ var clamp1: Vector2
 var clamp2: Vector2
 
 func _ready() -> void:
-    GameManager.game_load_finished.connect(_game_loaded)
+    get_tree().get_root().game_load_finished.connect(_game_loaded)
 
 func _game_loaded(_board: Board) -> void:
     board = _board
