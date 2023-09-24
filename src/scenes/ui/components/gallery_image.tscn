@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://bwmujbkx0jv8h"]
 
-[ext_resource type="Texture2D" uid="uid://di2cdg6ryho1f" path="res://icon.svg" id="1_k5jes"]
 [ext_resource type="Script" path="res://src/scripts/ui/components/gallery_image.gd" id="1_mgd4a"]
+[ext_resource type="Texture2D" uid="uid://ch55iben1ff3x" path="res://assets/icon.png" id="2_l2b1r"]
 [ext_resource type="Texture2D" uid="uid://cu648p40sig4d" path="res://src/resources/assets/ui/times.svg" id="3_br76f"]
 
 [node name="GalleryImage" type="BoxContainer"]
@@ -20,7 +20,7 @@ flat = true
 
 [node name="Texture" type="TextureRect" parent="."]
 layout_mode = 2
-texture = ExtResource("1_k5jes")
+texture = ExtResource("2_l2b1r")
 expand_mode = 2
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
