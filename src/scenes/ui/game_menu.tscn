@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://3uwharyjlmsp"]
-
-[ext_resource type="Script" path="res://src/scripts/ui/game_menu.gd" id="1_ncvbs"]
-
-[node name="GameMenu" type="PopupMenu"]
-visible = true
-script = ExtResource("1_ncvbs")
