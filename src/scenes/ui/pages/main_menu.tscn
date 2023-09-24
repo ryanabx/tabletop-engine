@@ -1,13 +1,16 @@
-[gd_scene load_steps=9 format=3 uid="uid://dlnv5bicqv8ih"]
+[gd_scene load_steps=11 format=3 uid="uid://dlnv5bicqv8ih"]
 
 [ext_resource type="Script" path="res://src/scripts/ui/pages/main_menu.gd" id="1_1pq65"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/components/fade_rect.tscn" id="2_62p08"]
 [ext_resource type="Texture2D" uid="uid://cyd74v1etxj2a" path="res://src/resources/assets/ui/play.svg" id="3_1vqd7"]
+[ext_resource type="Texture2D" uid="uid://ch55iben1ff3x" path="res://assets/icon.png" id="3_40fbx"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/components/safe_margins.tscn" id="3_o4qee"]
 [ext_resource type="Texture2D" uid="uid://dbpyib0osxmuy" path="res://src/resources/assets/ui/gear.svg" id="4_b7mlp"]
 [ext_resource type="Texture2D" uid="uid://b13sa65um5jk" path="res://src/resources/assets/ui/folder_icon.svg" id="5_atquh"]
 [ext_resource type="Texture2D" uid="uid://cu648p40sig4d" path="res://src/resources/assets/ui/times.svg" id="6_w7hdg"]
 [ext_resource type="Texture2D" uid="uid://bydji1mi7n4od" path="res://src/resources/assets/ui/about.svg" id="7_pbghq"]
+
+[sub_resource type="FontVariation" id="FontVariation_i5m8w"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -28,14 +31,28 @@ layout_mode = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer"]
 layout_mode = 2
 
+[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 40
+theme_override_fonts/font = SubResource("FontVariation_i5m8w")
+theme_override_font_sizes/font_size = 128
+text = "Tabletop Engine"
+horizontal_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_40fbx")
+expand_mode = 3
+
 [node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
-layout_mode = 2
-text = "Tabletop Engine"
-horizontal_alignment = 1
 
 [node name="NewGame" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2

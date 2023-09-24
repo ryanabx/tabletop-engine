@@ -32,6 +32,7 @@ func on_screen_orientation_changed() -> void:
     Global.safe_margin_r = margin_r
     Global.safe_margin_b = margin_b
     current_safe_area = DisplayServer.get_display_safe_area()
+    print("Changed")
 
 func _input(event: InputEvent) -> void:
     if event.is_action_pressed("ui_exit_fullscreen") and not Global.get_user_setting("fullscreen"):

@@ -39,7 +39,14 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="matrix(0.929419,0,0,1.0946334,-86.371552,-160.2593)"><path
+     transform="matrix(0.929419,0,0,1.0946334,-86.371552,-160.2593)"><rect
+       style="fill:#171f22;stroke:none;stroke-width:0;stroke-dasharray:none;paint-order:markers fill stroke;fill-opacity:1"
+       id="rect1"
+       width="176.49915"
+       height="149.85991"
+       x="92.930695"
+       y="146.40454"
+       inkscape:label="BGRect" /><path
        style="fill:#00aad4;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
        d="M 239.894,201.57929 H 133.49137 l -0.53099,24.98044 75.94019,0.4 z"
        id="path75"
