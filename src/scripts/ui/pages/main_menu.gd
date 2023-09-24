@@ -3,6 +3,8 @@ extends Control
 func _ready() -> void:
     if not Global.has_setup:
         Global.setup()
+    if not Global.is_desktop_platform():
+        %Quit.hide()
     Global.load_this_game = PackedByteArray([])
 
 func _on_new_game_pressed() -> void:
