@@ -2,7 +2,7 @@ extends MarginContainer
 
 signal orientation_changed()
 
-static var current_safe_area: Rect2i = Rect2i(0, 0, 0, 0)
+var current_safe_area: Rect2i = Rect2i(0, 0, 0, 0)
 
 func _ready() -> void:
     orientation_changed.connect(_screen_orientation_changed)
