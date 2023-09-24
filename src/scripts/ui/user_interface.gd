@@ -30,9 +30,9 @@ var board: Board = null
 ]
 
 func _ready() -> void:
-    get_tree().get_root().game_percent_loaded.connect(update_loading_percent)
-    get_tree().get_root().game_load_started.connect(show_loading)
-    get_tree().get_root().game_load_finished.connect(set_board)
+    get_tree().get_root().get_node("BoardManager").game_percent_loaded.connect(update_loading_percent)
+    get_tree().get_root().get_node("BoardManager").game_load_started.connect(show_loading)
+    get_tree().get_root().get_node("BoardManager").game_load_finished.connect(set_board)
     $SafeMargins.orientation_changed.connect(orientation_changed)
     orientation_changed()
     menu_bar.get_popup().submenu_popup_delay = 0.0
@@ -61,7 +61,6 @@ func _process(_delta: float) -> void:
         game_name = board.game.name
         input_mode_button.icon = input_mode_textures[board.input_mode]
         touch_type_button.text = touch_types[board.touch_type]
-    
 
 var drag_window: bool = false
 var start_position: Vector2 = Vector2.ZERO
@@ -73,7 +72,6 @@ func _on_input_setting_pressed() -> void:
     elif board.input_mode == Board.InputMode.SELECT:
         board.input_mode = Board.InputMode.CAMERA
         return
-
 
 func _on_touch_type_button_pressed() -> void:
     if board.touch_type == Board.TouchType.DRAG:
@@ -87,7 +85,6 @@ func _on_touch_type_button_pressed() -> void:
 
 @onready var player: PopupMenu
 @onready var actions: PopupMenu
-    
 
 func setup_menu_bar() -> void:
     if player != null:

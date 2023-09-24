@@ -34,6 +34,5 @@ func on_screen_orientation_changed() -> void:
     current_safe_area = DisplayServer.get_display_safe_area()
 
 func _input(event: InputEvent) -> void:
-    if event.is_action_pressed("ui_exit_fullscreen") and DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
-        DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-        GameProperties.save_settings()
+    if event.is_action_pressed("ui_exit_fullscreen") and not Global.get_user_setting("fullscreen"):
+        Global.set_user_setting("fullscreen", false)

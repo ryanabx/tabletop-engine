@@ -1,6 +1,8 @@
 class_name Global
 extends RefCounted
 
+static var has_setup: bool = false
+
 # MULTIPLAYER
 const DEFAULT_MAX_PLAYERS: int = 4
 
@@ -161,6 +163,7 @@ static func set_user_setting(setting: String, value: Variant) -> void:
         _user_settings[setting] = value
     else:
         _user_settings.erase(setting)
+    _save_settings()
 
 static func get_user_setting(setting: String) -> Variant:
     if setting in _user_settings:
@@ -176,8 +179,12 @@ static func load_settings() -> void:
         for prop: String in settings_dict.keys():
             set_user_setting(prop, settings_dict[prop])
 
-static func save_settings() -> void:
+static func _save_settings() -> void:
     var settings_str: String = JSON.stringify(_user_settings)
     var s_save: FileAccess = FileAccess.open(Global.SETTINGS_PATH, FileAccess.WRITE)
     s_save.store_string(settings_str)
     s_save.close()
+
+static func setup() -> void:
+    load_settings()
+    has_setup = true

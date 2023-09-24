@@ -6,9 +6,9 @@ var board: Board = null
 const MTU = 1476
 
 # Signals
-
-signal game_load_finished(board: Board)
-
+signal game_load_started()
+signal game_percent_loaded(pct: float)
+signal game_load_finished(brd: Board)
 
 # Crucial base operation nodes
 @onready var user_interface: UserInterface = $UserInterfaceLayer/UserInterface
@@ -28,7 +28,6 @@ func notify_ready(id: int) -> void:
         server_ready.emit()
 
 func _ready() -> void:
-    Global.set_shared_tabletop_manager(self)
     if multiplayer.is_server():
         notify_ready.rpc(1)
         make_tabletop()
@@ -79,7 +78,6 @@ func spawn_board() -> void:
     var board_new: Board = load("res://src/scenes/game_elements/board.tscn").instantiate()
     board_new.game = gc
     board_new.name = gc.name
-    Global.set_current_tabletop(board_new)
     
     add_child(board_new)
     board = board_new

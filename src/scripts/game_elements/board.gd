@@ -72,7 +72,6 @@ var _background_sprite: Sprite2D
 
 # Private signals
 signal _game_menu_create(obj: Selectable)
-signal _game_menu_destroy()
 
 var _counter: int = 0
 
@@ -229,15 +228,15 @@ func _is_ready(id: int) -> void:
 
 @rpc("authority", "call_local", "unreliable")
 func _game_percent_loaded(pc: float) -> void:
-    get_tree().get_root().game_percent_loaded.emit(pc)
+    get_tree().get_root().get_node("BoardManager").game_percent_loaded.emit(pc)
 
 @rpc("authority", "call_local", "reliable")
 func _game_load_finished() -> void:
-    get_tree().get_root().game_load_finished.emit(self)
+    get_tree().get_root().get_node("BoardManager").game_load_finished.emit(self)
 
 @rpc("authority", "call_local", "reliable")            
 func _game_load_started() -> void:
-    get_tree().get_root().game_load_started.emit()
+    get_tree().get_root().get_node("BoardManager").game_load_started.emit()
 
 func _on_sync_timer_timeout() -> void:
     property_sync.emit()

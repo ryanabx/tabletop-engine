@@ -8,9 +8,9 @@ var _board: Board = null
 
 func _ready() -> void:
     hide()
-    popup_hide.connect(_on_popup_hide)
+    get_tree().get_root().get_node("BoardManager").game_load_finished.connect(_game_load_finished)
 
-func _game_load_finished(board: Board):
+func _game_load_finished(board: Board) -> void:
     _board = board
     _board._game_menu_create.connect(_on_menu_created)
 
@@ -101,7 +101,3 @@ func _on_clicked_from_collection(id: int) -> void:
             if not collection.lock_state:
                 collection.face_up = false
         8: collection.shuffle()
-
-func _on_popup_hide() -> void:
-    if _board:
-        _board._game_menu_destroy.emit()
