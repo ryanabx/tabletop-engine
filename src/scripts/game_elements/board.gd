@@ -71,7 +71,7 @@ var _background_sprite: Sprite2D
 @onready var _highlights: Node2D = $Highlights
 
 # Private signals
-signal _game_menu_create(obj: Selectable)
+signal _create_context_menu(obj: Selectable)
 
 var _counter: int = 0
 

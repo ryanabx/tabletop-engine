@@ -12,7 +12,7 @@ func _ready() -> void:
 
 func _game_load_finished(board: Board) -> void:
     _board = board
-    _board._game_menu_create.connect(_on_menu_created)
+    _board._create_context_menu.connect(_on_menu_created)
 
 func reset_menu() -> void:
     set_position(Vector2.ZERO)

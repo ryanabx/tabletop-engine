@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://src/scripts/game_elements/board_manager.gd" id="1_u8h4e"]
 [ext_resource type="PackedScene" uid="uid://3uwharyjlmsp" path="res://src/scenes/ui/components/context_menu.tscn" id="2_ywb68"]
 [ext_resource type="PackedScene" uid="uid://ma7a666pl2us" path="res://src/scenes/ui/components/user_interface.tscn" id="4_dvdi8"]
-[ext_resource type="PackedScene" uid="uid://uing22je8p0x" path="res://src/scenes/ui/components/camera_controller.tscn" id="5_5q5a6"]
+[ext_resource type="PackedScene" uid="uid://uing22je8p0x" path="res://src/scenes/game_elements/camera_controller.tscn" id="5_5q5a6"]
 
 [node name="BoardManager" type="Node"]
 script = ExtResource("1_u8h4e")
@@ -11,7 +11,7 @@ script = ExtResource("1_u8h4e")
 [node name="UserInterfaceLayer" type="CanvasLayer" parent="."]
 layer = 10
 
-[node name="GameMenu" parent="UserInterfaceLayer" instance=ExtResource("2_ywb68")]
+[node name="ContextMenu" parent="UserInterfaceLayer" instance=ExtResource("2_ywb68")]
 visible = false
 
 [node name="UserInterface" parent="UserInterfaceLayer" instance=ExtResource("4_dvdi8")]

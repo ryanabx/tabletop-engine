@@ -158,9 +158,9 @@ func double_tap_input(event: InputEvent) -> void:
         var collider: Selectable = _get_collider_at_position()
         if collider != null:
             if collider is Collection:
-                board._game_menu_create.emit(collider as Collection)
+                board._create_context_menu.emit(collider as Collection)
             elif collider is Piece:
-                board._game_menu_create.emit(collider as Piece)
+                board._create_context_menu.emit(collider as Piece)
             deselect()
 
 func _get_collider_at_position(pos: Vector2 = get_local_mouse_position(), collision_mask: int = 1) -> Selectable:

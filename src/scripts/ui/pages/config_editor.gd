@@ -24,7 +24,7 @@ func _process(_delta: float) -> void:
     import_images_label.text = "Imported images (%s)" % image_list.get_child_count()
 
 func _on_back_button_pressed() -> void:
-    $FadeRect.scene_transition.emit("res://src/scenes/menu/main_menu.tscn")
+    $FadeRect.scene_transition.emit("res://src/scenes/ui/pages/main_menu.tscn")
 
 func clear_config() -> void:
     config_code.text = ""

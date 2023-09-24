@@ -127,5 +127,5 @@ func run_action(index: int) -> void:
 
 func tabletop_pressed(id: int) -> void:
     match id:
-        0: %FadeRect.scene_transition.emit("res://src/scenes/menu/main_menu.tscn")
+        0: %FadeRect.scene_transition.emit("res://src/scenes/ui/pages/main_menu.tscn")
         1: get_tree().quit()

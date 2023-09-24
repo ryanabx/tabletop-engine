@@ -17,8 +17,7 @@ run/main_scene="res://src/scenes/ui/pages/main_menu.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 boot_splash/bg_color=Color(0.164706, 0.172549, 0.192157, 1)
 boot_splash/image="res://assets/banners/banner.png"
-config/icon="res://assets/icons/icon_transparent.png"
-config/windows_native_icon="res://assets/icons/Windows/icon_windows.ico"
+config/icon="res://assets/icons/icon.svg"
 
 [debug]
 

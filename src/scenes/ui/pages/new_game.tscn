@@ -1,12 +1,12 @@
 [gd_scene load_steps=8 format=3 uid="uid://c6y4ttibwy3ay"]
 
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/components/fade_rect.tscn" id="1_g3g4g"]
-[ext_resource type="Script" path="res://src/scripts/menu/new_game.gd" id="1_pyp32"]
+[ext_resource type="Script" path="res://src/scripts/ui/pages/new_game.gd" id="1_pyp32"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/safe_margins.tscn" id="3_4l57n"]
 [ext_resource type="Texture2D" uid="uid://pgsxe1dk7qmx" path="res://src/resources/assets/ui/arrow-to-left.svg" id="3_ccqel"]
 [ext_resource type="PackedScene" uid="uid://dbpkcwga3251w" path="res://src/scenes/ui/components/config_selector.tscn" id="3_m23a8"]
 [ext_resource type="Texture2D" uid="uid://cyd74v1etxj2a" path="res://src/resources/assets/ui/play.svg" id="4_lry2e"]
-[ext_resource type="Script" path="res://src/scripts/menu/multiplayer_panel.gd" id="8_txr3i"]
+[ext_resource type="Script" path="res://src/scripts/ui/components/multiplayer_panel.gd" id="8_txr3i"]
 
 [node name="NewGame" type="Control"]
 layout_mode = 3

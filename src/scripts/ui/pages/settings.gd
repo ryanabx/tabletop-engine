@@ -7,7 +7,7 @@ func _ready() -> void:
 		view_menu.hide()
 
 func _on_back_button_pressed() -> void:
-	$FadeRect.scene_transition.emit("res://src/scenes/menu/main_menu.tscn")
+	$FadeRect.scene_transition.emit("res://src/scenes/ui/pages/main_menu.tscn")
 
 
 func _on_toggle_fullscreen_pressed() -> void:
