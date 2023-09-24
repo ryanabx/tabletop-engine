@@ -6,12 +6,10 @@ static var current_safe_area: Rect2i = Rect2i(0, 0, 0, 0)
 
 func _ready() -> void:
     orientation_changed.connect(_screen_orientation_changed)
-    on_screen_orientation_changed()
 
 func _process(_delta: float) -> void:
     if (current_safe_area != DisplayServer.get_display_safe_area()):
         on_screen_orientation_changed()
-        orientation_changed.emit()
 
 func _screen_orientation_changed() -> void:
     add_theme_constant_override("margin_left", Global.safe_margin_l)
@@ -33,6 +31,7 @@ func on_screen_orientation_changed() -> void:
     Global.safe_margin_b = margin_b
     current_safe_area = DisplayServer.get_display_safe_area()
     print("Changed")
+    orientation_changed.emit()
 
 func _input(event: InputEvent) -> void:
     if event.is_action_pressed("ui_exit_fullscreen") and not Global.get_user_setting("fullscreen"):
