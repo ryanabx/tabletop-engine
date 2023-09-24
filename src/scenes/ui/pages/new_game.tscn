@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/components/fade_rect.tscn" id="1_g3g4g"]
 [ext_resource type="Script" path="res://src/scripts/ui/pages/new_game.gd" id="1_pyp32"]
-[ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/safe_margins.tscn" id="3_4l57n"]
+[ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/components/safe_margins.tscn" id="3_4l57n"]
 [ext_resource type="Texture2D" uid="uid://pgsxe1dk7qmx" path="res://src/resources/assets/ui/arrow-to-left.svg" id="3_ccqel"]
 [ext_resource type="PackedScene" uid="uid://dbpkcwga3251w" path="res://src/scenes/ui/components/config_selector.tscn" id="3_m23a8"]
 [ext_resource type="Texture2D" uid="uid://cyd74v1etxj2a" path="res://src/resources/assets/ui/play.svg" id="4_lry2e"]
@@ -29,7 +29,6 @@ layout_mode = 2
 [node name="Options" type="TabContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 48
 
 [node name="Select Config" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Options"]
 layout_mode = 2
