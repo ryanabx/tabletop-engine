@@ -192,7 +192,9 @@ show_hidden_files = true
 [node name="OverwriteDialog" type="ConfirmationDialog" parent="."]
 unique_name_in_owner = true
 initial_position = 2
-size = Vector2i(1000, 980)
+size = Vector2i(1000, 1000)
+min_size = Vector2i(1000, 1000)
+max_size = Vector2i(1000, 1000)
 dialog_text = "Warning: You are about to overwrite the current config being edited. Is this okay?"
 dialog_autowrap = true
 
@@ -200,7 +202,7 @@ dialog_autowrap = true
 unique_name_in_owner = true
 title = "Config Loaded"
 initial_position = 2
-size = Vector2i(720, 720)
+size = Vector2i(772, 720)
 dialog_text = "Configuration loaded!"
 
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]

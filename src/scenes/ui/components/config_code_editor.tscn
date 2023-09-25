@@ -15,12 +15,17 @@ minimap_draw = true
 minimap_width = 120
 caret_blink = true
 caret_blink_interval = 0.5
+symbol_lookup_on_click = true
 line_folding = true
 gutters_draw_bookmarks = true
 gutters_draw_executing_lines = true
 gutters_draw_line_numbers = true
 gutters_draw_fold_gutter = true
+code_completion_enabled = true
 indent_use_spaces = true
 indent_automatic = true
 auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
+
+[connection signal="code_completion_requested" from="." to="." method="_on_code_completion_requested"]
+[connection signal="symbol_lookup" from="." to="." method="_on_symbol_lookup"]
