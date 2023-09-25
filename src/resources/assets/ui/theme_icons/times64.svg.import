@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cu648p40sig4d"
-path="res://.godot/imported/times.svg-11428f1b8128cfc8889e63879090d995.ctex"
+uid="uid://clnsssxgo82il"
+path="res://.godot/imported/times64.svg-4b07583741d39210ba94a79c8008a78c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://src/resources/assets/ui/times.svg"
-dest_files=["res://.godot/imported/times.svg-11428f1b8128cfc8889e63879090d995.ctex"]
+source_file="res://src/resources/assets/ui/theme_icons/times64.svg"
+dest_files=["res://.godot/imported/times64.svg-4b07583741d39210ba94a79c8008a78c.ctex"]
 
 [params]
 

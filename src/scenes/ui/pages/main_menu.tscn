@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/components/safe_margins.tscn" id="3_o4qee"]
 [ext_resource type="Texture2D" uid="uid://dbpyib0osxmuy" path="res://src/resources/assets/ui/gear.svg" id="4_b7mlp"]
 [ext_resource type="Texture2D" uid="uid://b13sa65um5jk" path="res://src/resources/assets/ui/folder_icon.svg" id="5_atquh"]
-[ext_resource type="Texture2D" uid="uid://cu648p40sig4d" path="res://src/resources/assets/ui/times.svg" id="6_w7hdg"]
+[ext_resource type="Texture2D" uid="uid://cu648p40sig4d" path="res://src/resources/assets/ui/theme_icons/times.svg" id="6_w7hdg"]
 [ext_resource type="Texture2D" uid="uid://bydji1mi7n4od" path="res://src/resources/assets/ui/about.svg" id="7_pbghq"]
 
 [sub_resource type="FontVariation" id="FontVariation_i5m8w"]

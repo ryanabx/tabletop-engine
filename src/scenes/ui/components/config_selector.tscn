@@ -74,6 +74,7 @@ min_size = Vector2i(1000, 1000)
 max_size = Vector2i(1000, 1000)
 theme = ExtResource("6_vysmk")
 ok_button_text = "Open"
+mode_overrides_title = false
 file_mode = 0
 access = 2
 filters = PackedStringArray("*.tbt")
@@ -85,6 +86,7 @@ initial_position = 2
 size = Vector2i(1000, 1000)
 visible = false
 min_size = Vector2i(1000, 1000)
+content_scale_factor = 2.0
 theme = ExtResource("6_vysmk")
 
 [node name="Control" type="Control" parent="DownloadConfigPanel"]
