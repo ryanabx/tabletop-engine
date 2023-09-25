@@ -135,7 +135,6 @@ expand_icon = true
 
 [node name="FadeRect" parent="." instance=ExtResource("1_g3g4g")]
 layout_mode = 1
-mouse_filter = 2
 
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Select Config/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Options/Select Config/VBoxContainer/HBoxContainer/ReadyButton" to="." method="_on_ready_pressed"]

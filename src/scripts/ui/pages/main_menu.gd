@@ -5,6 +5,9 @@ func _ready() -> void:
         Global.setup()
     if not Global.is_desktop_platform():
         %Quit.hide()
+    if Global.is_mobile_platform():
+        %Tabletops.hide()
+        %Settings.hide()
     Global.load_this_game = PackedByteArray([])
 
 func _on_new_game_pressed() -> void:
