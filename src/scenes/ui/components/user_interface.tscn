@@ -50,7 +50,7 @@ custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
 
 [node name="TopBar" type="PanelContainer" parent="SafeMargins"]
-custom_minimum_size = Vector2(0, 128)
+custom_minimum_size = Vector2(0, 84)
 layout_mode = 2
 size_flags_vertical = 0
 
@@ -73,12 +73,12 @@ alignment = 1
 layout_mode = 2
 
 [node name="MenuPanel" type="PanelContainer" parent="SafeMargins/TopBar/HBoxContainer"]
-custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 metadata/_edit_use_anchors_ = true
 
 [node name="MenuButton" type="MenuButton" parent="SafeMargins/TopBar/HBoxContainer/MenuPanel"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
 layout_mode = 2
 icon = ExtResource("7_f3h7v")
 flat = false
@@ -87,11 +87,8 @@ expand_icon = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/TopBar/HBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 0
 
 [node name="MenuPanel2" type="PanelContainer" parent="SafeMargins/TopBar/HBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_h871r")
 metadata/_edit_use_anchors_ = true
@@ -106,9 +103,7 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="MenuPanel3" type="PanelContainer" parent="SafeMargins/TopBar/HBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
-size_flags_horizontal = 10
 theme_override_styles/panel = SubResource("StyleBoxEmpty_h871r")
 metadata/_edit_use_anchors_ = true
 

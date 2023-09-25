@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://dlnv5bicqv8ih"]
+[gd_scene load_steps=16 format=3 uid="uid://dlnv5bicqv8ih"]
 
 [ext_resource type="Script" path="res://src/scripts/ui/pages/main_menu.gd" id="1_1pq65"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/components/fade_rect.tscn" id="2_62p08"]
@@ -13,8 +13,6 @@
 [ext_resource type="Texture2D" uid="uid://bydji1mi7n4od" path="res://src/resources/assets/ui/about.svg" id="7_pbghq"]
 [ext_resource type="StyleBox" uid="uid://b3ldjeejkehoq" path="res://src/resources/styles/menu/button_pressed.tres" id="8_ck0rn"]
 [ext_resource type="Texture2D" uid="uid://cfi8aldqbl7k7" path="res://src/resources/assets/wood_paneling.jpg" id="13_uucwo"]
-
-[sub_resource type="FontVariation" id="FontVariation_i5m8w"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0iom8"]
 
@@ -73,8 +71,7 @@ alignment = 1
 
 [node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
-theme_override_fonts/font = SubResource("FontVariation_i5m8w")
-theme_override_font_sizes/font_size = 128
+theme_type_variation = &"HeaderLarge"
 text = "Tabletop Engine"
 horizontal_alignment = 1
 
@@ -102,8 +99,6 @@ alignment = 1
 [node name="Splash" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/PanelContainer2/MarginContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_fonts/font = SubResource("FontVariation_i5m8w")
-theme_override_font_sizes/font_size = 32
 text = "Splash goes here"
 horizontal_alignment = 1
 
@@ -115,7 +110,7 @@ expand_mode = 3
 
 [node name="NewGame" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 164)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 theme_override_styles/normal = ExtResource("6_ukj2h")
 theme_override_styles/hover = ExtResource("7_ivhu7")
@@ -128,7 +123,7 @@ expand_icon = true
 
 [node name="Tabletops" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 164)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 theme_override_styles/normal = ExtResource("6_ukj2h")
 theme_override_styles/hover = ExtResource("7_ivhu7")
@@ -141,7 +136,7 @@ expand_icon = true
 
 [node name="Settings" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 164)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 theme_override_styles/normal = ExtResource("6_ukj2h")
 theme_override_styles/hover = ExtResource("7_ivhu7")
@@ -154,7 +149,7 @@ expand_icon = true
 
 [node name="About" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 164)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 theme_override_styles/normal = ExtResource("6_ukj2h")
 theme_override_styles/hover = ExtResource("7_ivhu7")
@@ -167,7 +162,7 @@ expand_icon = true
 
 [node name="Quit" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 164)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 theme_override_styles/normal = ExtResource("6_ukj2h")
 theme_override_styles/hover = ExtResource("7_ivhu7")
@@ -184,7 +179,6 @@ layout_mode = 2
 [node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/PanelContainer3"]
 layout_mode = 2
 size_flags_vertical = 8
-theme_override_font_sizes/font_size = 48
 text = "Copyright Ryanabx 2023"
 horizontal_alignment = 1
 

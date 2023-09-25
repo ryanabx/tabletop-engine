@@ -18,43 +18,39 @@ size_flags_vertical = 3
 script = ExtResource("1_0cw62")
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="."]
-custom_minimum_size = Vector2(0, 152)
+custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 
 [node name="LoadConfFile" type="Button" parent="HBoxContainer2"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(152, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+text = "File"
 icon = ExtResource("1_mshcn")
-icon_alignment = 1
 expand_icon = true
 
 [node name="LoadConfURL" type="Button" parent="HBoxContainer2"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(152, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+text = "URL"
 icon = ExtResource("2_wr7ge")
-icon_alignment = 1
 expand_icon = true
 
 [node name="RefreshConfList" type="Button" parent="HBoxContainer2"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(152, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+text = "Refresh"
 icon = ExtResource("3_ef6m5")
-icon_alignment = 1
 expand_icon = true
 
 [node name="DeleteSelected" type="Button" parent="HBoxContainer2"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(152, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+text = "Delete"
 icon = ExtResource("4_u4ikq")
-icon_alignment = 1
 expand_icon = true
 
 [node name="ConfigList" type="ItemList" parent="."]
@@ -67,9 +63,9 @@ icon_mode = 0
 unique_name_in_owner = true
 title = "Open a File"
 initial_position = 2
-size = Vector2i(1000, 1000)
-min_size = Vector2i(1000, 1000)
-max_size = Vector2i(1000, 1000)
+size = Vector2i(1000, 640)
+min_size = Vector2i(1000, 640)
+max_size = Vector2i(1000, 640)
 theme = ExtResource("6_vysmk")
 ok_button_text = "Open"
 mode_overrides_title = false
@@ -81,9 +77,10 @@ filters = PackedStringArray("*.tbt")
 unique_name_in_owner = true
 title = "Download Config from URL"
 initial_position = 2
-size = Vector2i(1000, 1000)
+size = Vector2i(1000, 640)
 visible = false
-min_size = Vector2i(1000, 1000)
+min_size = Vector2i(1000, 640)
+max_size = Vector2i(1000, 640)
 content_scale_factor = 2.0
 theme = ExtResource("6_vysmk")
 
@@ -140,7 +137,9 @@ text = "Cancel"
 unique_name_in_owner = true
 title = ""
 initial_position = 2
-size = Vector2i(1000, 720)
+size = Vector2i(1000, 640)
+min_size = Vector2i(1000, 640)
+max_size = Vector2i(1000, 640)
 dialog_text = "Warning! Configurations can run potentially dangerous code on your device! Make sure you trust the source of this configuration!"
 dialog_autowrap = true
 
