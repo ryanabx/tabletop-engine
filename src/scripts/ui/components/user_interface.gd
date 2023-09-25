@@ -116,6 +116,11 @@ func player_menu() -> void:
 
 func tabletop_menu() -> void:
     menu_bar.get_popup().id_pressed.connect(tabletop_pressed)
+    if not multiplayer.is_server():
+        if ConfigSelector.config_exists(board.game.name):
+            menu_bar.get_popup().add_item(str("Update ",board.game.name), 2)
+        else:
+            menu_bar.get_popup().add_item(str("Download ",board.game.name), 2)
     menu_bar.get_popup().add_item(str("Main Menu"), 0)
     if Global.is_desktop_platform():
         menu_bar.get_popup().add_item("Quit Game", 1)
@@ -131,3 +136,4 @@ func tabletop_pressed(id: int) -> void:
     match id:
         0: %FadeRect.scene_transition.emit("res://src/scenes/ui/pages/main_menu.tscn")
         1: get_tree().quit()
+        2: get_tree().get_root().get_node("BoardManager").save_config()

@@ -112,6 +112,10 @@ func add_from_filepath(fname: String) -> void:
     
 func file_decided(buf: PackedByteArray) -> void:
     print("Importing config")
+    if ConfigSelector.save_config_to_file(buf):
+        config_added()
+
+static func save_config_to_file(buf: PackedByteArray) -> bool:
     var config: TabletopGame = TabletopGame.import_config(buf)
     
     DirAccess.make_dir_absolute(Global.CONFIG_REPO)
@@ -124,12 +128,15 @@ func file_decided(buf: PackedByteArray) -> void:
 
     if local_copy == null:
         print(FileAccess.get_open_error(), ": ", conf_path)
-        return
+        return false
 
     local_copy.store_buffer(buf)
     local_copy.close()
     print("Done! Sent to ",conf_path)
-    config_added()
+    return true
+
+static func config_exists(conf_name: String) -> bool:
+    return FileAccess.file_exists(str(Global.CONFIG_REPO, "/",conf_name,Global.CONFIG_EXTENSION))
 
 # Download config from URL
 

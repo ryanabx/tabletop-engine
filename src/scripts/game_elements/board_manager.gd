@@ -88,3 +88,6 @@ func spawn_board() -> void:
     
     add_child(board_new)
     board = board_new
+
+func save_config() -> void:
+    ConfigSelector.save_config_to_file(config_bytes)
