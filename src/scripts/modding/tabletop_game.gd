@@ -66,6 +66,11 @@ func can_stack(_from: Selectable, _to: Selectable) -> bool:
 func can_take_piece_off(_collection: Collection) -> bool:
     return true
 
+## Determines whether the selectable object [param _highlighted] can be highlighted,
+## optionally given [param _selected] object.
+func can_highlight(_highlighted: Selectable, _selected: Selectable) -> bool:
+    return true
+
 # IMPORTING AND EXPORTING CONFIGURATIONS
 
 ## Import config

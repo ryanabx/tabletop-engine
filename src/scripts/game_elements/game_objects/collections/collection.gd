@@ -105,6 +105,8 @@ func _add_piece_at(piece: Piece, _index: int) -> void:
 func _add_collection_at(coll: Collection, _index: int) -> void:
     if not board.game.can_stack(coll, self):
         return
+    if coll.face_up != face_up:
+        coll.flip()
     if _index == inside.size():
         inside.append_array(coll.inside)
     else:

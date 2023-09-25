@@ -15,9 +15,6 @@ func add_piece(piece: Piece, back: bool = false) -> void:
     if not board.game.can_stack(piece, self):
         return
     
-    if not lock_state and not back:
-        face_up = piece.face_up
-    
     super.add_piece(piece, back)
 
 func remove_from_top(pos: Vector2 = Vector2.ZERO) -> Piece:

@@ -100,6 +100,8 @@ func _update_highlighted(event: InputEvent) -> void:
     
     if _poll_num == 0 or event is InputEventMouseButton:
         _highlighted_object = _get_collider_at_position()
+        if _highlighted_object != null and not board.game.can_highlight(_highlighted_object, selected_object):
+            _highlighted_object = null
     _poll_num = (_poll_num + 1) % POLLING_RATE
     
 func touch_input(event: InputEvent) -> void:
@@ -296,11 +298,12 @@ func stack_on_piece(item: Piece) -> void:
             Board.GameObjectType.DECK,
             {
                 "position": item.position,
-                "rotation": item.rotation
+                "rotation": item.rotation,
+                "face_up": item.face_up
             }
         )
-        collection.add_piece(get_selected_object())
         collection.add_piece(item)
+        collection.add_piece(get_selected_object())
 
 func _select_collection(collection: Collection) -> void:
     if collection is Hand or collection.permanent:
