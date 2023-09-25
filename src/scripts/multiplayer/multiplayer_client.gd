@@ -27,7 +27,7 @@ func start(url: String, _lobby: String = "", _mesh: bool = true) -> void:
 
 
 func stop() -> void:
-    multiplayer.multiplayer_peer = null
+    multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
     rtc_mp.close()
     close()
 

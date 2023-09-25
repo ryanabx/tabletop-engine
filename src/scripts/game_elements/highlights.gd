@@ -11,7 +11,8 @@ func _draw() -> void:
 func draw_player_stuff() -> void:
     if board.get_player().is_highlighting():
         if board.get_player().get_highlighted_object() is Hand:
-            if board.get_player().is_selecting():
+            if board.get_player().is_selecting() or\
+                (board.get_player().get_highlighted_object() is Collection and board.get_player().get_highlighted_object().inside.is_empty()):
                 draw_rect(
                     board.get_player().get_highlighted_object()._get_selected_range(),
                     Color.BLACK * Color(1,1,1,0.3)
@@ -23,7 +24,8 @@ func draw_player_stuff() -> void:
                     false, 4
                 )
         else:
-            if board.get_player().is_selecting():
+            if board.get_player().is_selecting() or\
+                (board.get_player().get_highlighted_object() is Collection and board.get_player().get_highlighted_object().inside.is_empty()):
                 draw_colored_polygon(
                     board.get_player().get_highlighted_object().get_extents(),
                     Color.BLACK * Color(1,1,1,0.3)

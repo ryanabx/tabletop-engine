@@ -41,7 +41,7 @@ func _refresh_image() -> void:
             return
     
     var ovr: bool = false
-    print("Selected: %d, Queued: %d, ViewOverrideType: %d" % [selected, queued, view_override])
+    # print("Selected: %d, Queued: %d, ViewOverrideType: %d" % [selected, queued, view_override])
     if view_override == ViewOverrideType.ALL:
         ovr = true
     elif view_override == ViewOverrideType.IF_SELECTED:
