@@ -20,6 +20,12 @@ var _taps_since_selecting: int = 0
 
 var input_events: Dictionary = {}
 
+var _highlighted_object: Selectable = null
+
+const POLLING_RATE = 2
+
+var _poll_num: int = 0
+
 func _ready() -> void:
     physics_state = get_world_2d().get_direct_space_state()
     hold_timer = Timer.new()
@@ -41,6 +47,9 @@ func get_selected_object() -> Selectable:
 func get_queued_object() -> Selectable:
     return queued_object
 
+func get_highlighted_object() -> Selectable:
+    return _highlighted_object
+
 func is_selecting() -> bool:
     return selected_object != null and is_instance_valid(selected_object)
 
@@ -59,6 +68,9 @@ func is_selecting_collection() -> bool:
 func collection_queued() -> bool:
     return object_queued() and queued_object is Collection
 
+func is_highlighting() -> bool:
+    return _highlighted_object != null and is_instance_valid(_highlighted_object)
+
 ######################
 ### Input Handling ###
 ######################
@@ -69,6 +81,8 @@ func _input(event: InputEvent) -> void:
         deselect()
         return
     var ev: InputEvent = make_input_local(event)
+    if ev is InputEventMouseMotion:
+        _update_highlighted()
     if ev.is_action_pressed("game_flip"):
         if is_selecting() and not get_selected_object().lock_state:
             get_selected_object().face_up = not get_selected_object().face_up
@@ -76,6 +90,11 @@ func _input(event: InputEvent) -> void:
         touch_input(ev)
     elif ev is InputEventScreenDrag:
         drag_input(ev)
+
+func _update_highlighted() -> void:
+    if _poll_num == 0:
+        _highlighted_object = _get_collider_at_position()
+    _poll_num = (_poll_num + 1) % POLLING_RATE
     
 func touch_input(event: InputEvent) -> void:
     if event.pressed:

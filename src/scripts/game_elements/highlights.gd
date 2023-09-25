@@ -25,4 +25,15 @@ func draw_player_stuff() -> void:
                 board.get_player().get_queued_object().get_extents(),
                 Color.BLUE * Color(1,1,1,0.2)
                 )
+    if board.get_player().is_highlighting():
+        if board.get_player().get_highlighted_object() is Hand:
+            draw_rect(
+                board.get_player().get_highlighted_object()._get_selected_range(),
+                Color.GRAY * Color(1,1,1,0.2)
+                )
+        else:
+            draw_colored_polygon(
+                board.get_player().get_highlighted_object().get_extents(),
+                Color.GRAY * Color(1,1,1,0.2)
+                )
 
