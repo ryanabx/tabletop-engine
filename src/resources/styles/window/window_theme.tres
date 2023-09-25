@@ -17,4 +17,4 @@ FileDialog/icons/forward_folder = ExtResource("4_l26sq")
 FileDialog/icons/parent_folder = ExtResource("5_ijelc")
 FileDialog/icons/reload = ExtResource("6_v3w2q")
 FileDialog/icons/toggle_hidden = ExtResource("7_vka4k")
-Window/font_sizes/title_font_size = 32
+Window/font_sizes/title_font_size = 24

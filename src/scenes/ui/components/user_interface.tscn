@@ -87,6 +87,7 @@ expand_icon = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/TopBar/HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
 [node name="MenuPanel2" type="PanelContainer" parent="SafeMargins/TopBar/HBoxContainer/HBoxContainer"]
@@ -97,6 +98,7 @@ metadata/_edit_use_anchors_ = true
 
 [node name="InputModeButton" type="Button" parent="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel2"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_8220w")
 icon = ExtResource("3_6psu3")
@@ -107,13 +109,14 @@ expand_icon = true
 [node name="MenuPanel3" type="PanelContainer" parent="SafeMargins/TopBar/HBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
+size_flags_horizontal = 10
 theme_override_styles/panel = SubResource("StyleBoxEmpty_h871r")
 metadata/_edit_use_anchors_ = true
 
 [node name="TouchTypeButton" type="Button" parent="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel3"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 48
 theme_override_styles/focus = SubResource("StyleBoxEmpty_8220w")
 text = "Drag"
 flat = true
