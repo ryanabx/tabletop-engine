@@ -188,3 +188,10 @@ func validate_downloaded_file(file: PackedByteArray) -> bool:
     local_copy.store_buffer(conf.to_bytes())
     local_copy.close()
     return true
+
+func _on_download_config_panel_close_requested() -> void:
+    %DownloadConfigPanel.hide()
+
+
+func _on_import_config_file_close_requested() -> void:
+    %ImportConfigFile.hide()

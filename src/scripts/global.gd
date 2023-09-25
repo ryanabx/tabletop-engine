@@ -188,3 +188,4 @@ static func _save_settings() -> void:
 static func setup() -> void:
     load_settings()
     has_setup = true
+    ThemeDB.fallback_base_scale = 5.0

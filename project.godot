@@ -41,7 +41,6 @@ import/blender/enabled=false
 
 [gui]
 
-theme/default_theme_scale=5.0
 theme/custom="res://src/resources/styles/normal/normal_theme.tres"
 
 [input]
