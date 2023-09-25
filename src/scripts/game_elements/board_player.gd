@@ -81,8 +81,8 @@ func _input(event: InputEvent) -> void:
         deselect()
         return
     var ev: InputEvent = make_input_local(event)
-    if ev is InputEventMouseMotion:
-        _update_highlighted()
+    if ev is InputEventMouseMotion or (ev is InputEventMouseButton and ev.button_index == MOUSE_BUTTON_LEFT):
+        _update_highlighted(ev)
     if ev.is_action_pressed("game_flip"):
         if is_selecting() and not get_selected_object().lock_state:
             get_selected_object().face_up = not get_selected_object().face_up
@@ -91,8 +91,10 @@ func _input(event: InputEvent) -> void:
     elif ev is InputEventScreenDrag:
         drag_input(ev)
 
-func _update_highlighted() -> void:
-    if _poll_num == 0:
+func _update_highlighted(event: InputEvent) -> void:
+    if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+        return
+    if _poll_num == 0 or event is InputEventMouseButton:
         _highlighted_object = _get_collider_at_position()
     _poll_num = (_poll_num + 1) % POLLING_RATE
     

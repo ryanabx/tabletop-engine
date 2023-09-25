@@ -29,11 +29,11 @@ func draw_player_stuff() -> void:
         if board.get_player().get_highlighted_object() is Hand:
             draw_rect(
                 board.get_player().get_highlighted_object()._get_selected_range(),
-                Color.GRAY * Color(1,1,1,0.2)
+                Color.BLACK * Color(1,1,1,0.35)
                 )
         else:
             draw_colored_polygon(
                 board.get_player().get_highlighted_object().get_extents(),
-                Color.GRAY * Color(1,1,1,0.2)
+                Color.BLACK * Color(1,1,1,0.35)
                 )
 
