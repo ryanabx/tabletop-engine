@@ -3,6 +3,15 @@ extends RefCounted
 
 static var has_setup: bool = false
 
+const SPLASHES: Array[String] = [
+    '"Because fuck Tabletop Simulator"!',
+    'Vegan, if you so choose!',
+    'You have UNO, you fucking dick!',
+    'Fruit salad, yummy yummy!',
+    'Can I drown myself? -Jacob',
+    'Since your ass wanna act onions'
+]
+
 # MULTIPLAYER
 const DEFAULT_MAX_PLAYERS: int = 4
 

@@ -102,7 +102,6 @@ custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_8220w")
 icon = ExtResource("3_6psu3")
-flat = true
 icon_alignment = 1
 expand_icon = true
 
@@ -119,7 +118,6 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 48
 theme_override_styles/focus = SubResource("StyleBoxEmpty_8220w")
 text = "Drag"
-flat = true
 icon_alignment = 1
 expand_icon = true
 

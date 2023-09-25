@@ -9,6 +9,8 @@ func _ready() -> void:
         %Tabletops.hide()
         %Settings.hide()
     Global.load_this_game = PackedByteArray([])
+    randomize()
+    %Splash.text = Global.SPLASHES[randi_range(0, len(Global.SPLASHES) - 1)]
 
 func _on_new_game_pressed() -> void:
     $FadeRect.scene_transition.emit("res://src/scenes/ui/pages/new_game.tscn")
