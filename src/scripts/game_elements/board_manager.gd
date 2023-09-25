@@ -25,17 +25,12 @@ func notify_ready(id: int) -> void:
     print("%d received ready from %d" % [multiplayer.get_unique_id(), id])
     if multiplayer.is_server():
         peer_ready.emit(id)
-    elif id == 1:
-        server_ready.emit()
 
 func _ready() -> void:
     if multiplayer.is_server():
-        print("Server notifying ready")
-        notify_ready.rpc(1)
         make_tabletop()
     else:
-        await server_ready
-        print("Server is ready. Let's go!")
+        await get_tree().create_timer(0.5).timeout
         print("Client notifying ready")
         notify_ready.rpc(multiplayer.get_unique_id())
 
