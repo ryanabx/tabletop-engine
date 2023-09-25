@@ -22,6 +22,7 @@ signal server_ready()
 
 @rpc("any_peer","call_remote","reliable")
 func notify_ready(id: int) -> void:
+    print("%d received ready from %d" % [multiplayer.get_unique_id(), id])
     if multiplayer.is_server():
         peer_ready.emit(id)
     elif id == 1:
@@ -29,13 +30,17 @@ func notify_ready(id: int) -> void:
 
 func _ready() -> void:
     if multiplayer.is_server():
+        print("Server notifying ready")
         notify_ready.rpc(1)
         make_tabletop()
     else:
         await server_ready
+        print("Server is ready. Let's go!")
+        print("Client notifying ready")
         notify_ready.rpc(multiplayer.get_unique_id())
 
 func make_tabletop() -> void:
+    print("Waiting for peers to be ready...")
     while peers_ready != multiplayer.get_peers().size():
         var id: int = await peer_ready
         print("Peer ",id, " is ready!")
@@ -49,6 +54,7 @@ func remove_tabletop() -> void:
     return
 
 func load_game_config() -> void:
+    print("Loading Game Config")
     await remove_tabletop()
     if not multiplayer.is_server():
         return
@@ -74,6 +80,7 @@ func receive_config_part(bytes: PackedByteArray, final: bool) -> void:
         spawn_board()
 
 func spawn_board() -> void:
+    print("Spawning board!")
     var gc: TabletopGame = TabletopGame.import_config(config_bytes)
     var board_new: Board = load("res://src/scenes/game_elements/board.tscn").instantiate()
     board_new.game = gc

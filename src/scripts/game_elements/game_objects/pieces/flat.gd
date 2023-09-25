@@ -16,8 +16,8 @@ var image_down: String = ""
 var face_up: bool:
     set(val):
         face_up = val
-        add_to_property_changes("face_up", val)
         _refresh_image()
+        add_to_property_changes("face_up", val)
 
 func _on_multiplayer_synchronizer_synchronized() -> void:
     _refresh_image()

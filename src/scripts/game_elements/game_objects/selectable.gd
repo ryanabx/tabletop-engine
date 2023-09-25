@@ -32,7 +32,6 @@ func _get_shareable_properties() -> Array:
 
 var selected: int = 0:
     set(val):
-        _authority = multiplayer.get_unique_id()
         selected = val
         if val != 0:
             area2d.collision_layer = 2
@@ -44,7 +43,6 @@ var selected: int = 0:
 
 var queued: int = 0:
     set(val):
-        _authority = multiplayer.get_unique_id()
         queued = val
         add_to_property_changes("queued", queued)
     get:
@@ -53,6 +51,8 @@ var queued: int = 0:
 func _on_select(_event:InputEvent) -> void:
     if selected == 0 and queued == 0:
         board.get_player().queue_select_object(self)
+    else:
+        print("Selected: %d, Queued: %d" % [selected, queued])
 
 func _on_deselect(_event: InputEvent) -> void:
     board.get_player().stack_selection_to_item(self)

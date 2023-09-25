@@ -240,6 +240,7 @@ func queue_select_object(obj: Selectable) -> void:
     if object_queued():
         deselect()
     if obj.queued == 0 and obj.selected == 0:
+        obj._authority = multiplayer.get_unique_id()
         _taps_since_selecting = 0
         print("Taps since selecting = 0")
         obj.move_self_to_top()
