@@ -92,8 +92,12 @@ func _input(event: InputEvent) -> void:
         drag_input(ev)
 
 func _update_highlighted(event: InputEvent) -> void:
-    if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+    if board.touch_type == Board.TouchType.DRAG and event is InputEventMouseButton:
         return
+    if board.touch_type == Board.TouchType.TAP and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+        _highlighted_object = null
+        return
+    
     if _poll_num == 0 or event is InputEventMouseButton:
         _highlighted_object = _get_collider_at_position()
     _poll_num = (_poll_num + 1) % POLLING_RATE

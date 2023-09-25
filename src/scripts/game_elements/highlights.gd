@@ -10,9 +10,10 @@ func _draw() -> void:
     
 func draw_player_stuff() -> void:
     if board.get_player().is_selecting():
-        draw_colored_polygon(
-            board.get_player().get_selected_object().get_extents(),
-            Color.GREEN * Color(1,1,1,0.2)
+        draw_polyline(
+            board.get_player().get_selected_object().get_polyline_extents(),
+            Color.GREEN * Color(1,1,1,0.8),
+            3
             )
     if board.get_player().object_queued():
         if board.get_player().get_queued_object() is Hand:

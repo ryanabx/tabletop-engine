@@ -143,8 +143,7 @@ func _find_spacing_interval() -> void:
 
 func _find_selectable_piece(pos: Vector2, check_boundaries: bool = true) -> void:
     if board.input_mode == Board.InputMode.CAMERA or (check_boundaries and (absf(pos.y) > size.y / 2.0 or absf(pos.x) > (size.x / 2.0))):
-        _selectable_piece = -1
-        _droppable_index = -1
+        _reset_selectable_piece()
         return
 
     var check := ((pos.x + (size.x / 2.0) - (size_pieces.x / 2.0)) / (size.x - size_pieces.x)) * inside.size()
@@ -154,12 +153,19 @@ func _find_selectable_piece(pos: Vector2, check_boundaries: bool = true) -> void
 
     # print("selectable object set to ",_selectable_piece)
 
+func _reset_selectable_piece() -> void:
+    _selectable_piece = -1
+    _droppable_index = -1
+
 func _process(delta: float) -> void:
     queue_redraw()
     _find_spacing_interval()
     if queued == 0 and selected == 0:
         _card_to_select = -1
-        _find_selectable_piece(get_local_mouse_position())
+        if board.touch_type == Board.TouchType.DRAG or (board.touch_type == Board.TouchType.TAP and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)):
+            _find_selectable_piece(get_local_mouse_position())
+        else:
+            _reset_selectable_piece()
     else:
         _selectable_piece = _card_to_select
     super._process(delta)

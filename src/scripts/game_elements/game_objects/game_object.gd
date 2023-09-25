@@ -73,6 +73,10 @@ func move_self_to_back() -> void:
 func get_extents() -> PackedVector2Array:
     return get_main_transform() * shape
 
+func get_polyline_extents() -> PackedVector2Array:
+    var arr: PackedVector2Array = get_extents()
+    return arr + PackedVector2Array([arr[0]])
+
 func get_main_transform() -> Transform2D:
     return Transform2D(rotation, size, 0.0, position)
 
