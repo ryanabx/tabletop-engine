@@ -50,7 +50,7 @@ custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
 
 [node name="TopBar" type="PanelContainer" parent="SafeMargins"]
-custom_minimum_size = Vector2(0, 84)
+custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 size_flags_vertical = 0
 
@@ -78,7 +78,7 @@ metadata/_edit_use_anchors_ = true
 
 [node name="MenuButton" type="MenuButton" parent="SafeMargins/TopBar/HBoxContainer/MenuPanel"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(96, 0)
+custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 icon = ExtResource("7_f3h7v")
 flat = false
@@ -95,7 +95,7 @@ metadata/_edit_use_anchors_ = true
 
 [node name="InputModeButton" type="Button" parent="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel2"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(128, 0)
+custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_8220w")
 icon = ExtResource("3_6psu3")
@@ -110,7 +110,7 @@ metadata/_edit_use_anchors_ = true
 [node name="TouchTypeButton" type="Button" parent="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel3"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 32
 theme_override_styles/focus = SubResource("StyleBoxEmpty_8220w")
 text = "Drag"
 icon_alignment = 1

@@ -100,6 +100,7 @@ static var safe_margin_b: int = 0
 
 const TRANSITION_TIME_IN: float = 0.125
 const TRANSITION_TIME_OUT: float = 0.125
+const TRANSITION_TIME_WAIT: float = 0.1
 
 # THEMING GLOBALS
 

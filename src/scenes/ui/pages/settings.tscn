@@ -1,8 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://c2aks78wf35pe"]
+[gd_scene load_steps=5 format=3 uid="uid://c2aks78wf35pe"]
 
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/components/fade_rect.tscn" id="1_0uyf7"]
 [ext_resource type="Script" path="res://src/scripts/ui/pages/settings.gd" id="1_6gtrg"]
-[ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/safe_margins.tscn" id="2_868ow"]
+[ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/components/safe_margins.tscn" id="2_868ow"]
 [ext_resource type="Texture2D" uid="uid://pgsxe1dk7qmx" path="res://src/resources/assets/ui/arrow-to-left.svg" id="5_efvg1"]
 
 [node name="Settings" type="Control"]
@@ -59,7 +59,7 @@ text = "Toggle Fullscreen"
 layout_mode = 2
 
 [node name="BackButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(164, 164)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 8
@@ -69,7 +69,6 @@ expand_icon = true
 [node name="FadeRect" parent="." instance=ExtResource("1_0uyf7")]
 layout_mode = 2
 anchors_preset = 0
-mouse_filter = 2
 
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer/View/HBoxContainer/ToggleFullscreen" to="." method="_on_toggle_fullscreen_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
