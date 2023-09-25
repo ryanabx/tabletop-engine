@@ -71,7 +71,7 @@ func _process(_delta: float) -> void:
     sprite.scale = size / sprite.texture.get_size()
 
 func _draw() -> void:
-    draw_polyline(collision_polygon.polygon + PackedVector2Array([collision_polygon.polygon[0]]), Color.WHITE, Global.COLLECTION_OUTLINE)
+    draw_polyline(collision_polygon.polygon + PackedVector2Array([collision_polygon.polygon[0]]), Color.WHITE * Color(1.0, 1.0, 1.0, 0.3), Global.COLLECTION_OUTLINE)
 
 func _clear_inside() -> void:
     super._clear_inside()

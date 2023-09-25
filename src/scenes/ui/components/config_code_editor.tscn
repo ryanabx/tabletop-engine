@@ -4,7 +4,7 @@
 
 [node name="ConfigCode" type="CodeEdit"]
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 24
 highlight_all_occurrences = true
 highlight_current_line = true
 draw_tabs = true

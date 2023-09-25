@@ -88,11 +88,14 @@ func _draw_piece(_data: Dictionary, selectable: bool, _position: Vector2, _size:
     draw_texture_rect(_texture, Rect2(_position - _size / 2, _size), false)
 
 func _get_selected_range() -> Rect2:
-    var card_position: Vector2 = Vector2(
-            lerp(get_rect().position.x + size_pieces.x / 2.0, get_rect().end.x - size_pieces.x / 2.0, (_selectable_piece + 0.5) / inside.size()),
-            get_rect().get_center().y
+    if _selectable_piece == -1:
+        return Rect2(0, 0, 0, 0)
+    var _position: Vector2 = Vector2(
+        lerp(get_rect().position.x + size_pieces.x / 2.0, get_rect().end.x - size_pieces.x / 2.0, (_selectable_piece + 0.5) / inside.size()),
+        get_rect().get_center().y
     )
-    return Rect2(to_global(card_position - size_pieces / 2.0), size_pieces * 1.1)
+    var _size := size_pieces * 1.1
+    return Rect2(to_global(_position - _size / 2), _size)
 
 func can_view() -> bool:
     match visibility:
