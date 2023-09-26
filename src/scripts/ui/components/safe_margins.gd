@@ -8,7 +8,7 @@ func _ready() -> void:
     orientation_changed.connect(_screen_orientation_changed)
 
 func _process(_delta: float) -> void:
-    if (current_safe_area != DisplayServer.get_display_safe_area() and Global.is_mobile_platform()):
+    if (current_safe_area != DisplayServer.get_display_safe_area() and not Global.is_desktop_platform()):
         on_screen_orientation_changed()
 
 func _screen_orientation_changed() -> void:
