@@ -57,6 +57,7 @@ func _process(_delta: float) -> void:
         game_name = board.game.name
         input_mode_button.icon = input_mode_textures[board.input_mode]
         touch_type_button.text = touch_types[board.touch_type]
+        touch_type_button.visible = board.input_mode == Board.InputMode.SELECT
 
 var drag_window: bool = false
 var start_position: Vector2 = Vector2.ZERO

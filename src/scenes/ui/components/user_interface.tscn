@@ -155,7 +155,8 @@ horizontal_alignment = 1
 [node name="MultiplatformControls" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="3"]
 layout_mode = 2
 bbcode_enabled = true
-text = "[i]SELECT MODE[/i]
+text = "[i]In select mode...[/i]
+
 In [b]Drag Mode[/b], left click/tap and drag to select and move an object.
 
 In [b]Tap Mode[/b], left click/tap on a card to select it. Then, once the object is selected, you may left click/tap and drag the card as you would in drag mode.
@@ -175,7 +176,8 @@ layout_mode = 2
 bbcode_enabled = true
 text = "[b]KEYBOARD CONTROLS[/b]
 
-[i]ANY MODE[/i]
+[i]In camera or select mode...[/i]
+
 [b](W,A,S,D):[/b] Pan Camera
 [b](Q,E):[/b] Rotate Camera
 [b](Z,C):[/b] Zoom Camera
@@ -184,7 +186,8 @@ text = "[b]KEYBOARD CONTROLS[/b]
 
 [b]MOUSE CONTROLS[/b]
 
-[i][CAMERA MODE][/i]
+[i]In camera mode...[/i]
+
 [b]Click and drag:[/b] Pan Camera.
 "
 fit_content = true
@@ -198,7 +201,8 @@ horizontal_alignment = 1
 [node name="TouchscreenControls" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="7"]
 layout_mode = 2
 bbcode_enabled = true
-text = "[i]CAMERA MODE[/i]
+text = "[i]In camera mode...[/i]
+
 [b]One-finger touch and drag:[/b] Pan camera.
 [b]Two-finger touch and drag:[/b] Pan, zoom, and rotate camera.
 
