@@ -126,13 +126,33 @@ unique_name_in_owner = true
 title = "Controls"
 visible = false
 
-[node name="Multiplatform" type="Label" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="0"]
+[node name="Modes" type="Label" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="0"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Different Modes"
+horizontal_alignment = 1
+
+[node name="ModesInfo" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="1"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[img width=32]res://src/resources/assets/ui/move.svg[/img] [i]CAMERA MODE[/i] - Allows camera to be moved
+[img width=32]res://src/resources/assets/ui/cursor.svg[/img] [i]SELECT MODE[/i] - Allows selecting of objects.
+
+[i]In select mode...
+
+[b]Drag Mode[/b] - Denoted by \"Drag\", click/tap down on an object and without unclicking/tapping, drag to select and move an object.
+
+[b]Tap Mode[/b] - Denoted by \"Tap\", click/tap down on an object and unclick/tap to select. Then, click/tap down on the selected object and drag to move the object.
+"
+fit_content = true
+
+[node name="Multiplatform" type="Label" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="2"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "Multiplatform Controls"
 horizontal_alignment = 1
 
-[node name="MultiplatformControls" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="1"]
+[node name="MultiplatformControls" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="3"]
 layout_mode = 2
 bbcode_enabled = true
 text = "[i]SELECT MODE[/i]
@@ -140,16 +160,17 @@ In [b]Drag Mode[/b], left click/tap and drag to select and move an object.
 
 In [b]Tap Mode[/b], left click/tap on a card to select it. Then, once the object is selected, you may left click/tap and drag the card as you would in drag mode.
 
-In [b]any mode[/b], double click/double tap to open an object's context menu."
+In [b]any mode[/b], double click/double tap to open an object's context menu.
+"
 fit_content = true
 
-[node name="KeyboardMouse" type="Label" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="2"]
+[node name="KeyboardMouse" type="Label" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="4"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "Keyboard/Mouse-only Controls"
 horizontal_alignment = 1
 
-[node name="KeyboardMouseControls" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="3"]
+[node name="KeyboardMouseControls" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="5"]
 layout_mode = 2
 bbcode_enabled = true
 text = "[b]KEYBOARD CONTROLS[/b]
@@ -164,17 +185,17 @@ text = "[b]KEYBOARD CONTROLS[/b]
 [b]MOUSE CONTROLS[/b]
 
 [i][CAMERA MODE][/i]
-[b]Click and drag:[/b] Pan Camera
+[b]Click and drag:[/b] Pan Camera.
 "
 fit_content = true
 
-[node name="Touchscreen" type="Label" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="4"]
+[node name="Touchscreen" type="Label" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="6"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "Touchscreen-only Controls"
 horizontal_alignment = 1
 
-[node name="TouchscreenControls" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="5"]
+[node name="TouchscreenControls" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="7"]
 layout_mode = 2
 bbcode_enabled = true
 text = "[i]CAMERA MODE[/i]

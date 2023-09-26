@@ -10,6 +10,7 @@ bg_color = Color(0.101961, 0.101961, 0.101961, 1)
 title = "Info"
 initial_position = 2
 size = Vector2i(800, 460)
+exclusive = true
 min_size = Vector2i(800, 460)
 max_size = Vector2i(800, 460)
 theme = ExtResource("1_h3v42")
