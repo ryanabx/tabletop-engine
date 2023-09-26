@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://d0vc77qt75rbf"]
+[gd_scene load_steps=6 format=3 uid="uid://d0vc77qt75rbf"]
 
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/components/safe_margins.tscn" id="1_kgect"]
 [ext_resource type="Script" path="res://src/scripts/ui/pages/about.gd" id="1_yt1xm"]
+[ext_resource type="PackedScene" uid="uid://b3gif3e78a12h" path="res://src/scenes/ui/components/about_information.tscn" id="3_8x7ue"]
 [ext_resource type="Texture2D" uid="uid://pgsxe1dk7qmx" path="res://src/resources/assets/ui/arrow-to-left.svg" id="3_dlpmv"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/components/fade_rect.tscn" id="4_k4us2"]
 
@@ -20,28 +21,12 @@ layout_mode = 1
 [node name="MarginContainer" type="MarginContainer" parent="SafeMargins"]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer"]
+[node name="AboutInformation" parent="SafeMargins/MarginContainer" instance=ExtResource("3_8x7ue")]
 layout_mode = 2
-alignment = 1
-
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "Tabletop Engine"
-horizontal_alignment = 1
-
-[node name="VersionNumber" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Version x.x.x"
-horizontal_alignment = 1
-
-[node name="Label3" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "Copyright Ryanabx 2023"
-horizontal_alignment = 1
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="SafeMargins/MarginContainer"]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer2"]
 layout_mode = 2

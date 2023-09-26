@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://ma7a666pl2us"]
+[gd_scene load_steps=10 format=3 uid="uid://ma7a666pl2us"]
 
 [ext_resource type="Script" path="res://src/scripts/ui/components/user_interface.gd" id="1_u2rch"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/components/safe_margins.tscn" id="2_i3s0x"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bbdahmmv0yxai" path="res://src/scenes/ui/components/content_window.tscn" id="6_80c06"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/components/fade_rect.tscn" id="6_aaf8p"]
 [ext_resource type="Texture2D" uid="uid://cnxcvuvev4a5d" path="res://src/resources/assets/ui/burger-menu.svg" id="7_f3h7v"]
+[ext_resource type="PackedScene" uid="uid://b3gif3e78a12h" path="res://src/scenes/ui/components/about_information.tscn" id="7_pwr8a"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_h871r"]
 
@@ -128,7 +129,7 @@ visible = false
 
 [node name="Modes" type="Label" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="0"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 48
 text = "Different Modes"
 horizontal_alignment = 1
 
@@ -146,13 +147,16 @@ text = "[img width=32]res://src/resources/assets/ui/move.svg[/img] [i]CAMERA MOD
 "
 fit_content = true
 
-[node name="Multiplatform" type="Label" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="2"]
+[node name="HSeparator" type="HSeparator" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="2"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+
+[node name="Multiplatform" type="Label" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="3"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
 text = "Multiplatform Controls"
 horizontal_alignment = 1
 
-[node name="MultiplatformControls" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="3"]
+[node name="MultiplatformControls" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="4"]
 layout_mode = 2
 bbcode_enabled = true
 text = "[i]In select mode...[/i]
@@ -165,13 +169,16 @@ In [b]any mode[/b], double click/double tap to open an object's context menu.
 "
 fit_content = true
 
-[node name="KeyboardMouse" type="Label" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="4"]
+[node name="HSeparator2" type="HSeparator" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="5"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+
+[node name="KeyboardMouse" type="Label" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="6"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
 text = "Keyboard/Mouse-only Controls"
 horizontal_alignment = 1
 
-[node name="KeyboardMouseControls" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="5"]
+[node name="KeyboardMouseControls" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="7"]
 layout_mode = 2
 bbcode_enabled = true
 text = "[b]KEYBOARD CONTROLS[/b]
@@ -192,13 +199,16 @@ text = "[b]KEYBOARD CONTROLS[/b]
 "
 fit_content = true
 
-[node name="Touchscreen" type="Label" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="6"]
+[node name="HSeparator3" type="HSeparator" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="8"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+
+[node name="Touchscreen" type="Label" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="9"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
 text = "Touchscreen-only Controls"
 horizontal_alignment = 1
 
-[node name="TouchscreenControls" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="7"]
+[node name="TouchscreenControls" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="10"]
 layout_mode = 2
 bbcode_enabled = true
 text = "[i]In camera mode...[/i]
@@ -209,7 +219,16 @@ text = "[i]In camera mode...[/i]
 "
 fit_content = true
 
+[node name="AboutWindow" parent="." instance=ExtResource("6_80c06")]
+unique_name_in_owner = true
+title = "About"
+visible = false
+
+[node name="AboutInformation" parent="AboutWindow/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="0" instance=ExtResource("7_pwr8a")]
+layout_mode = 2
+
 [connection signal="pressed" from="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel2/InputModeButton" to="." method="_on_input_setting_pressed"]
 [connection signal="pressed" from="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel3/TouchTypeButton" to="." method="_on_touch_type_button_pressed"]
 
 [editable path="ControlsInfo"]
+[editable path="AboutWindow"]

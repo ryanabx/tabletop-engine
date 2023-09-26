@@ -154,3 +154,5 @@ func help_menu_pressed(id: int) -> void:
     match id:
         0:
             %ControlsInfo.popup()
+        1:
+            %AboutWindow.popup()

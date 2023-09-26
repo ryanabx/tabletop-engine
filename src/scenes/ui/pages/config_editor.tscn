@@ -195,8 +195,10 @@ show_hidden_files = true
 unique_name_in_owner = true
 title = "WARNING"
 visible = false
+theme = ExtResource("7_lm2qt")
 
 [node name="Label" parent="OverwriteDialog/MarginContainer/VBoxContainer" index="0"]
+theme_override_font_sizes/font_size = 36
 text = "You are about to overwrite the current config being edited. Is this ok?"
 
 [node name="ConfigLoadedAlert" parent="." instance=ExtResource("9_4flkt")]
