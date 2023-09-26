@@ -15,9 +15,11 @@ config/description="A 2-dimensional virtual tabletop for all! Create board game 
 config/version="0.0.1"
 run/main_scene="res://src/scenes/ui/pages/main_menu.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
-boot_splash/bg_color=Color(0.164706, 0.172549, 0.192157, 1)
+boot_splash/bg_color=Color(0.0901961, 0.121569, 0.133333, 1)
 boot_splash/image="res://assets/banner.png"
+boot_splash/fullsize=false
 config/icon="res://assets/icon.png"
+boot_splash/minimum_display_time=100
 
 [debug]
 

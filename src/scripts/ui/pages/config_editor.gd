@@ -132,6 +132,5 @@ func _on_save_config_dialog_file_selected(path: String) -> void:
     f.close()
     print("Config created at ", path)
 
-
 func _on_overwrite_dialog_confirmed() -> void:
     import_config_to_editor()
