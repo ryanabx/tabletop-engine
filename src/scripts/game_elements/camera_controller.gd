@@ -23,6 +23,12 @@ func _game_loaded(_board: Board) -> void:
     board = _board
 
 func _input(event: InputEvent) -> void:
+    # Camera scrolling
+    if event.is_action_pressed("ui_zoom_in"):
+        zoom *= 1.1
+    if event.is_action_pressed("ui_zoom_out"):
+        zoom /= 1.1
+    # Everything else
     if board != null and board.input_mode == Board.InputMode.SELECT:
         current_points = {}
         return
@@ -83,11 +89,6 @@ func desktop_events(delta: float) -> void:
         zoom *= 1.0 + (1.5 * delta)
     if Input.is_action_pressed("camera_zoom_out"):
         zoom /= 1.0 + (1.5 * delta)
-    
-    if Input.is_action_just_pressed("ui_zoom_in"):
-        zoom *= 1.1
-    if Input.is_action_just_pressed("ui_zoom_out"):
-        zoom /= 1.1
     
     position += (Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down") * MOVEMENT_SPEED * delta).rotated(rotation)
     if board != null:

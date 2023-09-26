@@ -81,6 +81,7 @@ func _on_touch_type_button_pressed() -> void:
 
 @onready var player: PopupMenu
 @onready var actions: PopupMenu
+@onready var help_menu: PopupMenu
 
 func setup_menu_bar() -> void:
     if player != null:
@@ -91,6 +92,7 @@ func setup_menu_bar() -> void:
         await actions.tree_exited
     player_menu()
     actions_menu()
+    add_help_menu()
     tabletop_menu()
 
 func actions_menu() -> void:
@@ -113,6 +115,15 @@ func player_menu() -> void:
     menu_bar.get_popup().add_submenu_item("Player", "Player")
     for i: int in range(board.number_of_players):
         player.add_item(str("Player ",i+1))
+
+func add_help_menu() -> void:
+    help_menu = PopupMenu.new()
+    help_menu.index_pressed.connect(help_menu_pressed)
+    help_menu.name = "Help"
+    menu_bar.get_popup().add_child(help_menu)
+    menu_bar.get_popup().add_submenu_item("Help", "Help")
+    help_menu.add_item("Controls", 0)
+    help_menu.add_item("About Tabletop Engine", 1)
 
 func tabletop_menu() -> void:
     menu_bar.get_popup().id_pressed.connect(tabletop_pressed)
@@ -137,3 +148,8 @@ func tabletop_pressed(id: int) -> void:
         0: %FadeRect.scene_transition.emit("res://src/scenes/ui/pages/main_menu.tscn")
         1: get_tree().quit()
         2: get_tree().get_root().get_node("BoardManager").save_config()
+
+func help_menu_pressed(id: int) -> void:
+    match id:
+        0:
+            %ControlsInfo.popup()

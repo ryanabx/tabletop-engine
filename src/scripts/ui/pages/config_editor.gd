@@ -8,8 +8,8 @@ extends Control
 @onready var import_images_dialog: FileDialog = %ImportImagesDialog
 @onready var save_config_dialog: FileDialog = %SaveConfigDialog
 @onready var config_name: LineEdit = %ConfigName
-@onready var overwrite_dialog: ConfirmationDialog = %OverwriteDialog
-@onready var config_loaded_alert: AcceptDialog = %ConfigLoadedAlert
+@onready var overwrite_dialog: Window = %OverwriteDialog
+@onready var config_loaded_alert: Window = %ConfigLoadedAlert
 @onready var import_images_label: Label = %ImportImagesLabel
 
 

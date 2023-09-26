@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://ma7a666pl2us"]
+[gd_scene load_steps=9 format=3 uid="uid://ma7a666pl2us"]
 
 [ext_resource type="Script" path="res://src/scripts/ui/components/user_interface.gd" id="1_u2rch"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/components/safe_margins.tscn" id="2_i3s0x"]
 [ext_resource type="Texture2D" uid="uid://c4ngtvr2jxp2o" path="res://src/resources/assets/ui/move.svg" id="3_6psu3"]
+[ext_resource type="PackedScene" uid="uid://bbdahmmv0yxai" path="res://src/scenes/ui/components/content_window.tscn" id="6_80c06"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/components/fade_rect.tscn" id="6_aaf8p"]
 [ext_resource type="Texture2D" uid="uid://cnxcvuvev4a5d" path="res://src/resources/assets/ui/burger-menu.svg" id="7_f3h7v"]
 
@@ -120,5 +121,70 @@ expand_icon = true
 unique_name_in_owner = true
 layout_mode = 1
 
+[node name="ControlsInfo" parent="." instance=ExtResource("6_80c06")]
+unique_name_in_owner = true
+title = "Controls"
+visible = false
+
+[node name="Multiplatform" type="Label" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="0"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Multiplatform Controls"
+horizontal_alignment = 1
+
+[node name="MultiplatformControls" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="1"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[i]SELECT MODE[/i]
+In [b]Drag Mode[/b], left click/tap and drag to select and move an object.
+
+In [b]Tap Mode[/b], left click/tap on a card to select it. Then, once the object is selected, you may left click/tap and drag the card as you would in drag mode.
+
+In [b]any mode[/b], double click/double tap to open an object's context menu."
+fit_content = true
+
+[node name="KeyboardMouse" type="Label" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Keyboard/Mouse-only Controls"
+horizontal_alignment = 1
+
+[node name="KeyboardMouseControls" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="3"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[b]KEYBOARD CONTROLS[/b]
+
+[i]ANY MODE[/i]
+[b](W,A,S,D):[/b] Pan Camera
+[b](Q,E):[/b] Rotate Camera
+[b](Z,C):[/b] Zoom Camera
+
+[b](F):[/b] Flip selected object
+
+[b]MOUSE CONTROLS[/b]
+
+[i][CAMERA MODE][/i]
+[b]Click and drag:[/b] Pan Camera
+"
+fit_content = true
+
+[node name="Touchscreen" type="Label" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="4"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Touchscreen-only Controls"
+horizontal_alignment = 1
+
+[node name="TouchscreenControls" type="RichTextLabel" parent="ControlsInfo/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="5"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[i]CAMERA MODE[/i]
+[b]One-finger touch and drag:[/b] Pan camera.
+[b]Two-finger touch and drag:[/b] Pan, zoom, and rotate camera.
+
+"
+fit_content = true
+
 [connection signal="pressed" from="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel2/InputModeButton" to="." method="_on_input_setting_pressed"]
 [connection signal="pressed" from="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel3/TouchTypeButton" to="." method="_on_touch_type_button_pressed"]
+
+[editable path="ControlsInfo"]

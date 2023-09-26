@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://dbpkcwga3251w"]
+[gd_scene load_steps=9 format=3 uid="uid://dbpkcwga3251w"]
 
 [ext_resource type="Script" path="res://src/scripts/ui/components/config_selector.gd" id="1_0cw62"]
 [ext_resource type="Texture2D" uid="uid://dp7xutrajl5fw" path="res://src/resources/assets/ui/folder.svg" id="1_mshcn"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://4beyn2jx8qy6" path="res://src/resources/assets/ui/trash.svg" id="4_u4ikq"]
 [ext_resource type="Theme" uid="uid://5tyintmrnhfs" path="res://src/resources/styles/window/window_theme.tres" id="6_vysmk"]
 [ext_resource type="Texture2D" uid="uid://c4sv5wkd2de3o" path="res://src/resources/assets/ui/paste.svg" id="7_mfx0p"]
+[ext_resource type="PackedScene" uid="uid://bblvegt12shc8" path="res://src/scenes/ui/components/info_popup.tscn" id="8_3jx4r"]
 
 [node name="ConfigSelector" type="VBoxContainer"]
 anchors_preset = 15
@@ -63,9 +64,9 @@ icon_mode = 0
 unique_name_in_owner = true
 title = "Open a File"
 initial_position = 2
-size = Vector2i(1000, 640)
-min_size = Vector2i(1000, 640)
-max_size = Vector2i(1000, 640)
+size = Vector2i(1200, 600)
+min_size = Vector2i(1200, 600)
+max_size = Vector2i(1200, 600)
 theme = ExtResource("6_vysmk")
 ok_button_text = "Open"
 mode_overrides_title = false
@@ -77,11 +78,10 @@ filters = PackedStringArray("*.tbt")
 unique_name_in_owner = true
 title = "Download Config from URL"
 initial_position = 2
-size = Vector2i(1000, 640)
+size = Vector2i(800, 320)
 visible = false
-min_size = Vector2i(1000, 640)
-max_size = Vector2i(1000, 640)
-content_scale_factor = 2.0
+min_size = Vector2i(800, 320)
+max_size = Vector2i(800, 320)
 theme = ExtResource("6_vysmk")
 
 [node name="Control" type="Control" parent="DownloadConfigPanel"]
@@ -102,11 +102,7 @@ grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="DownloadConfigPanel/Control/MarginContainer"]
 layout_mode = 2
-
-[node name="Label" type="Label" parent="DownloadConfigPanel/Control/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "Download Config"
-horizontal_alignment = 1
+alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="DownloadConfigPanel/Control/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -115,6 +111,7 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 40
 placeholder_text = "URL"
 
 [node name="PasteLink" type="Button" parent="DownloadConfigPanel/Control/MarginContainer/VBoxContainer/HBoxContainer"]
@@ -127,21 +124,24 @@ expand_icon = true
 [node name="DownloadConfig" type="Button" parent="DownloadConfigPanel/Control/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 48
 text = "Download"
 
 [node name="URLCancel" type="Button" parent="DownloadConfigPanel/Control/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 48
 text = "Cancel"
 
-[node name="ImportConfigNotice" type="AcceptDialog" parent="."]
+[node name="ImportConfigNotice" parent="." instance=ExtResource("8_3jx4r")]
 unique_name_in_owner = true
-title = ""
-initial_position = 2
-size = Vector2i(1000, 640)
-min_size = Vector2i(1000, 640)
-max_size = Vector2i(1000, 640)
-dialog_text = "Warning! Configurations can run potentially dangerous code on your device! Make sure you trust the source of this configuration!"
-dialog_autowrap = true
+title = "External Configs"
+visible = false
+
+[node name="Label" parent="ImportConfigNotice/MarginContainer/VBoxContainer" index="0"]
+text = "Be careful with configs you get from other sources. Make sure you trust the source you get configs from!"
+
+[node name="OKButton" parent="ImportConfigNotice/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
+text = "I understand"
 
 [connection signal="pressed" from="HBoxContainer2/LoadConfFile" to="." method="_on_load_conf_file_pressed"]
 [connection signal="pressed" from="HBoxContainer2/LoadConfURL" to="." method="_on_load_conf_url_pressed"]
@@ -152,3 +152,5 @@ dialog_autowrap = true
 [connection signal="pressed" from="DownloadConfigPanel/Control/MarginContainer/VBoxContainer/HBoxContainer/PasteLink" to="." method="_on_paste_link_pressed"]
 [connection signal="pressed" from="DownloadConfigPanel/Control/MarginContainer/VBoxContainer/DownloadConfig" to="." method="_on_download_config_pressed"]
 [connection signal="pressed" from="DownloadConfigPanel/Control/MarginContainer/VBoxContainer/URLCancel" to="." method="_on_url_cancel_pressed"]
+
+[editable path="ImportConfigNotice"]

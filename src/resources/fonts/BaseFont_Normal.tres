@@ -1,0 +1,6 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://evcy34s8o261"]
+
+[ext_resource type="FontFile" uid="uid://dckj6m54dl0oe" path="res://src/resources/fonts/Inconsolata-VariableFont_wdth,wght.ttf" id="1_lai7v"]
+
+[resource]
+base_font = ExtResource("1_lai7v")

@@ -1,0 +1,52 @@
+[gd_scene load_steps=4 format=3 uid="uid://bblvegt12shc8"]
+
+[ext_resource type="Theme" uid="uid://5tyintmrnhfs" path="res://src/resources/styles/window/window_theme.tres" id="1_eh6wc"]
+[ext_resource type="Script" path="res://src/scripts/ui/components/info_popup.gd" id="2_blifc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_unn7n"]
+bg_color = Color(0.101961, 0.101961, 0.101961, 1)
+
+[node name="InfoPopup" type="Window"]
+title = "Info"
+initial_position = 2
+size = Vector2i(800, 460)
+min_size = Vector2i(800, 460)
+max_size = Vector2i(800, 460)
+theme = ExtResource("1_eh6wc")
+script = ExtResource("2_blifc")
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_unn7n")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "Information here"
+autowrap_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 10
+
+[node name="OKButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "OK"
+
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/OKButton" to="." method="_on_ok_button_pressed"]

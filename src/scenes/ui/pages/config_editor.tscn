@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://dw8r2fcefgfpk"]
+[gd_scene load_steps=10 format=3 uid="uid://dw8r2fcefgfpk"]
 
 [ext_resource type="Script" path="res://src/scripts/ui/pages/config_editor.gd" id="1_6vcsj"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/components/safe_margins.tscn" id="2_e8vj6"]
@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" uid="uid://chycn8r6thjep" path="res://src/scenes/ui/components/config_code_editor.tscn" id="5_a8e5x"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/components/fade_rect.tscn" id="5_gxamv"]
 [ext_resource type="Theme" uid="uid://5tyintmrnhfs" path="res://src/resources/styles/window/window_theme.tres" id="7_lm2qt"]
+[ext_resource type="PackedScene" uid="uid://c0llcvf8o40cn" path="res://src/scenes/ui/components/confirmation_popup.tscn" id="8_x7t25"]
+[ext_resource type="PackedScene" uid="uid://bblvegt12shc8" path="res://src/scenes/ui/components/info_popup.tscn" id="9_4flkt"]
 
 [node name="ConfigEditor" type="Control"]
 layout_mode = 3
@@ -189,23 +191,20 @@ theme = ExtResource("7_lm2qt")
 access = 2
 show_hidden_files = true
 
-[node name="OverwriteDialog" type="ConfirmationDialog" parent="."]
+[node name="OverwriteDialog" parent="." instance=ExtResource("8_x7t25")]
 unique_name_in_owner = true
-initial_position = 2
-size = Vector2i(1000, 640)
-min_size = Vector2i(1000, 640)
-max_size = Vector2i(1000, 640)
-dialog_text = "Warning: You are about to overwrite the current config being edited. Is this okay?"
-dialog_autowrap = true
+title = "WARNING"
+visible = false
 
-[node name="ConfigLoadedAlert" type="AcceptDialog" parent="."]
+[node name="Label" parent="OverwriteDialog/MarginContainer/VBoxContainer" index="0"]
+text = "You are about to overwrite the current config being edited. Is this ok?"
+
+[node name="ConfigLoadedAlert" parent="." instance=ExtResource("9_4flkt")]
 unique_name_in_owner = true
-title = "Config Loaded"
-initial_position = 2
-size = Vector2i(772, 640)
-min_size = Vector2i(0, 640)
-max_size = Vector2i(16384, 640)
-dialog_text = "Configuration loaded!"
+visible = false
+
+[node name="Label" parent="ConfigLoadedAlert/MarginContainer/VBoxContainer" index="0"]
+text = "Configuration was loaded!"
 
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox/HBoxContainer/SaveConfiguration" to="." method="_on_save_configuration_pressed"]
@@ -214,4 +213,7 @@ dialog_text = "Configuration loaded!"
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Configs/VBoxContainer/HBoxContainer/ImportConfig" to="." method="_on_import_configuration_pressed"]
 [connection signal="files_selected" from="ImportImagesDialog" to="." method="_on_import_images_dialog_files_selected"]
 [connection signal="file_selected" from="SaveConfigDialog" to="." method="_on_save_config_dialog_file_selected"]
-[connection signal="confirmed" from="OverwriteDialog" to="." method="_on_overwrite_dialog_confirmed"]
+[connection signal="pressed" from="OverwriteDialog/MarginContainer/VBoxContainer/HBoxContainer/OKButton" to="." method="_on_overwrite_dialog_confirmed"]
+
+[editable path="OverwriteDialog"]
+[editable path="ConfigLoadedAlert"]
