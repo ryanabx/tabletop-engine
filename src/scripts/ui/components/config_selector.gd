@@ -5,6 +5,8 @@ extends Control
 @onready var delete_button: Button = %DeleteSelected
 @onready var from_file_button: Button = %LoadConfFile
 
+var num_default_configs: int = 0
+
 func _ready() -> void:
     Global.load_this_game = PackedByteArray([])
     refresh_list()
@@ -24,18 +26,21 @@ func config_added() -> void:
 
 func refresh_list() -> void:
     config_list.clear()
-    config_list.add_item("Default Config")
-    for conf: String in get_available_configs():
+    var default_configs: Array[String] = get_available_configs(Global.DEFAULT_CONFIG_REPO)
+    num_default_configs = default_configs.size()
+    for conf: String in default_configs:
+        config_list.add_item(conf)
+    for conf: String in get_available_configs(Global.CONFIG_REPO):
         config_list.add_item(conf)
 
-func get_available_configs() -> Array[String]:
-    if not DirAccess.dir_exists_absolute(Global.CONFIG_REPO):
+func get_available_configs(path: String) -> Array[String]:
+    if not DirAccess.dir_exists_absolute(path):
         print("Directory doesn't exist!")
         return []
     
     var configs: Array[String] = []
 
-    var directory: DirAccess = DirAccess.open(Global.CONFIG_REPO)
+    var directory: DirAccess = DirAccess.open(path)
 
     for fname: String in directory.get_files():
         var split_fname: PackedStringArray = fname.rsplit(".",1)
@@ -57,15 +62,15 @@ func is_selecting_config() -> bool:
     return not config_list.get_selected_items().is_empty()
 
 func is_selecting_default_config() -> bool:
-    return is_selecting_config() and config_list.get_selected_items()[0] == 0
+    return is_selecting_config() and config_list.get_selected_items()[0] < num_default_configs
 
-func get_config_file_path(conf_name: String) -> String:
-    return str(Global.CONFIG_REPO,"/",conf_name,Global.CONFIG_EXTENSION)
+func get_config_file_path(conf_name: String, conf_dir: String) -> String:
+    return str(conf_dir,"/",conf_name,Global.CONFIG_EXTENSION)
 
 func _on_delete_selected_pressed() -> void:
     if is_selecting_config() and not is_selecting_default_config():
         var currently_selected: String = get_currently_selected_config()
-        DirAccess.remove_absolute(get_config_file_path(currently_selected))
+        DirAccess.remove_absolute(get_config_file_path(currently_selected, Global.CONFIG_REPO))
         refresh_list()
 
 func _on_load_conf_url_pressed() -> void:
@@ -75,10 +80,10 @@ func get_selected_config_bytes() -> PackedByteArray:
     if is_selecting_config():
         if is_selecting_default_config():
             print("Getting default config")
-            return get_file_bytes(Global.DEFAULT_CONFIG_PATH)
+            return get_file_bytes(get_config_file_path(get_currently_selected_config(), Global.DEFAULT_CONFIG_REPO))
         else:
             print("Getting given config")
-            return get_file_bytes(get_config_file_path(get_currently_selected_config()))
+            return get_file_bytes(get_config_file_path(get_currently_selected_config(), Global.CONFIG_REPO))
     return []
 
 func get_file_bytes(fname: String) -> PackedByteArray:

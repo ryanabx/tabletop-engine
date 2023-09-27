@@ -9,7 +9,15 @@ const SPLASHES: Array[String] = [
     'You have UNO, you fucking dick!',
     'Fruit salad, yummy yummy!',
     'Can I drown myself? -Jacob',
-    'Since your ass wanna act onions'
+    'Since your ass wanna act onions!',
+    'Constantly improving!',
+    'What will YOU create?',
+    'THIS IS THE SPLASH"; DROP TABLE Tabletops',
+    'The GD in GDScript stands for "Gosh Darn"!',
+    'Why are kids these days always on they puters...',
+    'Ryan does have great hair, I agree Minecraft!',
+    'https://www.youtube.com/watch?v=u9n-6ZDGUBs',
+    '90% of gamblers quit before making it big!'
 ]
 
 # MULTIPLAYER
@@ -128,9 +136,8 @@ const CURRENT_API_VERSION: int = 1
 # FILE PATHS
 
 const CONFIG_REPO: String = "user://configs"
+const DEFAULT_CONFIG_REPO: String = "res://configs"
 const CONFIG_EXTENSION: String = ".tbt"
-
-const DEFAULT_CONFIG_PATH: String = "res://configs/default%s" % CONFIG_EXTENSION
 
 const SETTINGS_PATH: String = "user://settings.json"
 

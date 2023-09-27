@@ -20,6 +20,10 @@ func draw_player_stuff() -> void:
             else:
                 draw_rect(
                     board.get_player().get_highlighted_object()._get_selected_range(),
+                    Color.BLACK * Color(1,1,1,0.2)
+                )
+                draw_rect(
+                    board.get_player().get_highlighted_object()._get_selected_range(),
                     Color.WHITE * Color(1,1,1,1.0),
                     false, 4
                 )
@@ -31,7 +35,10 @@ func draw_player_stuff() -> void:
                     Color.BLACK * Color(1,1,1,0.3)
                 )
             else:
-
+                draw_colored_polygon(
+                    board.get_player().get_highlighted_object().get_extents(),
+                    Color.BLACK * Color(1,1,1,0.2)
+                )
                 draw_polyline(
                     board.get_player().get_highlighted_object().get_polyline_extents(),
                     Color.WHITE * Color(1,1,1,1.0),
