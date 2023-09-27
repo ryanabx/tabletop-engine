@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="&quot;configs/default_tabletops/uno.gd&quot;" inherits="TabletopGame">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_create_cards">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_deal_cards">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="can_highlight">
+			<return type="bool" />
+			<param index="0" name="_highlighted" type="Selectable" />
+			<param index="1" name="_selected" type="Selectable" />
+			<description>
+			</description>
+		</method>
+		<method name="can_stack">
+			<return type="bool" />
+			<param index="0" name="from" type="Selectable" />
+			<param index="1" name="to" type="Selectable" />
+			<description>
+			</description>
+		</method>
+		<method name="game_start">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="get_actions">
+			<return type="String[]" />
+			<description>
+			</description>
+		</method>
+		<method name="run_action">
+			<return type="bool" />
+			<param index="0" name="action" type="String" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="hand_position" type="Vector2" setter="" getter="">
+		</member>
+	</members>
+	<constants>
+		<constant name="START_HAND" value="7">
+		</constant>
+		<constant name="BASE_SIZE" value="64">
+		</constant>
+		<constant name="HAND_SIZE" value="(512, 224)">
+		</constant>
+		<constant name="SIZE_PIECE" value="(160, 224)">
+		</constant>
+		<constant name="COLORS" value="[&quot;RED&quot;, &quot;BLUE&quot;, &quot;YELLOW&quot;, &quot;GREEN&quot;]">
+		</constant>
+		<constant name="CARD_TYPES" value="[&quot;0&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;6&quot;, &quot;7&quot;, &quot;8&quot;, &quot;9&quot;, &quot;DRAW2&quot;, &quot;SKIP&quot;, &quot;TURN&quot;]">
+		</constant>
+		<constant name="SPECIAL_CARDS" value="[&quot;DRAW4&quot;, &quot;WILD&quot;]">
+		</constant>
+		<constant name="ACTION_LIST" value="[&quot;Restart Game&quot;]">
+		</constant>
+	</constants>
+</class>

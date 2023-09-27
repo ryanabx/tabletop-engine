@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BoardPlayer" inherits="Node2D">
+	<brief_description>
+		#################### # Input Handling ### ####################
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_deselect_with_event">
+			<return type="void" />
+			<param index="0" name="event" type="InputEvent" />
+			<description>
+			</description>
+		</method>
+		<method name="_get_collider_at_position">
+			<return type="Selectable" />
+			<param index="0" name="pos" type="Vector2" default="&lt;unknown&gt;" />
+			<param index="1" name="collision_mask" type="int" default="1" />
+			<description>
+			</description>
+		</method>
+		<method name="_hold_timer_timeout">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_input">
+			<return type="void" />
+			<param index="0" name="event" type="InputEvent" />
+			<description>
+			</description>
+		</method>
+		<method name="_ready">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_select_collection">
+			<return type="void" />
+			<param index="0" name="collection" type="Collection" />
+			<description>
+			</description>
+		</method>
+		<method name="_select_with_event">
+			<return type="void" />
+			<param index="0" name="event" type="InputEvent" />
+			<description>
+			</description>
+		</method>
+		<method name="_swap">
+			<return type="void" />
+			<param index="0" name="pc1" type="Piece" />
+			<param index="1" name="contents" type="Dictionary" />
+			<description>
+			</description>
+		</method>
+		<method name="_update_highlighted">
+			<return type="void" />
+			<param index="0" name="event" type="InputEvent" />
+			<description>
+			</description>
+		</method>
+		<method name="collection_queued">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="compare_by_z_index">
+			<return type="bool" />
+			<param index="0" name="a" type="Dictionary" />
+			<param index="1" name="b" type="Dictionary" />
+			<description>
+			</description>
+		</method>
+		<method name="dequeue_object">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="deselect">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="deselect_object">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="double_tap_input">
+			<return type="void" />
+			<param index="0" name="event" type="InputEvent" />
+			<description>
+			</description>
+		</method>
+		<method name="drag_input">
+			<return type="void" />
+			<param index="0" name="event" type="InputEvent" />
+			<description>
+			</description>
+		</method>
+		<method name="get_highlighted_object">
+			<return type="Selectable" />
+			<description>
+			</description>
+		</method>
+		<method name="get_queued_object">
+			<return type="Selectable" />
+			<description>
+			</description>
+		</method>
+		<method name="get_selected_object">
+			<return type="Selectable" />
+			<description>
+			</description>
+		</method>
+		<method name="is_highlighting">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="is_selecting">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="is_selecting_collection">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="is_selecting_piece">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="move_objects_to">
+			<return type="void" />
+			<param index="0" name="pos" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="object_queued">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="piece_queued">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="queue_select_object">
+			<return type="void" />
+			<param index="0" name="obj" type="Selectable" />
+			<description>
+			</description>
+		</method>
+		<method name="rotate_selection">
+			<return type="void" />
+			<param index="0" name="amount" type="float" />
+			<param index="1" name="axis" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="select_object">
+			<return type="void" />
+			<param index="0" name="obj" type="Selectable" />
+			<description>
+			</description>
+		</method>
+		<method name="shuffle">
+			<return type="void" />
+			<param index="0" name="pcs" type="Piece[]" />
+			<description>
+				Shuffles objects
+			</description>
+		</method>
+		<method name="single_tap_input">
+			<return type="void" />
+			<param index="0" name="event" type="InputEvent" />
+			<description>
+			</description>
+		</method>
+		<method name="stack_on_collection">
+			<return type="void" />
+			<param index="0" name="item" type="Collection" />
+			<description>
+			</description>
+		</method>
+		<method name="stack_on_piece">
+			<return type="void" />
+			<param index="0" name="item" type="Piece" />
+			<description>
+			</description>
+		</method>
+		<method name="stack_selection_to_item">
+			<return type="void" />
+			<param index="0" name="item" type="Selectable" />
+			<description>
+			</description>
+		</method>
+		<method name="tap_pressed_drag">
+			<return type="void" />
+			<param index="0" name="event" type="InputEvent" />
+			<description>
+			</description>
+		</method>
+		<method name="tap_pressed_tap">
+			<return type="void" />
+			<param index="0" name="event" type="InputEvent" />
+			<description>
+			</description>
+		</method>
+		<method name="tap_released_drag">
+			<return type="void" />
+			<param index="0" name="event" type="InputEvent" />
+			<description>
+			</description>
+		</method>
+		<method name="tap_released_tap">
+			<return type="void" />
+			<param index="0" name="event" type="InputEvent" />
+			<description>
+			</description>
+		</method>
+		<method name="touch_input">
+			<return type="void" />
+			<param index="0" name="event" type="InputEvent" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="_highlighted_object" type="Selectable" setter="" getter="" default="null">
+		</member>
+		<member name="_poll_num" type="int" setter="" getter="" default="0">
+		</member>
+		<member name="_taps_since_selecting" type="int" setter="" getter="" default="0">
+		</member>
+		<member name="board" type="Board" setter="" getter="">
+		</member>
+		<member name="grab_position" type="Vector2" setter="" getter="" default="Vector2(0, 0)">
+		</member>
+		<member name="hold_timer" type="Timer" setter="" getter="">
+		</member>
+		<member name="input_events" type="Dictionary" setter="" getter="" default="&lt;unknown&gt;">
+		</member>
+		<member name="physics_state" type="PhysicsDirectSpaceState2D" setter="" getter="">
+		</member>
+		<member name="queued_object" type="Selectable" setter="" getter="" default="null">
+		</member>
+		<member name="select_index" type="int" setter="" getter="" default="-1">
+		</member>
+		<member name="selected_object" type="Selectable" setter="" getter="" default="null">
+		</member>
+	</members>
+	<constants>
+		<constant name="POLLING_RATE" value="2">
+		</constant>
+	</constants>
+</class>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="&quot;src/scripts/ui/pages/main_menu.gd&quot;" inherits="Control">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_on_about_pressed">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_new_game_pressed">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_quit_pressed">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_settings_pressed">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_tabletops_pressed">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_ready">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+	</methods>
+</class>

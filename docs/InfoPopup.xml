@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="InfoPopup" inherits="Window">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_on_close_requested">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_ok_button_pressed">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+	</methods>
+</class>

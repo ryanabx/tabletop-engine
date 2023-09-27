@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="&quot;configs/default_tabletops/basic_playing_cards.gd&quot;" inherits="TabletopGame">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="can_highlight">
+			<return type="bool" />
+			<param index="0" name="_highlighted" type="Selectable" />
+			<param index="1" name="_selected" type="Selectable" />
+			<description>
+				Determines whether the selectable object [param _highlighted] can be highlighted, optionally given [param _selected] object. This method may be optionally overridden. By default returns [true]
+			</description>
+		</method>
+		<method name="can_stack">
+			<return type="bool" />
+			<param index="0" name="_from" type="Selectable" />
+			<param index="1" name="_to" type="Selectable" />
+			<description>
+				Determines whether a selectable object can be stacked to another selectable object. This method may be optionally overridden. By default returns [true]
+			</description>
+		</method>
+		<method name="can_take_piece_off">
+			<return type="bool" />
+			<param index="0" name="_collection" type="Collection" />
+			<description>
+				Determines whether a piece can be taken off a collection. This method may be optionally overridden. By default returns [true]
+			</description>
+		</method>
+		<method name="game_start">
+			<return type="void" />
+			<description>
+				Called when the board wants the game to start. Should be used to create all the initial game objects. NOTE: Must be implemented by the configuration creator.
+			</description>
+		</method>
+		<method name="get_actions">
+			<return type="String[]" />
+			<description>
+				Returns the list of user actions. NOTE: Must be implemented by the configuration creator.
+			</description>
+		</method>
+		<method name="run_action">
+			<return type="bool" />
+			<param index="0" name="_action" type="String" />
+			<description>
+				Runs a specified action based off the action string, retrieved from get_actions() should return true if the action was successful, false otherwise. NOTE: Must be implemented by the configuration creator.
+			</description>
+		</method>
+	</methods>
+</class>

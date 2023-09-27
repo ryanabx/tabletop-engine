@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="Hand" inherits="Collection">
+	<brief_description>
+		hand.gd
+	</brief_description>
+	<description>
+		Defines a [class Collection] which displays its pieces in a row. Often useful for player's hands within a game.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_draw">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_draw_piece">
+			<return type="void" />
+			<param index="0" name="_data" type="Dictionary" />
+			<param index="1" name="selectable" type="bool" />
+			<param index="2" name="_position" type="Vector2" />
+			<param index="3" name="_size" type="Vector2" default="&lt;unknown&gt;" />
+			<description>
+				Draws a piece from data at a certain position
+			</description>
+		</method>
+		<method name="_draw_pieces">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_find_selectable_piece">
+			<return type="void" />
+			<param index="0" name="pos" type="Vector2" />
+			<param index="1" name="check_boundaries" type="bool" default="true" />
+			<description>
+			</description>
+		</method>
+		<method name="_find_spacing_interval">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_get_selected_range">
+			<return type="Rect2" />
+			<description>
+			</description>
+		</method>
+		<method name="_get_shareable_properties">
+			<return type="Array" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_select">
+			<return type="void" />
+			<param index="0" name="_event" type="InputEvent" />
+			<description>
+			</description>
+		</method>
+		<method name="_process">
+			<return type="void" />
+			<param index="0" name="delta" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="_reset_selectable_piece">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="add_collection">
+			<return type="void" />
+			<param index="0" name="coll" type="Collection" />
+			<param index="1" name="back" type="bool" default="false" />
+			<description>
+			</description>
+		</method>
+		<method name="add_piece">
+			<return type="void" />
+			<param index="0" name="piece" type="Piece" />
+			<param index="1" name="back" type="bool" default="false" />
+			<description>
+			</description>
+		</method>
+		<method name="can_view">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="remove_from_top">
+			<return type="Piece" />
+			<param index="0" name="pos" type="Vector2" default="Vector2(0, 0)" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="_card_to_select" type="int" setter="" getter="" default="-1">
+		</member>
+		<member name="_droppable_index" type="int" setter="" getter="" default="-1">
+		</member>
+		<member name="_selectable_piece" type="int" setter="" getter="" default="-1">
+		</member>
+		<member name="_spacing_interval" type="float" setter="" getter="" default="1.0">
+		</member>
+		<member name="designated_players" type="Array" setter="" getter="" default="&lt;unknown&gt;">
+			If visibility is set to [member Hand.VisibilitySetting.DESIGNATED] or [member Hand.VisibilitySetting.NOT_DESIGNATED], the visibility will be determined by the player numbers defined here.
+		</member>
+		<member name="layering_factor" type="float" setter="" getter="" default="0.9">
+			Determines the overlap between pieces when space is not limited. When space is limited (i.e. too many pieces), then this option is ignored.
+		</member>
+		<member name="size_option" type="int" setter="" getter="" enum="Hand.SizeOption" default="0">
+		</member>
+		<member name="size_pieces" type="Vector2" setter="" getter="" default="Vector2(1, 1)">
+			Determines the fixed size of each [class Piece] displayed in this hand.
+		</member>
+		<member name="visibility" type="int" setter="" getter="" enum="Hand.VisibilitySetting" default="1">
+			Determines the visibility of the hand. See [enum Hand.VisibilitySetting]
+		</member>
+	</members>
+	<constants>
+		<constant name="ALL" value="0" enum="VisibilitySetting">
+		</constant>
+		<constant name="DESIGNATED" value="1" enum="VisibilitySetting">
+		</constant>
+		<constant name="NOT_DESIGNATED" value="2" enum="VisibilitySetting">
+		</constant>
+		<constant name="NONE" value="3" enum="VisibilitySetting">
+		</constant>
+		<constant name="FIXED_LAYER" value="0" enum="SizeOption">
+		</constant>
+		<constant name="FIXED_RESIZE" value="1" enum="SizeOption">
+		</constant>
+		<constant name="GROW_FIXED" value="2" enum="SizeOption">
+		</constant>
+		<constant name="GROW_UNLIMITED" value="3" enum="SizeOption">
+		</constant>
+	</constants>
+</class>

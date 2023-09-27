@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="Board" inherits="Node2D">
+	<brief_description>
+		Board is the main class interfaced with by any TabletopGame.
+	</brief_description>
+	<description>
+		The board contains utility functions that are used for operating on the currently running tabletop.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_draw">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_game_load_finished">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_game_load_started">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_game_percent_loaded">
+			<return type="void" />
+			<param index="0" name="pc" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="_get_image">
+			<return type="Texture2D" />
+			<param index="0" name="path" type="String" />
+			<description>
+			</description>
+		</method>
+		<method name="_instantiate_by_type">
+			<return type="GDScript" />
+			<param index="0" name="type" type="int" enum="Board.GameObjectType" />
+			<description>
+			</description>
+		</method>
+		<method name="_is_ready">
+			<return type="void" />
+			<param index="0" name="id" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="_new_game_object_rpc">
+			<return type="void" />
+			<param index="0" name="type" type="int" enum="Board.GameObjectType" />
+			<param index="1" name="properties" type="Dictionary" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_sync_timer_timeout">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_process">
+			<return type="void" />
+			<param index="0" name="_delta" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="_ready">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="_set_player_id">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="clear_board">
+			<return type="void" />
+			<description>
+				Erases all the game objects on the board.
+			</description>
+		</method>
+		<method name="erase_object">
+			<return type="bool" />
+			<param index="0" name="object_name" type="String" />
+			<param index="1" name="recursive" type="bool" default="false" />
+			<description>
+				Finds and erases a specified GameObject by name. Use [param recursive] to specify whether nested game objects should be erased too. Returns [true] if the operation was successful, [false] otherwise.
+			</description>
+		</method>
+		<method name="get_all_objects">
+			<return type="GameObject[]" />
+			<description>
+				Gets a list of all game objects.
+			</description>
+		</method>
+		<method name="get_object">
+			<return type="GameObject" />
+			<param index="0" name="n" type="String" />
+			<description>
+				Finds a specified GameObject by name. Returns [null] if the GameObject cannot be found.
+			</description>
+		</method>
+		<method name="get_object_by_index">
+			<return type="GameObject" />
+			<param index="0" name="index" type="int" />
+			<description>
+				Finds a specified GameObject by index. Returns [null] if the index is out of bounds.
+			</description>
+		</method>
+		<method name="get_player">
+			<return type="BoardPlayer" />
+			<description>
+				Returns the player for this board instance.
+			</description>
+		</method>
+		<method name="move_piece">
+			<return type="void" />
+			<param index="0" name="from" type="Collection" />
+			<param index="1" name="to" type="Collection" />
+			<param index="2" name="from_ind" type="int" default="-1" />
+			<param index="3" name="to_ind" type="int" default="-1" />
+			<description>
+				Moves a piece from [param from] to [param to]. Optionally specify [param from_ind] as the index to take from, and [param to_ind] as the index to put in.
+			</description>
+		</method>
+		<method name="new_game_object">
+			<return type="GameObject" />
+			<param index="0" name="type" type="int" enum="Board.GameObjectType" />
+			<param index="1" name="properties" type="Dictionary" />
+			<description>
+				Creates a new object on the board, and returns a pointer to that object. Takes a [param type] from [enum Board.GameObjectType], to define the type of object to be created. A list of modifiable GameObject properties can be found in each GameObject's reference.
+			</description>
+		</method>
+		<method name="run_action">
+			<return type="void" />
+			<param index="0" name="action" type="int" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="_background_sprite" type="Sprite2D" setter="" getter="">
+		</member>
+		<member name="_board_objects" type="Node2D" setter="" getter="" default="&lt;unknown&gt;">
+		</member>
+		<member name="_board_player" type="BoardPlayer" setter="" getter="" default="&lt;unknown&gt;">
+		</member>
+		<member name="_counter" type="int" setter="" getter="" default="0">
+		</member>
+		<member name="_highlights" type="Node2D" setter="" getter="" default="&lt;unknown&gt;">
+		</member>
+		<member name="_ready_players" type="Array" setter="" getter="" default="&lt;unknown&gt;">
+		</member>
+		<member name="background" type="String" setter="@background_setter" getter="@background_getter" default="&quot;&quot;">
+		</member>
+		<member name="game" type="TabletopGame" setter="" getter="" default="null">
+			The currently running tabletop game script. If you are modding, this is the current game (your script)
+		</member>
+		<member name="input_mode" type="int" setter="" getter="" enum="Board.InputMode" default="1">
+			The selected input mode by the user. See [enum InputMode].
+		</member>
+		<member name="number_of_players" type="int" setter="" getter="">
+			A reference to the number of players currently in-game.
+		</member>
+		<member name="player_id" type="int" setter="" getter="">
+			The player number assigned to this user. Different from the assigned multiplayer ID.
+		</member>
+		<member name="size" type="Vector2" setter="" getter="" default="Vector2(1, 1)">
+			The size of the board.
+		</member>
+		<member name="touch_type" type="int" setter="" getter="" enum="Board.TouchType" default="&lt;unknown&gt;">
+			The selected touch type by the user. See [enum TouchType].
+		</member>
+	</members>
+	<signals>
+		<signal name="_create_context_menu">
+			<param index="0" name="obj" type="Selectable" />
+			<description>
+			</description>
+		</signal>
+		<signal name="property_sync">
+			<description>
+			</description>
+		</signal>
+	</signals>
+	<constants>
+		<constant name="FLAT" value="0" enum="GameObjectType">
+		</constant>
+		<constant name="DECK" value="1" enum="GameObjectType">
+		</constant>
+		<constant name="HAND" value="2" enum="GameObjectType">
+		</constant>
+		<constant name="MAX" value="3" enum="GameObjectType">
+		</constant>
+		<constant name="GAME_OBJECT_TYPE_STRING" value="[&quot;flat&quot;, &quot;deck&quot;, &quot;hand&quot;]">
+			Companion constant to [enum GameObjectType] that defines strings for each type.
+		</constant>
+		<constant name="CAMERA" value="0" enum="InputMode">
+		</constant>
+		<constant name="SELECT" value="1" enum="InputMode">
+		</constant>
+		<constant name="TAP" value="0" enum="TouchType">
+		</constant>
+		<constant name="DRAG" value="1" enum="TouchType">
+		</constant>
+	</constants>
+</class>

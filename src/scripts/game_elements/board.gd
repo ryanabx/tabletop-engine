@@ -207,6 +207,7 @@ func _ready() -> void:
     
     _board_player.board = self
     _highlights.board = self
+    game.board = self
 
     _background_sprite = Sprite2D.new()
     _background_sprite.z_index = -10
@@ -215,7 +216,6 @@ func _ready() -> void:
     get_viewport().set_physics_object_picking(true)
     get_viewport().set_physics_object_picking_sort(true)
 
-    game.add_board(self)
     _is_ready.rpc_id(1, multiplayer.get_unique_id())
 
 @rpc("any_peer","call_local","reliable")

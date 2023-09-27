@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="Selectable" inherits="GameObject">
+	<brief_description>
+		selectable.gd
+	</brief_description>
+	<description>
+		Defines an object that can be selected and moved by the player.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_get_shareable_properties">
+			<return type="Array" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_deselect">
+			<return type="void" />
+			<param index="0" name="_event" type="InputEvent" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_select">
+			<return type="void" />
+			<param index="0" name="_event" type="InputEvent" />
+			<description>
+			</description>
+		</method>
+		<method name="_process">
+			<return type="void" />
+			<param index="0" name="delta" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="_ready">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="area2d" type="Area2D" setter="" getter="">
+		</member>
+		<member name="collision_polygon" type="CollisionPolygon2D" setter="" getter="">
+		</member>
+		<member name="grab_offset" type="Vector2" setter="" getter="" default="Vector2(0, 0)">
+		</member>
+		<member name="lock_state" type="bool" setter="" getter="" default="false">
+			Whether or not state variables are locked, despite being selected or moved.
+		</member>
+		<member name="queued" type="int" setter="@queued_setter" getter="@queued_getter" default="0">
+		</member>
+		<member name="selected" type="int" setter="@selected_setter" getter="@selected_getter" default="0">
+		</member>
+	</members>
+</class>

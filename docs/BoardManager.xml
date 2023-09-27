@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BoardManager" inherits="Node">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_ready">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="load_game_config">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="make_tabletop">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="notify_ready">
+			<return type="void" />
+			<param index="0" name="id" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="receive_config_part">
+			<return type="void" />
+			<param index="0" name="bytes" type="PackedByteArray" />
+			<param index="1" name="final" type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="remove_tabletop">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="save_config">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="spawn_board">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="board" type="Board" setter="" getter="" default="null">
+		</member>
+		<member name="camera_controller" type="CameraController" setter="" getter="" default="&lt;unknown&gt;">
+		</member>
+		<member name="config_bytes" type="PackedByteArray" setter="" getter="" default="&lt;unknown&gt;">
+		</member>
+		<member name="peers_ready" type="int" setter="" getter="" default="0">
+		</member>
+		<member name="user_interface" type="UserInterface" setter="" getter="" default="&lt;unknown&gt;">
+		</member>
+	</members>
+	<signals>
+		<signal name="game_load_finished">
+			<param index="0" name="brd" type="Board" />
+			<description>
+			</description>
+		</signal>
+		<signal name="game_load_started">
+			<description>
+			</description>
+		</signal>
+		<signal name="game_percent_loaded">
+			<param index="0" name="pct" type="float" />
+			<description>
+			</description>
+		</signal>
+		<signal name="peer_ready">
+			<param index="0" name="id" type="int" />
+			<description>
+			</description>
+		</signal>
+		<signal name="server_ready">
+			<description>
+			</description>
+		</signal>
+	</signals>
+	<constants>
+		<constant name="MTU" value="1476">
+		</constant>
+	</constants>
+</class>

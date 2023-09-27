@@ -54,12 +54,11 @@ func refresh_images(images: Dictionary) -> void:
         gallery_image._set_type(ImageTexture.create_from_image(n_img), img)
         image_list.add_child(gallery_image)
 
-func add_images(images: Array) -> void:
-    for image: Texture2D in images:
+func add_images(result: Dictionary) -> void:
+    for key: String in result.keys():
         var gallery_image: GalleryImage = gallery_image_scene.instantiate()
-        gallery_image._set_type(image, "untitled")
+        gallery_image._set_type(result[key], key)
         image_list.add_child(gallery_image)
-
 
 func _on_import_configuration_pressed() -> void:
     if config_code.text != "" or config_name.text != "" or not image_list.get_children().is_empty():
@@ -80,12 +79,17 @@ func _on_import_images_pressed() -> void:
 
 func _on_import_images_dialog_files_selected(paths: PackedStringArray) -> void:
     # print("Importing images: ",paths)
+    add_images(load_images_into_dict(paths))
 
-    var new_images: Array = Global.load_images_into_array(paths)
-    if new_images.is_empty():
-        print("Something went wrong loading images")
-        return
-    add_images(new_images)
+func load_images_into_dict(paths: PackedStringArray) -> Dictionary:
+    var result: Dictionary = {}
+    for path in paths:
+        var img_name: String = path.simplify_path().rsplit("/",false,1)[-1].rsplit(".",false,1)[0]
+        print(img_name)
+        var img: Image = Image.load_from_file(path)
+        var texture: ImageTexture = ImageTexture.create_from_image(img)
+        result[img_name] = texture
+    return result
 
 
 func _on_save_configuration_pressed() -> void:
@@ -99,7 +103,7 @@ func get_images() -> Dictionary:
     for i: GalleryImage in image_list.get_children():
         if i.text in res:
             print("Duplicate name detected! ", i.text)
-            return {}
+            return {"empty": true}
         res[i.text] = i.texture.get_image().save_webp_to_buffer()
     return res
 
@@ -110,7 +114,7 @@ func export_data() -> PackedByteArray:
     var src_code: String = get_src_code()
     var images: Dictionary = get_images()
     var conf_name: String = get_conf_name()
-    if conf_name == "" or images.is_empty() or src_code == "":
+    if conf_name == "" or ("empty" in images and images["empty"] == true) or src_code == "":
         print("Config static validation failed")
         return []
     var bytes: PackedByteArray = TabletopGame.export_config(src_code, images, conf_name)
@@ -134,3 +138,11 @@ func _on_save_config_dialog_file_selected(path: String) -> void:
 
 func _on_overwrite_dialog_confirmed() -> void:
     import_config_to_editor()
+
+func _on_import_code_dialog_file_selected(path:String) -> void:
+    var code: String = FileAccess.get_file_as_string(path)
+    config_code.text = code
+
+
+func _on_import_code_pressed():
+    %ImportCodeDialog.popup()

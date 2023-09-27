@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="RightClickMenu" inherits="PopupMenu">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_game_load_finished">
+			<return type="void" />
+			<param index="0" name="board" type="Board" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_clicked_from_collection">
+			<return type="void" />
+			<param index="0" name="id" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_clicked_from_object">
+			<return type="void" />
+			<param index="0" name="id" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_collection_menu_created">
+			<return type="void" />
+			<param index="0" name="coll" type="Collection" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_menu_created">
+			<return type="void" />
+			<param index="0" name="obj" type="Selectable" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_piece_menu_created">
+			<return type="void" />
+			<param index="0" name="pc" type="Piece" />
+			<description>
+			</description>
+		</method>
+		<method name="_ready">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="init_collection_menu">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="init_piece_menu">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="reset_menu">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="_board" type="Board" setter="" getter="" default="null">
+		</member>
+		<member name="collection" type="Collection" setter="" getter="" default="null">
+		</member>
+		<member name="piece" type="Piece" setter="" getter="" default="null">
+		</member>
+	</members>
+</class>

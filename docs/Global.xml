@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="Global" inherits="RefCounted">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_save_settings" qualifiers="static">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="get_user_setting" qualifiers="static">
+			<return type="Variant" />
+			<param index="0" name="setting" type="String" />
+			<description>
+			</description>
+		</method>
+		<method name="is_desktop_platform" qualifiers="static">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="is_mobile_platform" qualifiers="static">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="is_web_platform" qualifiers="static">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="load_settings" qualifiers="static">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="set_user_setting" qualifiers="static">
+			<return type="void" />
+			<param index="0" name="setting" type="String" />
+			<param index="1" name="value" type="Variant" />
+			<description>
+			</description>
+		</method>
+		<method name="setup" qualifiers="static">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="_user_settings" type="Dictionary" setter="" getter="" default="&lt;unknown&gt;">
+		</member>
+		<member name="has_setup" type="bool" setter="" getter="" default="false">
+		</member>
+		<member name="load_this_game" type="PackedByteArray" setter="" getter="" default="&lt;unknown&gt;">
+		</member>
+		<member name="safe_margin_b" type="int" setter="" getter="" default="0">
+		</member>
+		<member name="safe_margin_l" type="int" setter="" getter="" default="0">
+		</member>
+		<member name="safe_margin_r" type="int" setter="" getter="" default="0">
+		</member>
+		<member name="safe_margin_t" type="int" setter="" getter="" default="0">
+		</member>
+	</members>
+	<constants>
+		<constant name="SPLASHES" value="[&quot;\&quot;Because fuck Tabletop Simulator\&quot;!&quot;, &quot;Vegan, if you so choose!&quot;, &quot;You have UNO, you fucking dick!&quot;, &quot;Fruit salad, yummy yummy!&quot;, &quot;Can I drown myself? -Jacob&quot;, &quot;Since your ass wanna act onions&quot;]">
+		</constant>
+		<constant name="DEFAULT_MAX_PLAYERS" value="4">
+		</constant>
+		<constant name="GRAB_THRESHOLD" value="40">
+		</constant>
+		<constant name="COLLECTION_OUTLINE" value="2">
+		</constant>
+		<constant name="ICE_SERVERS" value="{ &quot;iceServers&quot;: [{ &quot;urls&quot;: [&quot;stun.l.google.com:19302&quot;, &quot;iphone-stun.strato-iphone.de:3478&quot;, &quot;numb.viagenie.ca:3478&quot;, &quot;s1.taraba.net:3478&quot;, &quot;s2.taraba.net:3478&quot;, &quot;stun.12connect.com:3478&quot;, &quot;stun.12voip.com:3478&quot;, &quot;stun.1und1.de:3478&quot;, &quot;stun.2talk.co.nz:3478&quot;, &quot;stun.2talk.com:3478&quot;, &quot;stun.3clogic.com:3478&quot;, &quot;stun.3cx.com:3478&quot;, &quot;stun.a-mm.tv:3478&quot;, &quot;stun.aa.net.uk:3478&quot;, &quot;stun.acrobits.cz:3478&quot;] }, { &quot;urls&quot;: [&quot;stun:stun.relay.metered.ca:80&quot;] }, { &quot;urls&quot;: &quot;turn:numb.viagenie.ca&quot;, &quot;credential&quot;: &quot;muazkh&quot;, &quot;username&quot;: &quot;webrtc@live.com&quot; }, { &quot;urls&quot;: &quot;turn:192.158.29.39:3478?transport=udp&quot;, &quot;credential&quot;: &quot;JZEOEt2V3Qb0y27GRntt2u2PAYA=&quot;, &quot;username&quot;: &quot;28224511:1379330808&quot; }, { &quot;urls&quot;: &quot;turn:192.158.29.39:3478?transport=tcp&quot;, &quot;credential&quot;: &quot;JZEOEt2V3Qb0y27GRntt2u2PAYA=&quot;, &quot;username&quot;: &quot;28224511:1379330808&quot; }, { &quot;urls&quot;: &quot;turn:turn.bistri.com:80&quot;, &quot;credential&quot;: &quot;homeo&quot;, &quot;username&quot;: &quot;homeo&quot; }, { &quot;urls&quot;: &quot;turn:turn.anyfirewall.com:443?transport=tcp&quot;, &quot;credential&quot;: &quot;webrtc&quot;, &quot;username&quot;: &quot;webrtc&quot; }, { &quot;urls&quot;: &quot;turn:a.relay.metered.ca:80&quot;, &quot;username&quot;: &quot;b7153991e76085c83420f473&quot;, &quot;credential&quot;: &quot;S7apm/MC4QIFJG4C&quot; }, { &quot;urls&quot;: &quot;turn:a.relay.metered.ca:80?transport=tcp&quot;, &quot;username&quot;: &quot;b7153991e76085c83420f473&quot;, &quot;credential&quot;: &quot;S7apm/MC4QIFJG4C&quot; }, { &quot;urls&quot;: &quot;turn:a.relay.metered.ca:443&quot;, &quot;username&quot;: &quot;b7153991e76085c83420f473&quot;, &quot;credential&quot;: &quot;S7apm/MC4QIFJG4C&quot; }, { &quot;urls&quot;: &quot;turn:a.relay.metered.ca:443?transport=tcp&quot;, &quot;username&quot;: &quot;b7153991e76085c83420f473&quot;, &quot;credential&quot;: &quot;S7apm/MC4QIFJG4C&quot; }] }">
+		</constant>
+		<constant name="TRANSITION_TIME_IN" value="0.125">
+		</constant>
+		<constant name="TRANSITION_TIME_OUT" value="0.125">
+		</constant>
+		<constant name="TRANSITION_TIME_WAIT" value="0.1">
+		</constant>
+		<constant name="BASE_SCALE" value="1">
+		</constant>
+		<constant name="SCREEN_SIZE" value="(1280, 720)">
+		</constant>
+		<constant name="OUTLINE_THICKNESS" value="6">
+		</constant>
+		<constant name="THICKNESS_RATIO" value="0.8">
+		</constant>
+		<constant name="SELECTION_BOX_OUTLINE" value="2">
+		</constant>
+		<constant name="GAME_NAME_PADDING" value="2">
+		</constant>
+		<constant name="OBJECT_HIGHLIGHT_BORDER" value="2">
+		</constant>
+		<constant name="OBJECT_HIGHLIGHT_PADDING" value="6">
+		</constant>
+		<constant name="OBJECT_HIGHLIGHT_COLOR" value="(1, 1, 1, 1)">
+		</constant>
+		<constant name="GAME_VERSION" value="0.0.1">
+		</constant>
+		<constant name="CURRENT_API_VERSION" value="1">
+		</constant>
+		<constant name="CONFIG_REPO" value="user://configs">
+		</constant>
+		<constant name="CONFIG_EXTENSION" value=".tbt">
+		</constant>
+		<constant name="DEFAULT_CONFIG_PATH" value="res://configs/default.tbt">
+		</constant>
+		<constant name="SETTINGS_PATH" value="user://settings.json">
+		</constant>
+		<constant name="COLOR_TRANSPARENT_HIGHLIGHT" value="(1, 1, 1, 0.2)">
+		</constant>
+		<constant name="COLOR_SELECTED" value="(0.9412, 1, 1, 1)">
+		</constant>
+		<constant name="COLOR_HIGHLIGHTED" value="(0.9412, 0.9725, 1, 0.2)">
+		</constant>
+		<constant name="COLOR_PERMANENT" value="(0, 0, 0, 1)">
+		</constant>
+		<constant name="COLOR_SELECTION_BOX_BORDER" value="(0, 0, 1, 1)">
+		</constant>
+		<constant name="COLOR_SELECTION_BOX" value="(0, 0, 1, 0.2)">
+		</constant>
+		<constant name="DEFAULT_USER_SETTINGS" value="{ &quot;fullscreen&quot;: false }">
+		</constant>
+	</constants>
+</class>

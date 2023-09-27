@@ -33,6 +33,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="Settings" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
+visible = false
 layout_mode = 2
 
 [node name="SettingsVBox" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings"]
@@ -79,7 +80,6 @@ size_flags_horizontal = 3
 text = "Save Configuration"
 
 [node name="Code" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
-visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 0
@@ -92,6 +92,10 @@ layout_mode = 2
 [node name="ConfigCode" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Code/CodeVBox" instance=ExtResource("5_a8e5x")]
 unique_name_in_owner = true
 layout_mode = 2
+
+[node name="ImportCode" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Code/CodeVBox"]
+layout_mode = 2
+text = "Import code from *.gd file"
 
 [node name="Files" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs"]
 visible = false
@@ -169,20 +173,35 @@ layout_mode = 1
 
 [node name="ImportImagesDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true
-title = "Open File(s)"
+title = "Import images"
 initial_position = 2
 size = Vector2i(1000, 640)
 min_size = Vector2i(1000, 640)
 max_size = Vector2i(1000, 640)
 theme = ExtResource("7_lm2qt")
 ok_button_text = "Open"
+mode_overrides_title = false
 file_mode = 1
 access = 2
 filters = PackedStringArray("*.png", "*.webp", "*.jpg", "*.jpeg", "*.bmp", "*.svg", "*")
 show_hidden_files = true
 
+[node name="ImportCodeDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+title = "Import a Tabletop script"
+initial_position = 2
+size = Vector2i(1000, 640)
+min_size = Vector2i(1000, 640)
+max_size = Vector2i(1000, 640)
+theme = ExtResource("7_lm2qt")
+ok_button_text = "Open"
+mode_overrides_title = false
+file_mode = 0
+filters = PackedStringArray("*.gd")
+
 [node name="SaveConfigDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true
+title = "Save new configuration!"
 initial_position = 2
 size = Vector2i(1000, 640)
 min_size = Vector2i(1000, 640)
@@ -210,10 +229,12 @@ text = "Configuration was loaded!"
 
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox/HBoxContainer/SaveConfiguration" to="." method="_on_save_configuration_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Code/CodeVBox/ImportCode" to="." method="_on_import_code_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Files/ImportsVBox/HBoxContainer/ImportImagesButton" to="." method="_on_import_images_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Configs/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Configs/VBoxContainer/HBoxContainer/ImportConfig" to="." method="_on_import_configuration_pressed"]
 [connection signal="files_selected" from="ImportImagesDialog" to="." method="_on_import_images_dialog_files_selected"]
+[connection signal="file_selected" from="ImportCodeDialog" to="." method="_on_import_code_dialog_file_selected"]
 [connection signal="file_selected" from="SaveConfigDialog" to="." method="_on_save_config_dialog_file_selected"]
 [connection signal="pressed" from="OverwriteDialog/MarginContainer/VBoxContainer/HBoxContainer/OKButton" to="." method="_on_overwrite_dialog_confirmed"]
 
