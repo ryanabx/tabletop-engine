@@ -124,7 +124,7 @@ func add_help_menu() -> void:
     menu_bar.get_popup().add_child(help_menu)
     menu_bar.get_popup().add_submenu_item("Help", "Help")
     help_menu.add_item("Controls", 0)
-    help_menu.add_item("About Board Engine", 1)
+    help_menu.add_item("About Tabletop Engine", 1)
 
 func tabletop_menu() -> void:
     menu_bar.get_popup().id_pressed.connect(tabletop_pressed)
