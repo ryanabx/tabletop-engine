@@ -23,14 +23,18 @@ var hand_position: Vector2
 
 # MUST IMPLEMENT
 
-## Called when the board wants the game to start. Should be used to create all the initial game objects.
+## Called by all players when the board spawns in. Use this to set board settings.
 ## NOTE: MUST be implemented by the configuration creator.
-func game_start() -> void:
+func initialize() -> void:
     var num_players: int = board.number_of_players
     var extent: float = 6 + num_players
     board.size = Vector2.ONE * extent * 2 * BASE_SCALE
     hand_position = Vector2(0 * BASE_SCALE, (extent - 3) * BASE_SCALE)
     board.background = "bg"
+
+## Called when the board wants the game to start. Should be used to create all the initial game objects.
+## NOTE: MUST be implemented by the configuration creator.
+func game_start() -> void:
     _create_hands()
     _create_deck_of_cards()
 

@@ -4,7 +4,12 @@ extends TabletopGame
 
 # MUST IMPLEMENT
 
-## Called when the board wants the game to start. Should be used to create all the initial game objects.
+## Called by all players when the board spawns in. Use this to set board settings.
+## NOTE: MUST be implemented by the configuration creator.
+func initialize() -> void:
+    pass
+
+## Called by the server only when the board wants the game to start. Should be used to create all the initial game objects.
 ## NOTE: MUST be implemented by the configuration creator.
 func game_start() -> void:
     pass

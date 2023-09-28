@@ -95,7 +95,8 @@ func _get_selected_range() -> Rect2:
         get_rect().get_center().y
     )
     var _size := size_pieces * 1.1
-    return Rect2(to_global(_position - _size / 2), _size)
+    var rect: Rect2 = Rect2(_position - _size / 2, _size)
+    return rect
 
 func can_view() -> bool:
     match visibility:

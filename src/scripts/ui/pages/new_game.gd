@@ -15,6 +15,4 @@ func _on_ready_pressed() -> void:
     
 @rpc("authority","call_local","reliable")
 func go_to_scene(scn: String) -> void:
-    if not multiplayer.is_server():
-        await get_tree().create_timer(1.0).timeout
     $FadeRect.scene_transition.emit(scn)

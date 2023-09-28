@@ -30,7 +30,7 @@ func _ready() -> void:
     if multiplayer.is_server():
         make_tabletop()
     else:
-        await get_tree().create_timer(0.5).timeout
+        await get_tree().create_timer(0.2).timeout
         print("Client notifying ready")
         notify_ready.rpc(multiplayer.get_unique_id())
 

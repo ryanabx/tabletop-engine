@@ -24,12 +24,14 @@ const ACTION_LIST: Array[String] = [
 
 var hand_position: Vector2
 
-func game_start() -> void:
+func initialize() -> void:
     var num_players: int = board.number_of_players
     var extent: float = 6 + num_players
     board.size = Vector2.ONE * extent * 2 * BASE_SIZE
     hand_position = Vector2(0 * BASE_SIZE, (extent - 3) * BASE_SIZE)
     board.background = "images/bg"
+
+func game_start() -> void:
     _create_cards()
     _deal_cards()
 

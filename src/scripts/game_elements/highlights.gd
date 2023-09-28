@@ -13,11 +13,14 @@ func draw_player_stuff() -> void:
         if board.get_player().get_highlighted_object() is Hand:
             if board.get_player().is_selecting() or\
                 (board.get_player().get_highlighted_object() is Collection and board.get_player().get_highlighted_object().inside.is_empty()):
+                draw_set_transform(board.get_player().get_highlighted_object().position, board.get_player().get_highlighted_object().rotation)
                 draw_rect(
                     board.get_player().get_highlighted_object()._get_selected_range(),
                     Color.BLACK * Color(1,1,1,0.3)
                 )
+                draw_set_transform(position, rotation)
             else:
+                draw_set_transform(board.get_player().get_highlighted_object().position, board.get_player().get_highlighted_object().rotation)
                 draw_rect(
                     board.get_player().get_highlighted_object()._get_selected_range(),
                     Color.BLACK * Color(1,1,1,0.2)
@@ -27,6 +30,7 @@ func draw_player_stuff() -> void:
                     Color.WHITE * Color(1,1,1,1.0),
                     false, 4
                 )
+                draw_set_transform(position, rotation)
         else:
             if board.get_player().is_selecting() or\
                 (board.get_player().get_highlighted_object() is Collection and board.get_player().get_highlighted_object().inside.is_empty()):
@@ -46,10 +50,12 @@ func draw_player_stuff() -> void:
                 )
     if board.get_player().object_queued():
         if board.get_player().get_queued_object() is Hand:
+            draw_set_transform(board.get_player().get_highlighted_object().position, board.get_player().get_highlighted_object().rotation)
             draw_rect(
                 board.get_player().get_queued_object()._get_selected_range(),
                 Color.BLUE * Color(1,1,1,0.2)
             )
+            draw_set_transform(position, rotation)
         else:
             draw_colored_polygon(
                 board.get_player().get_queued_object().get_extents(),
