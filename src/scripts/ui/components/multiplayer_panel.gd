@@ -72,7 +72,6 @@ func _on_ping_pressed() -> void:
 func _on_seal_pressed() -> void:
     client.seal_lobby()
 
-
 func _on_start_pressed() -> void:
     client.start(host.text, room.text, mesh.button_pressed)
     _log("Connecting to signaling server... This may take a minute...")
