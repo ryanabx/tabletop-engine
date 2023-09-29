@@ -35,6 +35,10 @@ window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=4
 
+[dotnet]
+
+project/assembly_name="Tabletop Engine"
+
 [filesystem]
 
 import/blender/enabled=false
