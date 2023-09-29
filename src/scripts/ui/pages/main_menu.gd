@@ -5,9 +5,9 @@ func _ready() -> void:
         Global.setup()
     if not Global.is_desktop_platform():
         %Quit.hide()
-    if Global.is_mobile_platform():
-        %Tabletops.hide()
-        %Settings.hide()
+    # if Global.is_mobile_platform():
+        # %Tabletops.hide()
+        # %Settings.hide()
     Global.load_this_game = PackedByteArray([])
     randomize()
     %Splash.text = Global.SPLASHES[randi_range(0, len(Global.SPLASHES) - 1)]

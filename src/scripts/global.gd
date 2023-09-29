@@ -165,8 +165,9 @@ static func is_mobile_platform() -> bool:
         "iOS", "Android"
     ].has(OS.get_name())
 
-const DEFAULT_USER_SETTINGS: Dictionary = {
-    "fullscreen": false
+static var DEFAULT_USER_SETTINGS: Dictionary = {
+    "fullscreen": false,
+    "default_tap_mode": Board.TouchType.DRAG if not Global.is_mobile_platform() else Board.TouchType.TAP
 }
 
 static var _user_settings: Dictionary = DEFAULT_USER_SETTINGS.duplicate(true)

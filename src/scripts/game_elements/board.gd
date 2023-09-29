@@ -49,7 +49,7 @@ var player_id: int
 ## The selected input mode by the user. See [enum InputMode].
 var input_mode: InputMode = InputMode.SELECT
 ## The selected touch type by the user. See [enum TouchType].
-var touch_type: TouchType = TouchType.DRAG if not Global.is_mobile_platform() else TouchType.TAP
+var touch_type: TouchType = Global.get_user_setting("default_tap_mode")
 
 signal property_sync()
 

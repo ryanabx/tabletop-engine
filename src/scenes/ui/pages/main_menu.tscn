@@ -1,12 +1,10 @@
-[gd_scene load_steps=16 format=3 uid="uid://dlnv5bicqv8ih"]
+[gd_scene load_steps=14 format=3 uid="uid://dlnv5bicqv8ih"]
 
 [ext_resource type="Script" path="res://src/scripts/ui/pages/main_menu.gd" id="1_1pq65"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/components/fade_rect.tscn" id="2_62p08"]
-[ext_resource type="Texture2D" uid="uid://cyd74v1etxj2a" path="res://src/resources/assets/ui/play.svg" id="3_1vqd7"]
 [ext_resource type="Texture2D" uid="uid://ch55iben1ff3x" path="res://assets/icon.png" id="3_40fbx"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/components/safe_margins.tscn" id="3_o4qee"]
 [ext_resource type="Texture2D" uid="uid://dbpyib0osxmuy" path="res://src/resources/assets/ui/gear.svg" id="4_b7mlp"]
-[ext_resource type="Texture2D" uid="uid://b13sa65um5jk" path="res://src/resources/assets/ui/folder_icon.svg" id="5_atquh"]
 [ext_resource type="StyleBox" uid="uid://cl6rmska40ctf" path="res://src/resources/styles/menu/button_normal.tres" id="6_ukj2h"]
 [ext_resource type="Texture2D" uid="uid://cu648p40sig4d" path="res://src/resources/assets/ui/theme_icons/times.svg" id="6_w7hdg"]
 [ext_resource type="StyleBox" uid="uid://cdxc1844wwir1" path="res://src/resources/styles/menu/button_hover.tres" id="7_ivhu7"]
@@ -55,6 +53,7 @@ alignment = 1
 
 [node name="PanelContainer" type="PanelContainer" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/PanelContainer"]
 layout_mode = 2
@@ -65,7 +64,6 @@ theme_override_constants/margin_bottom = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
-size_flags_vertical = 8
 alignment = 1
 
 [node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
@@ -82,6 +80,8 @@ expand_mode = 3
 
 [node name="PanelContainer2" type="PanelContainer" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
 
 [node name="MarginContainer" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/PanelContainer2"]
 layout_mode = 2
@@ -92,24 +92,38 @@ theme_override_constants/margin_bottom = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/PanelContainer2/MarginContainer"]
 layout_mode = 2
-size_flags_vertical = 8
 alignment = 1
 
 [node name="Splash" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/PanelContainer2/MarginContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Splash goes here"
 horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/PanelContainer2/MarginContainer/HBoxContainer"]
-visible = false
+[node name="PanelContainer3" type="PanelContainer" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
-texture = ExtResource("3_40fbx")
-expand_mode = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
 
-[node name="NewGame" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/PanelContainer3"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Copyright Ryanabx 2023"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+alignment = 1
+
+[node name="NewGame" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_styles/normal = ExtResource("6_ukj2h")
 theme_override_styles/hover = ExtResource("7_ivhu7")
@@ -117,12 +131,12 @@ theme_override_styles/pressed = ExtResource("8_ck0rn")
 theme_override_styles/disabled = SubResource("StyleBoxEmpty_0iom8")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_oytix")
 text = "Play"
-icon = ExtResource("3_1vqd7")
 expand_icon = true
 
-[node name="Tabletops" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="Tabletops" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_styles/normal = ExtResource("6_ukj2h")
 theme_override_styles/hover = ExtResource("7_ivhu7")
@@ -130,62 +144,60 @@ theme_override_styles/pressed = ExtResource("8_ck0rn")
 theme_override_styles/disabled = SubResource("StyleBoxEmpty_0iom8")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_oytix")
 text = "Board Builder"
-icon = ExtResource("5_atquh")
 expand_icon = true
 
-[node name="Settings" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="Settings" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_styles/normal = ExtResource("6_ukj2h")
 theme_override_styles/hover = ExtResource("7_ivhu7")
 theme_override_styles/pressed = ExtResource("8_ck0rn")
 theme_override_styles/disabled = SubResource("StyleBoxEmpty_0iom8")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_oytix")
-text = "Settings"
 icon = ExtResource("4_b7mlp")
+icon_alignment = 1
 expand_icon = true
 
-[node name="About" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="About" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_styles/normal = ExtResource("6_ukj2h")
 theme_override_styles/hover = ExtResource("7_ivhu7")
 theme_override_styles/pressed = ExtResource("8_ck0rn")
 theme_override_styles/disabled = SubResource("StyleBoxEmpty_0iom8")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_oytix")
-text = "About"
 icon = ExtResource("7_pbghq")
+icon_alignment = 1
 expand_icon = true
 
-[node name="Quit" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="Quit" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_styles/normal = ExtResource("6_ukj2h")
 theme_override_styles/hover = ExtResource("7_ivhu7")
 theme_override_styles/pressed = ExtResource("8_ck0rn")
 theme_override_styles/disabled = SubResource("StyleBoxEmpty_0iom8")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_oytix")
-text = "Quit"
 icon = ExtResource("6_w7hdg")
+icon_alignment = 1
 expand_icon = true
-
-[node name="PanelContainer3" type="PanelContainer" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/PanelContainer3"]
-layout_mode = 2
-size_flags_vertical = 8
-text = "Copyright Ryanabx 2023"
-horizontal_alignment = 1
 
 [node name="FadeRect" parent="." instance=ExtResource("2_62p08")]
 layout_mode = 1
 
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/NewGame" to="." method="_on_new_game_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/Tabletops" to="." method="_on_tabletops_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/About" to="." method="_on_about_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/NewGame" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/Tabletops" to="." method="_on_tabletops_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/Settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/About" to="." method="_on_about_pressed"]
+[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/Quit" to="." method="_on_quit_pressed"]

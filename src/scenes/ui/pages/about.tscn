@@ -21,16 +21,16 @@ layout_mode = 1
 [node name="MarginContainer" type="MarginContainer" parent="SafeMargins"]
 layout_mode = 2
 
-[node name="AboutInformation" parent="SafeMargins/MarginContainer" instance=ExtResource("3_8x7ue")]
-layout_mode = 2
-
 [node name="VBoxContainer2" type="VBoxContainer" parent="SafeMargins/MarginContainer"]
 layout_mode = 2
 mouse_filter = 2
 
+[node name="AboutInformation" parent="SafeMargins/MarginContainer/VBoxContainer2" instance=ExtResource("3_8x7ue")]
+layout_mode = 2
+size_flags_vertical = 3
+
 [node name="HBoxContainer2" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer2"]
 layout_mode = 2
-size_flags_vertical = 10
 
 [node name="BackButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer2/HBoxContainer2"]
 custom_minimum_size = Vector2(64, 64)
