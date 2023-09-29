@@ -72,15 +72,9 @@ layout_mode = 2
 [node name="Connect" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Host" type="LineEdit" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/Connect"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "wss://obf-server-signaling.onrender.com"
-placeholder_text = "Host"
-alignment = 1
-
 [node name="RoomSecret" type="LineEdit" parent="SafeMargins/MarginContainer/VBoxContainer/Options/Multiplayer/VBoxContainer/Connect"]
 layout_mode = 2
+size_flags_horizontal = 3
 placeholder_text = "Room"
 alignment = 1
 

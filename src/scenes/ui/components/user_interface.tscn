@@ -52,24 +52,8 @@ custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
 
 [node name="TopBar" type="PanelContainer" parent="SafeMargins"]
-custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 size_flags_vertical = 0
-
-[node name="HBoxContainer3" type="HBoxContainer" parent="SafeMargins/TopBar"]
-layout_mode = 2
-alignment = 1
-
-[node name="GameInfo" type="Label" parent="SafeMargins/TopBar/HBoxContainer3"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Game: Untitled"
-horizontal_alignment = 1
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="SafeMargins/TopBar"]
-layout_mode = 2
-alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/TopBar"]
 layout_mode = 2
@@ -112,11 +96,15 @@ metadata/_edit_use_anchors_ = true
 [node name="TouchTypeButton" type="Button" parent="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel3"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
-theme_override_styles/focus = SubResource("StyleBoxEmpty_8220w")
 text = "Drag"
 icon_alignment = 1
 expand_icon = true
+
+[node name="GameInfo" type="Label" parent="SafeMargins/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Game: Untitled"
+horizontal_alignment = 1
 
 [node name="FadeRect" parent="." instance=ExtResource("6_aaf8p")]
 unique_name_in_owner = true

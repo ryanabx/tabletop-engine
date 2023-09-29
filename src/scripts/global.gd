@@ -167,7 +167,9 @@ static func is_mobile_platform() -> bool:
 
 static var DEFAULT_USER_SETTINGS: Dictionary = {
     "fullscreen": false,
-    "default_tap_mode": Board.TouchType.DRAG if not Global.is_mobile_platform() else Board.TouchType.TAP
+    "default_tap_mode": Board.TouchType.DRAG if not Global.is_mobile_platform() else Board.TouchType.TAP,
+    "signaling_server": "wss://obf-server-signaling.onrender.com",
+    "ui_scale": 5.0
 }
 
 static var _user_settings: Dictionary = DEFAULT_USER_SETTINGS.duplicate(true)
@@ -175,12 +177,17 @@ static var _user_settings: Dictionary = DEFAULT_USER_SETTINGS.duplicate(true)
 static func set_user_setting(setting: String, value: Variant) -> void:
     if setting not in DEFAULT_USER_SETTINGS:
         return
-    if setting == "fullscreen":
-        DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if value else DisplayServer.WINDOW_MODE_WINDOWED)
     if DEFAULT_USER_SETTINGS[setting] != value:
         _user_settings[setting] = value
     else:
         _user_settings.erase(setting)
+    match setting:
+        "fullscreen":
+            DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if value else DisplayServer.WINDOW_MODE_WINDOWED)
+        "ui_scale":
+            ThemeDB.get_project_theme().set_default_base_scale(clampf(value, 0.25, 8.0))
+            ThemeDB.get_project_theme().set_default_font_size(clampi(roundi(8 * value), 2, 64))
+            _user_settings[setting] = clampf(value, 0.25, 8.0)
     _save_settings()
 
 static func get_user_setting(setting: String) -> Variant:
@@ -206,4 +213,3 @@ static func _save_settings() -> void:
 static func setup() -> void:
     load_settings()
     has_setup = true
-    ThemeDB.fallback_base_scale = 5.0

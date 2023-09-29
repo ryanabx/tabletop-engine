@@ -1,7 +1,6 @@
 extends MarginContainer
 
 @onready var client := MultiplayerClient.new()
-@onready var host := $VBoxContainer/Connect/Host
 @onready var room := $VBoxContainer/Connect/RoomSecret
 @onready var mesh := $VBoxContainer/Connect/Mesh
 @onready var console := $VBoxContainer/Console
@@ -73,7 +72,7 @@ func _on_seal_pressed() -> void:
     client.seal_lobby()
 
 func _on_start_pressed() -> void:
-    client.start(host.text, room.text, mesh.button_pressed)
+    client.start(Global.get_user_setting("signaling_server"), room.text, mesh.button_pressed)
     _log("Connecting to signaling server... This may take a minute...")
 
 func _on_stop_pressed() -> void:
