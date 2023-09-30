@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
-using Microsoft.VisualBasic;
 
 public partial class GameCollection : Selectable
 {
@@ -13,7 +11,7 @@ public partial class GameCollection : Selectable
         if (back) {AddPieceAt(piece, 0);}
         else {AddPieceAt(piece, Inside.Count);}
     }
-    public void AddCollection(Collection collection, bool back = false)
+    public void AddCollection(GameCollection collection, bool back = false)
     {
         if (back) {AddCollectionAt(collection, 0);}
         else {AddCollectionAt(collection, Inside.Count);}
@@ -51,7 +49,7 @@ public partial class GameCollection : Selectable
         return base.GetShareableProperties() + new Array<string>(new string[]{"Inside", "FaceUp"});
     }
 
-    protected void AddPieceAt(Piece piece, int index)
+    public void AddPieceAt(Piece piece, int index)
     {
         // TODO: Add can_stack check
         Authority = Multiplayer.GetUniqueId();
@@ -62,11 +60,11 @@ public partial class GameCollection : Selectable
         Inside.Insert(index, pieceDict);
         AddToPropertyChanges(PropertyName.Inside, Inside);
     }
-    protected void AddCollectionAt(Collection collection, int index)
+    public void AddCollectionAt(GameCollection collection, int index)
     {
         // TODO: Implement
     }
-    protected Piece RemovePieceAt(int index)
+    public Piece RemovePieceAt(int index)
     {
         // TODO: Add board.game.can_take_piece_off check
         Authority = Multiplayer.GetUniqueId();

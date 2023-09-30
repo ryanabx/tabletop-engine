@@ -18,6 +18,13 @@ public partial class GameObject : Node2D
     // Private variables
     protected Godot.Collections.Dictionary _propertyChanges = new Godot.Collections.Dictionary();
     protected Board _board;
+    public Board GameBoard
+    {
+        set
+        {
+            _board = value;
+        }
+    }
     public int Authority
     {
         get {return this.GetMultiplayerAuthority();}

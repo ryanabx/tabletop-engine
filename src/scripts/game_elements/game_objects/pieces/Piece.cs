@@ -12,4 +12,13 @@ public partial class Piece : Selectable
     {
         return base.GetShareableProperties() + new Array<string>(new string[]{"Types"});
     }
+    public Dictionary Serialize()
+    {
+        Dictionary dict = new Dictionary();
+        dict["Shape"] = Shape;
+        dict["Size"] = Size;
+        dict["Types"] = Types;
+        dict["ObjectType"] = (int)ObjectType;
+        return dict;
+    }
 }

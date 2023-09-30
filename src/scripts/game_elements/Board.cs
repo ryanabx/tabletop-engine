@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Godot;
 using Godot.Collections;
@@ -23,7 +22,7 @@ public partial class Board : Node2D
     {
         "flat", "deck", "hand"
     };
-    public TabletopGame Game = null;
+    public GodotObject Game = null;
     public Vector2 Size = Vector2.One;
     public int NumberOfPlayers;
     public int PlayerId;
@@ -70,13 +69,29 @@ public partial class Board : Node2D
     }
     public void MovePiece(GameCollection from, GameCollection to, int fromInd = -1, int toInd = -1)
     {
-        
+        Piece piece;
+        if (fromInd != -1)
+        {
+            piece = from.RemovePieceAt(fromInd);
+        }
+        else
+        {
+            piece = from.RemoveFromTop(Vector2.Zero);
+        }
+        if (toInd != -1)
+        {
+            to.AddPieceAt(piece, toInd);
+        }
+        else
+        {
+            to.AddPiece(piece);
+        }
     }
     public GameObject GetObjectByIndex(int index)
     {
         return _boardObjects.GetChild<GameObject>(index);
     }
-    public GameObject NewGameObject(GameObjectType type, Dictionary properties)
+    public GameObject NewGameObject(GameObjectType type, Dictionary properties, int auth = -1)
     {
         GameObject c;
         if (!properties.ContainsKey("name"))
@@ -85,7 +100,16 @@ public partial class Board : Node2D
             _counter++;
         }
         c = InstantiateByType(type);
-        // TODO: Finish this method!
+        c.GameBoard = this;
+        c.ObjectType = type;
+        foreach (string prop in properties.Keys)
+        {
+            c.Set(prop, properties[prop]);
+        }
+        _boardObjects.AddChild(c);
+        // RPC
+        Rpc(MethodName.NewGameObjectRpc, new Array(new Variant[]{(int)type, properties}));
+        c.SetMultiplayerAuthority((auth == -1) ? Multiplayer.GetUniqueId() : auth);
         return c;
     }
     public bool EraseObject(string objName, bool recursive = false)
@@ -104,7 +128,7 @@ public partial class Board : Node2D
         {
             return null;
         }
-        Dictionary images = Game.call("get_images");
+        Dictionary images = (Dictionary)Game.Call("get_images");
         if (images == null)
         {
             return null;
@@ -138,5 +162,10 @@ public partial class Board : Node2D
             default:
                 return null;
         }
+    }
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void NewGameObjectRpc(GameObjectType type, Dictionary properties)
+    {
+        NewGameObject(type, properties, Multiplayer.GetRemoteSenderId());
     }
 }

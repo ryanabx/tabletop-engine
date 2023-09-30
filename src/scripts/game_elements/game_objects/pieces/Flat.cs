@@ -45,5 +45,27 @@ public partial class Flat : Piece
             default:
                 break;
         }
+        _sprite.Texture = (FaceUp || ovr) ? _board.GetImage(ImageUp) : _board.GetImage(ImageDown);
+        _sprite.Scale = Size / _sprite.Texture.GetSize();
+    }
+    new public Dictionary Serialize()
+    {
+        Dictionary dict = base.Serialize();
+        dict["ImageUp"] = ImageUp;
+        dict["ImageDown"] = ImageDown;
+        dict["FaceUp"] = FaceUp;
+        dict["ViewOverride"] = (int)ViewOverride;
+        return dict;
+    }
+    public override void _Process(double delta)
+    {
+        RefreshImage();
+        base._Process(delta);
+    }
+    public override void _Ready()
+    {
+        _sprite = new Sprite2D();
+        AddChild(_sprite);
+        base._Ready();
     }
 }
