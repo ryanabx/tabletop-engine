@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Godot;
+using Godot.Collections;
 
 public partial class Board : Node2D
 {
@@ -22,7 +23,7 @@ public partial class Board : Node2D
     {
         "flat", "deck", "hand"
     };
-    // public TabletopGame Game = null;
+    public TabletopGame Game = null;
     public Vector2 Size = Vector2.One;
     public int NumberOfPlayers;
     public int PlayerId;
@@ -55,9 +56,9 @@ public partial class Board : Node2D
     {
         return _boardObjects.GetNodeOrNull<GameObject>(n);
     }
-    public Godot.Collections.Array<GameObject> GetAllObjects()
+    public Array<GameObject> GetAllObjects()
     {
-        return new Godot.Collections.Array<GameObject>(_boardObjects.GetChildren());
+        return new Array<GameObject>(_boardObjects.GetChildren().OfType<GameObject>());
     }
     public void ClearBoard()
     {
@@ -70,5 +71,35 @@ public partial class Board : Node2D
     public void MovePiece(GameCollection from, GameCollection to, int fromInd = -1, int toInd = -1)
     {
         
+    }
+    public GameObject GetObjectByIndex(int index)
+    {
+        return _boardObjects.GetChild<GameObject>(index);
+    }
+    public GameObject NewGameObject(GameObjectType type, Dictionary properties)
+    {
+        GameObject c;
+        if (!properties.ContainsKey("name"))
+        {
+            properties.Add("name", $"{Multiplayer.GetUniqueId()}_{GAME_OBJECT_TYPE_STRING[((int)type)]}_{_counter}");
+            _counter++;
+        }
+        c = InstantiateByType(type);
+        // TODO: Finish this method!
+        return c;
+    }
+    private GameObject InstantiateByType(GameObjectType type)
+    {
+        switch (type)
+        {
+            case GameObjectType.DECK:
+                return new Deck();
+            case GameObjectType.FLAT:
+                return new Flat();
+            case GameObjectType.HAND:
+                return new Hand();
+            default:
+                return null;
+        }
     }
 }

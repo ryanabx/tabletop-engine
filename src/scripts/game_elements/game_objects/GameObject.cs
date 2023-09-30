@@ -16,8 +16,8 @@ public partial class GameObject : Node2D
     public Vector2 Size = Vector2.One;
     public Board.GameObjectType ObjectType;
     // Private variables
-    private Godot.Collections.Dictionary _propertyChanges = new Godot.Collections.Dictionary();
-    private Board _board;
+    protected Godot.Collections.Dictionary _propertyChanges = new Godot.Collections.Dictionary();
+    protected Board _board;
     public int Authority
     {
         get {return this.GetMultiplayerAuthority();}
@@ -49,21 +49,21 @@ public partial class GameObject : Node2D
         AddToPropertyChanges(property, value);
         return false;
     }
-    private void AddToPropertyChanges(StringName property, Variant value)
+    protected void AddToPropertyChanges(StringName property, Variant value)
     {
         if (this.IsInsideTree() && GetShareableProperties().Contains(property) && this.IsMultiplayerAuthority())
         {
             _propertyChanges[property] = value;
         }
     }
-    protected Godot.Collections.Array<string> GetShareableProperties()
+    public Array<string> GetShareableProperties()
     {
-        return new Godot.Collections.Array<string>(new String[]{"Shape", "Size", "Position", "Rotation"});
+        return new Array<string>(new string[]{"Shape", "Size", "Position", "Rotation"});
     }
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void PropertyChangesSyncRpc(Dictionary props)
     {
-        foreach (String prop in props.Keys)
+        foreach (string prop in props.Keys)
         {
             Set(prop, props[prop]);
         }

@@ -33,6 +33,9 @@ var face_up: bool:
         face_up = val
         add_to_property_changes("face_up", val)
 
+func _get_shareable_properties() -> Array:
+    return super._get_shareable_properties() + ["image_up", "image_down", "face_up"]
+
 func _refresh_image() -> void:
     if image_up == "" or image_down == "":
         return

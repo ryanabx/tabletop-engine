@@ -15,7 +15,7 @@ func _ready() -> void:
     super._ready()
 
 func _get_shareable_properties() -> Array:
-    return super._get_shareable_properties() + ["image_up", "image_down", "types", "face_up"]
+    return super._get_shareable_properties() + ["types"]
 
 func _serialize() -> Dictionary:
     var _dict: Dictionary = {}
