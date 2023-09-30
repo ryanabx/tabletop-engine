@@ -42,11 +42,13 @@ public partial class Board : Node2D
             _backgroundSprite.Scale = Size / _backgroundSprite.Texture.GetSize();
         }
     }
-    private Sprite2D _backgroundSprite;
     public BoardPlayer _boardPlayer;
+    private Sprite2D _backgroundSprite;
     private Node2D _boardObjects;
     private Highlights _highlights;
+    private Timer _syncTimer;
     private int _counter = 0;
+    private Array<int> _readyPlayers = new Array<int>();
     public BoardPlayer GetPlayer()
     {
         return _boardPlayer;
@@ -139,6 +141,26 @@ public partial class Board : Node2D
         }
         return (Texture2D)images[path];
     }
+    public override void _Ready()
+    {
+        base._Ready();
+        _boardPlayer = GetNode<BoardPlayer>("BoardPlayer");
+        _boardObjects = GetNode<Node2D>("BoardObjects");
+        _highlights = GetNode<Highlights>("Highlights");
+        _syncTimer = GetNode<Timer>("SyncTimer");
+        _syncTimer.Timeout += SyncTimerTimeout;
+        _boardPlayer.GameBoard = this;
+        _highlights.GameBoard = this;
+        SetPlayerID();
+        _backgroundSprite = new Sprite2D();
+        _backgroundSprite.ZIndex = -10;
+        AddChild(_backgroundSprite);
+        GetViewport().PhysicsObjectPicking = true;
+        GetViewport().PhysicsObjectPickingSort = true;
+        Game.Set("board", this);
+        Game.Call("initialize");
+        Rpc(MethodName.IsReady, Multiplayer.GetUniqueId());
+    }
     public override void _Process(double delta)
     {
         QueueRedraw();
@@ -148,6 +170,24 @@ public partial class Board : Node2D
     {
         DrawRect(new Rect2(-Size / 2.0f, Size), Colors.White, false, 3);
         base._Draw();
+    }
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void IsReady(int id)
+    {
+        if (Multiplayer.IsServer())
+        {
+            _readyPlayers.Add(id);
+            if (_readyPlayers.Count == Multiplayer.GetPeers().Length + 1)
+            {
+                Game.Call("game_start");
+                Rpc(MethodName.GameLoadFinished);
+            }
+        }
+    }
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void GameLoadFinished()
+    {
+        GetParent<BoardManager>().EmitSignal(BoardManager.SignalName.GameLoadFinished, this);
     }
     private GameObject InstantiateByType(GameObjectType type)
     {
@@ -163,9 +203,20 @@ public partial class Board : Node2D
                 return null;
         }
     }
+    private void SetPlayerID()
+    {
+        Array<int> fullArray = new Array<int>(Multiplayer.GetPeers());
+        fullArray.Add(Multiplayer.GetUniqueId());
+        fullArray.Sort();
+        PlayerId = fullArray.IndexOf(Multiplayer.GetUniqueId());
+    }
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void NewGameObjectRpc(GameObjectType type, Dictionary properties)
     {
         NewGameObject(type, properties, Multiplayer.GetRemoteSenderId());
+    }
+    private void SyncTimerTimeout()
+    {
+        EmitSignal(SignalName.PropertySync);
     }
 }
