@@ -88,6 +88,43 @@ public partial class Board : Node2D
         // TODO: Finish this method!
         return c;
     }
+    public bool EraseObject(string objName, bool recursive = false)
+    {
+        GameObject obj = GetObject(objName);
+        if (obj == null)
+        {
+            return false;
+        }
+        obj.Erase(recursive);
+        return true;
+    }
+    public Texture2D GetImage(string path)
+    {
+        if (Game == null)
+        {
+            return null;
+        }
+        Dictionary images = Game.call("get_images");
+        if (images == null)
+        {
+            return null;
+        }
+        else if (!images.ContainsKey(path))
+        {
+            return null;
+        }
+        return (Texture2D)images[path];
+    }
+    public override void _Process(double delta)
+    {
+        QueueRedraw();
+        base._Process(delta);
+    }
+    public override void _Draw()
+    {
+        DrawRect(new Rect2(-Size / 2.0f, Size), Colors.White, false, 3);
+        base._Draw();
+    }
     private GameObject InstantiateByType(GameObjectType type)
     {
         switch (type)
