@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
 
@@ -174,5 +175,54 @@ public partial class BoardPlayer : Node2D
     private void TapReleasedTap(InputEventScreenTouch touch)
     {
         // TODO: Implement
+    }
+    private void SelectWithEvent(InputEventScreenTouch touch)
+    {
+        // TODO: Implement
+    }
+    private void DeselectWithEvent(InputEventScreenTouch touch)
+    {
+        // TODO: Implement
+    }
+    private void DoubleTapInput(InputEventScreenTouch touch)
+    {
+        // TODO: Implement
+    }
+    private Selectable GetColliderAtPosition(Vector2 position = GetLocalMousePosition(), int collisionMask = 1)
+    {
+        PhysicsPointQueryParameters2D queryParams = new PhysicsPointQueryParameters2D();
+        queryParams.Position = position;
+        queryParams.CollideWithAreas = true;
+        queryParams.CollideWithBodies = false;
+        queryParams.CollisionMask = (uint)collisionMask;
+        Array<Dictionary> results = _physicsState.IntersectPoint(queryParams, 65535);
+        if (results.Count > 0)
+        {
+            // TODO: Sort custom
+            return ((Area2D)results[0]["collider"]).GetParent<Selectable>();
+        }
+        return null;
+    }
+    private void DragInput(InputEventScreenDrag drag)
+    {
+        _inputEvents.Add(drag.Index, drag);
+        if (_selectIndex != drag.Index)
+        {
+            return;
+        }
+        if (IsQueueing() && drag.Position.DistanceTo(_grabPosition) > Global.GRAB_THRESHOLD)
+        {
+            _holdTimer.Stop();
+            if (CollectionQueued() && GameBoard.Game.CanTakePieceOff(QueuedObject))
+            {
+                Piece piece = ((GameCollection)QueuedObject).RemoveFromTop(QueuedObject.ToLocal(_grabPosition));
+                SelectObject(piece);
+            }
+            else if (PieceQueued())
+            {
+                SelectObject(QueuedObject);
+            }
+            MoveObjectsTo(drag.Position);
+        }
     }
 }
