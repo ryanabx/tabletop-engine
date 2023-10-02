@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
@@ -6,6 +7,7 @@ public partial class BoardManager : Node
     public Board GameBoard;
     private const int MTU = 1476;
     private int _peersReady = 0;
+    private Array<byte> _configBytes = new Array<byte>();
     [Signal]
     public delegate void GameLoadFinishedEventHandler(Board board);
     [Signal]
@@ -37,6 +39,30 @@ public partial class BoardManager : Node
         {
             return;
         }
+        _configBytes.AddRange(Global.LoadThisGame);
+
+        int curr = 0;
+
+        while (true)
+        {
+            byte[] slice = _configBytes.Slice(curr, MTU).ToArray<byte>();
+            Rpc(MethodName.ReceiveConfigPart, slice, (curr + MTU >= _configBytes.Count));
+            if (curr + MTU >= _configBytes.Count)
+            {
+                SpawnBoard();
+                break;
+            }
+            curr += MTU;
+        }
+    }
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void ReceiveConfigPart(byte[] part, bool final)
+    {
+        _configBytes.AddRange(part);
+        if (final)
+        {
+            SpawnBoard();
+        }
     }
     public async Task RemoveTabletop()
     {
@@ -45,6 +71,11 @@ public partial class BoardManager : Node
             GameBoard.QueueFree();
             await ToSignal(GameBoard, Board.SignalName.TreeExited);
         }
+    }
+    public void SpawnBoard()
+    {
+        GD.Print("Spawning board!");
+        
     }
     public override void _Ready()
     {

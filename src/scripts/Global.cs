@@ -1,6 +1,6 @@
 using Godot;
 using Godot.Collections;
-public partial class Global
+public partial class Global : RefCounted
 {
     public static bool HasSetup = false;
     public static readonly string[] SPLASHES = {
@@ -103,8 +103,7 @@ public partial class Global
             }
         }
     };
-
-    public static int[] LoadThisGame = new int[0];
+    public static byte[] LoadThisGame = new byte[0];
     public static int SafeMarginLeft = 0;
     public static int SafeMarginTop = 0;
     public static int SafeMarginRight = 0;
@@ -118,7 +117,7 @@ public partial class Global
     public const string CONFIG_EXTENSION = ".tbt";
     public const string SETTINGS_PATH = "user://settings.json";
     // PLATFORMS
-    static bool IsDesktopPlatform()
+    public static bool IsDesktopPlatform()
     {
 #if GODOT_PC
         return true;
@@ -126,7 +125,7 @@ public partial class Global
         return false;
 #endif
     }
-    static bool IsWebPlatform()
+    public static bool IsWebPlatform()
     {
 #if GODOT_WEB
         return true;
@@ -134,7 +133,7 @@ public partial class Global
         return false;
 #endif
     }
-    static bool IsMobilePlatform()
+    public static bool IsMobilePlatform()
     {
 #if GODOT_MOBILE
         return true;

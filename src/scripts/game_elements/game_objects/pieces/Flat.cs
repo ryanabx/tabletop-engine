@@ -19,7 +19,7 @@ public partial class Flat : Piece
         }
     }
     protected Sprite2D _sprite;
-    new public Array<string> GetShareableProperties()
+    public override Array<string> GetShareableProperties()
     {
         return base.GetShareableProperties() + new Array<string>(new string[]{"ImageUp", "ImageDown", "FaceUp"});
     }

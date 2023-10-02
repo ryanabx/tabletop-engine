@@ -6,17 +6,17 @@ public partial class GameCollection : Selectable
     public Array<string> Types;
     public Array<Dictionary> Inside = new Array<Dictionary>();
     public bool FaceUp = false;
-    public void AddPiece(Piece piece, bool back = false)
+    public virtual void AddPiece(Piece piece, bool back = false)
     {
         if (back) {AddPieceAt(piece, 0);}
         else {AddPieceAt(piece, Inside.Count);}
     }
-    public void AddCollection(GameCollection collection, bool back = false)
+    public virtual void AddCollection(GameCollection collection, bool back = false)
     {
         if (back) {AddCollectionAt(collection, 0);}
         else {AddCollectionAt(collection, Inside.Count);}
     }
-    public Piece RemoveFromTop(Vector2 position)
+    public virtual Piece RemoveFromTop(Vector2 position)
     {
         if (Inside.Count == 0)
         {
@@ -44,7 +44,7 @@ public partial class GameCollection : Selectable
             dict
         ) as Piece;
     }
-    new public Array<string> GetShareableProperties()
+    public override Array<string> GetShareableProperties()
     {
         return base.GetShareableProperties() + new Array<string>(new string[]{"Inside", "FaceUp"});
     }

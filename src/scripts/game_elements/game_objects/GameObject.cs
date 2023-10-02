@@ -63,7 +63,7 @@ public partial class GameObject : Node2D
             _propertyChanges[property] = value;
         }
     }
-    public Array<string> GetShareableProperties()
+    public virtual Array<string> GetShareableProperties()
     {
         return new Array<string>(new string[]{"Shape", "Size", "Position", "Rotation"});
     }

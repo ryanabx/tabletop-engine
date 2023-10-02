@@ -8,7 +8,7 @@ public partial class Piece : Selectable
     {
         base._Ready();
     }
-    new public Array<string> GetShareableProperties()
+    public override Array<string> GetShareableProperties()
     {
         return base.GetShareableProperties() + new Array<string>(new string[]{"Types"});
     }

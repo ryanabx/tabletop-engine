@@ -36,7 +36,7 @@ public partial class Selectable : GameObject
         _area2d.AddChild(_collisionPolygon);
         base._Ready();
     }
-    new public Array<string> GetShareableProperties()
+    public override Array<string> GetShareableProperties()
     {
         return base.GetShareableProperties() + new Array<string>(new string[]{"LockState", "Selected", "Queued"});
     }
