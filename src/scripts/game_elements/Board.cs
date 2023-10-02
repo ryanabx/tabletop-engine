@@ -22,7 +22,7 @@ public partial class Board : Node2D
     {
         "flat", "deck", "hand"
     };
-    public GodotObject Game = null;
+    public TabletopGame Game = null;
     public Vector2 Size = Vector2.One;
     public int NumberOfPlayers;
     public int PlayerId;
@@ -126,20 +126,7 @@ public partial class Board : Node2D
     }
     public Texture2D GetImage(string path)
     {
-        if (Game == null)
-        {
-            return null;
-        }
-        Dictionary images = (Dictionary)Game.Call("get_images");
-        if (images == null)
-        {
-            return null;
-        }
-        else if (!images.ContainsKey(path))
-        {
-            return null;
-        }
-        return (Texture2D)images[path];
+        return Game.GetImage(path);
     }
     public override void _Ready()
     {
@@ -157,8 +144,8 @@ public partial class Board : Node2D
         AddChild(_backgroundSprite);
         GetViewport().PhysicsObjectPicking = true;
         GetViewport().PhysicsObjectPickingSort = true;
-        Game.Set("board", this);
-        Game.Call("initialize");
+        Game.GameBoard = this;
+        Game.Initialize();
         Rpc(MethodName.IsReady, Multiplayer.GetUniqueId());
     }
     public override void _Process(double delta)
@@ -179,7 +166,7 @@ public partial class Board : Node2D
             _readyPlayers.Add(id);
             if (_readyPlayers.Count == Multiplayer.GetPeers().Length + 1)
             {
-                Game.Call("game_start");
+                Game.GameStart();
                 Rpc(MethodName.GameLoadFinished);
             }
         }
