@@ -75,13 +75,28 @@ public partial class BoardManager : Node
     public void SpawnBoard()
     {
         GD.Print("Spawning board!");
-        
+        TabletopGame game = TabletopGame.ImportConfig(_configBytes.ToArray());
+        Board newBoard = GD.Load<PackedScene>("res://src/scenes/game_elements/Board.cs").Instantiate<Board>();
+        newBoard.Game = game;
+        newBoard.Name = game.Name;
+        AddChild(newBoard);
+        GameBoard = newBoard;
     }
-    public override void _Ready()
+    public override async void _Ready()
     {
-        if (Multiplayer.IsServer())
+        if (Multiplayer.IsServer()) // Server code
         {
-            // TODO: Continue here!
+            MakeTabletop();
         }
+        else // Client code
+        {
+            await ToSignal(GetTree().CreateTimer(0.2), SceneTreeTimer.SignalName.Timeout);
+            GD.Print("Client notifying ready");
+            Rpc(MethodName.NotifyReady, Multiplayer.GetUniqueId());
+        }
+    }
+    public void SaveConfig()
+    {
+        // TODO: Implement this
     }
 }

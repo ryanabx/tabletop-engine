@@ -8,35 +8,34 @@ public partial class TabletopGame : RefCounted
     private Dictionary<string, Texture2D> _includeImages;
     private RefCounted UserScript;
     public string Name = "";
-    // MUST IMPLEMENT
     public void Initialize()
     {
-
+        UserScript.Set("board", GameBoard);
+        UserScript.Call("initialize");
     }
     public void GameStart()
     {
-
+        UserScript.Call("game_start");
     }
-    // OPTIONAL OVERRIDE
     public string[] GetActions()
     {
-        return new string[0];
+        return (string[])UserScript.Call("get_actions");
     }
-    public bool RunAction()
+    public bool RunAction(string action)
     {
-        return false;
+        return (bool)UserScript.Call("run_action", action);
     }
     public bool CanStack(Selectable from, Selectable to)
     {
-        return true;
+        return (bool)UserScript.Call("can_stack", from, to);
     }
     public bool CanTakePieceOff(GameCollection collection)
     {
-        return true;
+        return (bool)UserScript.Call("can_take_piece_off", collection);
     }
     public bool CanHighlight(Selectable highlighted, Selectable selected)
     {
-        return true;
+        return (bool)UserScript.Call("can_highlight", highlighted, selected);
     }
     // For use by config loader and game
     private void SetImages(Dictionary<string, byte[]> imagesBytes)
@@ -57,7 +56,6 @@ public partial class TabletopGame : RefCounted
         }
         return _includeImages[path];
     }
-    // TODO: Implement static functions for tabletopgame
     public static TabletopGame ImportConfig(byte[] data)
     {
         using var stream = new MemoryStream();
