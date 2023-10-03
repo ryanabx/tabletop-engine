@@ -51,14 +51,14 @@ public partial class Selectable : GameObject
     {
         return base.GetShareableProperties() + new Array<string>(new string[]{"LockState", "Selected", "Queued"});
     }
-    public void OnSelect(InputEventScreenTouch touch)
+    public virtual void OnSelect(InputEventScreenTouch touch)
     {
         if (Selected == 0 && Queued == 0)
         {
             GameBoard.GetPlayer().QueueSelectObject(this);
         }
     }
-    public void OnDeselect(InputEventScreenTouch touch)
+    public virtual void OnDeselect(InputEventScreenTouch touch)
     {
         GameBoard.GetPlayer().StackSelectionToItem(this);
     }

@@ -56,7 +56,7 @@ public partial class Hand : GameCollection
     private void DrawPiece(Dictionary data, bool selectable, Vector2 position)
     {
         Vector2 size = (selectable) ? SizePieces * 1.1f : SizePieces;
-        Texture2D texture = GameBoard.GetImage(CanView() ? data["ImageUp"] : data["ImageDown"]);
+        Texture2D texture = GameBoard.GetImage(CanView() ? (string)data["ImageUp"] : (string)data["ImageDown"]);
         DrawTextureRect(texture, new Rect2(position - size / 2.0f, size), false);
     }
     public Rect2 GetSelectedRange()
@@ -95,9 +95,72 @@ public partial class Hand : GameCollection
     {
         if (_cardToSelect == -1)
         {
-            
+            FindSelectablePiece(position, false);
         }
-        return base.RemoveFromTop(position);
+        Piece piece = _selectablePiece == -1 ? base.RemoveFromTop(position) : base.RemovePieceAt(_selectablePiece);
+        piece.Position = GetGlobalMousePosition();
+        piece.Rotation = Rotation;
+        piece.GrabOffset = Vector2.Zero;
+        if (piece is Flippable f)
+        {
+            f.SetOrientation(FaceUp);
+        }
+        return piece;
     }
-    
+    private void FindSpacingInterval()
+    {
+        _spacingInterval = SizePieces.X * LayeringFactor;
+        if (_spacingInterval * Inside.Count > Size.X)
+        {
+            _spacingInterval = (Size.X - SizePieces.X / 2.0f) / Inside.Count;
+        }
+    }
+    private void FindSelectablePiece(Vector2 position, bool checkBoundaries = true)
+    {
+        if (GameBoard.InputMode == Board.InputModeType.CAMERA)
+        {
+            ResetSelectablePiece();
+            return;
+        }
+        float check = ((position.X + (Size.X / 2.0f)) - (SizePieces.X / 2.0f) / (Size.X - SizePieces.X)) * Inside.Count;
+        _selectablePiece = Mathf.Clamp(Mathf.FloorToInt(check), 0, Inside.Count - 1);
+        _droppableIndex = Mathf.Clamp(Mathf.RoundToInt(check), 0, Inside.Count - 1);
+    }
+    private void ResetSelectablePiece()
+    {
+        _selectablePiece = -1;
+        _droppableIndex = -1;
+    }
+    public override void _Process(double delta)
+    {
+        QueueRedraw();
+        FindSpacingInterval();
+        if (Queued == 0 && Selected == 0)
+        {
+            _cardToSelect = -1;
+            if (GameBoard.TouchMode == Board.TouchModeType.DRAG || (GameBoard.TouchMode == Board.TouchModeType.TAP && Input.IsMouseButtonPressed(MouseButton.Left)))
+            {
+                FindSelectablePiece(GetLocalMousePosition());
+            }
+            else
+            {
+                ResetSelectablePiece();
+            }
+        }
+        else
+        {
+            _selectablePiece = _cardToSelect;
+        }
+        base._Process(delta);
+    }
+    public override void OnSelect(InputEventScreenTouch touch)
+    {
+        if (Inside.Count == 0 || Selected != 0 || Queued != 0)
+        {
+            return;
+        }
+        GameBoard.GetPlayer().QueueSelectObject(this);
+        FindSelectablePiece(GetLocalMousePosition());
+        _cardToSelect = _selectablePiece;
+    }
 }
