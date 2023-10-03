@@ -144,7 +144,7 @@ public partial class Global : RefCounted
     public static readonly Dictionary<string, Variant> DEFAULT_USER_SETTINGS = new Dictionary<string, Variant>
     {
         ["fullscreen"] = false,
-        ["default_tap_mode"] = Global.IsMobilePlatform() ? (int)Board.TouchModeType.TAP : (int)Board.TouchModeType.DRAG,
+        ["default_tap_mode"] = IsMobilePlatform() ? (int)Board.TouchModeType.TAP : (int)Board.TouchModeType.DRAG,
         ["signaling_server"] = "wss://obf-server-signaling.onrender.com",
         ["ui_scale"] = 5.0f
     };
