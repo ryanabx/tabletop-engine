@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using Godot.Collections;
 
@@ -99,7 +99,7 @@ public partial class BoardPlayer : Node2D
 
         if (_pollNum == 0 || @event is InputEventMouseButton)
         {
-            HighlightedObject = GetColliderAtPosition();
+            HighlightedObject = GetColliderAtPosition(GetLocalMousePosition());
             if (HighlightedObject != null && !GameBoard.Game.CanHighlight(HighlightedObject, SelectedObject))
             {
                 HighlightedObject = null;
@@ -188,7 +188,7 @@ public partial class BoardPlayer : Node2D
     {
         // TODO: Implement
     }
-    private Selectable GetColliderAtPosition(Vector2 position = GetLocalMousePosition(), int collisionMask = 1)
+    private Selectable GetColliderAtPosition(Vector2 position, int collisionMask = 1)
     {
         PhysicsPointQueryParameters2D queryParams = new PhysicsPointQueryParameters2D();
         queryParams.Position = position;
@@ -198,8 +198,8 @@ public partial class BoardPlayer : Node2D
         Array<Dictionary> results = _physicsState.IntersectPoint(queryParams, 65535);
         if (results.Count > 0)
         {
-            // TODO: Sort custom
-            return ((Area2D)results[0]["collider"]).GetParent<Selectable>();
+            Dictionary topObj = results.MaxBy(res => ((Area2D)res["collider"]).GetParent<Selectable>().Index);
+            return ((Area2D)topObj["collider"]).GetParent<Selectable>();
         }
         return null;
     }
@@ -213,7 +213,7 @@ public partial class BoardPlayer : Node2D
         if (IsQueueing() && drag.Position.DistanceTo(_grabPosition) > Global.GRAB_THRESHOLD)
         {
             _holdTimer.Stop();
-            if (CollectionQueued() && GameBoard.Game.CanTakePieceOff(QueuedObject))
+            if (CollectionQueued() && GameBoard.Game.CanTakePieceOff((GameCollection)QueuedObject))
             {
                 Piece piece = ((GameCollection)QueuedObject).RemoveFromTop(QueuedObject.ToLocal(_grabPosition));
                 SelectObject(piece);
@@ -223,6 +223,141 @@ public partial class BoardPlayer : Node2D
                 SelectObject(QueuedObject);
             }
             MoveObjectsTo(drag.Position);
+        }
+    }
+    private void MoveObjectsTo(Vector2 position)
+    {
+        if (IsSelecting())
+        {
+            SelectedObject.Position = (position - SelectedObject.GrabOffset).Clamp(-GameBoard.Size/2.0f, GameBoard.Size/2.0f);
+        }
+    }
+    private void SelectObject(Selectable obj)
+    {
+        Deselect();
+        obj.Authority = Multiplayer.GetUniqueId();
+        obj.MoveSelfToTop();
+        SelectedObject = obj;
+        obj.Selected = Multiplayer.GetUniqueId();
+        obj.GrabOffset = _grabPosition - obj.Position;
+    }
+    private void QueueSelectObject(Selectable obj)
+    {
+        if (IsQueueing())
+        {
+            Deselect();
+        }
+        if (obj.Queued == 0 && obj.Selected == 0)
+        {
+            obj.Authority = Multiplayer.GetUniqueId();
+            _tapsSinceSelecting = 0;
+            obj.MoveSelfToTop();
+            QueuedObject = obj;
+            obj.Queued = Multiplayer.GetUniqueId();
+            _holdTimer.Start();
+        }
+    }
+    private void StackSelectionToItem(Selectable item)
+    {
+        item.Authority = Multiplayer.GetUniqueId();
+        if (item is GameCollection collection)
+        {
+            StackOnCollection(collection);
+        }
+        else if (item is Piece piece)
+        {
+            StackOnPiece(piece);
+        }
+        Deselect();
+    }
+    private void StackOnCollection(GameCollection collection)
+    {
+        if (CollectionSelected())
+        {
+            collection.AddCollection((GameCollection)SelectedObject);
+        }
+        else if (PieceSelected())
+        {
+            collection.AddPiece((Piece)SelectedObject);
+        }
+    }
+    private void StackOnPiece(Piece piece)
+    {
+        if (CollectionSelected())
+        {
+            SelectedObject.Position = piece.Position;
+            SelectedObject.Rotation = piece.Rotation;
+            ((GameCollection)SelectedObject).AddPiece(piece, true);
+        }
+        else if (PieceSelected())
+        {
+            GameCollection collection = (GameCollection)GameBoard.NewGameObject(
+                Board.GameObjectType.DECK,
+                new Dictionary
+                {
+                    ["position"] = piece.Position,
+                    ["rotation"] = piece.Rotation,
+                    ["FaceUp"] = ((Flat)piece).FaceUp
+                }
+            );
+        }
+    }
+    private void SelectCollection(GameCollection collection)
+    {
+        if (collection is Hand || ((Deck)collection).Permanent)
+        {
+            GameCollection newCollection = (GameCollection)GameBoard.NewGameObject(
+                Board.GameObjectType.DECK,
+                new Dictionary
+                {
+                    ["position"] = collection.Position,
+                    ["rotation"] = collection.Rotation,
+                    ["FaceUp"] = collection.FaceUp
+                }
+            );
+            newCollection.Inside = collection.Inside;
+            newCollection.AddToPropertyChanges("Inside", newCollection.Inside);
+            collection.ClearInside();
+            collection = newCollection;
+        }
+        _grabPosition = collection.Position;
+        SelectObject(collection);
+        collection.GrabOffset = Vector2.Zero;
+    }
+    private void Deselect()
+    {
+        _holdTimer.Stop();
+        DeselectObject();
+        DequeueObject();
+    }
+    private void DeselectObject()
+    {
+        if (IsSelecting() && SelectedObject.Selected == Multiplayer.GetUniqueId())
+        {
+            SelectedObject.Authority = Multiplayer.GetUniqueId();
+            SelectedObject.Selected = 0;
+            SelectedObject = null;
+        }
+    }
+    private void DequeueObject()
+    {
+        if (IsQueueing() && QueuedObject.Queued == Multiplayer.GetUniqueId())
+        {
+            _tapsSinceSelecting = 0;
+            QueuedObject.Authority = Multiplayer.GetUniqueId();
+            QueuedObject.Queued = 0;
+            QueuedObject = null;
+        }
+    }
+    public void RotateSelection(float amount, float axis)
+    {
+        if (IsSelecting())
+        {
+            SelectedObject.Rotation += amount;
+            if (Mathf.Abs(axis) < 0.1f && Mathf.Abs(Mathf.Round(SelectedObject.RotationDegrees / 45.0) * 45.0 - SelectedObject.RotationDegrees) < 7.5f)
+            {
+                SelectedObject.RotationDegrees = Mathf.Round(SelectedObject.RotationDegrees / 45.0f) * 45.0f;
+            }
         }
     }
 }
