@@ -4,7 +4,7 @@ using Godot.Collections;
 public partial class GameCollection : Selectable
 {
     public Array<string> Types;
-    public Array<Dictionary> Inside = new Array<Dictionary>();
+    public Array<Dictionary> Inside = new();
     public bool FaceUp = false;
     public virtual void AddPiece(Piece piece, bool back = false)
     {
@@ -37,10 +37,6 @@ public partial class GameCollection : Selectable
         Inside.Shuffle();
         AddToPropertyChanges(PropertyName.Inside, Inside);
     }
-    protected Dictionary SerializePiece(Piece piece)
-    {
-        return piece.Serialize();
-    }
     public virtual Piece DeserializePiece(Dictionary dict)
     {
         dict["position"] = Position;
@@ -57,22 +53,36 @@ public partial class GameCollection : Selectable
 
     public void AddPieceAt(Piece piece, int index)
     {
-        // TODO: Add can_stack check
+        if (!GameBoard.Game.CanStack(piece, this)){return;}
         Authority = Multiplayer.GetUniqueId();
         piece.Authority = Multiplayer.GetUniqueId();
 
-        Dictionary pieceDict = SerializePiece(piece);
+        Dictionary pieceDict = piece.Serialize();
         piece.Erase();
         Inside.Insert(index, pieceDict);
         AddToPropertyChanges(PropertyName.Inside, Inside);
     }
     public void AddCollectionAt(GameCollection collection, int index)
     {
-        // TODO: Implement
+        if (!GameBoard.Game.CanStack(collection, this)){return;}
+        if (collection is Flippable fl && this is Flippable fl2 && fl.GetOrientation() != fl2.GetOrientation())
+        {
+            fl.Flip();
+        }
+        if (index == Inside.Count)
+        {
+            Inside.AddRange(collection.Inside);
+        }
+        else
+        {
+            Inside = Inside[..index] + collection.Inside + Inside[index..];
+        }
+        AddToPropertyChanges(PropertyName.Inside, Inside);
+        collection.ClearInside();
     }
     public Piece RemovePieceAt(int index)
     {
-        // TODO: Add board.game.can_take_piece_off check
+        if (!GameBoard.Game.CanTakePieceOff(this)){return default;}
         Authority = Multiplayer.GetUniqueId();
         Dictionary pieceDict = Inside[index];
         Inside.RemoveAt(index);

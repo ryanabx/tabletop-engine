@@ -16,7 +16,7 @@ public partial class GameObject : Node2D
     public Vector2 Size = Vector2.One;
     public Board.GameObjectType ObjectType;
     // Private variables
-    protected Godot.Collections.Dictionary _propertyChanges = new Godot.Collections.Dictionary();
+    protected Dictionary _propertyChanges = new Godot.Collections.Dictionary();
     protected Board _board;
     public Board GameBoard
     {

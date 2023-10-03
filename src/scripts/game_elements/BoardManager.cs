@@ -97,6 +97,7 @@ public partial class BoardManager : Node
     }
     public void SaveConfig()
     {
-        // TODO: Implement this
+        // TODO: Remove comment when ConfigSelector implemented
+        // ConfigSelector.SaveConfigToFile(_configBytes);
     }
 }

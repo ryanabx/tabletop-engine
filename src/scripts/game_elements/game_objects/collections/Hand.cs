@@ -8,7 +8,7 @@ public partial class Hand : GameCollection
     };
     public float LayeringFactor = 0.9f;
     public VisibilitySetting PieceVisibility = VisibilitySetting.DESIGNATED;
-    public Array<int> DesignatedPlayers = new Array<int>();
+    public Array<int> DesignatedPlayers = new();
     public Vector2 SizePieces = Vector2.One;
     private float _spacingInterval = 1.0f;
     private int _selectablePiece = -1;
@@ -37,7 +37,7 @@ public partial class Hand : GameCollection
                 i++;
                 continue;
             }
-            Vector2 cardPosition = new Vector2(
+            Vector2 cardPosition = new(
                 Mathf.Lerp(GetRect().Position.X + SizePieces.X / 2.0f, GetRect().End.X - SizePieces.X / 2.0f, (i + 0.5f) / Inside.Count),
                 GetRect().GetCenter().Y
             );
@@ -46,7 +46,7 @@ public partial class Hand : GameCollection
         }
         if (_selectablePiece != -1 && _selectablePiece < Inside.Count)
         {
-            Vector2 cardPosition = new Vector2(
+            Vector2 cardPosition = new(
                 Mathf.Lerp(GetRect().Position.X + SizePieces.X / 2.0f, GetRect().End.X - SizePieces.X / 2.0f, (_selectablePiece + 0.5f) / Inside.Count),
                 GetRect().GetCenter().Y
             );
@@ -61,8 +61,16 @@ public partial class Hand : GameCollection
     }
     public Rect2 GetSelectedRange()
     {
-        // TODO: Implement
-        return default;
+        if (_selectablePiece == -1)
+        {
+            return new Rect2(0, 0, 0, 0);
+        }
+        Vector2 position = new(
+            Mathf.Lerp(GetRect().Position.X + SizePieces.X / 2.0f, GetRect().End.X - SizePieces.X / 2.0f, (_selectablePiece + 0.5f) / Inside.Count),
+            GetRect().GetCenter().Y
+        );
+        Vector2 size = SizePieces * 1.1f;
+        return new(position - size / 2.0f, size);
     }
     private bool CanView()
     {
