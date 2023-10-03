@@ -12,7 +12,7 @@ public partial class Piece : Selectable
     {
         return base.GetShareableProperties() + new Array<string>(new string[]{"Types"});
     }
-    public Dictionary Serialize()
+    public virtual Dictionary Serialize()
     {
         Dictionary dict = new Dictionary();
         dict["Shape"] = Shape;

@@ -24,6 +24,10 @@ public partial class GameObject : Node2D
         {
             _board = value;
         }
+        get
+        {
+            return _board;
+        }
     }
     public int Authority
     {
@@ -56,9 +60,9 @@ public partial class GameObject : Node2D
         AddToPropertyChanges(property, value);
         return false;
     }
-    protected void AddToPropertyChanges(StringName property, Variant value)
+    public void AddToPropertyChanges(StringName property, Variant value)
     {
-        if (this.IsInsideTree() && GetShareableProperties().Contains(property) && this.IsMultiplayerAuthority())
+        if (IsInsideTree() && GetShareableProperties().Contains(property) && IsMultiplayerAuthority())
         {
             _propertyChanges[property] = value;
         }

@@ -26,7 +26,10 @@ public partial class BoardPlayer : Node2D
     }
     private void HoldTimerTimeout()
     {
-        // TODO: Implement this
+        if (CollectionQueued())
+        {
+            SelectCollection((GameCollection)QueuedObject);
+        }
     }
     public bool IsSelecting()
     {
@@ -71,9 +74,9 @@ public partial class BoardPlayer : Node2D
         }
         if (@ev.IsActionPressed("game_flip"))
         {
-            if (IsSelecting() && !SelectedObject.LockState)
+            if (IsSelecting() && !SelectedObject.LockState && SelectedObject is Flippable f)
             {
-                SelectedObject.Flip();
+                f.Flip();
             }
         }
         if (@ev is InputEventScreenTouch touch)
@@ -162,31 +165,86 @@ public partial class BoardPlayer : Node2D
     }
     private void TapPressedDrag(InputEventScreenTouch touch)
     {
-        // TODO: Implement
+        SelectWithEvent(touch);
     }
     private void TapReleasedDrag(InputEventScreenTouch touch)
     {
-        // TODO: Implement
+        if (IsSelecting())
+        {
+            DeselectWithEvent(touch);
+        }
+        _holdTimer.Stop();
     }
     private void TapPressedTap(InputEventScreenTouch touch)
     {
-        // TODO: Implement
+        if (IsQueueing())
+        {
+            if (GetColliderAtPosition(GetLocalMousePosition(), 1) != QueuedObject)
+            {
+                Deselect();
+            }
+            else
+            {
+                _grabPosition = touch.Position;
+                _holdTimer.Start();
+            }
+        }
     }
     private void TapReleasedTap(InputEventScreenTouch touch)
     {
-        // TODO: Implement
+        if (!IsSelecting() && !IsQueueing())
+        {
+            SelectWithEvent(touch);
+        }
+        else if (IsSelecting() && GetColliderAtPosition(GetLocalMousePosition(), 2) != SelectedObject)
+        {
+            DeselectWithEvent(touch);
+        }
+        else if (IsQueueing() && GetColliderAtPosition(GetLocalMousePosition()) != QueuedObject)
+        {
+            Deselect();
+        }
+        _holdTimer.Stop();
     }
     private void SelectWithEvent(InputEventScreenTouch touch)
     {
-        // TODO: Implement
+        Selectable collider = GetColliderAtPosition(GetLocalMousePosition());
+        if (collider == null) {return;}
+        _grabPosition = touch.Position;
+        _selectIndex = touch.Index;
+        collider.OnSelect(touch);
     }
     private void DeselectWithEvent(InputEventScreenTouch touch)
     {
-        // TODO: Implement
+        Selectable collider = GetColliderAtPosition(GetLocalMousePosition());
+        if (collider != null)
+        {
+            collider.OnDeselect(touch);
+        }
+        Deselect();
     }
     private void DoubleTapInput(InputEventScreenTouch touch)
     {
-        // TODO: Implement
+        if (touch.Pressed)
+        {
+            if (GameBoard.TouchMode == Board.TouchModeType.TAP && _tapsSinceSelecting < 2)
+            {
+                return;
+            }
+            Selectable collider = GetColliderAtPosition(GetLocalMousePosition());
+            if (collider != null)
+            {
+                if (collider is GameCollection gc)
+                {
+                    GameBoard.EmitSignal(Board.SignalName.CreateContextMenu, gc);
+                }
+                else if (collider is Piece pc)
+                {
+                    GameBoard.EmitSignal(Board.SignalName.CreateContextMenu, pc);
+                }
+                Deselect();
+            }
+        }
     }
     private Selectable GetColliderAtPosition(Vector2 position, int collisionMask = 1)
     {
@@ -241,7 +299,7 @@ public partial class BoardPlayer : Node2D
         obj.Selected = Multiplayer.GetUniqueId();
         obj.GrabOffset = _grabPosition - obj.Position;
     }
-    private void QueueSelectObject(Selectable obj)
+    public void QueueSelectObject(Selectable obj)
     {
         if (IsQueueing())
         {
@@ -257,7 +315,7 @@ public partial class BoardPlayer : Node2D
             _holdTimer.Start();
         }
     }
-    private void StackSelectionToItem(Selectable item)
+    public void StackSelectionToItem(Selectable item)
     {
         item.Authority = Multiplayer.GetUniqueId();
         if (item is GameCollection collection)
@@ -304,7 +362,7 @@ public partial class BoardPlayer : Node2D
     }
     private void SelectCollection(GameCollection collection)
     {
-        if (collection is Hand || ((Deck)collection).Permanent)
+        if (collection is Hand || (collection is Deck dck && dck.Permanent))
         {
             GameCollection newCollection = (GameCollection)GameBoard.NewGameObject(
                 Board.GameObjectType.DECK,

@@ -25,6 +25,12 @@ public partial class GameCollection : Selectable
         }
         return RemovePieceAt(Inside.Count - 1);
     }
+    public virtual void ClearInside()
+    {
+        Authority = Multiplayer.GetUniqueId();
+        Inside.Clear();
+        AddToPropertyChanges("Inside", Inside);
+    }
     public void Shuffle()
     {
         Authority = Multiplayer.GetUniqueId();
@@ -35,7 +41,7 @@ public partial class GameCollection : Selectable
     {
         return piece.Serialize();
     }
-    protected Piece DeserializePiece(Dictionary dict)
+    public virtual Piece DeserializePiece(Dictionary dict)
     {
         dict["position"] = Position;
         dict["rotation"] = Rotation;

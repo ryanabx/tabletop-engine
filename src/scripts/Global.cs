@@ -177,6 +177,18 @@ public partial class Global : RefCounted
         }
         SaveSettings();
     }
+    public static Variant GetUserSetting(string setting)
+    {
+        if (_userSettings.ContainsKey(setting))
+        {
+            return _userSettings[setting];
+        }
+        else if (DEFAULT_USER_SETTINGS.ContainsKey(setting))
+        {
+            return DEFAULT_USER_SETTINGS[setting];
+        }
+        return default;
+    }
     public static void LoadSettings()
     {
         if (FileAccess.FileExists(Global.SETTINGS_PATH))

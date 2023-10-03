@@ -1,6 +1,6 @@
 using Godot;
 using Godot.Collections;
-public partial class Flat : Piece
+public partial class Flat : Piece, Flippable
 {
     public enum ViewOverrideType
     {
@@ -9,12 +9,13 @@ public partial class Flat : Piece
     public ViewOverrideType ViewOverride = ViewOverrideType.NONE;
     public string ImageUp = "";
     public string ImageDown = "";
+    private bool _faceUp = false;
     public bool FaceUp
     {
-        get {return FaceUp;}
+        get {return _faceUp;}
         set
         {
-            FaceUp = value;
+            _faceUp = value;
             AddToPropertyChanges(PropertyName.FaceUp, value);
         }
     }
@@ -48,14 +49,13 @@ public partial class Flat : Piece
         _sprite.Texture = (FaceUp || ovr) ? _board.GetImage(ImageUp) : _board.GetImage(ImageDown);
         _sprite.Scale = Size / _sprite.Texture.GetSize();
     }
-    new public Dictionary Serialize()
+    public void Flip()
     {
-        Dictionary dict = base.Serialize();
-        dict["ImageUp"] = ImageUp;
-        dict["ImageDown"] = ImageDown;
-        dict["FaceUp"] = FaceUp;
-        dict["ViewOverride"] = (int)ViewOverride;
-        return dict;
+        FaceUp = !FaceUp;
+    }
+    public void SetOrientation(bool orientation)
+    {
+        FaceUp = orientation;
     }
     public override void _Process(double delta)
     {
@@ -67,5 +67,14 @@ public partial class Flat : Piece
         _sprite = new Sprite2D();
         AddChild(_sprite);
         base._Ready();
+    }
+    public override Dictionary Serialize()
+    {
+        Dictionary dict = base.Serialize();
+        dict["ImageUp"] = ImageUp;
+        dict["ImageDown"] = ImageDown;
+        dict["FaceUp"] = FaceUp;
+        dict["ViewOverride"] = (int)ViewOverride;
+        return dict;
     }
 }
