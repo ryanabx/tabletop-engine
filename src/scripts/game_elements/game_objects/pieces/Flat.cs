@@ -21,9 +21,12 @@ public partial class Flat : Piece, IFlippable
         }
     }
     protected Sprite2D _sprite;
-    public override Array<string> GetShareableProperties()
+    public override Array<StringName> GetShareableProperties()
     {
-        return base.GetShareableProperties() + new Array<string>(new string[]{"ImageUp", "ImageDown", "FaceUp"});
+        return base.GetShareableProperties() + new Array<StringName>
+        {
+            PropertyName.ImageDown, PropertyName.ImageUp, PropertyName.FaceUp
+        };
     }
     protected void RefreshImage()
     {
@@ -73,13 +76,13 @@ public partial class Flat : Piece, IFlippable
         AddChild(_sprite);
         base._Ready();
     }
-    public override Dictionary Serialize()
+    public override Dictionary<StringName, Variant> Serialize()
     {
-        Dictionary dict = base.Serialize();
-        dict["ImageUp"] = ImageUp;
-        dict["ImageDown"] = ImageDown;
-        dict["FaceUp"] = FaceUp;
-        dict["ViewOverride"] = (int)ViewOverride;
+        Dictionary<StringName, Variant> dict = base.Serialize();
+        dict[PropertyName.ImageUp] = ImageUp;
+        dict[PropertyName.ImageDown] = ImageDown;
+        dict[PropertyName.FaceUp] = FaceUp;
+        dict[PropertyName.ViewOverride] = (int)ViewOverride;
         return dict;
     }
 }

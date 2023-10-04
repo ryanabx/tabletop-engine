@@ -3,6 +3,6 @@
 [ext_resource type="Script" path="res://src/scripts/ui/components/ContextMenu.cs" id="1_0q8rn"]
 
 [node name="ContextMenu" type="PopupMenu"]
-size = Vector2i(108, 100)
+size = Vector2i(172, 100)
 visible = true
 script = ExtResource("1_0q8rn")

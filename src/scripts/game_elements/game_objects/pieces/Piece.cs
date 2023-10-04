@@ -8,18 +8,21 @@ public partial class Piece : Selectable
     {
         base._Ready();
     }
-    public override Array<string> GetShareableProperties()
+    public override Array<StringName> GetShareableProperties()
     {
-        return base.GetShareableProperties() + new Array<string>(new string[]{"Types"});
-    }
-    public virtual Dictionary Serialize()
-    {
-        Dictionary dict = new()
+        return base.GetShareableProperties() + new Array<StringName>
         {
-            ["Shape"] = Shape,
-            ["Size"] = Size,
-            ["Types"] = Types,
-            ["ObjectType"] = (int)ObjectType
+            PropertyName.Types
+        };
+    }
+    public virtual Dictionary<StringName, Variant> Serialize()
+    {
+        Dictionary<StringName, Variant> dict = new()
+        {
+            [GameObject.PropertyName.Shape] = Shape,
+            [GameObject.PropertyName.Size] = Size,
+            [PropertyName.Types] = Types,
+            [GameObject.PropertyName.ObjectType] = (int)ObjectType
         };
         return dict;
     }

@@ -14,7 +14,7 @@ public partial class Selectable : GameObject
         {
             _selected = value;
             _area2d.CollisionLayer = (value != 0) ? 2u : 1u;
-            AddToPropertyChanges("Selected", _selected);
+            AddToPropertyChanges(PropertyName.Selected, _selected);
         }
     }
     public int Queued
@@ -23,7 +23,7 @@ public partial class Selectable : GameObject
         set
         {
             _queued = value;
-            AddToPropertyChanges("Queued", _queued);
+            AddToPropertyChanges(PropertyName.Queued, _queued);
         }
     }
     protected CollisionPolygon2D _collisionPolygon;
@@ -48,9 +48,12 @@ public partial class Selectable : GameObject
     {
         _collisionPolygon.Polygon = GetGameObjectTransform() * Shape;
     }
-    public override Array<string> GetShareableProperties()
+    public override Array<StringName> GetShareableProperties()
     {
-        return base.GetShareableProperties() + new Array<string>(new string[]{"LockState", "Selected", "Queued"});
+        return base.GetShareableProperties() + new Array<StringName>
+        {
+            PropertyName.LockState, PropertyName.Queued, PropertyName.Selected
+        };
     }
     public virtual void OnSelect(InputEventScreenTouch touch)
     {

@@ -30,10 +30,10 @@ public partial class GameObject : Node2D
     }
     public int Authority
     {
-        get {return this.GetMultiplayerAuthority();}
+        get {return GetMultiplayerAuthority();}
         set
         {
-            if (this.IsInsideTree() && Multiplayer.GetUniqueId() == value && this.GetMultiplayerAuthority() != value)
+            if (IsInsideTree() && Multiplayer.GetUniqueId() == value && GetMultiplayerAuthority() != value)
             {
                 Rpc(nameof(SetAuthority), value);
             }
@@ -42,11 +42,11 @@ public partial class GameObject : Node2D
     }
     public int Index
     {
-        get {return this.GetIndex();}
+        get {return GetIndex();}
         set
         {
             GetParent().MoveChild(this, value);
-            AddToPropertyChanges("Index", value);
+            AddToPropertyChanges(PropertyName.Index, value);
         }
     }
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
@@ -66,9 +66,12 @@ public partial class GameObject : Node2D
             _propertyChanges[property] = value;
         }
     }
-    public virtual Array<string> GetShareableProperties()
+    public virtual Array<StringName> GetShareableProperties()
     {
-        return new Array<string>(new string[]{"Shape", "Size", "Position", "Rotation"});
+        return new Array<StringName>
+        {
+            PropertyName.Shape, PropertyName.Size, PropertyName.ObjectType, Node2D.PropertyName.Position, Node2D.PropertyName.Rotation
+        };
     }
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void PropertyChangesSyncRpc(Dictionary<string, Variant> props)
@@ -123,12 +126,12 @@ public partial class GameObject : Node2D
         }
         _propertyChanges.Clear();
     }
-    public void Erase(bool recursive = false)
+    public void Erase(bool recursive = false, bool propagate = true)
     {
         Rpc(nameof(EraseRpc), recursive);
     }
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void EraseRpc(bool recursive)
+    public virtual void EraseRpc(bool recursive)
     {
         QueueFree();
     }

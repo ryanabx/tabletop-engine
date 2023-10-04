@@ -35,9 +35,12 @@ public partial class Deck : GameCollection, IFlippable
     {
         return FaceUp;
     }
-    public override Array<string> GetShareableProperties()
+    public override Array<StringName> GetShareableProperties()
     {
-        return base.GetShareableProperties() + new Array<string>{"Permanent"};
+        return base.GetShareableProperties() + new Array<StringName>
+        {
+            PropertyName.Permanent
+        };
     }
     public override void _Ready()
     {
@@ -64,7 +67,7 @@ public partial class Deck : GameCollection, IFlippable
             _sprite.Texture = default;
             return;
         }
-        Dictionary topPc = Inside[^1];
+        Dictionary<StringName, Variant> topPc = Inside[^1];
         if ((Vector2)topPc["Size"] != Size)
         {
             Size = (Vector2)topPc["Size"];
@@ -85,9 +88,9 @@ public partial class Deck : GameCollection, IFlippable
             Erase();
         }
     }
-    public override Piece DeserializePiece(Dictionary dict)
+    public override Piece DeserializePiece(Dictionary<StringName, Variant> dict)
     {
-        dict["FaceUp"] = FaceUp;
+        dict[PropertyName.FaceUp] = FaceUp;
         return base.DeserializePiece(dict);
     }
 }

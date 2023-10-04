@@ -15,9 +15,12 @@ public partial class Hand : GameCollection
     private int _selectablePiece = -1;
     private int _droppableIndex = -1;
     private int _cardToSelect = -1;
-    public override Array<string> GetShareableProperties()
+    public override Array<StringName> GetShareableProperties()
     {
-        return base.GetShareableProperties() + new Array<string>{"LayeringFactor", "PieceVisibility", "DesignatedPlayers", "SizePieces"};
+        return base.GetShareableProperties() + new Array<StringName>
+        {
+            PropertyName.LayeringFactor, PropertyName.PieceVisibility, PropertyName.DesignatedPlayers, PropertyName.SizePieces
+        };
     }
     public override void _Draw()
     {
@@ -31,7 +34,7 @@ public partial class Hand : GameCollection
     public void DrawPieces()
     {
         int i = 0;
-        foreach (Dictionary pc in Inside)
+        foreach (Dictionary<StringName, Variant> pc in Inside)
         {
             if (i == _selectablePiece)
             {
@@ -54,9 +57,9 @@ public partial class Hand : GameCollection
             DrawPiece(Inside[_selectablePiece], true, cardPosition);
         }
     }
-    private void DrawPiece(Dictionary data, bool selectable, Vector2 position)
+    private void DrawPiece(Dictionary<StringName, Variant> data, bool selectable, Vector2 position)
     {
-        Vector2 size = (selectable) ? SizePieces * 1.1f : SizePieces;
+        Vector2 size = selectable ? SizePieces * 1.1f : SizePieces;
         Texture2D texture = GameBoard.GetImage(CanView() ? (string)data["ImageUp"] : (string)data["ImageDown"]);
         DrawTextureRect(texture, new Rect2(position - size / 2.0f, size), false);
     }

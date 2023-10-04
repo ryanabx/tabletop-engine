@@ -350,11 +350,11 @@ public partial class BoardPlayer : Node2D
         {
             GameCollection collection = (GameCollection)GameBoard.NewGameObject(
                 Board.GameObjectType.DECK,
-                new Dictionary
+                new Dictionary<StringName, Variant>
                 {
-                    ["position"] = piece.Position,
-                    ["rotation"] = piece.Rotation,
-                    ["FaceUp"] = ((Flat)piece).FaceUp
+                    [Node2D.PropertyName.Position] = piece.Position,
+                    [Node2D.PropertyName.Rotation] = piece.Rotation,
+                    [GameCollection.PropertyName.FaceUp] = ((Flat)piece).FaceUp
                 }
             );
             collection.AddPiece(piece);
@@ -367,11 +367,11 @@ public partial class BoardPlayer : Node2D
         {
             GameCollection newCollection = (GameCollection)GameBoard.NewGameObject(
                 Board.GameObjectType.DECK,
-                new Dictionary
+                new Dictionary<StringName, Variant>
                 {
-                    ["position"] = collection.Position,
-                    ["rotation"] = collection.Rotation,
-                    ["FaceUp"] = collection.FaceUp
+                    [Node2D.PropertyName.Position] = collection.Position,
+                    [Node2D.PropertyName.Rotation] = collection.Rotation,
+                    [GameCollection.PropertyName.FaceUp] = collection.FaceUp
                 }
             );
             newCollection.Inside = collection.Inside;

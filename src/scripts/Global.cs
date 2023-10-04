@@ -161,26 +161,25 @@ public partial class Global : RefCounted
         {
             return;
         }
-        else if (DEFAULT_USER_SETTINGS[setting].Equals(value))
-        {
-            _userSettings.Remove(setting);
-            return;
-        }
         switch (setting)
         {
             case "fullscreen":
-                DisplayServer.WindowSetMode(((bool)value) ? DisplayServer.WindowMode.Fullscreen : DisplayServer.WindowMode.Windowed);
-                _userSettings[setting] = value;
+                DisplayServer.WindowSetMode(((bool)value == true) ? DisplayServer.WindowMode.Fullscreen : DisplayServer.WindowMode.Windowed);
+                _userSettings[setting] = (bool)value;
                 break;
             case "ui_scale":
-                ThemeDB.GetProjectTheme().DefaultBaseScale = Mathf.Clamp((float)value, 0.25f, 8.0f);
-                ThemeDB.GetProjectTheme().DefaultFontSize = Mathf.Clamp((int)((float)value * 8.0f), 2, 64);
-                _userSettings[setting] = Mathf.Clamp((float)value, 0.25f, 8.0f);
-                GD.Print($"Setting font size to {Mathf.Clamp((int)((float)value * 8.0f), 2, 64)}");
+                ThemeDB.GetProjectTheme().DefaultBaseScale = Mathf.Clamp((float)value, 1.0f, 8.0f);
+                ThemeDB.GetProjectTheme().DefaultFontSize = Mathf.Clamp((int)((float)value * 8.0f), 8, 64);
+                _userSettings[setting] = Mathf.Clamp((float)value, 1.0f, 8.0f);
+                GD.Print($"Setting font size to {Mathf.Clamp((int)((float)value * 8.0f), 8, 64)}");
                 break;
             default:
                 _userSettings[setting] = value;
                 break;
+        }
+        if (DEFAULT_USER_SETTINGS[setting].Equals(value))
+        {
+            _userSettings.Remove(setting);
         }
         SaveSettings();
     }
@@ -201,7 +200,7 @@ public partial class Global : RefCounted
         if (FileAccess.FileExists(SETTINGS_PATH))
         {
             string settingsStr = FileAccess.GetFileAsString(SETTINGS_PATH);
-            Dictionary<string, Variant> settingsDict = (Godot.Collections.Dictionary<string, Variant>)Json.ParseString(settingsStr);
+            Dictionary<string, Variant> settingsDict = (Dictionary<string, Variant>)Json.ParseString(settingsStr);
             foreach (string prop in settingsDict.Keys)
             {
                 SetUserSetting(prop, settingsDict[prop]);

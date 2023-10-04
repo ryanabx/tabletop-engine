@@ -32,12 +32,13 @@ public partial class Board : Node2D
     public delegate void PropertySyncEventHandler();
     [Signal]
     public delegate void CreateContextMenuEventHandler(Selectable obj);
+    private string _background = "";
     public string Background
     {
-        get {return Background;}
+        get {return _background;}
         set
         {
-            Background = value;
+            _background = value;
             _backgroundSprite.Texture = GetImage(value);
             _backgroundSprite.Scale = Size / _backgroundSprite.Texture.GetSize();
         }
@@ -48,7 +49,7 @@ public partial class Board : Node2D
     private Highlights _highlights;
     private Timer _syncTimer;
     private int _counter = 0;
-    private Array<int> _readyPlayers = new Array<int>();
+    private Array<int> _readyPlayers = new ();
     public BoardPlayer GetPlayer()
     {
         return _boardPlayer;
@@ -69,7 +70,7 @@ public partial class Board : Node2D
             obj.Erase(true);
         }
     }
-    public void MovePiece(GameCollection from, GameCollection to, int fromInd = -1, int toInd = -1)
+    public static void MovePiece(GameCollection from, GameCollection to, int fromInd = -1, int toInd = -1)
     {
         Piece piece;
         if (fromInd != -1)
@@ -93,7 +94,7 @@ public partial class Board : Node2D
     {
         return _boardObjects.GetChild<GameObject>(index);
     }
-    public GameObject NewGameObject(GameObjectType type, Dictionary properties, int auth = -1)
+    public GameObject NewGameObject(GameObjectType type, Dictionary<StringName, Variant> properties, int auth = -1)
     {
         GameObject c;
         if (!properties.ContainsKey("name"))
@@ -104,7 +105,7 @@ public partial class Board : Node2D
         c = InstantiateByType(type);
         c.GameBoard = this;
         c.ObjectType = type;
-        foreach (string prop in properties.Keys)
+        foreach (StringName prop in properties.Keys)
         {
             c.Set(prop, properties[prop]);
         }
@@ -139,8 +140,10 @@ public partial class Board : Node2D
         _boardPlayer.GameBoard = this;
         _highlights.GameBoard = this;
         SetPlayerID();
-        _backgroundSprite = new Sprite2D();
-        _backgroundSprite.ZIndex = -10;
+        _backgroundSprite = new()
+        {
+            ZIndex = -10
+        };
         AddChild(_backgroundSprite);
         GetViewport().PhysicsObjectPicking = true;
         GetViewport().PhysicsObjectPickingSort = true;
@@ -176,29 +179,27 @@ public partial class Board : Node2D
     {
         GetParent<BoardManager>().EmitSignal(BoardManager.SignalName.GameLoadFinished, this);
     }
-    private GameObject InstantiateByType(GameObjectType type)
+    private static GameObject InstantiateByType(GameObjectType type)
     {
-        switch (type)
+        return type switch
         {
-            case GameObjectType.DECK:
-                return new Deck();
-            case GameObjectType.FLAT:
-                return new Flat();
-            case GameObjectType.HAND:
-                return new Hand();
-            default:
-                return null;
-        }
+            GameObjectType.DECK => new Deck(),
+            GameObjectType.FLAT => new Flat(),
+            GameObjectType.HAND => new Hand(),
+            _ => default,
+        };
     }
     private void SetPlayerID()
     {
-        Array<int> fullArray = new Array<int>(Multiplayer.GetPeers());
-        fullArray.Add(Multiplayer.GetUniqueId());
+        Array<int> fullArray = new(Multiplayer.GetPeers())
+        {
+            Multiplayer.GetUniqueId()
+        };
         fullArray.Sort();
         PlayerId = fullArray.IndexOf(Multiplayer.GetUniqueId());
     }
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void NewGameObjectRpc(GameObjectType type, Dictionary properties)
+    private void NewGameObjectRpc(GameObjectType type, Dictionary<StringName, Variant> properties)
     {
         NewGameObject(type, properties, Multiplayer.GetRemoteSenderId());
     }

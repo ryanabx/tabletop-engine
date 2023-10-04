@@ -4,7 +4,7 @@ namespace TabletopEngine;
 public partial class GameCollection : Selectable
 {
     public Array<string> Types;
-    public Array<Dictionary> Inside = new();
+    public Array<Dictionary<StringName, Variant>> Inside = new();
     public bool FaceUp = false;
     public virtual void AddPiece(Piece piece, bool back = false)
     {
@@ -29,7 +29,7 @@ public partial class GameCollection : Selectable
     {
         Authority = Multiplayer.GetUniqueId();
         Inside.Clear();
-        AddToPropertyChanges("Inside", Inside);
+        AddToPropertyChanges(PropertyName.Inside, Inside);
     }
     public void Shuffle()
     {
@@ -37,18 +37,23 @@ public partial class GameCollection : Selectable
         Inside.Shuffle();
         AddToPropertyChanges(PropertyName.Inside, Inside);
     }
-    public virtual Piece DeserializePiece(Dictionary dict)
+    public virtual Piece DeserializePiece(Dictionary<StringName, Variant> dict)
     {
-        dict["position"] = Position;
-        dict["rotation"] = Rotation;
+        dict[Node2D.PropertyName.Position] = Position;
+        dict[Node2D.PropertyName.Rotation] = Rotation;
         return _board.NewGameObject(
             (Board.GameObjectType)(int)dict["ObjectType"],
             dict
         ) as Piece;
     }
-    public override Array<string> GetShareableProperties()
+    public override Array<StringName> GetShareableProperties()
     {
-        return base.GetShareableProperties() + new Array<string>(new string[]{"Inside", "FaceUp"});
+        return base.GetShareableProperties() + new Array<StringName>
+        {
+            PropertyName.Types,
+            PropertyName.Inside,
+            PropertyName.FaceUp
+        };
     }
 
     public void AddPieceAt(Piece piece, int index)
@@ -57,7 +62,7 @@ public partial class GameCollection : Selectable
         Authority = Multiplayer.GetUniqueId();
         piece.Authority = Multiplayer.GetUniqueId();
 
-        Dictionary pieceDict = piece.Serialize();
+        Dictionary<StringName, Variant> pieceDict = piece.Serialize();
         piece.Erase();
         Inside.Insert(index, pieceDict);
         AddToPropertyChanges(PropertyName.Inside, Inside);
@@ -84,7 +89,7 @@ public partial class GameCollection : Selectable
     {
         if (!GameBoard.Game.CanTakePieceOff(this)){return default;}
         Authority = Multiplayer.GetUniqueId();
-        Dictionary pieceDict = Inside[index];
+        Dictionary<StringName, Variant> pieceDict = Inside[index];
         Inside.RemoveAt(index);
         AddToPropertyChanges(PropertyName.Inside, Inside);
         Piece piece = DeserializePiece(pieceDict);
@@ -92,5 +97,17 @@ public partial class GameCollection : Selectable
         piece.Position = Position;
         piece.Rotation = Rotation;
         return piece;
+    }
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public override void EraseRpc(bool recursive)
+    {
+        if (!recursive && IsMultiplayerAuthority())
+        {
+            foreach (Dictionary<StringName, Variant> piece in Inside)
+            {
+                DeserializePiece(piece);
+            }
+        }
+        base.EraseRpc(recursive);
     }
 }

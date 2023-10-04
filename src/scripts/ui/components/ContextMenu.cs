@@ -18,11 +18,11 @@ public partial class ContextMenu : PopupMenu
     {
         ResetMenu();
         Target = target;
-        if (target is Piece pc)
+        if (target is Piece)
         {
             InitPieceMenu();
         }
-        else if (target is GameCollection gc)
+        else if (target is GameCollection)
         {
             InitCollectionMenu();
         }
