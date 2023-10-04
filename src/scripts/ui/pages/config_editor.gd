@@ -16,7 +16,7 @@ extends Control
 @onready var gallery_image_scene: PackedScene = preload("res://src/scenes/ui/components/gallery_image.tscn")
 
 func _ready() -> void:
-    save_config_dialog.filters = PackedStringArray([str("*",Global.CONFIG_EXTENSION)])
+    save_config_dialog.filters = PackedStringArray([str("*",GlobalBridge.global.CONFIG_EXTENSION)])
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -117,16 +117,16 @@ func export_data() -> PackedByteArray:
     if conf_name == "" or ("empty" in images and images["empty"] == true) or src_code == "":
         print("Config static validation failed")
         return []
-    var bytes: PackedByteArray = TabletopGame.export_config(src_code, images, conf_name)
+    var bytes: PackedByteArray = GlobalBridge.tabletop_game.ExportConfig(src_code, images, conf_name)
     if bytes.is_empty():
-        print("Problem creating %s config" % Global.CONFIG_EXTENSION)
+        print("Problem creating %s config" % GlobalBridge.global.CONFIG_EXTENSION)
         return []
     return bytes
 
 func _on_save_config_dialog_file_selected(path: String) -> void:
-    if path.rfind(Global.CONFIG_EXTENSION) != len(path) - len(Global.CONFIG_EXTENSION):
+    if path.rfind(GlobalBridge.global.CONFIG_EXTENSION) != len(path) - len(GlobalBridge.global.CONFIG_EXTENSION):
         print("Adding file extension")
-        path = path + Global.CONFIG_EXTENSION
+        path = path + GlobalBridge.global.CONFIG_EXTENSION
     print("File selected! ",path)
     var bytes: PackedByteArray = export_data()
     if bytes.is_empty():

@@ -1,16 +1,16 @@
 extends Control
 
 func _ready() -> void:
-    if not Global.HasSetup:
-        Global.setup()
-    if not Global.is_desktop_platform():
+    if not GlobalBridge.global.HasSetup:
+        GlobalBridge.global.Setup()
+    if not GlobalBridge.global.IsDesktopPlatform():
         %Quit.hide()
     # if Global.is_mobile_platform():
         # %Tabletops.hide()
         # %Settings.hide()
-    Global.load_this_game = PackedByteArray([])
+    GlobalBridge.global.LoadThisGame = PackedByteArray([])
     randomize()
-    %Splash.text = Global.SPLASHES[randi_range(0, len(Global.SPLASHES) - 1)]
+    %Splash.text = GlobalBridge.global.SPLASHES[randi_range(0, len(GlobalBridge.global.SPLASHES) - 1)]
     if multiplayer.multiplayer_peer is WebRTCMultiplayerPeer:
         multiplayer.multiplayer_peer.close()
         multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()

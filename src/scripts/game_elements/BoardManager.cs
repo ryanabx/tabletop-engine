@@ -40,7 +40,7 @@ public partial class BoardManager : Node
         {
             return;
         }
-        _configBytes.AddRange(Global.LoadThisGame);
+        _configBytes.AddRange(Global.GetSingleton().LoadThisGame);
 
         int curr = 0;
 

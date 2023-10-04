@@ -21,9 +21,11 @@ func _ready() -> void:
     fade_out_timer.timeout.connect(_on_fade_timer_timeout)
     fade_in_timer.one_shot = true
     fade_out_timer.one_shot = true
-    fade_in_timer.wait_time = Global.TRANSITION_TIME_IN
-    fade_out_timer.wait_time = Global.TRANSITION_TIME_OUT
-    get_tree().create_timer(Global.TRANSITION_TIME_WAIT / 2).timeout.connect(start_fade_timer)
+    # print(GlobalBridge.global.get_property_list())
+    # print(get_property_list())
+    fade_in_timer.wait_time = GlobalBridge.global.TRANSITION_TIME_IN
+    fade_out_timer.wait_time = GlobalBridge.global.TRANSITION_TIME_OUT
+    get_tree().create_timer(GlobalBridge.global.TRANSITION_TIME_WAIT / 2).timeout.connect(start_fade_timer)
     
 
 func start_fade_timer() -> void:
@@ -44,5 +46,5 @@ func _on_scene_transition(_scene: String) -> void:
 
 func _on_fade_timer_timeout() -> void:
     fade_out_done = true
-    await get_tree().create_timer(Global.TRANSITION_TIME_WAIT / 2).timeout
+    await get_tree().create_timer(GlobalBridge.global.TRANSITION_TIME_WAIT / 2).timeout
     get_tree().change_scene_to_file(scene)

@@ -3,8 +3,13 @@ using Godot.Collections;
 namespace TabletopEngine;
 public partial class Global : RefCounted
 {
-    public static bool HasSetup = false;
-    public static readonly string[] SPLASHES = {
+    public static Global GetSingleton()
+    {
+        return GlobalSingleton;
+    }
+    private static readonly Global GlobalSingleton = new();
+    public bool HasSetup = false;
+    public readonly string[] SPLASHES = {
         "\"Because fuck Tabletop Simulator\"!",
         "Vegan, if you so choose!",
         "You have UNO, you fucking dick!",
@@ -20,8 +25,8 @@ public partial class Global : RefCounted
         "https://www.youtube.com/watch?v=u9n-6ZDGUBs",
         "90% of gamblers quit before making it big!"
     };
-    public const float GRAB_THRESHOLD = 40.0f;
-    public static readonly Dictionary<string, Variant> ICE_SERVERS = new()
+    public readonly float GRAB_THRESHOLD = 40.0f;
+    public readonly Dictionary<string, Variant> ICE_SERVERS = new()
     {
         ["iceServers"] = new Array<Dictionary<string, Variant>>{
             new Dictionary<string, Variant>
@@ -104,19 +109,19 @@ public partial class Global : RefCounted
             }
         }
     };
-    public static byte[] LoadThisGame = default;
-    public static int SafeMarginLeft = 0;
-    public static int SafeMarginTop = 0;
-    public static int SafeMarginRight = 0;
-    public static int SafeMarginBottom = 0;
-    public const float TRANSITION_TIME_IN = 0.125f;
-    public const float TRANSITION_TIME_OUT = 0.125f;
-    public const float TRANSITION_TIME_WAIT = 0.1f;
+    public byte[] LoadThisGame = default;
+    public int SafeMarginLeft = 0;
+    public int SafeMarginTop = 0;
+    public int SafeMarginRight = 0;
+    public int SafeMarginBottom = 0;
+    public readonly float TRANSITION_TIME_IN = 0.125f;
+    public readonly float TRANSITION_TIME_OUT = 0.125f;
+    public readonly float TRANSITION_TIME_WAIT = 0.1f;
     // FILE PATHS
-    public const string CONFIG_REPO = "user://configs";
-    public const string DEFAULT_CONFIG_REPO = "res://configs";
-    public const string CONFIG_EXTENSION = ".tbt";
-    public const string SETTINGS_PATH = "user://settings.json";
+    public readonly string CONFIG_REPO = "user://configs";
+    public readonly string DEFAULT_CONFIG_REPO = "res://configs";
+    public readonly string CONFIG_EXTENSION = ".tbt";
+    public readonly string SETTINGS_PATH = "user://settings.json";
     // PLATFORMS
     public static bool IsDesktopPlatform()
     {
@@ -142,15 +147,15 @@ public partial class Global : RefCounted
         return false;
 #endif
     }
-    public static readonly Dictionary<string, Variant> DEFAULT_USER_SETTINGS = new()
+    public readonly Dictionary<string, Variant> DEFAULT_USER_SETTINGS = new()
     {
         ["fullscreen"] = false,
         ["default_tap_mode"] = IsMobilePlatform() ? (int)Board.TouchModeType.TAP : (int)Board.TouchModeType.DRAG,
         ["signaling_server"] = "wss://obf-server-signaling.onrender.com",
         ["ui_scale"] = 5.0f
     };
-    private static Dictionary<string, Variant> _userSettings = new();
-    public static void SetUserSetting(string setting, Variant value)
+    private Dictionary<string, Variant> _userSettings = new();
+    public void SetUserSetting(string setting, Variant value)
     {
         if (!DEFAULT_USER_SETTINGS.ContainsKey(setting))
         {
@@ -178,7 +183,7 @@ public partial class Global : RefCounted
         }
         SaveSettings();
     }
-    public static Variant GetUserSetting(string setting)
+    public Variant GetUserSetting(string setting)
     {
         if (_userSettings.ContainsKey(setting))
         {
@@ -190,11 +195,11 @@ public partial class Global : RefCounted
         }
         return default;
     }
-    public static void LoadSettings()
+    public void LoadSettings()
     {
-        if (FileAccess.FileExists(Global.SETTINGS_PATH))
+        if (FileAccess.FileExists(SETTINGS_PATH))
         {
-            string settingsStr = FileAccess.GetFileAsString(Global.SETTINGS_PATH);
+            string settingsStr = FileAccess.GetFileAsString(SETTINGS_PATH);
             Dictionary<string, Variant> settingsDict = (Godot.Collections.Dictionary<string, Variant>)Json.ParseString(settingsStr);
             foreach (string prop in settingsDict.Keys)
             {
@@ -202,14 +207,14 @@ public partial class Global : RefCounted
             }
         }
     }
-    public static void SaveSettings()
+    public void SaveSettings()
     {
         string settingsStr = Json.Stringify(_userSettings);
-        FileAccess settingsSave = FileAccess.Open(Global.SETTINGS_PATH, FileAccess.ModeFlags.Write);
+        FileAccess settingsSave = FileAccess.Open(SETTINGS_PATH, FileAccess.ModeFlags.Write);
         settingsSave.StoreString(settingsStr);
         settingsSave.Close();
     }
-    public static void Setup()
+    public void Setup()
     {
         LoadSettings();
         HasSetup = true;

@@ -10,7 +10,7 @@ func _on_back_button_pressed() -> void:
     $FadeRect.scene_transition.emit("res://src/scenes/ui/pages/main_menu.tscn")
 
 func _on_ready_pressed() -> void:
-    Global.load_this_game = config_selector.get_selected_config_bytes()
+    GlobalBridge.global.LoadThisGame = config_selector.get_selected_config_bytes()
     go_to_scene.rpc("res://src/scenes/game_elements/board_manager.tscn")
     
 @rpc("authority","call_local","reliable")

@@ -267,7 +267,7 @@ public partial class BoardPlayer : Node2D
         {
             return;
         }
-        if (IsQueueing() && drag.Position.DistanceTo(_grabPosition) > Global.GRAB_THRESHOLD)
+        if (IsQueueing() && drag.Position.DistanceTo(_grabPosition) > Global.GetSingleton().GRAB_THRESHOLD)
         {
             _holdTimer.Stop();
             if (CollectionQueued() && GameBoard.Game.CanTakePieceOff((GameCollection)QueuedObject))

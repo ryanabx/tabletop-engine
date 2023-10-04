@@ -8,10 +8,10 @@ extends Control
 var num_default_configs: int = 0
 
 func _ready() -> void:
-    Global.load_this_game = PackedByteArray([])
+    GlobalBridge.global.LoadThisGame = PackedByteArray([])
     refresh_list()
     %ImportConfigFile.file_selected.connect(add_from_filepath)
-    if not Global.is_desktop_platform():
+    if not GlobalBridge.global.IsDesktopPlatform():
         from_file_button.hide()
 
 func _process(_delta: float) -> void:
@@ -26,11 +26,11 @@ func config_added() -> void:
 
 func refresh_list() -> void:
     config_list.clear()
-    var default_configs: Array[String] = get_available_configs(Global.DEFAULT_CONFIG_REPO)
+    var default_configs: Array[String] = get_available_configs(GlobalBridge.global.DEFAULT_CONFIG_REPO)
     num_default_configs = default_configs.size()
     for conf: String in default_configs:
         config_list.add_item(conf)
-    for conf: String in get_available_configs(Global.CONFIG_REPO):
+    for conf: String in get_available_configs(GlobalBridge.global.CONFIG_REPO):
         config_list.add_item(conf)
 
 func get_available_configs(path: String) -> Array[String]:
@@ -44,7 +44,7 @@ func get_available_configs(path: String) -> Array[String]:
 
     for fname: String in directory.get_files():
         var split_fname: PackedStringArray = fname.rsplit(".",1)
-        if fname.rsplit(".",1)[-1] == Global.CONFIG_EXTENSION.substr(1):
+        if fname.rsplit(".",1)[-1] == GlobalBridge.global.CONFIG_EXTENSION.substr(1):
             configs.append(split_fname[0])
     
     return configs
@@ -65,12 +65,12 @@ func is_selecting_default_config() -> bool:
     return is_selecting_config() and config_list.get_selected_items()[0] < num_default_configs
 
 func get_config_file_path(conf_name: String, conf_dir: String) -> String:
-    return str(conf_dir,"/",conf_name,Global.CONFIG_EXTENSION)
+    return str(conf_dir,"/",conf_name,GlobalBridge.global.CONFIG_EXTENSION)
 
 func _on_delete_selected_pressed() -> void:
     if is_selecting_config() and not is_selecting_default_config():
         var currently_selected: String = get_currently_selected_config()
-        DirAccess.remove_absolute(get_config_file_path(currently_selected, Global.CONFIG_REPO))
+        DirAccess.remove_absolute(get_config_file_path(currently_selected, GlobalBridge.global.CONFIG_REPO))
         refresh_list()
 
 func _on_load_conf_url_pressed() -> void:
@@ -80,10 +80,10 @@ func get_selected_config_bytes() -> PackedByteArray:
     if is_selecting_config():
         if is_selecting_default_config():
             print("Getting default config")
-            return get_file_bytes(get_config_file_path(get_currently_selected_config(), Global.DEFAULT_CONFIG_REPO))
+            return get_file_bytes(get_config_file_path(get_currently_selected_config(), GlobalBridge.global.DEFAULT_CONFIG_REPO))
         else:
             print("Getting given config")
-            return get_file_bytes(get_config_file_path(get_currently_selected_config(), Global.CONFIG_REPO))
+            return get_file_bytes(get_config_file_path(get_currently_selected_config(), GlobalBridge.global.CONFIG_REPO))
     return []
 
 func get_file_bytes(fname: String) -> PackedByteArray:
@@ -101,11 +101,11 @@ func get_config_data() -> Dictionary:
     var config: Dictionary = bytes_to_var(_bytes.decompress_dynamic(-1, 3))
     return config
 
-func get_selected_config() -> TabletopGame:
+func get_selected_config() -> RefCounted:
     var _bytes := get_selected_config_bytes()
     if _bytes.is_empty():
         return null
-    return TabletopGame.import_config(_bytes)
+    return GlobalBridge.tabletop_game.ImportConfig(_bytes)
 
 # Import config file dialog
 
@@ -121,11 +121,12 @@ func file_decided(buf: PackedByteArray) -> void:
         config_added()
 
 static func save_config_to_file(buf: PackedByteArray) -> bool:
-    var config: TabletopGame = TabletopGame.import_config(buf)
     
-    DirAccess.make_dir_absolute(Global.CONFIG_REPO)
+    var config: RefCounted = GlobalBridge.tabletop_game.import_config(buf)
+    
+    DirAccess.make_dir_absolute(GlobalBridge.global.CONFIG_REPO)
 
-    var conf_path: String = str(Global.CONFIG_REPO, "/",config.name,Global.CONFIG_EXTENSION)
+    var conf_path: String = str(GlobalBridge.global.CONFIG_REPO, "/",config.name,GlobalBridge.global.CONFIG_EXTENSION)
 
     DirAccess.remove_absolute(conf_path)
     
@@ -141,7 +142,7 @@ static func save_config_to_file(buf: PackedByteArray) -> bool:
     return true
 
 static func config_exists(conf_name: String) -> bool:
-    return FileAccess.file_exists(str(Global.CONFIG_REPO, "/",conf_name,Global.CONFIG_EXTENSION))
+    return FileAccess.file_exists(str(GlobalBridge.global.CONFIG_REPO, "/",conf_name,GlobalBridge.global.CONFIG_EXTENSION))
 
 # Download config from URL
 
@@ -190,8 +191,8 @@ func validate_downloaded_file(file: PackedByteArray) -> bool:
     if file.is_empty():
         print("Config was empty")
         return false
-    var conf: TabletopGame = TabletopGame.import_config(file)
-    var conf_path: String = str(Global.CONFIG_REPO, "/",conf.name,Global.CONFIG_EXTENSION)
+    var conf: RefCounted = GlobalBridge.tabletop_game.import_config(file)
+    var conf_path: String = str(GlobalBridge.global.CONFIG_REPO, "/",conf.name,GlobalBridge.global.CONFIG_EXTENSION)
     DirAccess.remove_absolute(conf_path)
     var local_copy: FileAccess = FileAccess.open(conf_path, FileAccess.WRITE)
     if local_copy == null:

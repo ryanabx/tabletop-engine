@@ -72,7 +72,7 @@ func _on_seal_pressed() -> void:
     client.seal_lobby()
 
 func _on_start_pressed() -> void:
-    client.start(Global.get_user_setting("signaling_server"), room.text, mesh.button_pressed)
+    client.start(GlobalBridge.global.GetUserSetting("signaling_server"), room.text, mesh.button_pressed)
     _log("Connecting to signaling server... This may take a minute...")
 
 func _on_stop_pressed() -> void:

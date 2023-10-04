@@ -1,18 +1,18 @@
 class_name RightClickMenu
 extends PopupMenu
 
-var piece: Piece = null
-var collection: Collection = null
+var piece: Node2D = null
+var collection: Node2D = null
 
-var _board: Board = null
+var _board: Node2D = null
 
 func _ready() -> void:
     hide()
-    get_tree().get_root().get_node("BoardManager").game_load_finished.connect(_game_load_finished)
+    get_tree().get_root().get_node("BoardManager").GameLoadFinished.connect(_game_load_finished)
 
-func _game_load_finished(board: Board) -> void:
+func _game_load_finished(board: Node2D) -> void:
     _board = board
-    _board._create_context_menu.connect(_on_menu_created)
+    _board.CreateContextMenu.connect(_on_menu_created)
 
 func reset_menu() -> void:
     set_position(Vector2.ZERO)
@@ -24,7 +24,7 @@ func reset_menu() -> void:
     clear()
     set_position(get_viewport().get_mouse_position())
 
-func _on_menu_created(obj: Selectable) -> void:
+func _on_menu_created(obj: Node2D) -> void:
     if obj is Piece:
         _on_piece_menu_created(obj as Piece)
     elif obj is Collection:
