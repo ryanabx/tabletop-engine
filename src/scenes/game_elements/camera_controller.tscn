@@ -1,9 +1,9 @@
 [gd_scene load_steps=2 format=3 uid="uid://uing22je8p0x"]
 
-[ext_resource type="Script" path="res://src/scripts/game_elements/camera_controller.gd" id="1_67wnr"]
+[ext_resource type="Script" path="res://src/scripts/game_elements/CameraController.cs" id="1_4yivk"]
 
 [node name="CameraController" type="Camera2D"]
 ignore_rotation = false
 position_smoothing_speed = 10.0
 rotation_smoothing_speed = 9.0
-script = ExtResource("1_67wnr")
+script = ExtResource("1_4yivk")

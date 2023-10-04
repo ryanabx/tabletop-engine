@@ -27,7 +27,7 @@ public partial class Board : Node2D
     public int NumberOfPlayers;
     public int PlayerId;
     public InputModeType InputMode = InputModeType.SELECT;
-    public TouchModeType TouchMode = Global.GetUserSetting("default_tap_mode"); // TODO: Change this to set the global setting
+    public TouchModeType TouchMode = (TouchModeType)(int)Global.GetUserSetting("default_tap_mode");
     [Signal]
     public delegate void PropertySyncEventHandler();
     [Signal]

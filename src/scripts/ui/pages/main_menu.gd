@@ -1,7 +1,7 @@
 extends Control
 
 func _ready() -> void:
-    if not Global.has_setup:
+    if not Global.HasSetup:
         Global.setup()
     if not Global.is_desktop_platform():
         %Quit.hide()
