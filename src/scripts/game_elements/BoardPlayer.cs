@@ -115,7 +115,7 @@ public partial class BoardPlayer : Node2D
     {
         if (touch.Pressed)
         {
-            _inputEvents.Add(touch.Index, touch);
+            _inputEvents[touch.Index] = touch;
         }
         else
         {
@@ -262,7 +262,7 @@ public partial class BoardPlayer : Node2D
     }
     private void DragInput(InputEventScreenDrag drag)
     {
-        _inputEvents.Add(drag.Index, drag);
+        _inputEvents[drag.Index] = drag;
         if (_selectIndex != drag.Index)
         {
             return;

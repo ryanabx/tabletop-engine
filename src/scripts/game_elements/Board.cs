@@ -98,7 +98,7 @@ public partial class Board : Node2D
         GameObject c;
         if (!properties.ContainsKey("name"))
         {
-            properties.Add("name", $"{Multiplayer.GetUniqueId()}_{GAME_OBJECT_TYPE_STRING[((int)type)]}_{_counter}");
+            properties["name"] = $"{Multiplayer.GetUniqueId()}_{GAME_OBJECT_TYPE_STRING[((int)type)]}_{_counter}";
             _counter++;
         }
         c = InstantiateByType(type);

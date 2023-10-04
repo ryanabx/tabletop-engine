@@ -46,7 +46,7 @@ public partial class TabletopGame : RefCounted
         {
             Image newImg = new();
             newImg.LoadWebpFromBuffer(imagesBytes[image]);
-            _includeImages.Add(image, ImageTexture.CreateFromImage(newImg));
+            _includeImages[image] = ImageTexture.CreateFromImage(newImg);
         }
     }
     public Texture2D GetImage(string path)

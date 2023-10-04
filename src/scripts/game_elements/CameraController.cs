@@ -39,7 +39,7 @@ public partial class CameraController : Camera2D
         {
             if (touch.Pressed)
             {
-                _currentPoints.Add(touch.Index, touch);
+                _currentPoints[touch.Index] = touch;
             }
             else
             {
@@ -48,7 +48,7 @@ public partial class CameraController : Camera2D
         }
         else if (@event is InputEventScreenDrag drag)
         {
-            _currentPoints.Add(drag.Index, drag);
+            _currentPoints[drag.Index] = drag;
             if (_currentPoints.Count == 1) // Only pan
             {
                 Position -= drag.Relative.Rotated(Rotation);

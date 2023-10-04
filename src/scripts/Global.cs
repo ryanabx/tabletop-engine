@@ -170,15 +170,16 @@ public partial class Global : RefCounted
         {
             case "fullscreen":
                 DisplayServer.WindowSetMode(((bool)value) ? DisplayServer.WindowMode.Fullscreen : DisplayServer.WindowMode.Windowed);
-                _userSettings.Add(setting, value);
+                _userSettings[setting] = value;
                 break;
             case "ui_scale":
                 ThemeDB.GetProjectTheme().DefaultBaseScale = Mathf.Clamp((float)value, 0.25f, 8.0f);
-                ThemeDB.GetProjectTheme().DefaultFontSize = Mathf.Clamp((int)value, 2, 64);
-                _userSettings.Add(setting, (Variant)(Mathf.Clamp((float)value, 0.25f, 8.0f)));
+                ThemeDB.GetProjectTheme().DefaultFontSize = Mathf.Clamp((int)((float)value * 8.0f), 2, 64);
+                _userSettings[setting] = Mathf.Clamp((float)value, 0.25f, 8.0f);
+                GD.Print($"Setting font size to {Mathf.Clamp((int)((float)value * 8.0f), 2, 64)}");
                 break;
             default:
-                _userSettings.Add(setting, value);
+                _userSettings[setting] = value;
                 break;
         }
         SaveSettings();
