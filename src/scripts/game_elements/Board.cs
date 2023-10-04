@@ -1,7 +1,7 @@
 using System.Linq;
 using Godot;
 using Godot.Collections;
-
+namespace TabletopEngine;
 public partial class Board : Node2D
 {
     public enum GameObjectType

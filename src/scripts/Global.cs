@@ -1,5 +1,6 @@
 using Godot;
 using Godot.Collections;
+namespace TabletopEngine;
 public partial class Global : RefCounted
 {
     public static bool HasSetup = false;
@@ -20,7 +21,7 @@ public partial class Global : RefCounted
         "90% of gamblers quit before making it big!"
     };
     public const float GRAB_THRESHOLD = 40.0f;
-    public static readonly Dictionary<string, Variant> ICE_SERVERS = new Dictionary<string, Variant>
+    public static readonly Dictionary<string, Variant> ICE_SERVERS = new()
     {
         ["iceServers"] = new Array<Dictionary<string, Variant>>{
             new Dictionary<string, Variant>
@@ -103,7 +104,7 @@ public partial class Global : RefCounted
             }
         }
     };
-    public static byte[] LoadThisGame = new byte[0];
+    public static byte[] LoadThisGame = default;
     public static int SafeMarginLeft = 0;
     public static int SafeMarginTop = 0;
     public static int SafeMarginRight = 0;
@@ -141,14 +142,14 @@ public partial class Global : RefCounted
         return false;
 #endif
     }
-    public static readonly Dictionary<string, Variant> DEFAULT_USER_SETTINGS = new Dictionary<string, Variant>
+    public static readonly Dictionary<string, Variant> DEFAULT_USER_SETTINGS = new()
     {
         ["fullscreen"] = false,
         ["default_tap_mode"] = IsMobilePlatform() ? (int)Board.TouchModeType.TAP : (int)Board.TouchModeType.DRAG,
         ["signaling_server"] = "wss://obf-server-signaling.onrender.com",
         ["ui_scale"] = 5.0f
     };
-    private static Dictionary<string, Variant> _userSettings = new Dictionary<string, Variant>();
+    private static Dictionary<string, Variant> _userSettings = new();
     public static void SetUserSetting(string setting, Variant value)
     {
         if (!DEFAULT_USER_SETTINGS.ContainsKey(setting))

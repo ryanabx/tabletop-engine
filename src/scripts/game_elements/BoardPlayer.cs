@@ -1,7 +1,7 @@
 using System.Linq;
 using Godot;
 using Godot.Collections;
-
+namespace TabletopEngine;
 public partial class BoardPlayer : Node2D
 {
     public Board GameBoard;
@@ -13,15 +13,16 @@ public partial class BoardPlayer : Node2D
     private PhysicsDirectSpaceState2D _physicsState;
     private int _selectIndex = -1;
     private int _tapsSinceSelecting = 0;
-    private Dictionary _inputEvents = new Dictionary();
+    private Dictionary<int, InputEvent> _inputEvents = new();
     private int _pollNum = 0;
     private const int POLLING_RATE = 3;
     public override void _Ready()
     {
         _physicsState = GetWorld2D().DirectSpaceState;
-        _holdTimer = new Timer();
-        _holdTimer.WaitTime = 0.5;
-        // _holdTimer.Timeout += HoldTimerTimeout;
+        _holdTimer = new(){
+            WaitTime = 0.5f
+        };
+        _holdTimer.Timeout += HoldTimerTimeout;
         AddChild(_holdTimer);
     }
     private void HoldTimerTimeout()
@@ -74,7 +75,7 @@ public partial class BoardPlayer : Node2D
         }
         if (@ev.IsActionPressed("game_flip"))
         {
-            if (IsSelecting() && !SelectedObject.LockState && SelectedObject is Flippable f)
+            if (IsSelecting() && !SelectedObject.LockState && SelectedObject is IFlippable f)
             {
                 f.Flip();
             }
@@ -216,11 +217,7 @@ public partial class BoardPlayer : Node2D
     }
     private void DeselectWithEvent(InputEventScreenTouch touch)
     {
-        Selectable collider = GetColliderAtPosition(GetLocalMousePosition());
-        if (collider != null)
-        {
-            collider.OnDeselect(touch);
-        }
+        GetColliderAtPosition(GetLocalMousePosition())?.OnDeselect(touch);
         Deselect();
     }
     private void DoubleTapInput(InputEventScreenTouch touch)
@@ -248,11 +245,13 @@ public partial class BoardPlayer : Node2D
     }
     private Selectable GetColliderAtPosition(Vector2 position, int collisionMask = 1)
     {
-        PhysicsPointQueryParameters2D queryParams = new PhysicsPointQueryParameters2D();
-        queryParams.Position = position;
-        queryParams.CollideWithAreas = true;
-        queryParams.CollideWithBodies = false;
-        queryParams.CollisionMask = (uint)collisionMask;
+        PhysicsPointQueryParameters2D queryParams = new()
+        {
+            Position = position,
+            CollideWithAreas = true,
+            CollideWithBodies = false,
+            CollisionMask = (uint)collisionMask
+        };
         Array<Dictionary> results = _physicsState.IntersectPoint(queryParams, 65535);
         if (results.Count > 0)
         {
@@ -358,6 +357,8 @@ public partial class BoardPlayer : Node2D
                     ["FaceUp"] = ((Flat)piece).FaceUp
                 }
             );
+            collection.AddPiece(piece);
+            collection.AddPiece((Piece)SelectedObject);
         }
     }
     private void SelectCollection(GameCollection collection)

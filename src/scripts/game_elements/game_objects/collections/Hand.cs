@@ -1,5 +1,6 @@
 using Godot;
 using Godot.Collections;
+namespace TabletopEngine;
 public partial class Hand : GameCollection
 {
     public enum VisibilitySetting
@@ -109,7 +110,7 @@ public partial class Hand : GameCollection
         piece.Position = GetGlobalMousePosition();
         piece.Rotation = Rotation;
         piece.GrabOffset = Vector2.Zero;
-        if (piece is Flippable f)
+        if (piece is IFlippable f)
         {
             f.SetOrientation(FaceUp);
         }
@@ -125,12 +126,12 @@ public partial class Hand : GameCollection
     }
     private void FindSelectablePiece(Vector2 position, bool checkBoundaries = true)
     {
-        if (GameBoard.InputMode == Board.InputModeType.CAMERA)
+        if (GameBoard.InputMode == Board.InputModeType.CAMERA || (checkBoundaries && (Mathf.Abs(position.Y) > Size.Y / 2.0f || Mathf.Abs(position.X) > (Size.X / 2.0f))))
         {
             ResetSelectablePiece();
             return;
         }
-        float check = ((position.X + (Size.X / 2.0f)) - (SizePieces.X / 2.0f) / (Size.X - SizePieces.X)) * Inside.Count;
+        float check = (position.X + (Size.X / 2.0f) - (SizePieces.X / 2.0f)) / (Size.X - SizePieces.X) * Inside.Count;
         _selectablePiece = Mathf.Clamp(Mathf.FloorToInt(check), 0, Inside.Count - 1);
         _droppableIndex = Mathf.Clamp(Mathf.RoundToInt(check), 0, Inside.Count - 1);
     }

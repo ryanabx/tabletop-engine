@@ -2,6 +2,7 @@ using Godot;
 using Godot.Collections;
 using System.IO;
 using System.IO.Compression;
+namespace TabletopEngine;
 public partial class TabletopGame : RefCounted
 {
     public Board GameBoard;
@@ -43,7 +44,7 @@ public partial class TabletopGame : RefCounted
         _includeImages = new Dictionary<string, Texture2D>();
         foreach (string image in imagesBytes.Keys)
         {
-            Image newImg = new Image();
+            Image newImg = new();
             newImg.LoadWebpFromBuffer(imagesBytes[image]);
             _includeImages.Add(image, ImageTexture.CreateFromImage(newImg));
         }
@@ -66,11 +67,15 @@ public partial class TabletopGame : RefCounted
     }
     public static TabletopGame GetTabletopGame(Dictionary config)
     {
-        GDScript script = new GDScript();
-        script.SourceCode = (string)config["script"];
+        GDScript script = new()
+        {
+            SourceCode = (string)config["script"]
+        };
         script.Reload();
-        TabletopGame obj = new TabletopGame();
-        obj.UserScript = new RefCounted();
+        TabletopGame obj = new()
+        {
+            UserScript = new RefCounted()
+        };
         obj.UserScript.SetScript(script);
         obj.Name = (string)config["name"];
         obj.SetImages((Dictionary<string, byte[]>)config["include_images"]);
@@ -78,7 +83,7 @@ public partial class TabletopGame : RefCounted
     }
     public static byte[] ExportConfig(string sourceCode, Dictionary<string, byte[]> images, string gameName)
     {
-        Dictionary config = new Dictionary
+        Dictionary config = new()
         {
             ["name"] = gameName,
             ["include_images"] = images,

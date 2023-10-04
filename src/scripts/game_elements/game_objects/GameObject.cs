@@ -1,8 +1,7 @@
-using System;
 using System.Linq;
 using Godot;
 using Godot.Collections;
-
+namespace TabletopEngine;
 public partial class GameObject : Node2D
 {
     // Shareable properties
@@ -16,7 +15,7 @@ public partial class GameObject : Node2D
     public Vector2 Size = Vector2.One;
     public Board.GameObjectType ObjectType;
     // Private variables
-    protected Dictionary _propertyChanges = new Godot.Collections.Dictionary();
+    protected Dictionary _propertyChanges = new();
     protected Board _board;
     public Board GameBoard
     {
@@ -72,7 +71,7 @@ public partial class GameObject : Node2D
         return new Array<string>(new string[]{"Shape", "Size", "Position", "Rotation"});
     }
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void PropertyChangesSyncRpc(Dictionary props)
+    private void PropertyChangesSyncRpc(Dictionary<string, Variant> props)
     {
         foreach (string prop in props.Keys)
         {

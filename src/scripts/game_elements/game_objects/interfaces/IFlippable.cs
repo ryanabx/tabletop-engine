@@ -1,5 +1,6 @@
 using Godot;
-public interface Flippable
+namespace TabletopEngine;
+public interface IFlippable
 {
     public abstract void Flip();
     public abstract void SetOrientation(bool faceUp);

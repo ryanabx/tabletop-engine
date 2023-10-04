@@ -1,9 +1,9 @@
 using Godot;
 using Godot.Collections;
-
+namespace TabletopEngine;
 public partial class Piece : Selectable
 {
-    public Array<string> Types = new Array<string>();
+    public Array<string> Types = new();
     public override void _Ready()
     {
         base._Ready();
@@ -14,11 +14,13 @@ public partial class Piece : Selectable
     }
     public virtual Dictionary Serialize()
     {
-        Dictionary dict = new Dictionary();
-        dict["Shape"] = Shape;
-        dict["Size"] = Size;
-        dict["Types"] = Types;
-        dict["ObjectType"] = (int)ObjectType;
+        Dictionary dict = new()
+        {
+            ["Shape"] = Shape,
+            ["Size"] = Size,
+            ["Types"] = Types,
+            ["ObjectType"] = (int)ObjectType
+        };
         return dict;
     }
 }

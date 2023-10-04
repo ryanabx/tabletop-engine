@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
-public partial class Flat : Piece, Flippable
+namespace TabletopEngine;
+public partial class Flat : Piece, IFlippable
 {
     public enum ViewOverrideType
     {
@@ -56,6 +57,10 @@ public partial class Flat : Piece, Flippable
     public void SetOrientation(bool orientation)
     {
         FaceUp = orientation;
+    }
+    public bool GetOrientation()
+    {
+        return FaceUp;
     }
     public override void _Process(double delta)
     {

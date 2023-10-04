@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
-public partial class Deck : GameCollection, Flippable
+namespace TabletopEngine;
+public partial class Deck : GameCollection, IFlippable
 {
     public bool Permanent = false;
     private Sprite2D _sprite;
@@ -29,6 +30,10 @@ public partial class Deck : GameCollection, Flippable
     public void SetOrientation(bool orientation)
     {
         FaceUp = orientation;
+    }
+    public bool GetOrientation()
+    {
+        return FaceUp;
     }
     public override Array<string> GetShareableProperties()
     {

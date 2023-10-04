@@ -1,5 +1,5 @@
 using Godot;
-
+namespace TabletopEngine;
 public partial class Highlights : Node2D
 {
     public Board GameBoard;

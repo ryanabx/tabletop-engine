@@ -1,5 +1,6 @@
 using Godot;
 using Godot.Collections;
+namespace TabletopEngine;
 public partial class Selectable : GameObject
 {
     public bool LockState = false;

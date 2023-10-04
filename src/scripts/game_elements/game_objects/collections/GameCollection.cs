@@ -1,6 +1,6 @@
 using Godot;
 using Godot.Collections;
-
+namespace TabletopEngine;
 public partial class GameCollection : Selectable
 {
     public Array<string> Types;
@@ -65,7 +65,7 @@ public partial class GameCollection : Selectable
     public void AddCollectionAt(GameCollection collection, int index)
     {
         if (!GameBoard.Game.CanStack(collection, this)){return;}
-        if (collection is Flippable fl && this is Flippable fl2 && fl.GetOrientation() != fl2.GetOrientation())
+        if (collection is IFlippable fl && this is IFlippable fl2 && fl.GetOrientation() != fl2.GetOrientation())
         {
             fl.Flip();
         }

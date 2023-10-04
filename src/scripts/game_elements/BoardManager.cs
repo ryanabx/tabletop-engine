@@ -2,12 +2,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
+namespace TabletopEngine;
 public partial class BoardManager : Node
 {
     public Board GameBoard;
     private const int MTU = 1476;
     private int _peersReady = 0;
-    private Array<byte> _configBytes = new Array<byte>();
+    private Array<byte> _configBytes = new();
     [Signal]
     public delegate void GameLoadFinishedEventHandler(Board board);
     [Signal]
