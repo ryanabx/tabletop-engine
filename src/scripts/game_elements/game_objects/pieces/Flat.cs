@@ -3,6 +3,7 @@ using Godot.Collections;
 namespace TabletopEngine;
 public partial class Flat : Piece, IFlippable
 {
+    public override Array<string> ObjectTypes { get => base.ObjectTypes + new Array<string> {"IFlippable", "Flat"};}
     public enum ViewOverrideType
     {
         ALL, IF_SELECTED, IF_NOT_SELECTED, NONE

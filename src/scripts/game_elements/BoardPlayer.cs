@@ -349,7 +349,7 @@ public partial class BoardPlayer : Node2D
         else if (PieceSelected())
         {
             GameCollection collection = (GameCollection)GameBoard.NewGameObject(
-                Board.GameObjectType.DECK,
+                "Deck",
                 new Dictionary<StringName, Variant>
                 {
                     [Node2D.PropertyName.Position] = piece.Position,
@@ -366,7 +366,7 @@ public partial class BoardPlayer : Node2D
         if (collection is Hand || (collection is Deck dck && dck.Permanent))
         {
             GameCollection newCollection = (GameCollection)GameBoard.NewGameObject(
-                Board.GameObjectType.DECK,
+                "Deck",
                 new Dictionary<StringName, Variant>
                 {
                     [Node2D.PropertyName.Position] = collection.Position,

@@ -3,6 +3,7 @@ using Godot.Collections;
 namespace TabletopEngine;
 public partial class GameCollection : Selectable
 {
+    public override Array<string> ObjectTypes { get => base.ObjectTypes + new Array<string> {"GameCollection"};}
     public Array<string> Types;
     public Array<Dictionary<StringName, Variant>> Inside = new();
     public bool FaceUp = false;
@@ -42,7 +43,7 @@ public partial class GameCollection : Selectable
         dict[Node2D.PropertyName.Position] = Position;
         dict[Node2D.PropertyName.Rotation] = Rotation;
         return _board.NewGameObject(
-            (Board.GameObjectType)(int)dict["ObjectType"],
+            ((Array<string>)dict[GameObject.PropertyName.ObjectTypes])[^1],
             dict
         ) as Piece;
     }

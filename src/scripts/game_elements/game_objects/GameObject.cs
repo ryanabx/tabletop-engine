@@ -13,7 +13,7 @@ public partial class GameObject : Node2D
         new Vector2(0.5f, -0.5f)
     };
     public Vector2 Size = Vector2.One;
-    public Board.GameObjectType ObjectType;
+    public virtual Array<string> ObjectTypes {get => new() { "GameObject"};}
     // Private variables
     protected Dictionary _propertyChanges = new();
     protected Board _board;
@@ -70,7 +70,7 @@ public partial class GameObject : Node2D
     {
         return new Array<StringName>
         {
-            PropertyName.Shape, PropertyName.Size, PropertyName.ObjectType, Node2D.PropertyName.Position, Node2D.PropertyName.Rotation
+            PropertyName.Shape, PropertyName.Size, PropertyName.ObjectTypes, Node2D.PropertyName.Position, Node2D.PropertyName.Rotation
         };
     }
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]

@@ -1,12 +1,19 @@
+using System;
 using System.Linq;
 using Godot;
 using Godot.Collections;
 namespace TabletopEngine;
 public partial class Board : Node2D
 {
-    public enum GameObjectType
+    private readonly Dictionary<string, Type> CLASS_REF = new()
     {
-        FLAT, DECK, HAND, MAX
+        ["GameObject"] = typeof(GameObject),
+        ["Selectable"] = typeof(Selectable),
+        ["GameCollection"] = typeof(GameCollection),
+        ["Deck"] = typeof(Deck),
+        ["Hand"] = typeof(Hand),
+        ["Piece"] = typeof(Piece),
+        ["Flat"] = typeof(Flat)
     };
     public enum InputModeType
     {
@@ -17,10 +24,6 @@ public partial class Board : Node2D
     {
         TAP,
         DRAG
-    };
-    public readonly string[] GAME_OBJECT_TYPE_STRING =
-    {
-        "flat", "deck", "hand"
     };
     public TabletopGame Game = null;
     public Vector2 Size = Vector2.One;
@@ -94,24 +97,23 @@ public partial class Board : Node2D
     {
         return _boardObjects.GetChild<GameObject>(index);
     }
-    public GameObject NewGameObject(GameObjectType type, Dictionary<StringName, Variant> properties, int auth = -1)
+    public GameObject NewGameObject(string type, Dictionary<StringName, Variant> properties, int auth = -1)
     {
         GameObject c;
         if (!properties.ContainsKey("name"))
         {
-            properties["name"] = $"{Multiplayer.GetUniqueId()}_{GAME_OBJECT_TYPE_STRING[((int)type)]}_{_counter}";
+            properties["name"] = $"{Multiplayer.GetUniqueId()}_{type}_{_counter}";
             _counter++;
         }
         c = InstantiateByType(type);
         c.GameBoard = this;
-        c.ObjectType = type;
         foreach (StringName prop in properties.Keys)
         {
             c.Set(prop, properties[prop]);
         }
         _boardObjects.AddChild(c);
         // RPC
-        Rpc(MethodName.NewGameObjectRpc, new Array(new Variant[]{(int)type, properties}));
+        Rpc(MethodName.NewGameObjectRpc, type, properties);
         c.SetMultiplayerAuthority((auth == -1) ? Multiplayer.GetUniqueId() : auth);
         return c;
     }
@@ -179,13 +181,13 @@ public partial class Board : Node2D
     {
         GetParent<BoardManager>().EmitSignal(BoardManager.SignalName.GameLoadFinished, this);
     }
-    private static GameObject InstantiateByType(GameObjectType type)
+    private static GameObject InstantiateByType(string type)
     {
         return type switch
         {
-            GameObjectType.DECK => new Deck(),
-            GameObjectType.FLAT => new Flat(),
-            GameObjectType.HAND => new Hand(),
+            "Deck" => new Deck(),
+            "Flat" => new Flat(),
+            "Hand" => new Hand(),
             _ => default,
         };
     }

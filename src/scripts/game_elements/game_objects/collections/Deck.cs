@@ -3,6 +3,7 @@ using Godot.Collections;
 namespace TabletopEngine;
 public partial class Deck : GameCollection, IFlippable
 {
+    public override Array<string> ObjectTypes { get => base.ObjectTypes + new Array<string> {"IFlippable", "Deck"};}
     public bool Permanent = false;
     private Sprite2D _sprite;
     private Label _count;

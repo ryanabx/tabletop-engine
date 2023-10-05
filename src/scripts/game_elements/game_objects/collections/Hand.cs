@@ -3,6 +3,7 @@ using Godot.Collections;
 namespace TabletopEngine;
 public partial class Hand : GameCollection
 {
+    public override Array<string> ObjectTypes { get => base.ObjectTypes + new Array<string> {"Hand"};}
     public enum VisibilitySetting
     {
         ALL, DESIGNATED, NOT_DESIGNATED, NONE

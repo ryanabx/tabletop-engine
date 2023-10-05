@@ -7,6 +7,7 @@ public partial class Selectable : GameObject
     public Vector2 GrabOffset = Vector2.Zero;
     private int _selected = 0;
     private int _queued = 0;
+    public override Array<string> ObjectTypes { get => base.ObjectTypes + new Array<string> {"Selectable"};}
     public int Selected
     {
         get {return _selected;}

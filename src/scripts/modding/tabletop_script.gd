@@ -28,18 +28,21 @@ func get_actions() -> PackedStringArray:
 ## This method may be optionally overridden. By default returns [false]
 func run_action(action: String) -> bool:
     print("Default behavior. Function not implemented.")
+    print(action)
     return false
 
 ## Determines whether a selectable object can be stacked to another selectable object.
 ## This method may be optionally overridden. By default returns [true]
 func can_stack(from: Node2D, to: Node2D) -> bool:
     print("Default behavior. Function not implemented.")
+    print(from.name, " :: ", to.name)
     return true
 
 ## Determines whether a piece can be taken off a collection.
 ## This method may be optionally overridden. By default returns [true]
 func can_take_piece_off(collection: Node2D) -> bool:
     print("Default behavior. Function not implemented.")
+    print(collection.name)
     return true
 
 ## Determines whether the selectable object [param _highlighted] can be highlighted,
@@ -47,4 +50,5 @@ func can_take_piece_off(collection: Node2D) -> bool:
 ## This method may be optionally overridden. By default returns [true]
 func can_highlight(highlighted: Node2D, selected: Node2D) -> bool:
     print("Default behavior. Function not implemented.")
+    print(highlighted.name, " :: ", selected.name)
     return true

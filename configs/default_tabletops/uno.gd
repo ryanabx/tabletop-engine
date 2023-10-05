@@ -1,6 +1,6 @@
 # uno.gd
 # Copyright Ryanabx 2023
-extends RefCounted
+extends TabletopScript
 
 const START_HAND: int = 7
 
@@ -18,7 +18,7 @@ const CARD_TYPES: Array[String] = [
 const SPECIAL_CARDS: Array[String] = [
     "DRAW4", "WILD"
 ]
-const ACTION_LIST: Array[String] = [
+const ACTION_LIST: PackedStringArray = [
     "Restart Game"
 ]
 
@@ -35,13 +35,13 @@ func game_start() -> void:
     _create_cards()
     _deal_cards()
 
-func get_actions() -> Array[String]:
+func get_actions() -> PackedStringArray:
     return ACTION_LIST
 
 func run_action(action: String) -> bool:
     match action:
         "Restart Game":
-            board.clear_board()
+            board.ClearBoard()
             await board.get_tree().create_timer(0.1).timeout
             _create_cards()
             _deal_cards()
@@ -49,38 +49,35 @@ func run_action(action: String) -> bool:
     # Not a valid action
     return false
 
-func can_stack(from: Selectable, to: Selectable) -> bool:
-    if to.name != "PLACE_PILE" or (to is Collection and to.get_inside().is_empty()):
+func can_stack(from: Node2D, to: Node2D) -> bool:
+    if to.name != "PLACE_PILE" or ("GameCollection" in to.ObjectTypes and to.Inside.is_empty()):
         return true
-    var types_1: Array = to.get_inside().back().types
-    var types_2: Array = from.types
-
+    var types_1: Array = to.Inside.back().Types
+    var types_2: Array = from.Types
     if "WILD" in types_1 or "WILD" in types_2\
     or "DRAW4" in types_1 or "DRAW4" in types_2:
         return true
-    
     for type: String in types_1:
         if type in types_2:
             return true
-    
     return false
 
-func can_highlight(_highlighted: Selectable, _selected: Selectable) -> bool:
-    if _selected == null:
+func can_highlight(highlighted: Node2D, selected: Node2D) -> bool:
+    if selected == null:
         return true
-    return can_stack(_selected, _highlighted)
+    return can_stack(selected, highlighted)
 
 func _create_cards() -> void:
-    var draw_pile: Collection = board.new_game_object(
+    var draw_pile: Node2D = board.NewGameObject(
         board.GameObjectType.DECK,
         {
-            "name": "DRAW_PILE",
-            "position": Vector2(-1.5 * BASE_SIZE, 0 * BASE_SIZE),
-            "size": Vector2(2.5 * BASE_SIZE, 3.5 * BASE_SIZE),
-            "rotation": 0.0,
-            "permanent": true,
-            "lock_state": true,
-            "face_up": false
+            "Name": "DRAW_PILE",
+            "Position": Vector2(-1.5 * BASE_SIZE, 0 * BASE_SIZE),
+            "Size": Vector2(2.5 * BASE_SIZE, 3.5 * BASE_SIZE),
+            "Rotation": 0.0,
+            "Permanent": true,
+            "LockState": true,
+            "FaceUp": false
         }
     )
     for color in COLORS:

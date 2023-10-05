@@ -4,6 +4,7 @@ namespace TabletopEngine;
 public partial class Piece : Selectable
 {
     public Array<string> Types = new();
+    public override Array<string> ObjectTypes { get => base.ObjectTypes + new Array<string> {"Piece"};}
     public override void _Ready()
     {
         base._Ready();
@@ -22,7 +23,7 @@ public partial class Piece : Selectable
             [GameObject.PropertyName.Shape] = Shape,
             [GameObject.PropertyName.Size] = Size,
             [PropertyName.Types] = Types,
-            [GameObject.PropertyName.ObjectType] = (int)ObjectType
+            [GameObject.PropertyName.ObjectTypes] = ObjectTypes
         };
         return dict;
     }
