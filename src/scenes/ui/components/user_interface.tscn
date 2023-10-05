@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://ma7a666pl2us"]
 
-[ext_resource type="Script" path="res://src/scripts/ui/components/user_interface.gd" id="1_u2rch"]
+[ext_resource type="Script" path="res://src/scripts/game_elements/ui/UserInterface.cs" id="1_usscr"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/components/safe_margins.tscn" id="2_i3s0x"]
 [ext_resource type="Texture2D" uid="uid://c4ngtvr2jxp2o" path="res://src/resources/assets/ui/move.svg" id="3_6psu3"]
 [ext_resource type="PackedScene" uid="uid://bbdahmmv0yxai" path="res://src/scenes/ui/components/content_window.tscn" id="6_80c06"]
@@ -21,7 +21,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 mouse_filter = 2
-script = ExtResource("1_u2rch")
+script = ExtResource("1_usscr")
 
 [node name="PaddingPanel" type="Panel" parent="."]
 layout_mode = 1

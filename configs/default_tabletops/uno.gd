@@ -1,6 +1,6 @@
 # uno.gd
 # Copyright Ryanabx 2023
-extends TabletopGame
+extends RefCounted
 
 const START_HAND: int = 7
 

@@ -198,6 +198,10 @@ public partial class Board : Node2D
         fullArray.Sort();
         PlayerId = fullArray.IndexOf(Multiplayer.GetUniqueId());
     }
+    public void RunAction(int action)
+    {
+        Game.RunAction(Game.GetActions()[action]);
+    }
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void NewGameObjectRpc(GameObjectType type, Dictionary<StringName, Variant> properties)
     {
