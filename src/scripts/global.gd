@@ -114,7 +114,7 @@ const TRANSITION_TIME_WAIT: float = 0.1
 
 const BASE_SCALE: float = 1.0
 
-const SCREEN_SIZE = Vector2(1280.0, 720.0)
+const SCREEN_SIZE: Vector2 = Vector2(1280.0, 720.0)
 
 const OUTLINE_THICKNESS: float = 6.0
 const THICKNESS_RATIO: float = 0.8
@@ -143,7 +143,7 @@ const SETTINGS_PATH: String = "user://settings.json"
 
 # COLORS
 
-const COLOR_TRANSPARENT_HIGHLIGHT = Color(1.0, 1.0, 1.0, 0.2)
+const COLOR_TRANSPARENT_HIGHLIGHT: Color = Color(1.0, 1.0, 1.0, 0.2)
 const COLOR_SELECTED: Color = Color.AZURE
 const COLOR_HIGHLIGHTED: Color = Color.ALICE_BLUE * COLOR_TRANSPARENT_HIGHLIGHT
 const COLOR_PERMANENT: Color = Color.BLACK

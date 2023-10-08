@@ -82,7 +82,7 @@ func can_highlight(_highlighted: Selectable, _selected: Selectable) -> bool:
     return true
 
 func _create_hands() -> void:
-    for i in range(board.number_of_players):
+    for i: int in range(board.number_of_players):
         var player: int = i + 1
         var angle: float = (float(i) / board.number_of_players) * 2.0 * PI
         board.new_game_object(
@@ -111,8 +111,8 @@ func _create_deck_of_cards(with_jokers: bool = false) -> void:
         }
     )
     
-    for face in TYPES:
-        for suit in SUITS:
+    for face: String in TYPES:
+        for suit: String in SUITS:
             var pc: Piece = board.new_game_object(
                 board.GameObjectType.FLAT,
                 {

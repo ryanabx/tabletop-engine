@@ -2,7 +2,7 @@ class_name MultiplayerClient
 extends WSWebRTCClient
 
 var rtc_mp: WebRTCMultiplayerPeer = WebRTCMultiplayerPeer.new()
-var sealed := false
+var sealed: bool = false
 
 func _init() -> void:
     connected.connect(self._connected)

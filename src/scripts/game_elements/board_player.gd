@@ -22,7 +22,7 @@ var input_events: Dictionary = {}
 
 var _highlighted_object: Selectable = null
 
-const POLLING_RATE = 2
+const POLLING_RATE: int = 2
 
 var _poll_num: int = 0
 

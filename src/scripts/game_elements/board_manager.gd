@@ -3,7 +3,7 @@ extends Node
 
 var board: Board = null
 
-const MTU = 1476
+const MTU: int = 1476
 
 # Signals
 signal game_load_started()

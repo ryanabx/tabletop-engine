@@ -3,13 +3,13 @@ extends Node
 
 enum Message {JOIN, ID, PEER_CONNECT, PEER_DISCONNECT, OFFER, ANSWER, CANDIDATE, SEAL}
 
-@export var autojoin := true
-@export var lobby := "" # Will create a new lobby if empty.
-@export var mesh := true # Will use the lobby host as relay otherwise.
+@export var autojoin: bool = true
+@export var lobby: String = "" # Will create a new lobby if empty.
+@export var mesh: bool = true # Will use the lobby host as relay otherwise.
 
 var ws: WebSocketPeer = WebSocketPeer.new()
-var code := 1000
-var reason := "Unknown"
+var code: int = 1000
+var reason: String = "Unknown"
 
 signal lobby_joined(lobby: String)
 signal connected(id: int, use_mesh: bool)
@@ -38,7 +38,7 @@ func _process(_delta: float) -> void:
     if old_state == WebSocketPeer.STATE_CLOSED:
         return
     ws.poll()
-    var state := ws.get_ready_state()
+    var state: int = ws.get_ready_state()
     if state != old_state and state == WebSocketPeer.STATE_OPEN and autojoin:
         join_lobby(lobby)
     while state == WebSocketPeer.STATE_OPEN and ws.get_available_packet_count():
@@ -56,12 +56,12 @@ func _parse_msg() -> bool:
         typeof(parsed.get("data")) != TYPE_STRING:
         return false
 
-    var msg := parsed as Dictionary
+    var msg: Dictionary = parsed as Dictionary
     if not str(msg.type).is_valid_int() or not str(msg.id).is_valid_int():
         return false
 
-    var type := str(msg.type).to_int()
-    var src_id := str(msg.id).to_int()
+    var type: int = str(msg.type).to_int()
+    var src_id: int = str(msg.id).to_int()
 
     if type == Message.ID:
         connected.emit(src_id, msg.data == "true")

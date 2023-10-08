@@ -7,6 +7,8 @@ extends Control
 
 var num_default_configs: int = 0
 
+var dict: Array[int] = [1, 2, 3]
+
 func _ready() -> void:
     Global.load_this_game = PackedByteArray([])
     refresh_list()
@@ -95,14 +97,14 @@ func get_file_bytes(fname: String) -> PackedByteArray:
     return PackedByteArray([])
 
 func get_config_data() -> Dictionary:
-    var _bytes := get_selected_config_bytes()
+    var _bytes: PackedByteArray = get_selected_config_bytes()
     if _bytes.is_empty():
         return {}
     var config: Dictionary = bytes_to_var(_bytes.decompress_dynamic(-1, 3))
     return config
 
 func get_selected_config() -> TabletopGame:
-    var _bytes := get_selected_config_bytes()
+    var _bytes: PackedByteArray = get_selected_config_bytes()
     if _bytes.is_empty():
         return null
     return TabletopGame.import_config(_bytes)

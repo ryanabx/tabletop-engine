@@ -94,7 +94,7 @@ func _get_selected_range() -> Rect2:
         lerp(get_rect().position.x + size_pieces.x / 2.0, get_rect().end.x - size_pieces.x / 2.0, (_selectable_piece + 0.5) / inside.size()),
         get_rect().get_center().y
     )
-    var _size := size_pieces * 1.1
+    var _size: Vector2 = size_pieces * 1.1
     var rect: Rect2 = Rect2(_position - _size / 2, _size)
     return rect
 
@@ -150,7 +150,7 @@ func _find_selectable_piece(pos: Vector2, check_boundaries: bool = true) -> void
         _reset_selectable_piece()
         return
 
-    var check := ((pos.x + (size.x / 2.0) - (size_pieces.x / 2.0)) / (size.x - size_pieces.x)) * inside.size()
+    var check: float = ((pos.x + (size.x / 2.0) - (size_pieces.x / 2.0)) / (size.x - size_pieces.x)) * inside.size()
     
     _selectable_piece = clampi(floori(check), 0, inside.size() - 1)
     _droppable_index = clampi(roundi(check), 0, inside.size())

@@ -22,7 +22,7 @@ enum GameObjectType {
 
 
 ## Companion constant to [enum GameObjectType] that defines strings for each type.
-const GAME_OBJECT_TYPE_STRING = [
+const GAME_OBJECT_TYPE_STRING: Array[String] = [
     "flat", "deck", "hand"
 ]
 

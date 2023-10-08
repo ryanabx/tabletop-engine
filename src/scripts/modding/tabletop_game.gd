@@ -76,7 +76,7 @@ static func _get_tabletop_game(config: Dictionary) -> TabletopGame:
     var sc: GDScript = GDScript.new()
     sc.set_source_code(config.script)
     sc.reload()
-    var obj := TabletopGame.new()
+    var obj: TabletopGame = TabletopGame.new()
     obj.set_script(sc)
     obj.name = config.name
 

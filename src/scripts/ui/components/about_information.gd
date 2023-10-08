@@ -1,6 +1,6 @@
 extends VBoxContainer
 
-@onready var version := %VersionNumber
+@onready var version: Label = %VersionNumber
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
