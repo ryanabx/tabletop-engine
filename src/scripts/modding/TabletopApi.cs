@@ -1,7 +1,10 @@
 // Tabletop Engine API
 // Copyright Ryanabx 2023
-using System.Collections.Generic;
+using Godot.Collections;
 using Godot;
+using System.Linq;
+using System.Collections.Generic;
+
 namespace TabletopApi;
 public class Board
 {
@@ -31,7 +34,27 @@ public class Board
     }
     public List<GameObject> GetAllObjects()
     {
-        
+        return new(((Array<GodotObject>)_board.Call("GetAllObjects")).Select(
+            value => new GameObject(value)
+        ).ToList());
+    }
+    public void ClearBoard()
+    {
+        _board.Call("ClearBoard");
+    }
+    public void MovePiece()
+    {
+        _board.Call("MovePiece", );
+    }
+
+    public abstract void DoThis()
+    {
+
+    }
+
+    public abstract void AlsoThis()
+    {
+
     }
 
 }
