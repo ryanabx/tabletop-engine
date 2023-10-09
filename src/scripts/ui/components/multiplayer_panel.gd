@@ -1,9 +1,9 @@
 extends MarginContainer
 
-@onready var client := MultiplayerClient.new()
-@onready var room := $VBoxContainer/Connect/RoomSecret
-@onready var mesh := $VBoxContainer/Connect/Mesh
-@onready var console := $VBoxContainer/Console
+@onready var client: MultiplayerClient = MultiplayerClient.new()
+@onready var room: LineEdit = $VBoxContainer/Connect/RoomSecret
+@onready var mesh: CheckBox = $VBoxContainer/Connect/Mesh
+@onready var console: TextEdit = $VBoxContainer/Console
 
 func _ready() -> void:
     add_child(client)

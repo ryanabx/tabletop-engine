@@ -12,7 +12,6 @@ extends Control
 @onready var config_loaded_alert: Window = %ConfigLoadedAlert
 @onready var import_images_label: Label = %ImportImagesLabel
 
-
 @onready var gallery_image_scene: PackedScene = preload("res://src/scenes/ui/components/gallery_image.tscn")
 
 func _ready() -> void:
@@ -44,7 +43,7 @@ func refresh_from_loaded(tbt: Dictionary) -> void:
 
 func refresh_images(images: Dictionary) -> void:
     # Remove all previous images
-    for i in image_list.get_children():
+    for i: Node in image_list.get_children():
         i.queue_free()
     # Add new images
     for img: String in images.keys():
@@ -83,7 +82,7 @@ func _on_import_images_dialog_files_selected(paths: PackedStringArray) -> void:
 
 func load_images_into_dict(paths: PackedStringArray) -> Dictionary:
     var result: Dictionary = {}
-    for path in paths:
+    for path: String in paths:
         var img_name: String = path.simplify_path().rsplit("/",false,1)[-1].rsplit(".",false,1)[0]
         print(img_name)
         var img: Image = Image.load_from_file(path)
@@ -144,5 +143,5 @@ func _on_import_code_dialog_file_selected(path:String) -> void:
     config_code.text = code
 
 
-func _on_import_code_pressed():
+func _on_import_code_pressed() -> void:
     %ImportCodeDialog.popup()
