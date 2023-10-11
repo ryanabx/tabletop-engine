@@ -1,4 +1,4 @@
-# Copyright Ryanabx 2023. Reference for the Open Tabletop API. Extend this class when making a tabletop
+# Copyright Ryanabx 2023. Reference for the Tabletop Engine API. Extend this class when making a tabletop
 class_name TabletopGame
 extends RefCounted
 
