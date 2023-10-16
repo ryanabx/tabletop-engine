@@ -14,8 +14,8 @@ var game_name: String = ""
 
 var board: Board = null
 
-@onready var image_1 := preload("res://src/resources/assets/ui/move.svg")
-@onready var image_2 := preload("res://src/resources/assets/ui/cursor.svg")
+@onready var image_1: Texture2D = preload("res://src/resources/assets/ui/move.svg")
+@onready var image_2: Texture2D = preload("res://src/resources/assets/ui/cursor.svg")
 
 
 @onready var input_mode_textures: Array[Texture2D] = [

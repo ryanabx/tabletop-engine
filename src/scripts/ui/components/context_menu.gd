@@ -9,7 +9,8 @@ var _board: Board = null
 func _ready() -> void:
     hide()
     get_tree().get_root().get_node("BoardManager").game_load_finished.connect(_game_load_finished)
-
+    
+# Comment example
 func _game_load_finished(board: Board) -> void:
     _board = board
     _board._create_context_menu.connect(_on_menu_created)
