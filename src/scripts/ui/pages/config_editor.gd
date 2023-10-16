@@ -1,6 +1,5 @@
 extends Control
 
-
 @onready var config_selector: ConfigSelector = %ConfigSelector
 @onready var config_code: CodeEdit = %ConfigCode
 @onready var import_config: Button = %ImportConfig
@@ -89,7 +88,6 @@ func load_images_into_dict(paths: PackedStringArray) -> Dictionary:
         var texture: ImageTexture = ImageTexture.create_from_image(img)
         result[img_name] = texture
     return result
-
 
 func _on_save_configuration_pressed() -> void:
     save_config_dialog.popup()
