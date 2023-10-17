@@ -17,7 +17,7 @@ func _ready() -> void:
 
 func _on_new_game_pressed() -> void:
     $FadeRect.scene_transition.emit("res://src/scenes/ui/pages/new_game.tscn")
-
+    
 func _on_quit_pressed() -> void:
     get_tree().quit()
 
