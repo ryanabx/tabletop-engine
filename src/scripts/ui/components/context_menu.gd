@@ -51,7 +51,7 @@ func _on_collection_menu_created(coll: Collection) -> void:
 func init_collection_menu() -> void:
     add_item("Shuffle", 8)
     
-    var orientation_menu := PopupMenu.new()
+    var orientation_menu: PopupMenu = PopupMenu.new()
     orientation_menu.add_item("Face up", 5)
     orientation_menu.add_item("Face down", 6)
     orientation_menu.add_item("Flip", 1)
@@ -59,7 +59,7 @@ func init_collection_menu() -> void:
     add_child(orientation_menu)
     if not collection.lock_state:
         add_submenu_item("Set Orientation", "orientation", 7)
-    var ordering_menu := PopupMenu.new()
+    var ordering_menu: PopupMenu = PopupMenu.new()
     ordering_menu.name = "ordering"
     add_child(ordering_menu)
     add_submenu_item("Ordering", "ordering", 2)
@@ -71,7 +71,7 @@ func init_collection_menu() -> void:
 
 func init_piece_menu() -> void:
     add_item("Flip object", 0)
-    var ordering_menu := PopupMenu.new()
+    var ordering_menu: PopupMenu = PopupMenu.new()
     ordering_menu.name = "ordering"
     add_child(ordering_menu)
     add_submenu_item("Ordering", "ordering", 1)
