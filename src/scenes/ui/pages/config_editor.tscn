@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://src/scripts/ui/pages/config_editor.gd" id="1_6vcsj"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/components/safe_margins.tscn" id="2_e8vj6"]
-[ext_resource type="Texture2D" uid="uid://pgsxe1dk7qmx" path="res://src/resources/assets/ui/arrow-to-left.svg" id="3_fva16"]
+[ext_resource type="PackedScene" uid="uid://blgj8gsmcd1ad" path="res://src/scenes/ui/components/back_button.tscn" id="3_vh785"]
 [ext_resource type="PackedScene" uid="uid://dbpkcwga3251w" path="res://src/scenes/ui/components/config_selector.tscn" id="4_qs4ra"]
 [ext_resource type="PackedScene" uid="uid://chycn8r6thjep" path="res://src/scenes/ui/components/config_code_editor.tscn" id="5_a8e5x"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/components/fade_rect.tscn" id="5_gxamv"]
@@ -65,13 +65,10 @@ placeholder_text = "Tabletop Name"
 [node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox"]
 layout_mode = 2
 
-[node name="BackButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox/HBoxContainer"]
-custom_minimum_size = Vector2(64, 64)
+[node name="BackButton" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox/HBoxContainer" node_paths=PackedStringArray("fade_rect") instance=ExtResource("3_vh785")]
 layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 8
-icon = ExtResource("3_fva16")
-expand_icon = true
+back_scene = "res://src/scenes/ui/pages/main_menu.tscn"
+fade_rect = NodePath("../../../../../../../../FadeRect")
 
 [node name="SaveConfiguration" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox/HBoxContainer"]
 layout_mode = 2
@@ -154,13 +151,10 @@ layout_mode = 2
 [node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Configs/VBoxContainer"]
 layout_mode = 2
 
-[node name="BackButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Configs/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(64, 64)
+[node name="BackButton" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Configs/VBoxContainer/HBoxContainer" node_paths=PackedStringArray("fade_rect") instance=ExtResource("3_vh785")]
 layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 8
-icon = ExtResource("3_fva16")
-expand_icon = true
+back_scene = "res://src/scenes/ui/pages/main_menu.tscn"
+fade_rect = NodePath("../../../../../../../../FadeRect")
 
 [node name="ImportConfig" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/Tabs/Configs/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
@@ -184,7 +178,6 @@ mode_overrides_title = false
 file_mode = 1
 access = 2
 filters = PackedStringArray("*.png", "*.webp", "*.jpg", "*.jpeg", "*.bmp", "*.svg", "*")
-show_hidden_files = true
 
 [node name="ImportCodeDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true
@@ -208,7 +201,6 @@ min_size = Vector2i(1000, 640)
 max_size = Vector2i(1000, 640)
 theme = ExtResource("7_lm2qt")
 access = 2
-show_hidden_files = true
 
 [node name="OverwriteDialog" parent="." instance=ExtResource("8_x7t25")]
 unique_name_in_owner = true
@@ -230,11 +222,9 @@ visible = false
 [node name="Label" parent="ConfigLoadedAlert/MarginContainer/VBoxContainer" index="0"]
 text = "Configuration was loaded!"
 
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Settings/SettingsVBox/HBoxContainer/SaveConfiguration" to="." method="_on_save_configuration_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Code/CodeVBox/ImportCode" to="." method="_on_import_code_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Files/ImportsVBox/HBoxContainer/ImportImagesButton" to="." method="_on_import_images_pressed"]
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Configs/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer/Tabs/Configs/VBoxContainer/HBoxContainer/ImportConfig" to="." method="_on_import_configuration_pressed"]
 [connection signal="files_selected" from="ImportImagesDialog" to="." method="_on_import_images_dialog_files_selected"]
 [connection signal="file_selected" from="ImportCodeDialog" to="." method="_on_import_code_dialog_file_selected"]

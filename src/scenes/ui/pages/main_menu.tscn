@@ -1,20 +1,18 @@
-[gd_scene load_steps=14 format=3 uid="uid://dlnv5bicqv8ih"]
+[gd_scene load_steps=11 format=3 uid="uid://dlnv5bicqv8ih"]
 
 [ext_resource type="Script" path="res://src/scripts/ui/pages/main_menu.gd" id="1_1pq65"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/components/fade_rect.tscn" id="2_62p08"]
 [ext_resource type="Texture2D" uid="uid://ch55iben1ff3x" path="res://assets/icon.png" id="3_40fbx"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/components/safe_margins.tscn" id="3_o4qee"]
+[ext_resource type="FontVariation" uid="uid://bnrdwa586ifuf" path="res://src/resources/fonts/HeaderFont_Normal.tres" id="4_3onmd"]
 [ext_resource type="Texture2D" uid="uid://dbpyib0osxmuy" path="res://src/resources/assets/ui/gear.svg" id="4_b7mlp"]
-[ext_resource type="StyleBox" uid="uid://cl6rmska40ctf" path="res://src/resources/styles/menu/button_normal.tres" id="6_ukj2h"]
 [ext_resource type="Texture2D" uid="uid://cu648p40sig4d" path="res://src/resources/assets/ui/theme_icons/times.svg" id="6_w7hdg"]
-[ext_resource type="StyleBox" uid="uid://cdxc1844wwir1" path="res://src/resources/styles/menu/button_hover.tres" id="7_ivhu7"]
 [ext_resource type="Texture2D" uid="uid://bydji1mi7n4od" path="res://src/resources/assets/ui/about.svg" id="7_pbghq"]
-[ext_resource type="StyleBox" uid="uid://b3ldjeejkehoq" path="res://src/resources/styles/menu/button_pressed.tres" id="8_ck0rn"]
 [ext_resource type="Texture2D" uid="uid://cfi8aldqbl7k7" path="res://src/resources/assets/wood_paneling.jpg" id="13_uucwo"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0iom8"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_oytix"]
+[sub_resource type="LabelSettings" id="LabelSettings_lt5lq"]
+font = ExtResource("4_3onmd")
+font_size = 76
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -70,6 +68,7 @@ alignment = 1
 layout_mode = 2
 theme_type_variation = &"HeaderLarge"
 text = "Tabletop Engine"
+label_settings = SubResource("LabelSettings_lt5lq")
 horizontal_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
@@ -102,18 +101,6 @@ text = "Splash goes here"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PanelContainer3" type="PanelContainer" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.5
-
-[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/PanelContainer3"]
-layout_mode = 2
-size_flags_vertical = 1
-text = "Copyright Ryanabx 2023"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
@@ -125,11 +112,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/normal = ExtResource("6_ukj2h")
-theme_override_styles/hover = ExtResource("7_ivhu7")
-theme_override_styles/pressed = ExtResource("8_ck0rn")
-theme_override_styles/disabled = SubResource("StyleBoxEmpty_0iom8")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_oytix")
+theme_type_variation = &"MainMenuButton"
 text = "Play"
 expand_icon = true
 
@@ -138,11 +121,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/normal = ExtResource("6_ukj2h")
-theme_override_styles/hover = ExtResource("7_ivhu7")
-theme_override_styles/pressed = ExtResource("8_ck0rn")
-theme_override_styles/disabled = SubResource("StyleBoxEmpty_0iom8")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_oytix")
+theme_type_variation = &"MainMenuButton"
 text = "Board Builder"
 expand_icon = true
 
@@ -156,11 +135,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/normal = ExtResource("6_ukj2h")
-theme_override_styles/hover = ExtResource("7_ivhu7")
-theme_override_styles/pressed = ExtResource("8_ck0rn")
-theme_override_styles/disabled = SubResource("StyleBoxEmpty_0iom8")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_oytix")
+theme_type_variation = &"MainMenuButton"
 icon = ExtResource("4_b7mlp")
 icon_alignment = 1
 expand_icon = true
@@ -170,11 +145,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/normal = ExtResource("6_ukj2h")
-theme_override_styles/hover = ExtResource("7_ivhu7")
-theme_override_styles/pressed = ExtResource("8_ck0rn")
-theme_override_styles/disabled = SubResource("StyleBoxEmpty_0iom8")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_oytix")
+theme_type_variation = &"MainMenuButton"
 icon = ExtResource("7_pbghq")
 icon_alignment = 1
 expand_icon = true
@@ -184,14 +155,23 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/normal = ExtResource("6_ukj2h")
-theme_override_styles/hover = ExtResource("7_ivhu7")
-theme_override_styles/pressed = ExtResource("8_ck0rn")
-theme_override_styles/disabled = SubResource("StyleBoxEmpty_0iom8")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_oytix")
+theme_type_variation = &"MainMenuButton"
 icon = ExtResource("6_w7hdg")
 icon_alignment = 1
 expand_icon = true
+
+[node name="PanelContainer3" type="PanelContainer" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="Label" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/PanelContainer3"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Copyright Ryanabx 2023"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="FadeRect" parent="." instance=ExtResource("2_62p08")]
 layout_mode = 1

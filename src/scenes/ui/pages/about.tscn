@@ -3,8 +3,8 @@
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/components/safe_margins.tscn" id="1_kgect"]
 [ext_resource type="Script" path="res://src/scripts/ui/pages/about.gd" id="1_yt1xm"]
 [ext_resource type="PackedScene" uid="uid://b3gif3e78a12h" path="res://src/scenes/ui/components/about_information.tscn" id="3_8x7ue"]
-[ext_resource type="Texture2D" uid="uid://pgsxe1dk7qmx" path="res://src/resources/assets/ui/arrow-to-left.svg" id="3_dlpmv"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/components/fade_rect.tscn" id="4_k4us2"]
+[ext_resource type="PackedScene" uid="uid://blgj8gsmcd1ad" path="res://src/scenes/ui/components/back_button.tscn" id="4_n57hm"]
 
 [node name="About" type="Control"]
 layout_mode = 3
@@ -21,26 +21,27 @@ layout_mode = 1
 [node name="MarginContainer" type="MarginContainer" parent="SafeMargins"]
 layout_mode = 2
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="SafeMargins/MarginContainer"]
+[node name="AboutTabs" type="TabContainer" parent="SafeMargins/MarginContainer"]
+layout_mode = 2
+
+[node name="About" type="MarginContainer" parent="SafeMargins/MarginContainer/AboutTabs"]
+layout_mode = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="SafeMargins/MarginContainer/AboutTabs/About"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="AboutInformation" parent="SafeMargins/MarginContainer/VBoxContainer2" instance=ExtResource("3_8x7ue")]
+[node name="AboutInformation" parent="SafeMargins/MarginContainer/AboutTabs/About/VBoxContainer2" instance=ExtResource("3_8x7ue")]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer2"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="SafeMargins/MarginContainer/AboutTabs/About/VBoxContainer2"]
 layout_mode = 2
 
-[node name="BackButton" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer2/HBoxContainer2"]
-custom_minimum_size = Vector2(64, 64)
+[node name="BackButton" parent="SafeMargins/MarginContainer/AboutTabs/About/VBoxContainer2" node_paths=PackedStringArray("fade_rect") instance=ExtResource("4_n57hm")]
 layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 8
-icon = ExtResource("3_dlpmv")
-expand_icon = true
+back_scene = "res://src/scenes/ui/pages/main_menu.tscn"
+fade_rect = NodePath("../../../../../../FadeRect")
 
 [node name="FadeRect" parent="." instance=ExtResource("4_k4us2")]
 layout_mode = 1
-
-[connection signal="pressed" from="SafeMargins/MarginContainer/VBoxContainer2/HBoxContainer2/BackButton" to="." method="_on_back_button_pressed"]
