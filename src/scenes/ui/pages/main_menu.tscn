@@ -111,16 +111,14 @@ alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
 theme_type_variation = &"MainMenuButton"
-text = "Play"
+text = "New Tabletop"
 expand_icon = true
 
 [node name="Tabletops" type="Button" parent="SafeMargins/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
 theme_type_variation = &"MainMenuButton"
 text = "Board Builder"
 expand_icon = true

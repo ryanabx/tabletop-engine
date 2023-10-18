@@ -21,27 +21,36 @@ layout_mode = 1
 [node name="MarginContainer" type="MarginContainer" parent="SafeMargins"]
 layout_mode = 2
 
-[node name="AboutTabs" type="TabContainer" parent="SafeMargins/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/MarginContainer"]
 layout_mode = 2
 
-[node name="About" type="MarginContainer" parent="SafeMargins/MarginContainer/AboutTabs"]
+[node name="PageTitle" type="Label" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
+text = "About Tabletop Engine"
+horizontal_alignment = 1
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="SafeMargins/MarginContainer/AboutTabs/About"]
-layout_mode = 2
-mouse_filter = 2
-
-[node name="AboutInformation" parent="SafeMargins/MarginContainer/AboutTabs/About/VBoxContainer2" instance=ExtResource("3_8x7ue")]
+[node name="AboutTabs" type="TabContainer" parent="SafeMargins/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="SafeMargins/MarginContainer/AboutTabs/About/VBoxContainer2"]
+[node name="About" type="MarginContainer" parent="SafeMargins/MarginContainer/VBoxContainer/AboutTabs"]
 layout_mode = 2
 
-[node name="BackButton" parent="SafeMargins/MarginContainer/AboutTabs/About/VBoxContainer2" node_paths=PackedStringArray("fade_rect") instance=ExtResource("4_n57hm")]
+[node name="VBoxContainer2" type="VBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/AboutTabs/About"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="AboutInformation" parent="SafeMargins/MarginContainer/VBoxContainer/AboutTabs/About/VBoxContainer2" instance=ExtResource("3_8x7ue")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="SafeMargins/MarginContainer/VBoxContainer/AboutTabs/About/VBoxContainer2"]
+layout_mode = 2
+
+[node name="BackButton" parent="SafeMargins/MarginContainer/VBoxContainer/AboutTabs/About/VBoxContainer2" node_paths=PackedStringArray("fade_rect") instance=ExtResource("4_n57hm")]
 layout_mode = 2
 back_scene = "res://src/scenes/ui/pages/main_menu.tscn"
-fade_rect = NodePath("../../../../../../FadeRect")
+fade_rect = NodePath("../../../../../../../FadeRect")
 
 [node name="FadeRect" parent="." instance=ExtResource("4_k4us2")]
 layout_mode = 1
