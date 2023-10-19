@@ -169,7 +169,7 @@ static var DEFAULT_USER_SETTINGS: Dictionary = {
     "fullscreen": false,
     "default_tap_mode": Board.TouchType.DRAG if not Global.is_mobile_platform() else Board.TouchType.TAP,
     "signaling_server": "wss://obf-server-signaling.onrender.com",
-    "ui_scale": 3.0 if not Global.is_mobile_platform() else 6.0
+    "ui_scale": 5.0 if not Global.is_mobile_platform() else 6.0
 }
 
 static var _user_settings: Dictionary = DEFAULT_USER_SETTINGS.duplicate(true)

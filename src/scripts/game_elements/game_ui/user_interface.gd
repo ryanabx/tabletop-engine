@@ -14,16 +14,14 @@ var game_name: String = ""
 
 var board: Board = null
 
-@onready var image_1: Texture2D = preload("res://src/resources/assets/ui/move.svg")
-@onready var image_2: Texture2D = preload("res://src/resources/assets/ui/cursor.svg")
-
-
 @onready var input_mode_textures: Array[Texture2D] = [
-    image_1, image_2
+    preload("res://src/resources/assets/ui/move.svg"),
+    preload("res://src/resources/assets/ui/cursor.svg")
 ]
 
-@onready var touch_types: Array[String] = [
-    "Tap", "Drag"
+@onready var touch_types: Array[Texture2D] = [
+    preload("res://src/resources/assets/ui/tap.svg"),
+    preload("res://src/resources/assets/ui/drag.svg")
 ]
 
 func _ready() -> void:
@@ -56,7 +54,7 @@ func _process(_delta: float) -> void:
     if board != null:
         game_name = board.game.name
         input_mode_button.icon = input_mode_textures[board.input_mode]
-        touch_type_button.text = touch_types[board.touch_type]
+        touch_type_button.icon = touch_types[board.touch_type]
         touch_type_button.visible = board.input_mode == Board.InputMode.SELECT
 
 var drag_window: bool = false
