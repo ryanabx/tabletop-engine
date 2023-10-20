@@ -2,59 +2,46 @@
 
 [ext_resource type="Script" path="res://src/scripts/ui/components/about_information.gd" id="1_jrbic"]
 
-[node name="AboutInformation" type="VBoxContainer"]
+[node name="AboutInformation" type="ScrollContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
-alignment = 1
 script = ExtResource("1_jrbic")
 
-[node name="Label" type="Label" parent="."]
+[node name="Vbox" type="VBoxContainer" parent="."]
 layout_mode = 2
-size_flags_vertical = 7
-text = "Tabletop Engine"
-horizontal_alignment = 1
-vertical_alignment = 1
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+alignment = 1
 
-[node name="VersionNumber" type="Label" parent="."]
+[node name="VersionNumber" type="Label" parent="Vbox"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_vertical = 7
-text = "Version x.x.x"
+text = "Tabletop Engine version x.x.x"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Label3" type="Label" parent="."]
+[node name="Buttons" type="VBoxContainer" parent="Vbox"]
 layout_mode = 2
-size_flags_vertical = 7
-text = "Copyright Ryanabx 2023"
-horizontal_alignment = 1
-vertical_alignment = 1
+theme_type_variation = &"VBoxNoSeparation"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 2.0
-
-[node name="GitHub" type="Button" parent="HBoxContainer"]
+[node name="API" type="Button" parent="Vbox/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "GitHub"
+text = "API Documentation"
 
-[node name="Docs" type="Button" parent="HBoxContainer"]
+[node name="SubmitFeedback" type="Button" parent="Vbox/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 3
-disabled = true
-text = "Docs (WIP)"
+text = "Submit an issue/feature request"
 
-[node name="SubmitFeedback" type="Button" parent="HBoxContainer"]
+[node name="Licenses" type="Label" parent="Vbox"]
+unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-text = "Submit Feedback"
+autowrap_mode = 2
 
-[connection signal="pressed" from="HBoxContainer/GitHub" to="." method="_on_github_pressed"]
-[connection signal="pressed" from="HBoxContainer/Docs" to="." method="_on_docs_pressed"]
-[connection signal="pressed" from="HBoxContainer/SubmitFeedback" to="." method="_on_submit_feedback_pressed"]
+[connection signal="pressed" from="Vbox/Buttons/API" to="Vbox" method="_on_github_pressed"]
+[connection signal="pressed" from="Vbox/Buttons/SubmitFeedback" to="Vbox" method="_on_submit_feedback_pressed"]

@@ -217,6 +217,7 @@ visible = false
 
 [node name="AboutInformation" parent="AboutWindow/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" index="0" instance=ExtResource("7_pwr8a")]
 layout_mode = 2
+size_flags_vertical = 3
 
 [connection signal="pressed" from="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel2/InputModeButton" to="." method="_on_input_setting_pressed"]
 [connection signal="pressed" from="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel3/TouchTypeButton" to="." method="_on_touch_type_button_pressed"]

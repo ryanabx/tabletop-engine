@@ -20,6 +20,8 @@ const SPLASHES: Array[String] = [
     '90% of gamblers quit before making it big!'
 ]
 
+const LICENSE_FILE: String = "res://src/resources/licenses.txt"
+
 # MULTIPLAYER
 const DEFAULT_MAX_PLAYERS: int = 4
 
