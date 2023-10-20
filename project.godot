@@ -49,7 +49,7 @@ import/blender/enabled=false
 
 [gui]
 
-theme/custom="res://src/resources/styles/normal/normal_theme.tres"
+theme/custom="res://src/resources/styles/default_theme.tres"
 
 [input]
 

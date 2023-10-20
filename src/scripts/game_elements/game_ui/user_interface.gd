@@ -105,7 +105,6 @@ func actions_menu() -> void:
     menu_bar.get_popup().add_child(actions)
     menu_bar.get_popup().add_submenu_item("Actions", "Actions")
 
-
 func player_menu() -> void:
     player = PopupMenu.new()
     player.index_pressed.connect(set_player)

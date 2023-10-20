@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://ma7a666pl2us"]
+[gd_scene load_steps=12 format=3 uid="uid://ma7a666pl2us"]
 
 [ext_resource type="Script" path="res://src/scripts/game_elements/game_ui/user_interface.gd" id="1_u2rch"]
 [ext_resource type="PackedScene" uid="uid://bs7s2yo0kutpx" path="res://src/scenes/ui/components/safe_margins.tscn" id="2_i3s0x"]
@@ -8,6 +8,8 @@
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/components/fade_rect.tscn" id="6_aaf8p"]
 [ext_resource type="Texture2D" uid="uid://cnxcvuvev4a5d" path="res://src/resources/assets/ui/burger-menu.svg" id="7_f3h7v"]
 [ext_resource type="PackedScene" uid="uid://b3gif3e78a12h" path="res://src/scenes/ui/components/about_information.tscn" id="7_pwr8a"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_a5s5e"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_h871r"]
 
@@ -53,61 +55,66 @@ custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
 
 [node name="TopBar" type="PanelContainer" parent="SafeMargins"]
-custom_minimum_size = Vector2(0, 32)
+custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 size_flags_vertical = 0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/TopBar"]
-layout_mode = 2
-
-[node name="MenuPanel" type="PanelContainer" parent="SafeMargins/TopBar/HBoxContainer"]
-layout_mode = 2
-metadata/_edit_use_anchors_ = true
-
-[node name="MenuButton" type="MenuButton" parent="SafeMargins/TopBar/HBoxContainer/MenuPanel"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-icon = ExtResource("7_f3h7v")
-flat = false
-icon_alignment = 1
-expand_icon = true
-
-[node name="HBoxContainer" type="HBoxContainer" parent="SafeMargins/TopBar/HBoxContainer"]
-layout_mode = 2
-
-[node name="MenuPanel2" type="PanelContainer" parent="SafeMargins/TopBar/HBoxContainer/HBoxContainer"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_h871r")
-metadata/_edit_use_anchors_ = true
-
-[node name="InputModeButton" type="Button" parent="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel2"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-theme_override_styles/focus = SubResource("StyleBoxEmpty_8220w")
-icon = ExtResource("3_6psu3")
-icon_alignment = 1
-expand_icon = true
-
-[node name="MenuPanel3" type="PanelContainer" parent="SafeMargins/TopBar/HBoxContainer/HBoxContainer"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_h871r")
-metadata/_edit_use_anchors_ = true
-
-[node name="TouchTypeButton" type="Button" parent="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel3"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-icon = ExtResource("5_xobk8")
-icon_alignment = 1
-expand_icon = true
 
 [node name="GameInfo" type="Label" parent="SafeMargins/TopBar"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Game: Untitled"
 horizontal_alignment = 1
+
+[node name="LeftBar" type="PanelContainer" parent="SafeMargins"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_a5s5e")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SafeMargins/LeftBar"]
+layout_mode = 2
+
+[node name="MenuPanel" type="PanelContainer" parent="SafeMargins/LeftBar/VBoxContainer"]
+layout_mode = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="MenuButton" type="MenuButton" parent="SafeMargins/LeftBar/VBoxContainer/MenuPanel"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+icon = ExtResource("7_f3h7v")
+flat = false
+icon_alignment = 1
+expand_icon = true
+
+[node name="HBoxContainer2" type="VBoxContainer" parent="SafeMargins/LeftBar/VBoxContainer"]
+layout_mode = 2
+
+[node name="MenuPanel2" type="PanelContainer" parent="SafeMargins/LeftBar/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_h871r")
+metadata/_edit_use_anchors_ = true
+
+[node name="InputModeButton" type="Button" parent="SafeMargins/LeftBar/VBoxContainer/HBoxContainer2/MenuPanel2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_8220w")
+icon = ExtResource("3_6psu3")
+icon_alignment = 1
+expand_icon = true
+
+[node name="MenuPanel3" type="PanelContainer" parent="SafeMargins/LeftBar/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_h871r")
+metadata/_edit_use_anchors_ = true
+
+[node name="TouchTypeButton" type="Button" parent="SafeMargins/LeftBar/VBoxContainer/HBoxContainer2/MenuPanel3"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+icon = ExtResource("5_xobk8")
+icon_alignment = 1
+expand_icon = true
 
 [node name="FadeRect" parent="." instance=ExtResource("6_aaf8p")]
 unique_name_in_owner = true
@@ -219,8 +226,8 @@ visible = false
 layout_mode = 2
 size_flags_vertical = 3
 
-[connection signal="pressed" from="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel2/InputModeButton" to="." method="_on_input_setting_pressed"]
-[connection signal="pressed" from="SafeMargins/TopBar/HBoxContainer/HBoxContainer/MenuPanel3/TouchTypeButton" to="." method="_on_touch_type_button_pressed"]
+[connection signal="pressed" from="SafeMargins/LeftBar/VBoxContainer/HBoxContainer2/MenuPanel2/InputModeButton" to="." method="_on_input_setting_pressed"]
+[connection signal="pressed" from="SafeMargins/LeftBar/VBoxContainer/HBoxContainer2/MenuPanel3/TouchTypeButton" to="." method="_on_touch_type_button_pressed"]
 
 [editable path="ControlsInfo"]
 [editable path="AboutWindow"]
