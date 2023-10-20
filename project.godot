@@ -23,8 +23,8 @@ boot_splash/minimum_display_time=100
 
 [debug]
 
-gdscript/warnings/untyped_declaration=1
-gdscript/warnings/inferred_declaration=1
+gdscript/warnings/untyped_declaration=2
+gdscript/warnings/inferred_declaration=2
 
 [display]
 
