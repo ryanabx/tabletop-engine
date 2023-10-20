@@ -77,7 +77,7 @@ func receive_config_part(bytes: PackedByteArray, final: bool) -> void:
 func spawn_board() -> void:
     print("Spawning board!")
     var gc: TabletopGame = TabletopGame.import_config(config_bytes)
-    var board_new: Board = load("res://src/scenes/game_elements/board.tscn").instantiate()
+    var board_new: Board = (load("res://src/scenes/game_elements/board.tscn") as PackedScene).instantiate()
     board_new.game = gc
     board_new.name = gc.name
     

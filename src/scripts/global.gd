@@ -187,9 +187,9 @@ static func set_user_setting(setting: String, value: Variant) -> void:
         "fullscreen":
             DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if value else DisplayServer.WINDOW_MODE_WINDOWED)
         "ui_scale":
-            ThemeDB.get_project_theme().set_default_base_scale(clampf(value, 0.25, 8.0))
-            ThemeDB.get_project_theme().set_default_font_size(clampi(roundi(8 * value), 2, 64))
-            _user_settings[setting] = clampf(value, 0.25, 8.0)
+            ThemeDB.get_project_theme().set_default_base_scale(clampf(value as float, 0.25, 8.0))
+            ThemeDB.get_project_theme().set_default_font_size(clampi(roundi(8 * (value as float)), 2, 64))
+            _user_settings[setting] = clampf(value as float, 0.25, 8.0)
     _save_settings()
 
 static func get_user_setting(setting: String) -> Variant:

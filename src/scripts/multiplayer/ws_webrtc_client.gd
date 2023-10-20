@@ -52,8 +52,8 @@ func _process(_delta: float) -> void:
 
 func _parse_msg() -> bool:
     var parsed: Variant = JSON.parse_string(ws.get_packet().get_string_from_utf8()) # TODO: Check on this
-    if typeof(parsed) != TYPE_DICTIONARY or not parsed.has("type") or not parsed.has("id") or \
-        typeof(parsed.get("data")) != TYPE_STRING:
+    if typeof(parsed) != TYPE_DICTIONARY or not (parsed as Dictionary).has("type") or not (parsed as Dictionary).has("id") or \
+        typeof((parsed as Dictionary).get("data")) != TYPE_STRING:
         return false
 
     var msg: Dictionary = parsed as Dictionary
@@ -83,7 +83,8 @@ func _parse_msg() -> bool:
         answer_received.emit(src_id, msg.data)
     elif type == Message.CANDIDATE:
         # Candidate received
-        var candidate: PackedStringArray = msg.data.split("\n", false)
+        var msg_data: String = msg.data
+        var candidate: PackedStringArray = msg_data.split("\n", false)
         if candidate.size() != 3:
             return false
         if not candidate[1].is_valid_int():

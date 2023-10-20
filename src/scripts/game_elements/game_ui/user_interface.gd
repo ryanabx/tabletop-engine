@@ -25,10 +25,10 @@ var board: Board = null
 ]
 
 func _ready() -> void:
-    get_tree().get_root().get_node("BoardManager").game_percent_loaded.connect(update_loading_percent)
-    get_tree().get_root().get_node("BoardManager").game_load_started.connect(show_loading)
-    get_tree().get_root().get_node("BoardManager").game_load_finished.connect(set_board)
-    $SafeMargins.orientation_changed.connect(orientation_changed)
+    (get_tree().get_root().get_node("BoardManager") as BoardManager).game_percent_loaded.connect(update_loading_percent)
+    (get_tree().get_root().get_node("BoardManager") as BoardManager).game_load_started.connect(show_loading)
+    (get_tree().get_root().get_node("BoardManager") as BoardManager).game_load_finished.connect(set_board)
+    ($SafeMargins as SafeMargins).orientation_changed.connect(orientation_changed)
     orientation_changed()
     menu_bar.get_popup().submenu_popup_delay = 0.0
 
@@ -37,17 +37,17 @@ func orientation_changed() -> void:
 
 func show_loading() -> void:
     print("Game load started")
-    $SafeMargins/LoadingBarContainer.show()
+    ($SafeMargins/LoadingBarContainer as Control).show()
 
 func set_board(_board: Board) -> void:
     board = _board
     print("Game load finished")
-    $SafeMargins/LoadingBarContainer.hide()
+    ($SafeMargins/LoadingBarContainer as Control).hide()
     setup_menu_bar()
 
 func update_loading_percent(pc: float) -> void:
     print("Game load at ",pc)
-    %LoadingBar.value = pc * 100.0
+    (%LoadingBar as ProgressBar).value = pc * 100.0
 
 func _process(_delta: float) -> void:
     game_info.text = str("Game: ",game_name)
@@ -144,13 +144,13 @@ func run_action(index: int) -> void:
 
 func tabletop_pressed(id: int) -> void:
     match id:
-        0: %FadeRect.scene_transition.emit("res://src/scenes/ui/pages/main_menu.tscn")
+        0: (%FadeRect as FadeRect).scene_transition.emit("res://src/scenes/ui/pages/main_menu.tscn")
         1: get_tree().quit()
-        2: get_tree().get_root().get_node("BoardManager").save_config()
+        2: (get_tree().get_root().get_node("BoardManager") as BoardManager).save_config()
 
 func help_menu_pressed(id: int) -> void:
     match id:
         0:
-            %ControlsInfo.popup()
+            (%ControlsInfo as Window).popup()
         1:
-            %AboutWindow.popup()
+            (%AboutWindow as Window).popup()

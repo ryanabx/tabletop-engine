@@ -2,17 +2,14 @@ extends Control
 
 func _ready() -> void:
     if Global.is_mobile_platform():
-        %Video.hide()
+        (%Video as Control).hide()
     else:
-        %Fullscreen.button_pressed = Global.get_user_setting("fullscreen")
-    %SignalingServer.text = Global.get_user_setting("signaling_server")
-    %UIScale.text = str(Global.get_user_setting("ui_scale"))
+        (%Fullscreen as Button).button_pressed = Global.get_user_setting("fullscreen")
+    (%SignalingServer as LineEdit).text = Global.get_user_setting("signaling_server")
+    (%UIScale as LineEdit).text = str(Global.get_user_setting("ui_scale"))
 
 func _on_back_button_pressed() -> void:
-    $FadeRect.scene_transition.emit("res://src/scenes/ui/pages/main_menu.tscn")
-
-func _on_export_config_pressed() -> void:
-    $FadeRect.create_export_config_dialog.emit()
+    ($FadeRect as FadeRect).scene_transition.emit("res://src/scenes/ui/pages/main_menu.tscn")
 
 func _on_toggle_fullscreen_toggled(toggled_on:bool) -> void:
     Global.set_user_setting("fullscreen",toggled_on)

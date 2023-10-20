@@ -35,7 +35,7 @@ func _ready() -> void:
 
 func _hold_timer_timeout() -> void:
     if collection_queued():
-        _select_collection(get_queued_object())
+        _select_collection(get_queued_object() as Collection)
 
 ######################
 ### Getter Methods ###
@@ -81,15 +81,18 @@ func _input(event: InputEvent) -> void:
         deselect()
         return
     var ev: InputEvent = make_input_local(event)
-    if ev is InputEventMouseMotion or (ev is InputEventMouseButton and ev.button_index == MOUSE_BUTTON_LEFT):
+    if ev is InputEventMouseMotion or (ev is InputEventMouseButton and (ev as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT):
         _update_highlighted(ev)
     if ev.is_action_pressed("game_flip"):
         if is_selecting() and not get_selected_object().lock_state:
-            get_selected_object().face_up = not get_selected_object().face_up
+            if get_selected_object() is Flat:
+                (get_selected_object() as Flat).face_up = not (get_selected_object() as Flat).face_up
+            elif get_selected_object() is Deck:
+                (get_selected_object() as Deck).face_up = not (get_selected_object() as Deck).face_up
     if ev is InputEventScreenTouch:
-        touch_input(ev)
+        touch_input(ev as InputEventScreenTouch)
     elif ev is InputEventScreenDrag:
-        drag_input(ev)
+        drag_input(ev as InputEventScreenDrag)
 
 func _update_highlighted(event: InputEvent) -> void:
     if board.touch_type == Board.TouchType.DRAG and event is InputEventMouseButton:
@@ -104,7 +107,7 @@ func _update_highlighted(event: InputEvent) -> void:
             _highlighted_object = null
     _poll_num = (_poll_num + 1) % POLLING_RATE
     
-func touch_input(event: InputEvent) -> void:
+func touch_input(event: InputEventScreenTouch) -> void:
     if event.pressed:
         input_events[event.index] = event
     else:
@@ -119,7 +122,7 @@ func touch_input(event: InputEvent) -> void:
     elif input_events.size() == 1:
         double_tap_input(event)
 
-func single_tap_input(event: InputEvent) -> void:
+func single_tap_input(event: InputEventScreenTouch) -> void:
     if event.pressed and input_events.size() == 1: # Tap pressed
         print("Tap Pressed: ", board.touch_type)
         if board.touch_type == Board.TouchType.DRAG:
@@ -133,15 +136,15 @@ func single_tap_input(event: InputEvent) -> void:
         elif board.touch_type == Board.TouchType.TAP:
             tap_released_tap(event)
 
-func tap_pressed_drag(event: InputEvent) -> void:
+func tap_pressed_drag(event: InputEventScreenTouch) -> void:
     _select_with_event(event)
 
-func tap_released_drag(event: InputEvent) -> void:
+func tap_released_drag(event: InputEventScreenTouch) -> void:
     if is_selecting():
         _deselect_with_event(event)
     hold_timer.stop()
 
-func tap_pressed_tap(event: InputEvent) -> void:
+func tap_pressed_tap(event: InputEventScreenTouch) -> void:
     print("Tap pressed tap")
     if object_queued():
         if _get_collider_at_position(get_local_mouse_position(), 1) != get_queued_object():
@@ -151,7 +154,7 @@ func tap_pressed_tap(event: InputEvent) -> void:
             grab_position = event.position
             hold_timer.start()
 
-func tap_released_tap(event: InputEvent) -> void:
+func tap_released_tap(event: InputEventScreenTouch) -> void:
     print("Tap released tap")
     if not is_selecting() and not object_queued():
         print("Select with event")
@@ -162,20 +165,20 @@ func tap_released_tap(event: InputEvent) -> void:
         deselect()
     hold_timer.stop()
 
-func _select_with_event(event: InputEvent) -> void:
+func _select_with_event(event: InputEventScreenTouch) -> void:
     var collider: Selectable = _get_collider_at_position()
     if collider != null:
         grab_position = event.position
         select_index = event.index
         collider._on_select(event)
 
-func _deselect_with_event(event: InputEvent) -> void:
+func _deselect_with_event(event: InputEventScreenTouch) -> void:
     var collider: Selectable = _get_collider_at_position()
     if collider != null:
         collider._on_deselect(event)
     deselect()
 
-func double_tap_input(event: InputEvent) -> void:
+func double_tap_input(event: InputEventScreenTouch) -> void:
     if event.pressed:
         if board.touch_type == Board.TouchType.TAP and _taps_since_selecting < 2:
             print("Not a double tap! %d" % _taps_since_selecting)
@@ -199,17 +202,18 @@ func _get_collider_at_position(pos: Vector2 = get_local_mouse_position(), collis
     var results: Array[Dictionary] = physics_state.intersect_point(params, 65535)
     if results.size() > 0:
         results.sort_custom(compare_by_z_index)
-        return results[0].collider.get_parent() as Selectable
+        var collider: Node = results[0].collider
+        return collider.get_parent() as Selectable
     return null
 
-func drag_input(event: InputEvent) -> void:
+func drag_input(event: InputEventScreenDrag) -> void:
     input_events[event.index] = event
     if select_index != event.index:
         return
     if object_queued() and event.position.distance_to(grab_position) > Global.GRAB_THRESHOLD:
         hold_timer.stop()
-        if collection_queued() and board.game.can_take_piece_off(get_queued_object()):
-            var pc: Piece = get_queued_object().remove_from_top(get_queued_object().to_local(grab_position))
+        if collection_queued() and board.game.can_take_piece_off(get_queued_object() as Collection):
+            var pc: Piece = (get_queued_object() as Collection).remove_from_top(get_queued_object().to_local(grab_position))
             select_object(pc)
         elif piece_queued():
             select_object(get_queued_object())
@@ -220,36 +224,9 @@ func move_objects_to(pos: Vector2) -> void:
         get_selected_object().position = (pos - get_selected_object().grab_offset).clamp(-board.size/2, board.size/2)
 
 func compare_by_z_index(a: Dictionary, b: Dictionary) -> bool:
-    return a.collider.get_parent().index > b.collider.get_parent().index
-
-## Shuffles objects
-func shuffle(pcs: Array[Piece]) -> void:
-    var pcs_shuffled: Array[Piece] = pcs.duplicate(false)
-    pcs_shuffled.shuffle()
-    for i: int in range(pcs.size()):
-        var pc1: Piece = pcs[i]
-        var pc2: Piece = pcs_shuffled[i]
-        var contents1: Dictionary = {
-            "position": pc1.position,
-            "rotation": pc1.rotation,
-            "index": pc1.index,
-            "collection": pc1.collection
-        }
-        var contents2: Dictionary = {
-            "position": pc2.position,
-            "rotation": pc2.rotation,
-            "index": pc2.index,
-            "collection": pc2.collection
-        }
-        _swap(pc1, contents2)
-        _swap(pc2, contents1)
-
-func _swap(pc1: Piece, contents: Dictionary) -> void:
-    pc1.position = contents.position
-    pc1.rotation = contents.rotation
-    pc1.index = contents.index
-    if pc1.collection != contents.collection:
-        contents.collection.add_piece(pc1)
+    var collider_a: Node = a.collider
+    var collider_b: Node = b.collider
+    return (collider_a.get_parent() as GameObject).index > (collider_b.get_parent() as GameObject).index
 
 ######################
 ### Main Processes ###
@@ -278,35 +255,38 @@ func queue_select_object(obj: Selectable) -> void:
 func stack_selection_to_item(item: Selectable) -> void:
     item._authority = multiplayer.get_unique_id()
     if item is Collection:
-        stack_on_collection(item)
+        stack_on_collection(item as Collection)
     elif item is Piece:
-        stack_on_piece(item)
+        stack_on_piece(item as Piece)
     deselect()
 
 func stack_on_collection(item: Collection) -> void:
     if is_selecting_piece():
-        item.add_piece(get_selected_object())
+        item.add_piece(get_selected_object() as Piece)
     elif is_selecting_collection():
-        item.add_collection(get_selected_object())
+        item.add_collection(get_selected_object() as Collection)
 
 func stack_on_piece(item: Piece) -> void:
     if is_selecting_collection():
         get_selected_object().position = item.position
-        get_selected_object().add_piece(item, true)
+        (get_selected_object() as Collection).add_piece(item, true)
     elif is_selecting_piece():
+        var is_face_up: bool = true
+        if item is Flat:
+            is_face_up = (item as Flat).face_up
         var collection: Collection = board.new_game_object(
             Board.GameObjectType.DECK,
             {
                 "position": item.position,
                 "rotation": item.rotation,
-                "face_up": item.face_up
+                "face_up": is_face_up
             }
         )
         collection.add_piece(item)
-        collection.add_piece(get_selected_object())
+        collection.add_piece(get_selected_object() as Piece)
 
 func _select_collection(collection: Collection) -> void:
-    if collection is Hand or collection.permanent:
+    if collection is Hand or (collection as Deck).permanent:
         var new_collection: Collection = collection.board.new_game_object(
             Board.GameObjectType.DECK,
             {

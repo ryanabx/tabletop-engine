@@ -1,3 +1,4 @@
+class_name FadeRect
 extends ColorRect
 
 var fade_in_timer: Timer

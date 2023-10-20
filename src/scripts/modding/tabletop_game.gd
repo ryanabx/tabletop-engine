@@ -57,7 +57,8 @@ func set_images(imgs: Dictionary) -> void:
     include_images = {}
     for img: String in imgs.keys():
         var n_img: Image = Image.new()
-        n_img.load_webp_from_buffer(imgs[img])
+        var buf: PackedByteArray = imgs[img]
+        n_img.load_webp_from_buffer(buf)
         include_images[img] = ImageTexture.create_from_image(n_img)
 
 func get_images() -> Dictionary:
@@ -74,13 +75,13 @@ static func import_config(bytes: PackedByteArray) -> TabletopGame:
 
 static func _get_tabletop_game(config: Dictionary) -> TabletopGame:
     var sc: GDScript = GDScript.new()
-    sc.set_source_code(config.script)
+    sc.set_source_code(config.script as Variant as String)
     sc.reload()
     var obj: TabletopGame = TabletopGame.new()
     obj.set_script(sc)
     obj.name = config.name
 
-    obj.set_images(config.include_images)
+    obj.set_images(config.include_images as Variant as Dictionary)
     return obj
 
 static func export_config(source_code: String, images: Dictionary, game_name: String) -> PackedByteArray:

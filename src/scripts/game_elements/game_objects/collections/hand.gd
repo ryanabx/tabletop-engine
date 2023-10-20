@@ -67,14 +67,14 @@ func _draw_pieces() -> void:
             continue
         # (size.x - size_pieces.x / 2.0) / (inside.size())
         var card_position: Vector2 = Vector2(
-            lerp(get_rect().position.x + size_pieces.x / 2.0, get_rect().end.x - size_pieces.x / 2.0, (i + 0.5) / inside.size()),
+            lerp(get_rect().position.x + size_pieces.x / 2.0, get_rect().end.x - size_pieces.x / 2.0, (i + 0.5) / inside.size()) as float,
             get_rect().get_center().y
         )
         _draw_piece(pc, (i == _selectable_piece), card_position)
         i += 1
     if _selectable_piece != -1 and _selectable_piece < inside.size():
         var card_position: Vector2 = Vector2(
-            lerp(get_rect().position.x + size_pieces.x / 2.0, get_rect().end.x - size_pieces.x / 2.0, (_selectable_piece + 0.5) / inside.size()),
+            lerp(get_rect().position.x + size_pieces.x / 2.0, get_rect().end.x - size_pieces.x / 2.0, (_selectable_piece + 0.5) / inside.size()) as float,
             get_rect().get_center().y
         )
         _draw_piece(inside[_selectable_piece], true, card_position)
@@ -83,7 +83,9 @@ func _draw_pieces() -> void:
 func _draw_piece(_data: Dictionary, selectable: bool, _position: Vector2, _size: Vector2 = size_pieces) -> void:
     if selectable:
         _size = _size * 1.1
-    var _texture: Texture2D = board._get_image(_data.image_up if can_view() else _data.image_down)
+    var img_up: String = _data.image_up
+    var img_down: String = _data.image_down
+    var _texture: Texture2D = board._get_image(img_up if can_view() else img_down)
     
     draw_texture_rect(_texture, Rect2(_position - _size / 2, _size), false)
 
@@ -91,7 +93,7 @@ func _get_selected_range() -> Rect2:
     if _selectable_piece == -1:
         return Rect2(0, 0, 0, 0)
     var _position: Vector2 = Vector2(
-        lerp(get_rect().position.x + size_pieces.x / 2.0, get_rect().end.x - size_pieces.x / 2.0, (_selectable_piece + 0.5) / inside.size()),
+        lerp(get_rect().position.x + size_pieces.x / 2.0, get_rect().end.x - size_pieces.x / 2.0, (_selectable_piece + 0.5) / inside.size()) as float,
         get_rect().get_center().y
     )
     var _size: Vector2 = size_pieces * 1.1
@@ -135,7 +137,8 @@ func remove_from_top(pos: Vector2 = Vector2.ZERO) -> Piece:
     _piece.position = get_global_mouse_position()
     _piece.rotation = rotation
     _piece.grab_offset = Vector2.ZERO
-    _piece.face_up = face_up
+    if _piece is Flat:
+        (_piece as Flat).face_up = face_up
     return _piece
 
 func _find_spacing_interval() -> void:

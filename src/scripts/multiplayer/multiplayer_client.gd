@@ -51,7 +51,8 @@ func _offer_created(type: String, data: String, id: int) -> void:
     if not rtc_mp.has_peer(id):
         return
     print("created", type)
-    rtc_mp.get_peer(id).connection.set_local_description(type, data)
+    var peer_connection: WebRTCPeerConnection = rtc_mp.get_peer(id).connection
+    peer_connection.set_local_description(type, data)
     if type == "offer": send_offer(id, data)
     else: send_answer(id, data)
 
@@ -93,15 +94,18 @@ func _peer_disconnected(id: int) -> void:
 func _offer_received(id: int, offer: String) -> void:
     print("Got offer: %d" % id)
     if rtc_mp.has_peer(id):
-        rtc_mp.get_peer(id).connection.set_remote_description("offer", offer)
+        var peer_connection: WebRTCPeerConnection = rtc_mp.get_peer(id).connection
+        peer_connection.set_remote_description("offer", offer)
 
 
 func _answer_received(id: int, answer: String) -> void:
     print("Got answer: %d" % id)
     if rtc_mp.has_peer(id):
-        rtc_mp.get_peer(id).connection.set_remote_description("answer", answer)
+        var peer_connection: WebRTCPeerConnection = rtc_mp.get_peer(id).connection
+        peer_connection.set_remote_description("answer", answer)
 
 
 func _candidate_received(id: int, mid: String, index: int, sdp: String) -> void:
     if rtc_mp.has_peer(id):
-        rtc_mp.get_peer(id).connection.add_ice_candidate(mid, index, sdp)
+        var peer_connection: WebRTCPeerConnection = rtc_mp.get_peer(id).connection
+        peer_connection.add_ice_candidate(mid, index, sdp)

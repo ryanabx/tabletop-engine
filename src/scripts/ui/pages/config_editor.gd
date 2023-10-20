@@ -22,7 +22,7 @@ func _process(_delta: float) -> void:
     import_images_label.text = "Imported images (%s)" % image_list.get_child_count()
 
 func _on_back_button_pressed() -> void:
-    $FadeRect.scene_transition.emit("res://src/scenes/ui/pages/main_menu.tscn")
+    ($FadeRect as FadeRect).scene_transition.emit("res://src/scenes/ui/pages/main_menu.tscn")
 
 func clear_config() -> void:
     config_code.text = ""
@@ -36,18 +36,20 @@ func refresh_from_loaded(tbt: Dictionary) -> void:
     print("Config code setting text")
     config_code.text = tbt.script
     print("Setting images")
-    refresh_images(tbt.include_images)
+    var include_images: Dictionary = tbt.include_images
+    refresh_images(include_images)
     config_name.text = tbt.name
     config_loaded_alert.popup()
 
-func refresh_images(images: Dictionary) -> void:
+func refresh_images(imgs: Dictionary) -> void:
     # Remove all previous images
     for i: Node in image_list.get_children():
         i.queue_free()
     # Add new images
-    for img: String in images.keys():
+    for img: String in imgs.keys():
         var n_img: Image = Image.new()
-        n_img.load_webp_from_buffer(images[img])
+        var buf: PackedByteArray = imgs[img]
+        n_img.load_webp_from_buffer(buf)
         var gallery_image: GalleryImage = gallery_image_scene.instantiate()
         gallery_image._set_type(ImageTexture.create_from_image(n_img), img)
         image_list.add_child(gallery_image)
@@ -55,7 +57,8 @@ func refresh_images(images: Dictionary) -> void:
 func add_images(result: Dictionary) -> void:
     for key: String in result.keys():
         var gallery_image: GalleryImage = gallery_image_scene.instantiate()
-        gallery_image._set_type(result[key], key)
+        var texture: Texture2D = result[key]
+        gallery_image._set_type(texture, key)
         image_list.add_child(gallery_image)
 
 func _on_import_configuration_pressed() -> void:
@@ -142,4 +145,4 @@ func _on_import_code_dialog_file_selected(path:String) -> void:
 
 
 func _on_import_code_pressed() -> void:
-    %ImportCodeDialog.popup()
+    (%ImportCodeDialog as Window).popup()

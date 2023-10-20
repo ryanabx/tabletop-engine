@@ -12,18 +12,18 @@ var dict: Array[int] = [1, 2, 3]
 func _ready() -> void:
     Global.load_this_game = PackedByteArray([])
     refresh_list()
-    %ImportConfigFile.file_selected.connect(add_from_filepath)
+    (%ImportConfigFile as FileDialog).file_selected.connect(add_from_filepath)
     if not Global.is_desktop_platform():
         from_file_button.hide()
 
 func _process(_delta: float) -> void:
     delete_button.disabled = not is_selecting_config() or is_selecting_default_config()
-    %DownloadConfig.disabled = (%URLEdit.text == "")
+    (%DownloadConfig as Button).disabled = ((%URLEdit as LineEdit).text == "")
 
 func config_added() -> void:
-    %ImportConfigNotice.popup()
-    await %ImportConfigNotice.visibility_changed
-    %ImportConfigNotice.hide()
+    (%ImportConfigNotice as Window).popup()
+    await (%ImportConfigNotice as Window).visibility_changed
+    (%ImportConfigNotice as Window).hide()
     refresh_list()
 
 func refresh_list() -> void:
@@ -52,7 +52,7 @@ func get_available_configs(path: String) -> Array[String]:
     return configs
 
 func _on_load_conf_file_pressed() -> void:
-    %ImportConfigFile.popup()
+    (%ImportConfigFile as Window).popup()
 
 func _on_refresh_conf_list_pressed() -> void:
     refresh_list()
@@ -76,7 +76,7 @@ func _on_delete_selected_pressed() -> void:
         refresh_list()
 
 func _on_load_conf_url_pressed() -> void:
-    %DownloadConfigPanel.popup()
+    (%DownloadConfigPanel as Window).popup()
 
 func get_selected_config_bytes() -> PackedByteArray:
     if is_selecting_config():
@@ -148,18 +148,18 @@ static func config_exists(conf_name: String) -> bool:
 # Download config from URL
 
 func _download_url_about_to_popup() -> void:
-    %URLEdit.text = ""
+    (%URLEdit as LineEdit).text = ""
 
 func _on_url_cancel_pressed() -> void:
-    %DownloadConfigPanel.hide()
+    (%DownloadConfigPanel as Window).hide()
 
 func _on_download_config_pressed() -> void:
-    if await download_file_from_url(%URLEdit.text):
+    if await download_file_from_url((%URLEdit as LineEdit).text):
         config_added()
-        %DownloadConfigPanel.hide()
+        (%DownloadConfigPanel as Window).hide()
 
 func _on_paste_link_pressed() -> void:
-    %URLEdit.text = DisplayServer.clipboard_get()
+    (%URLEdit as LineEdit).text = DisplayServer.clipboard_get()
 
 # Previously in Global.FileManager...
 
@@ -183,10 +183,12 @@ func download_file(url: String) -> PackedByteArray:
     print("Download completed: ",result)
     request.queue_free()
     if result[1] == 303:
-        var new_url: String = result[2][5].split("Location: ", false, 1)[0]
+        var result_string: String = result[2][5]
+        var new_url: String = result_string.split("Location: ", false, 1)[0]
         print("303 ERROR, going to url ", new_url)
         return await download_file(new_url)
-    return PackedByteArray(result[4])
+    var result_array: Array = result[4]
+    return PackedByteArray(result_array)
 
 func validate_downloaded_file(file: PackedByteArray) -> bool:
     if file.is_empty():
@@ -199,13 +201,13 @@ func validate_downloaded_file(file: PackedByteArray) -> bool:
     if local_copy == null:
         print(FileAccess.get_open_error(), ": ", conf_path)
         return false
-    local_copy.store_buffer(conf.to_bytes())
+    # local_copy.store_buffer(conf.to_bytes())
     local_copy.close()
     return true
 
 func _on_download_config_panel_close_requested() -> void:
-    %DownloadConfigPanel.hide()
+    (%DownloadConfigPanel as Window).hide()
 
 
 func _on_import_config_file_close_requested() -> void:
-    %ImportConfigFile.hide()
+    (%ImportConfigFile as Window).hide()

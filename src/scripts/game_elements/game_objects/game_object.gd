@@ -47,7 +47,8 @@ func _property_changes_sync_rpc(props: Dictionary) -> void:
         if prop == "inside":
             # print("Setting inside here!")
             var new_inside: Array[Dictionary] = []
-            new_inside.assign(props[prop])
+            var arr: Array = props[prop]
+            new_inside.assign(arr)
             props[prop] = new_inside
         set(prop, props[prop])
 

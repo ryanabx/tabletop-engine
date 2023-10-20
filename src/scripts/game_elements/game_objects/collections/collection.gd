@@ -55,8 +55,9 @@ func _serialize_piece(pc: Piece) -> Dictionary:
 func _deserialize_piece(_dict: Dictionary) -> Piece:
     _dict.position = position
     _dict.rotation = rotation
+    var obj_type: Board.GameObjectType = _dict.object_type
     return board.new_game_object(
-        _dict.object_type,
+        obj_type,
         _dict
     )
 
@@ -105,8 +106,8 @@ func _add_piece_at(piece: Piece, _index: int) -> void:
 func _add_collection_at(coll: Collection, _index: int) -> void:
     if not board.game.can_stack(coll, self):
         return
-    if coll.face_up != face_up:
-        coll.flip()
+    if coll.face_up != face_up and coll is Deck:
+        (coll as Deck).flip()
     if _index == inside.size():
         inside.append_array(coll.inside)
     else:

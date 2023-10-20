@@ -19,11 +19,11 @@ func _ready() -> void:
     multiplayer.peer_disconnected.connect(self._mp_peer_disconnected)
 
 func _process(_delta: float) -> void:
-    %Start.disabled = not _is_local()
-    %Stop.disabled = _is_local()
-    %Peers.disabled = _is_local()
-    %Seal.disabled = _is_local() or not multiplayer.is_server() or multiplayer.get_peers().is_empty()
-    %Ping.disabled = _is_local()
+    (%Start as Button).disabled = not _is_local()
+    (%Stop as Button).disabled = _is_local()
+    (%Peers as Button).disabled = _is_local()
+    (%Seal as Button).disabled = _is_local() or not multiplayer.is_server() or multiplayer.get_peers().is_empty()
+    (%Ping as Button).disabled = _is_local()
 
 func _is_local() -> bool:
     return multiplayer.multiplayer_peer == null or multiplayer.multiplayer_peer is OfflineMultiplayerPeer
@@ -72,7 +72,7 @@ func _on_seal_pressed() -> void:
     client.seal_lobby()
 
 func _on_start_pressed() -> void:
-    client.start(Global.get_user_setting("signaling_server"), room.text, mesh.button_pressed)
+    client.start(Global.get_user_setting("signaling_server") as String, room.text, mesh.button_pressed)
     _log("Connecting to signaling server... This may take a minute...")
 
 func _on_stop_pressed() -> void:

@@ -6,8 +6,8 @@ var text: String
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-    $Texture.texture = texture
-    $Text.text = text
+    ($Texture as TextureRect).texture = texture
+    ($Text as Label).text = text
 
 func _set_type(image: Texture2D, _text: String) -> void:
     texture = image

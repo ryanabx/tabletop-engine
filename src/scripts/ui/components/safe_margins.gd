@@ -1,3 +1,4 @@
+class_name SafeMargins
 extends MarginContainer
 
 signal orientation_changed()

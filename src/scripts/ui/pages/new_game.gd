@@ -7,7 +7,7 @@ func _process(_delta: float) -> void:
     ready_button.disabled = not config_selector.is_selecting_config() or not multiplayer.is_server()
 
 func _on_back_button_pressed() -> void:
-    $FadeRect.scene_transition.emit("res://src/scenes/ui/pages/main_menu.tscn")
+    ($FadeRect as FadeRect).scene_transition.emit("res://src/scenes/ui/pages/main_menu.tscn")
 
 func _on_ready_pressed() -> void:
     Global.load_this_game = config_selector.get_selected_config_bytes()
@@ -15,4 +15,4 @@ func _on_ready_pressed() -> void:
     
 @rpc("authority","call_local","reliable")
 func go_to_scene(scn: String) -> void:
-    $FadeRect.scene_transition.emit(scn)
+    ($FadeRect as FadeRect).scene_transition.emit(scn)

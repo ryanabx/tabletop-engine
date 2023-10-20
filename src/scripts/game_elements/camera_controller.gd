@@ -17,7 +17,7 @@ var clamp1: Vector2
 var clamp2: Vector2
 
 func _ready() -> void:
-    get_tree().get_root().get_node("BoardManager").game_load_finished.connect(_game_loaded)
+    (get_tree().get_root().get_node("BoardManager") as BoardManager).game_load_finished.connect(_game_loaded)
 
 func _game_loaded(_board: Board) -> void:
     board = _board
@@ -34,23 +34,25 @@ func _input(event: InputEvent) -> void:
         return
     event = make_input_local(event)
     if event is InputEventScreenTouch:
-        if event.pressed:
-            current_points[event.index] = event
+        var ev: InputEventScreenTouch = event
+        if ev.pressed:
+            current_points[ev.index] = ev
         else:
-            current_points.erase(event.index)
+            current_points.erase(ev.index)
     elif event is InputEventScreenDrag:
-        current_points[event.index] = event
+        var ev: InputEventScreenDrag = event
+        current_points[ev.index] = ev
         if current_points.size() == 1: # Pan only
-            position -= event.relative.rotated(rotation)
+            position -= ev.relative.rotated(rotation)
         if current_points.size() == 2: # Zoom, Rotate
             var other: int
-            var my: int = event.index
-            if current_points.keys().find(event.index) == 0:
+            var my: int = ev.index
+            if current_points.keys().find(ev.index) == 0:
                 other = current_points.keys()[1]
-            elif current_points.keys().find(event.index) == 1:
+            elif current_points.keys().find(ev.index) == 1:
                 other = current_points.keys()[0]
             else:
-                print("Can't find key with index ",event.index, ", keys: ",current_points.keys())
+                print("Can't find key with index ",ev.index, ", keys: ",current_points.keys())
                 return
             # Initial constants
             var a1: Vector2 = current_points[my].position
@@ -76,10 +78,6 @@ func _input(event: InputEvent) -> void:
             zoom *= delta_scale
     if board != null:
         position = position.clamp(-board.size/2, board.size/2)
-
-# func _draw() -> void:
-#     for evt: InputEvent in current_points.values():
-#         draw_circle(evt.position, 100, Color.BLACK)
 
 func board_selecting() -> bool:
     return board != null and (board.get_player().is_selecting() or board.get_player().object_queued())

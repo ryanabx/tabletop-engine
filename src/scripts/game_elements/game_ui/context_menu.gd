@@ -8,7 +8,7 @@ var _board: Board = null
 
 func _ready() -> void:
     hide()
-    get_tree().get_root().get_node("BoardManager").game_load_finished.connect(_game_load_finished)
+    (get_tree().get_root().get_node("BoardManager") as BoardManager).game_load_finished.connect(_game_load_finished)
     
 # Comment example
 func _game_load_finished(board: Board) -> void:
@@ -84,7 +84,7 @@ func init_piece_menu() -> void:
 
 func _on_clicked_from_object(id: int) -> void:
     match id:
-        0: piece.face_up = not piece.face_up
+        0: (piece as Flat).face_up = not (piece as Flat).face_up
         2: piece.move_self_to_top()
         3: piece.move_self_to_back()
 
@@ -93,7 +93,7 @@ func _on_clicked_from_collection(id: int) -> void:
         1:
             if not collection.lock_state:
                 collection.face_up = not collection.face_up
-        3: collection.move_self_to_front()
+        3: collection.move_self_to_top()
         4: collection.move_self_to_back()
         5:
             if not collection.lock_state:
