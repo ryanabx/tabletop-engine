@@ -51,7 +51,7 @@ func draw_player_stuff() -> void:
                 )
     if board.get_player().object_queued():
         if board.get_player().get_queued_object() is Hand:
-            draw_set_transform(board.get_player().get_highlighted_object().position, board.get_player().get_highlighted_object().rotation)
+            draw_set_transform(board.get_player().get_queued_object().position, board.get_player().get_queued_object().rotation)
             draw_rect(
                 (board.get_player().get_queued_object() as Hand)._get_selected_range(),
                 Color.BLUE * Color(1,1,1,0.2)
