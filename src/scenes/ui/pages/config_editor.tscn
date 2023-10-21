@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://dbpkcwga3251w" path="res://src/scenes/ui/components/config_selector.tscn" id="4_qs4ra"]
 [ext_resource type="PackedScene" uid="uid://chycn8r6thjep" path="res://src/scenes/ui/components/config_code_editor.tscn" id="5_a8e5x"]
 [ext_resource type="PackedScene" uid="uid://danbn6jjfghru" path="res://src/scenes/ui/components/fade_rect.tscn" id="5_gxamv"]
-[ext_resource type="Theme" uid="uid://5tyintmrnhfs" path="res://src/resources/styles/window/window_theme.tres" id="7_lm2qt"]
+[ext_resource type="Theme" uid="uid://5tyintmrnhfs" path="res://src/resources/themes/window/window_theme.tres" id="7_lm2qt"]
 [ext_resource type="PackedScene" uid="uid://c0llcvf8o40cn" path="res://src/scenes/ui/components/confirmation_popup.tscn" id="8_x7t25"]
 [ext_resource type="PackedScene" uid="uid://bblvegt12shc8" path="res://src/scenes/ui/components/info_popup.tscn" id="9_4flkt"]
 

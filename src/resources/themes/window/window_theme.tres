@@ -1,0 +1,38 @@
+[gd_resource type="Theme" load_steps=14 format=3 uid="uid://5tyintmrnhfs"]
+
+[ext_resource type="Texture2D" uid="uid://wwvwqraerhol" path="res://src/resources/assets/ui/theme_icons/left.svg" id="1_hg82p"]
+[ext_resource type="Texture2D" uid="uid://33wgci7k6bda" path="res://src/resources/assets/ui/theme_icons/file.svg" id="2_78k8m"]
+[ext_resource type="Texture2D" uid="uid://blvr0phujxnpc" path="res://src/resources/assets/ui/theme_icons/folder.svg" id="3_3u772"]
+[ext_resource type="Texture2D" uid="uid://do2f6mdnjy8ek" path="res://src/resources/assets/ui/theme_icons/right.svg" id="4_rpegv"]
+[ext_resource type="Texture2D" uid="uid://di26sohvh3dbm" path="res://src/resources/assets/ui/theme_icons/back.svg" id="5_v5oc8"]
+[ext_resource type="Texture2D" uid="uid://c7dngyyvg8xx6" path="res://src/resources/assets/ui/theme_icons/refresh.svg" id="6_hhjeu"]
+[ext_resource type="Texture2D" uid="uid://c6nss3k4vc3r6" path="res://src/resources/assets/ui/theme_icons/visibility.svg" id="7_j6rj8"]
+[ext_resource type="FontVariation" uid="uid://dwgt12jyh3edd" path="res://src/resources/fonts/BaseFont_Bold.tres" id="8_4jy0p"]
+[ext_resource type="FontVariation" uid="uid://evcy34s8o261" path="res://src/resources/fonts/BaseFont_Normal.tres" id="8_e6jif"]
+[ext_resource type="Texture2D" uid="uid://clnsssxgo82il" path="res://src/resources/assets/ui/theme_icons/times64.svg" id="8_imygc"]
+[ext_resource type="StyleBox" uid="uid://cmkrrye2eb73e" path="res://src/resources/styles/normal/window_border.tres" id="9_aogve"]
+[ext_resource type="FontVariation" uid="uid://dvbg8g4a8x0g0" path="res://src/resources/fonts/BaseFont_BoldItalics.tres" id="9_ol0y7"]
+[ext_resource type="FontVariation" uid="uid://dcuiosqi3qm2" path="res://src/resources/fonts/BaseFont_Italics.tres" id="10_hkmnm"]
+
+[resource]
+default_font_size = 24
+AcceptDialog/constants/buttons_separation = 20
+FileDialog/icons/back_folder = ExtResource("1_hg82p")
+FileDialog/icons/file = ExtResource("2_78k8m")
+FileDialog/icons/folder = ExtResource("3_3u772")
+FileDialog/icons/forward_folder = ExtResource("4_rpegv")
+FileDialog/icons/parent_folder = ExtResource("5_v5oc8")
+FileDialog/icons/reload = ExtResource("6_hhjeu")
+FileDialog/icons/toggle_hidden = ExtResource("7_j6rj8")
+HBoxContainer/constants/separation = 4
+RichTextLabel/fonts/bold_font = ExtResource("8_4jy0p")
+RichTextLabel/fonts/bold_italics_font = ExtResource("9_ol0y7")
+RichTextLabel/fonts/italics_font = ExtResource("10_hkmnm")
+RichTextLabel/fonts/normal_font = ExtResource("8_e6jif")
+Window/constants/close_h_offset = 64
+Window/constants/close_v_offset = 64
+Window/constants/title_height = 64
+Window/font_sizes/title_font_size = 64
+Window/icons/close = ExtResource("8_imygc")
+Window/icons/close_pressed = ExtResource("8_imygc")
+Window/styles/embedded_border = ExtResource("9_aogve")

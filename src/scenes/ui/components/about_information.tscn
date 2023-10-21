@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://b3gif3e78a12h"]
+[gd_scene load_steps=3 format=3 uid="uid://b3gif3e78a12h"]
 
 [ext_resource type="Script" path="res://src/scripts/ui/components/about_information.gd" id="1_jrbic"]
+[ext_resource type="Texture2D" uid="uid://ch55iben1ff3x" path="res://assets/icon.png" id="2_niy76"]
 
 [node name="AboutInformation" type="ScrollContainer"]
 anchors_preset = 15
@@ -16,6 +17,14 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 2
 alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="Vbox"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("2_niy76")
+expand_mode = 1
+stretch_mode = 4
 
 [node name="VersionNumber" type="Label" parent="Vbox"]
 unique_name_in_owner = true

@@ -15,7 +15,7 @@ config/description="A 2-dimensional virtual tabletop for all! Create board game 
 config/version="0.0.1"
 run/main_scene="res://src/scenes/ui/pages/main_menu.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
-boot_splash/bg_color=Color(0.0901961, 0.121569, 0.133333, 1)
+boot_splash/bg_color=Color(0.184314, 0.219608, 0.301961, 1)
 boot_splash/image="res://assets/banner.png"
 boot_splash/fullsize=false
 config/icon="res://assets/icon.png"
@@ -39,17 +39,13 @@ window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=4
 
-[dotnet]
-
-project/assembly_name="Tabletop Engine"
-
 [filesystem]
 
 import/blender/enabled=false
 
 [gui]
 
-theme/custom="res://src/resources/styles/default_theme.tres"
+theme/custom="res://src/resources/themes/default_theme.tres"
 
 [input]
 
