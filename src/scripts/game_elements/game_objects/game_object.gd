@@ -108,3 +108,34 @@ func erase(recursive: bool = false) -> void:
 @rpc("authority","call_local","reliable")
 func _erase_rpc(_recursive: bool) -> void:
     queue_free()
+
+
+# Traits
+
+# FLIPPABLE
+
+func is_flippable() -> bool:
+    return false
+
+func flip() -> void:
+    pass
+
+# SELECTABLE
+
+func is_selectable() -> bool:
+    return false
+
+func can_select() -> bool:
+    return false
+
+func get_queued() -> int:
+    return -1
+
+func get_selected() -> int:
+    return -1
+
+func select_object() -> void:
+    pass
+
+func queue_object() -> void:
+    pass
