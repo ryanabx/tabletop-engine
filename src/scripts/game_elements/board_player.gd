@@ -84,7 +84,7 @@ func _input(event: InputEvent) -> void:
     if ev is InputEventMouseMotion or (ev is InputEventMouseButton and (ev as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT):
         _update_highlighted(ev)
     if ev.is_action_pressed("game_flip"):
-        if is_selecting() and not get_selected_object().lock_state:
+        if is_selecting() and not get_selected_object().selectable.lock_state:
             if get_selected_object().is_flippable():
                 get_selected_object().flip()
     if ev is InputEventScreenTouch:
@@ -168,20 +168,19 @@ func _select_with_event(event: InputEventScreenTouch) -> void:
     if collider != null:
         grab_position = event.position
         select_index = event.index
-        collider._on_select(event)
+        collider.selectable._on_select.call(event)
 
 func _deselect_with_event(event: InputEventScreenTouch) -> void:
     var collider: GameObject = _get_collider_at_position()
     if collider != null:
-        collider._on_deselect(event)
+        collider.selectable._on_deselect.call(event)
     deselect()
 
 func double_tap_input(event: InputEventScreenTouch) -> void:
     if event.pressed:
         if board.touch_type == Board.TouchType.TAP and _taps_since_selecting < 2:
-            print("Not a double tap! %d" % _taps_since_selecting)
+            print("Not a double tap pressed! %d" % _taps_since_selecting)
             return
-        # print("Double tap")
         print("Succeeded! %d :: %d" % [_taps_since_selecting, board.touch_type])
         var collider: GameObject = _get_collider_at_position()
         if collider != null:
@@ -219,7 +218,7 @@ func drag_input(event: InputEventScreenDrag) -> void:
 
 func move_objects_to(pos: Vector2) -> void:
     if is_selecting():
-        get_selected_object().position = (pos - get_selected_object().grab_offset).clamp(-board.size/2, board.size/2)
+        get_selected_object().position = (pos - get_selected_object().selectable.grab_offset).clamp(-board.size/2, board.size/2)
 
 func compare_by_z_index(a: Dictionary, b: Dictionary) -> bool:
     var collider_a: Node = a.collider
@@ -235,19 +234,19 @@ func select_object(obj: GameObject) -> void:
     obj._authority = multiplayer.get_unique_id()
     obj.move_self_to_top()
     selected_object = obj
-    obj.selected = multiplayer.get_unique_id()
-    obj.grab_offset = grab_position - obj.position
+    obj.selectable.selected = multiplayer.get_unique_id()
+    obj.selectable.grab_offset = grab_position - obj.position
 
 func queue_select_object(obj: GameObject) -> void:
     if object_queued():
         deselect()
-    if obj.queued == 0 and obj.selected == 0:
+    if obj.selectable.queued == 0 and obj.selectable.selected == 0:
         obj._authority = multiplayer.get_unique_id()
         _taps_since_selecting = 0
         print("Taps since selecting = 0")
         obj.move_self_to_top()
         queued_object = obj
-        obj.queued = multiplayer.get_unique_id()
+        obj.selectable.queued = multiplayer.get_unique_id()
         hold_timer.start()
 
 func stack_selection_to_item(item: GameObject) -> void:
@@ -270,8 +269,8 @@ func stack_on_piece(item: Piece) -> void:
         (get_selected_object() as Collection).add_piece(item, true)
     elif is_selecting_piece():
         var is_face_up: bool = true
-        if item is Flat:
-            is_face_up = (item as Flat).face_up
+        if item.flippable:
+            is_face_up = item.flippable.face_up
         var collection: Collection = board.new_game_object(
             Board.GameObjectType.DECK,
             {
@@ -290,7 +289,7 @@ func _select_collection(collection: Collection) -> void:
             {
                 "position": collection.position,
                 "rotation": collection.rotation,
-                "face_up": collection.face_up
+                "face_up": collection.flippable.face_up
             }
         )
         new_collection.inside = collection.inside
@@ -300,7 +299,7 @@ func _select_collection(collection: Collection) -> void:
         collection = new_collection
     grab_position = collection.position
     select_object(collection)
-    collection.grab_offset = Vector2.ZERO
+    collection.selectable.grab_offset = Vector2.ZERO
 
 func deselect() -> void:
     hold_timer.stop()
@@ -308,17 +307,17 @@ func deselect() -> void:
     dequeue_object()
 
 func deselect_object() -> void:
-    if is_selecting() and get_selected_object().selected == multiplayer.get_unique_id():
+    if is_selecting() and get_selected_object().selectable.selected == multiplayer.get_unique_id():
         get_selected_object()._authority = multiplayer.get_unique_id()
-        get_selected_object().selected = 0
+        get_selected_object().selectable.selected = 0
         selected_object = null
 
 func dequeue_object() -> void:
-    if object_queued() and get_queued_object().queued == multiplayer.get_unique_id():
+    if object_queued() and get_queued_object().selectable.queued == multiplayer.get_unique_id():
         _taps_since_selecting = 0
         print("Taps since selecting = 0")
         get_queued_object()._authority = multiplayer.get_unique_id()
-        get_queued_object().queued = 0
+        get_queued_object().selectable.queued = 0
         queued_object = null
 
 func rotate_selection(amount: float, axis: float) -> void:

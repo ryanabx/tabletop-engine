@@ -56,6 +56,8 @@ func _ready() -> void:
         "visibility", "designated_players",
         "size_option", "size_pieces",
         "layering_factor"])
+    flippable = Flippable.new(self)
+    super._ready()
 
 func _draw_pieces() -> void:
     var i: int = 0
@@ -78,8 +80,8 @@ func _draw_pieces() -> void:
         _draw_piece(inside[_selectable_piece], true, card_position)
 
 ## Draws a piece from data at a certain position
-func _draw_piece(_data: Dictionary, selectable: bool, _position: Vector2, _size: Vector2 = size_pieces) -> void:
-    if selectable:
+func _draw_piece(_data: Dictionary, _selectable: bool, _position: Vector2, _size: Vector2 = size_pieces) -> void:
+    if _selectable:
         _size = _size * 1.1
     var img_up: String = _data.image_up
     var img_down: String = _data.image_down
