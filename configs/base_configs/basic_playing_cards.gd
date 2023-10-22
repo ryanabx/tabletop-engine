@@ -92,8 +92,8 @@ func _create_hands() -> void:
                 "position": hand_position.rotated(angle),
                 "rotation": angle,
                 "size": HAND_SIZE,
-                "lock_state": true,
-                "face_up": false,
+                "selectable.lock_state": true,
+                "flippable.face_up": false,
                 "visibility": Hand.VisibilitySetting.DESIGNATED,
                 "designated_players": [player],
                 "size_pieces": CARD_SIZE,
@@ -107,7 +107,7 @@ func _create_deck_of_cards(with_jokers: bool = false) -> void:
         {
             "position": Vector2.ZERO,
             "size": CARD_SIZE,
-            "face_up": false
+            "flippable.face_up": false
         }
     )
     
