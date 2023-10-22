@@ -34,9 +34,9 @@ func get_actions() -> Array[String]:
 func run_action(_action: String) -> bool:
     return false
 
-## Determines whether a selectable object can be stacked to another selectable object.
+## Determines whether a GameObject object can be stacked to another GameObject object.
 ## This method may be optionally overridden. By default returns [true]
-func can_stack(_from: Selectable, _to: Selectable) -> bool:
+func can_stack(_from: GameObject, _to: GameObject) -> bool:
     return true
 
 ## Determines whether a piece can be taken off a collection.
@@ -44,10 +44,10 @@ func can_stack(_from: Selectable, _to: Selectable) -> bool:
 func can_take_piece_off(_collection: Collection) -> bool:
     return true
 
-## Determines whether the selectable object [param _highlighted] can be highlighted,
+## Determines whether the GameObject object [param _highlighted] can be highlighted,
 ## optionally given [param _selected] object.
 ## This method may be optionally overridden. By default returns [true]
-func can_highlight(_highlighted: Selectable, _selected: Selectable) -> bool:
+func can_highlight(_highlighted: GameObject, _selected: GameObject) -> bool:
     return true
 
 # For use by config loader and game

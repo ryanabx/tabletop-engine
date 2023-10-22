@@ -27,11 +27,6 @@ var view_override: ViewOverrideType = ViewOverrideType.NONE
 var image_up: String = ""
 ## The image string for the face down side of the flat object.
 var image_down: String = ""
-## Whether the object is face up or not.
-var face_up: bool:
-    set(val):
-        face_up = val
-        add_to_property_changes("face_up", val)
 
 func _refresh_image() -> void:
     if image_up == "" or image_down == "":
@@ -45,18 +40,18 @@ func _refresh_image() -> void:
     if view_override == ViewOverrideType.ALL:
         ovr = true
     elif view_override == ViewOverrideType.IF_SELECTED:
-        ovr = selected == multiplayer.get_unique_id() or queued == multiplayer.get_unique_id()
+        ovr = selectable.selected == multiplayer.get_unique_id() or selectable.queued == multiplayer.get_unique_id()
     elif view_override == ViewOverrideType.IF_NOT_SELECTED:
-        ovr = selected != multiplayer.get_unique_id() or queued == multiplayer.get_unique_id()
+        ovr = selectable.selected != multiplayer.get_unique_id() or selectable.queued == multiplayer.get_unique_id()
     
-    _sprite.texture = board._get_image(image_up) if face_up or ovr else board._get_image(image_down)
+    _sprite.texture = board._get_image(image_up) if not flippable or flippable.face_up or ovr else board._get_image(image_down)
     _sprite.scale = size / _sprite.texture.get_size()
 
 func _serialize() -> Dictionary:
     var _dict: Dictionary = super._serialize()
     _dict.image_up = image_up
     _dict.image_down = image_down
-    _dict.face_up = face_up
+    _dict["flippable.face_up"] = flippable.face_up
     _dict.view_override = view_override
     return _dict
 

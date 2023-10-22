@@ -14,7 +14,6 @@ var permanent: bool = false
 func add_piece(piece: Piece, back: bool = false) -> void:
     if not board.game.can_stack(piece, self):
         return
-    
     super.add_piece(piece, back)
 
 func remove_from_top(pos: Vector2 = Vector2.ZERO) -> Piece:
@@ -26,17 +25,14 @@ func remove_from_top(pos: Vector2 = Vector2.ZERO) -> Piece:
 ## Flips the deck
 func flip() -> void:
     _authority = multiplayer.get_unique_id()
-    face_up = not face_up
+    flippable.face_up = not flippable.face_up
     inside.reverse()
     add_to_property_changes("inside",inside)
 
-
-# Private methods
-
-func _get_shareable_properties() -> Array:
-    return super._get_shareable_properties() + ["permanent"]
-
 func _ready() -> void:
+    _shareable_properties.append_array(["permanent"])
+    # Interfaces!!!
+    flippable = Flippable.new(self, flip)
     _init_children()
     super._ready()
 
@@ -63,14 +59,14 @@ func _process(_delta: float) -> void:
     var top_pc: Dictionary = inside[-1]
     if top_pc.size != size:
         size = top_pc.size
-        collision_polygon.set_polygon(get_gobject_transform() * self.shape)
+        selectable._collision_polygon.set_polygon(get_gobject_transform() * self.shape)
     var img_up: String = top_pc.image_up
     var img_down: String = top_pc.image_down
-    sprite.texture = board._get_image(img_up) if face_up else board._get_image(img_down)
+    sprite.texture = board._get_image(img_up) if not flippable or flippable.face_up else board._get_image(img_down)
     sprite.scale = size / sprite.texture.get_size()
 
 func _draw() -> void:
-    draw_polyline(collision_polygon.polygon + PackedVector2Array([collision_polygon.polygon[0]]), Color.WHITE * Color(1.0, 1.0, 1.0, 0.3), Global.COLLECTION_OUTLINE)
+    draw_polyline(selectable._collision_polygon.polygon + PackedVector2Array([selectable._collision_polygon.polygon[0]]), Color.WHITE * Color(1.0, 1.0, 1.0, 0.3), Global.COLLECTION_OUTLINE)
 
 func _clear_inside() -> void:
     super._clear_inside()
@@ -78,5 +74,5 @@ func _clear_inside() -> void:
         _erase_rpc.rpc(false)
 
 func _deserialize_piece(_dict: Dictionary) -> Piece:
-    _dict.face_up = face_up
+    _dict.face_up = flippable.face_up
     return super._deserialize_piece(_dict)

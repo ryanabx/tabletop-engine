@@ -45,19 +45,17 @@ var size_option: SizeOption = SizeOption.FIXED_LAYER
 ## Determines the fixed size of each [class Piece] displayed in this hand.
 var size_pieces: Vector2 = Vector2.ONE
 
-func _get_shareable_properties() -> Array:
-    return super._get_shareable_properties() + [
-        "visibility", "designated_players",
-        "size_option", "size_pieces",
-        "layering_factor"]
-
-
 func _draw() -> void:
     draw_rect(get_rect(), Color.BLACK * Color(1.0, 1.0, 1.0, 0.3))
     if can_view():
         draw_rect(get_rect(), Color.WHITE * Color(1.0, 1.0, 1.0, 0.3), false, Global.COLLECTION_OUTLINE)
     _draw_pieces()
 
+func _ready() -> void:
+    _shareable_properties.append_array([
+        "visibility", "designated_players",
+        "size_option", "size_pieces",
+        "layering_factor"])
 
 func _draw_pieces() -> void:
     var i: int = 0
@@ -136,9 +134,9 @@ func remove_from_top(pos: Vector2 = Vector2.ZERO) -> Piece:
         _piece = super._remove_piece_at(_selectable_piece)
     _piece.position = get_global_mouse_position()
     _piece.rotation = rotation
-    _piece.grab_offset = Vector2.ZERO
-    if _piece is Flat:
-        (_piece as Flat).face_up = face_up
+    _piece.selectable.grab_offset = Vector2.ZERO
+    if _piece.flippable:
+        _piece.flippable.set_orientation.call(not flippable or flippable.face_up)
     return _piece
 
 func _find_spacing_interval() -> void:
@@ -158,7 +156,7 @@ func _find_selectable_piece(pos: Vector2, check_boundaries: bool = true) -> void
     _selectable_piece = clampi(floori(check), 0, inside.size() - 1)
     _droppable_index = clampi(roundi(check), 0, inside.size())
 
-    # print("selectable object set to ",_selectable_piece)
+    # print("selesctable object set to ",_selectable_piece)
 
 func _reset_selectable_piece() -> void:
     _selectable_piece = -1
@@ -167,7 +165,7 @@ func _reset_selectable_piece() -> void:
 func _process(delta: float) -> void:
     queue_redraw()
     _find_spacing_interval()
-    if queued == 0 and selected == 0:
+    if selectable.queued == 0 and selectable.selected == 0:
         _card_to_select = -1
         if board.touch_type == Board.TouchType.DRAG or (board.touch_type == Board.TouchType.TAP and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)):
             _find_selectable_piece(get_local_mouse_position())
@@ -178,7 +176,7 @@ func _process(delta: float) -> void:
     super._process(delta)
 
 func _on_select(_event:InputEvent) -> void:
-    if get_inside().is_empty() or selected != 0 or queued != 0:
+    if get_inside().is_empty() or selectable.selected != 0 or selectable.queued != 0:
         return
     board.get_player().queue_select_object(self)
     _find_selectable_piece(get_local_mouse_position())

@@ -25,7 +25,7 @@ func reset_menu() -> void:
     clear()
     set_position(get_viewport().get_mouse_position())
 
-func _on_menu_created(obj: Selectable) -> void:
+func _on_menu_created(obj: GameObject) -> void:
     if obj is Piece:
         _on_piece_menu_created(obj as Piece)
     elif obj is Collection:
@@ -57,7 +57,7 @@ func init_collection_menu() -> void:
     orientation_menu.add_item("Flip", 1)
     orientation_menu.name = "orientation"
     add_child(orientation_menu)
-    if not collection.lock_state:
+    if not collection.selectable.lock_state:
         add_submenu_item("Set Orientation", "orientation", 7)
     var ordering_menu: PopupMenu = PopupMenu.new()
     ordering_menu.name = "ordering"
@@ -84,21 +84,23 @@ func init_piece_menu() -> void:
 
 func _on_clicked_from_object(id: int) -> void:
     match id:
-        0: (piece as Flat).face_up = not (piece as Flat).face_up
+        0: 
+            if piece.flippable:
+                piece.flippable.flip.call()
         2: piece.move_self_to_top()
         3: piece.move_self_to_back()
 
 func _on_clicked_from_collection(id: int) -> void:
     match id:
         1:
-            if not collection.lock_state:
-                collection.face_up = not collection.face_up
+            if collection.flippable and not collection.selectable.lock_state:
+                collection.flippable.flip.call()
         3: collection.move_self_to_top()
         4: collection.move_self_to_back()
         5:
-            if not collection.lock_state:
-                collection.face_up = true
+            if collection.flippable and not collection.selectable.lock_state:
+                collection.flippable.set_orientation.call(true)
         6:
-            if not collection.lock_state:
-                collection.face_up = false
+            if collection.flippable and not collection.selectable.lock_state:
+                collection.flippable.set_orientation.call(false)
         8: collection.shuffle()

@@ -1,5 +1,5 @@
 class_name Collection
-extends Selectable
+extends GameObject
 ## collection.gd
 ##
 ## Defines an object that contains pieces within it.
@@ -9,9 +9,6 @@ var types: Array = [] # Currently just for compatibility. TODO: Remove
 # Shareable properties
 ## The list of serialized pieces that are inside this collection.
 var inside: Array[Dictionary] = []
-## Determines whether the pieces inside the collection come out face up or not.
-## If [member Selectable.lock_state] is true, the collection's [member face_up] value remains constant.
-var face_up: bool = false
 
 ## Adds a given [param piece] to the collection.
 ## Added to the front by default, use [param back] to specify.
@@ -61,10 +58,8 @@ func _deserialize_piece(_dict: Dictionary) -> Piece:
         _dict
     )
 
-func _get_shareable_properties() -> Array:
-    return super._get_shareable_properties() + ["inside", "face_up"]
-
 func _ready() -> void:
+    _shareable_properties.append_array(["inside"])
     super._ready()
 
 @rpc("authority","call_local","reliable")
@@ -80,13 +75,13 @@ func _clear_inside() -> void:
     add_to_property_changes("inside", inside)
 
 func _on_select(_event:InputEvent) -> void:
-    if get_inside().is_empty() or selected != 0 or queued != 0:
+    if get_inside().is_empty() or selectable.selected != 0 or selectable.queued != 0:
         return
     board.get_player().queue_select_object(self)
 
 func _on_deselect(_event:InputEvent) -> void:
     if board.get_player().is_selecting():
-        if selected == 0:
+        if selectable.selected == 0:
             board.get_player().stack_selection_to_item(self)
 
 func _process(delta: float) -> void:
@@ -106,8 +101,8 @@ func _add_piece_at(piece: Piece, _index: int) -> void:
 func _add_collection_at(coll: Collection, _index: int) -> void:
     if not board.game.can_stack(coll, self):
         return
-    if coll.face_up != face_up and coll is Deck:
-        (coll as Deck).flip()
+    if coll.flippable and flippable and coll.flippable.face_up != flippable.face_up:
+        coll.flippable.flip.call()
     if _index == inside.size():
         inside.append_array(coll.inside)
     else:

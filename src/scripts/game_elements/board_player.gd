@@ -1,8 +1,8 @@
 class_name BoardPlayer
 extends Node2D
 
-var selected_object: Selectable = null
-var queued_object: Selectable = null
+var selected_object: GameObject = null
+var queued_object: GameObject = null
 
 # var holding_object: bool = false
 
@@ -20,7 +20,7 @@ var _taps_since_selecting: int = 0
 
 var input_events: Dictionary = {}
 
-var _highlighted_object: Selectable = null
+var _highlighted_object: GameObject = null
 
 const POLLING_RATE: int = 2
 
@@ -41,13 +41,13 @@ func _hold_timer_timeout() -> void:
 ### Getter Methods ###
 ######################
 
-func get_selected_object() -> Selectable:
+func get_selected_object() -> GameObject:
     return selected_object
 
-func get_queued_object() -> Selectable:
+func get_queued_object() -> GameObject:
     return queued_object
 
-func get_highlighted_object() -> Selectable:
+func get_highlighted_object() -> GameObject:
     return _highlighted_object
 
 func is_selecting() -> bool:
@@ -164,14 +164,14 @@ func tap_released_tap(event: InputEventScreenTouch) -> void:
     hold_timer.stop()
 
 func _select_with_event(event: InputEventScreenTouch) -> void:
-    var collider: Selectable = _get_collider_at_position()
+    var collider: GameObject = _get_collider_at_position()
     if collider != null:
         grab_position = event.position
         select_index = event.index
         collider._on_select(event)
 
 func _deselect_with_event(event: InputEventScreenTouch) -> void:
-    var collider: Selectable = _get_collider_at_position()
+    var collider: GameObject = _get_collider_at_position()
     if collider != null:
         collider._on_deselect(event)
     deselect()
@@ -183,7 +183,7 @@ func double_tap_input(event: InputEventScreenTouch) -> void:
             return
         # print("Double tap")
         print("Succeeded! %d :: %d" % [_taps_since_selecting, board.touch_type])
-        var collider: Selectable = _get_collider_at_position()
+        var collider: GameObject = _get_collider_at_position()
         if collider != null:
             if collider is Collection:
                 board._create_context_menu.emit(collider as Collection)
@@ -191,7 +191,7 @@ func double_tap_input(event: InputEventScreenTouch) -> void:
                 board._create_context_menu.emit(collider as Piece)
             deselect()
 
-func _get_collider_at_position(pos: Vector2 = get_local_mouse_position(), collision_mask: int = 1) -> Selectable:
+func _get_collider_at_position(pos: Vector2 = get_local_mouse_position(), collision_mask: int = 1) -> GameObject:
     var params: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
     params.position = pos
     params.collide_with_areas = true
@@ -201,7 +201,7 @@ func _get_collider_at_position(pos: Vector2 = get_local_mouse_position(), collis
     if results.size() > 0:
         results.sort_custom(compare_by_z_index)
         var collider: Node = results[0].collider
-        return collider.get_parent() as Selectable
+        return collider.get_parent() as GameObject
     return null
 
 func drag_input(event: InputEventScreenDrag) -> void:
@@ -230,7 +230,7 @@ func compare_by_z_index(a: Dictionary, b: Dictionary) -> bool:
 ### Main Processes ###
 ######################
 
-func select_object(obj: Selectable) -> void:
+func select_object(obj: GameObject) -> void:
     deselect()
     obj._authority = multiplayer.get_unique_id()
     obj.move_self_to_top()
@@ -238,7 +238,7 @@ func select_object(obj: Selectable) -> void:
     obj.selected = multiplayer.get_unique_id()
     obj.grab_offset = grab_position - obj.position
 
-func queue_select_object(obj: Selectable) -> void:
+func queue_select_object(obj: GameObject) -> void:
     if object_queued():
         deselect()
     if obj.queued == 0 and obj.selected == 0:
@@ -250,7 +250,7 @@ func queue_select_object(obj: Selectable) -> void:
         obj.queued = multiplayer.get_unique_id()
         hold_timer.start()
 
-func stack_selection_to_item(item: Selectable) -> void:
+func stack_selection_to_item(item: GameObject) -> void:
     item._authority = multiplayer.get_unique_id()
     if item is Collection:
         stack_on_collection(item as Collection)
@@ -322,7 +322,7 @@ func dequeue_object() -> void:
         queued_object = null
 
 func rotate_selection(amount: float, axis: float) -> void:
-    var obj: Selectable = get_selected_object()
+    var obj: GameObject = get_selected_object()
     if not is_instance_valid(obj):
         return
     obj.rotation += amount

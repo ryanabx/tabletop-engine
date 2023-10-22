@@ -1,5 +1,5 @@
 class_name Piece
-extends Selectable
+extends GameObject
 ## piece.gd
 ## 
 ## Represents a singular game piece. Typically extended into separate piece types.
@@ -12,10 +12,8 @@ var types: Array = []
 # Private methods
 
 func _ready() -> void:
+    _shareable_properties.append_array(["image_up", "image_down", "types", "face_up"])
     super._ready()
-
-func _get_shareable_properties() -> Array:
-    return super._get_shareable_properties() + ["image_up", "image_down", "types", "face_up"]
 
 func _serialize() -> Dictionary:
     var _dict: Dictionary = {}

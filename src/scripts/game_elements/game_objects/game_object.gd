@@ -15,8 +15,13 @@ var size: Vector2 = Vector2.ONE
 ## See [enum Board.GameObjectType]
 var object_type: Board.GameObjectType
 
+# TRAITS
+var selectable: Selectable = null
+var flippable: Flippable = null
+
 # Private Variables
 
+var _shareable_properties: Array[String] = ["shape", "size", "position", "rotation"]
 var _property_changes: Dictionary = {}
 var board: Board # TODO: Make private with _
 
@@ -33,13 +38,8 @@ func _set(property: StringName, value: Variant) -> bool:
     return false
 
 func add_to_property_changes(property: StringName, value: Variant) -> void:
-    if is_inside_tree() and property in _get_shareable_properties() and is_multiplayer_authority():
+    if is_inside_tree() and property in _shareable_properties and is_multiplayer_authority():
         _property_changes[property] = value
-
-func _get_shareable_properties() -> Array:
-    return [
-        "shape", "size", "position", "rotation"
-    ]
 
 @rpc("authority", "call_remote", "reliable")
 func _property_changes_sync_rpc(props: Dictionary) -> void:
@@ -92,6 +92,11 @@ func get_gobject_transform() -> Transform2D:
 
 func _ready() -> void:
     board.property_sync.connect(_sync_properties)
+    # Trait properties
+    if selectable:
+        _shareable_properties.append_array(selectable.get_trait_shareable_properties())
+    if flippable:
+        _shareable_properties.append_array(flippable.get_trait_shareable_properties())
 
 func _sync_properties() -> void:
     if is_multiplayer_authority() and not _property_changes.is_empty():
