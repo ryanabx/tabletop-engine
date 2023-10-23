@@ -12,6 +12,8 @@ var types: Array = []
 # Private methods
 
 func _ready() -> void:
+    # Traits
+    selectable = Selectable.new(self)
     _shareable_properties.append_array(["image_up", "image_down", "types", "face_up"])
     super._ready()
 

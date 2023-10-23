@@ -85,7 +85,7 @@ func _input(event: InputEvent) -> void:
         _update_highlighted(ev)
     if ev.is_action_pressed("game_flip"):
         if is_selecting() and not get_selected_object().selectable.lock_state:
-            if get_selected_object().is_flippable():
+            if get_selected_object().flippable:
                 get_selected_object().flip()
     if ev is InputEventScreenTouch:
         touch_input(ev as InputEventScreenTouch)

@@ -60,6 +60,7 @@ func _deserialize_piece(_dict: Dictionary) -> Piece:
 
 func _ready() -> void:
     _shareable_properties.append_array(["inside"])
+    selectable = Selectable.new(self, _on_select, _on_deselect)
     super._ready()
 
 @rpc("authority","call_local","reliable")

@@ -59,6 +59,8 @@ func _process(_delta: float) -> void:
     _refresh_image()
 
 func _ready() -> void:
+    # Traits
+    flippable = Flippable.new(self)
     # Sprite stuff
     _sprite = Sprite2D.new()
     add_child(_sprite)
