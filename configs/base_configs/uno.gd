@@ -1,6 +1,6 @@
 # uno.gd
 # Copyright Ryanabx 2023
-extends TabletopScript
+extends TabletopGame
 
 const START_HAND: int = 7
 

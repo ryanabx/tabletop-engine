@@ -22,6 +22,12 @@ func game_start() -> void:
 
 # OPTIONAL
 
+## Returns a list of template objects that can be instantiated by the user
+## This method may be optionally overridden. By default returns an empty [Array]
+func get_template_objects() -> Array[Dictionary]:
+    var res: Array[Dictionary] = []
+    return res
+
 ## Returns the list of user actions.
 ## This method may be optionally overridden. By default returns an empty [Array]
 func get_actions() -> Array[String]:
@@ -81,7 +87,7 @@ static func _get_tabletop_game(config: Dictionary) -> TabletopGame:
     obj.set_script(sc)
     obj.name = config.name
 
-    obj.set_images(config.include_images as Variant as Dictionary)
+    obj.set_images(config.include_images as Dictionary)
     return obj
 
 static func export_config(source_code: String, images: Dictionary, game_name: String) -> PackedByteArray:
