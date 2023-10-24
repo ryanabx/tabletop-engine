@@ -32,6 +32,9 @@ func _set(property: StringName, value: Variant) -> bool:
     add_to_property_changes(property, value)
     return false
 
+func get_trait(trt: String) -> ObjectTraits.ObjectTrait:
+    return null if not trt in object_traits else object_traits[trt] as ObjectTraits.ObjectTrait
+
 func add_to_property_changes(property: StringName, value: Variant) -> void:
     if is_inside_tree() and property in _shareable_properties and is_multiplayer_authority():
         _property_changes[property] = value

@@ -70,8 +70,8 @@ class Selectable extends ObjectTrait:
         _area2d.collision_layer = 1
         obj.add_child(_area2d)
         _collision_polygon = CollisionPolygon2D.new()
-        if "has_shape" in obj.object_traits:
-            _collision_polygon.polygon = obj.object_traits.has_shape.get_gobject_transform.call() * obj.object_traits.has_shape.shape
+        if obj.get_trait("has_shape"):
+            _collision_polygon.polygon = (obj.get_trait("has_shape") as HasShape).get_gobject_transform.call() * (obj.get_trait("has_shape") as HasShape).shape
         _area2d.add_child(_collision_polygon)
 
 class HasShape extends ObjectTrait:
