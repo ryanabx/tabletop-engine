@@ -7,21 +7,16 @@ extends Node2D
 
 # Shareable properties
 
-## Represents the shape of an object, given a set of points.
-var shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)])
-## Represents the size of an object. Works with [param shape] to make the shape's boundaries on the board.
-var size: Vector2 = Vector2.ONE
 ## Represents the type of the object. It is preferred to use this method of finding out the object type.
 ## See [enum Board.GameObjectType]
 var object_type: Board.GameObjectType
 
 # TRAITS
-var selectable: Selectable = null
-var flippable: Flippable = null
+var object_traits: Dictionary = {}
 
 # Private Variables
 
-var _shareable_properties: Array[String] = ["shape", "size", "position", "rotation"]
+var _shareable_properties: Array[String] = ["position", "rotation"]
 var _property_changes: Dictionary = {}
 var board: Board # TODO: Make private with _
 
@@ -44,7 +39,14 @@ func add_to_property_changes(property: StringName, value: Variant) -> void:
 @rpc("authority", "call_remote", "reliable")
 func _property_changes_sync_rpc(props: Dictionary) -> void:
     for prop: String in props.keys():
-        if prop == "inside":
+        if "." in prop:
+            var split_prop: Array = prop.split(".")
+            if split_prop[0] in object_traits:
+                (object_traits[split_prop[0]] as ObjectTraits.ObjectTrait).set(split_prop[1] as StringName, props[prop])
+            else:
+                print("Wtf ",prop)
+            continue
+        elif prop == "inside":
             # print("Setting inside here!")
             var new_inside: Array[Dictionary] = []
             var arr: Array = props[prop]
@@ -71,32 +73,11 @@ func move_self_to_top() -> void:
 func move_self_to_back() -> void:
     index = 0
 
-func get_extents() -> PackedVector2Array:
-    return get_main_transform() * shape
-
-func get_polyline_extents() -> PackedVector2Array:
-    var arr: PackedVector2Array = get_extents()
-    return arr + PackedVector2Array([arr[0]])
-
-func get_main_transform() -> Transform2D:
-    return Transform2D(rotation, size, 0.0, position)
-
-func get_rect_extents() -> Rect2:
-    return Rect2(position - size / 2, size)
-
-func get_rect() -> Rect2:
-    return Rect2(-size / 2, size)
-
-func get_gobject_transform() -> Transform2D:
-    return Transform2D().scaled(size)
-
 func _ready() -> void:
     board.property_sync.connect(_sync_properties)
     # Trait properties
-    if selectable:
-        _shareable_properties.append_array(selectable.get_trait_shareable_properties())
-    if flippable:
-        _shareable_properties.append_array(flippable.get_trait_shareable_properties())
+    for trt: ObjectTraits.ObjectTrait in object_traits.values():
+        _shareable_properties.append_array(trt.shareable_properties())
 
 func _sync_properties() -> void:
     if is_multiplayer_authority() and not _property_changes.is_empty():
