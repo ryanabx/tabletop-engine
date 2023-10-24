@@ -3,12 +3,19 @@ extends RefCounted
 
 ## Generic object trait definition. Must contain shareable_properties()
 class ObjectTrait extends RefCounted:
+    var obj: GameObject
+    
+    func trait_name() -> String: return "object_trait"
     func shareable_properties() -> Array[String]: return []
 
+    func _set(property: StringName, value: Variant) -> bool:
+        obj.add_to_property_changes("%s.%s" % [trait_name(), property], value)
+        return false
+
 class Flippable extends ObjectTrait:
-    var obj: GameObject
     var face_up: bool = false
 
+    func trait_name() -> String: return "flippable"
     func shareable_properties() -> Array[String]: return ["flippable.face_up"]
     
     var flip: Callable = func() -> void:
@@ -22,14 +29,14 @@ class Flippable extends ObjectTrait:
     func _init(_obj: GameObject) -> void:
         obj = _obj
 
-class Selectable extends ObjectTrait:
-    var obj: GameObject
-    
+class Selectable extends ObjectTrait:    
     var _collision_polygon: CollisionPolygon2D
     var _area2d: Area2D
 
     var lock_state: bool = false
     var grab_offset: Vector2 = Vector2.ZERO
+
+    func trait_name() -> String: return "selectable"
 
     func shareable_properties() -> Array[String]: return ["selectable.lock_state", "selectable.selected", "selectable.queued"]
 
@@ -75,9 +82,10 @@ class Selectable extends ObjectTrait:
         _area2d.add_child(_collision_polygon)
 
 class HasShape extends ObjectTrait:
-    var obj: GameObject
     var shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)])
     var size: Vector2 = Vector2.ONE
+
+    func trait_name() -> String: return "has_shape"
 
     func shareable_properties() -> Array[String]: return ["has_shape.shape", "has_shape.size"]
 

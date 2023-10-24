@@ -8,15 +8,16 @@ extends Node2D
 # Shareable properties
 
 ## Represents the type of the object. It is preferred to use this method of finding out the object type.
-## See [enum Board.GameObjectType]
-var object_type: Board.GameObjectType
+var type: String
+## Tags for this Game Object
+var tags: Array[String]
 
 # TRAITS
 var object_traits: Dictionary = {}
 
 # Private Variables
 
-var _shareable_properties: Array[String] = ["position", "rotation"]
+var _shareable_properties: Array[String] = ["position", "rotation", "tags", "type"]
 var _property_changes: Dictionary = {}
 var board: Board # TODO: Make private with _
 
