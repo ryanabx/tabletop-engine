@@ -46,44 +46,35 @@ func shuffle() -> void:
 
 # Private methods
 
-func _serialize_piece(pc: Piece) -> Dictionary:
-    return pc._serialize()
-
-func _deserialize_piece(_dict: Dictionary) -> Piece:
-    _dict.position = position
-    _dict.rotation = rotation
-    var obj_type: Board.GameObjectType = _dict.object_type
-    return board.new_game_object(
-        obj_type,
-        _dict
-    )
-
 func _ready() -> void:
     _shareable_properties.append_array(["inside"])
-    selectable = Selectable.new(self, _on_select, _on_deselect)
+    add_attribute(CollectionSelectable.new(self))
     super._ready()
 
 @rpc("authority","call_local","reliable")
 func _erase_rpc(recursive: bool = false) -> void:
     for obj: Dictionary in inside:
         if not recursive and is_multiplayer_authority():
-            _deserialize_piece(obj)
+            deserialize_object(obj)
     queue_free()
+
+func deserialize_object(dict: Dictionary) -> GameObject:
+    dict.position = position
+    dict.rotation = rotation
+    var piece: Piece = super.deserialize_object(dict)
+    piece._authority = multiplayer.get_unique_id()
+    return piece
 
 func _clear_inside() -> void:
     _authority = multiplayer.get_unique_id()
     inside = []
     add_to_property_changes("inside", inside)
 
-func _on_select(_event:InputEvent) -> void:
-    if get_inside().is_empty() or selectable.selected != 0 or selectable.queued != 0:
-        return
-    board.get_player().queue_select_object(self)
-
-func _on_deselect(_event:InputEvent) -> void:
-    if board.get_player().is_selecting():
-        if selectable.selected == 0:
-            board.get_player().stack_selection_to_item(self)
+class CollectionSelectable extends Selectable:
+    func on_select(_event:InputEvent) -> void:
+        if obj.inside.is_empty():
+            return
+        super.on_select(_event)
 
 func _process(delta: float) -> void:
     super._process(delta)
@@ -94,7 +85,7 @@ func _add_piece_at(piece: Piece, _index: int) -> void:
     _authority = multiplayer.get_unique_id()
     piece._authority = multiplayer.get_unique_id()
     
-    var pc_d: Dictionary = _serialize_piece(piece)
+    var pc_d: Dictionary = piece.serialize_object()
     piece._erase_rpc.rpc(false)
     inside.insert(_index, pc_d)
     add_to_property_changes("inside", inside)
@@ -102,8 +93,8 @@ func _add_piece_at(piece: Piece, _index: int) -> void:
 func _add_collection_at(coll: Collection, _index: int) -> void:
     if not board.game.can_stack(coll, self):
         return
-    if coll.flippable and flippable and coll.flippable.face_up != flippable.face_up:
-        coll.flippable.flip.call()
+    if coll.get_attribute("flippable") and get_attribute("flippable") and coll.get_attribute("flippable").face_up != get_attribute("flippable").face_up:
+        coll.get_attribute("flippable").flip()
     if _index == inside.size():
         inside.append_array(coll.inside)
     else:
@@ -117,8 +108,5 @@ func _remove_piece_at(_index: int) -> Piece:
     _authority = multiplayer.get_unique_id()
     var pc_d: Dictionary = inside.pop_at(_index)
     add_to_property_changes("inside", inside)
-    var piece: Piece = _deserialize_piece(pc_d)
-    piece._authority = multiplayer.get_unique_id()
-    piece.position = position
-    piece.rotation = rotation
+    var piece: Piece = deserialize_object(pc_d)
     return piece

@@ -12,8 +12,8 @@ var type: String
 ## Tags for this Game Object
 var tags: Array[String]
 
-# TRAITS
-var object_traits: Dictionary = {}
+# ATTRIBUTES
+var attributes: Dictionary = {}
 
 # Private Variables
 
@@ -33,9 +33,6 @@ func _set(property: StringName, value: Variant) -> bool:
     add_to_property_changes(property, value)
     return false
 
-func get_trait(trt: String) -> ObjectTraits.ObjectTrait:
-    return null if not trt in object_traits else object_traits[trt] as ObjectTraits.ObjectTrait
-
 func add_to_property_changes(property: StringName, value: Variant) -> void:
     if is_inside_tree() and property in _shareable_properties and is_multiplayer_authority():
         _property_changes[property] = value
@@ -43,14 +40,7 @@ func add_to_property_changes(property: StringName, value: Variant) -> void:
 @rpc("authority", "call_remote", "reliable")
 func _property_changes_sync_rpc(props: Dictionary) -> void:
     for prop: String in props.keys():
-        if "." in prop:
-            var split_prop: Array = prop.split(".")
-            if split_prop[0] in object_traits:
-                (object_traits[split_prop[0]] as ObjectTraits.ObjectTrait).set(split_prop[1] as StringName, props[prop])
-            else:
-                print("Wtf ",prop)
-            continue
-        elif prop == "inside":
+        if prop == "inside":
             # print("Setting inside here!")
             var new_inside: Array[Dictionary] = []
             var arr: Array = props[prop]
@@ -79,8 +69,8 @@ func move_self_to_back() -> void:
 
 func _ready() -> void:
     board.property_sync.connect(_sync_properties)
-    # Trait properties
-    for trt: ObjectTraits.ObjectTrait in object_traits.values():
+    # Attributes
+    for trt: Attribute in attributes.values():
         _shareable_properties.append_array(trt.shareable_properties())
 
 func _sync_properties() -> void:
@@ -98,3 +88,31 @@ func erase(recursive: bool = false) -> void:
 @rpc("authority","call_local","reliable")
 func _erase_rpc(_recursive: bool) -> void:
     queue_free()
+
+func get_attribute(attr: String) -> Variant:
+    return attributes[attr] if attr in attributes else null
+
+func add_attribute(attr: Attribute) -> void:
+    attributes[attr.name()] = attr
+
+func remove_attribute(idntfr: String) -> void:
+    # TODO: Remove changeable properties as well
+    attributes.erase(idntfr)
+
+func get_prop(prop: StringName) -> Variant:
+    if "::" in prop:
+        var prop_split: Array = prop.split("::")
+        if get_attribute(prop_split[0]):
+            return get_attribute(prop_split[0]).get(prop_split[1])
+        else:
+            return null
+    return get(prop)
+
+func serialize_object() -> Dictionary:
+    var _dict: Dictionary = {}
+    for prop: String in _shareable_properties:
+        _dict[prop] = get_prop(prop)
+    return _dict
+
+func deserialize_object(dict: Dictionary) -> GameObject:
+    return board.new_game_object(dict)
