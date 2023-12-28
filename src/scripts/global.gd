@@ -4,12 +4,9 @@ extends RefCounted
 static var has_setup: bool = false
 
 const SPLASHES: Array[String] = [
-    '"Because **** Tabletop Simulator"!',
     'Vegan, if you so choose!',
-    'You have UNO, you fucking dick!',
     'Fruit salad, yummy yummy!',
     'Can I drown myself? -Jacob',
-    'Since your ass wanna act onions!',
     'Constantly improving!',
     'What will YOU create?',
     'THIS IS THE SPLASH"; DROP TABLE Tabletops',
@@ -18,6 +15,12 @@ const SPLASHES: Array[String] = [
     'Ryan does have great hair, I agree Minecraft!',
     'https://www.youtube.com/watch?v=u9n-6ZDGUBs',
     '90% of gamblers quit before making it big!'
+]
+
+const EXPLICIT_SPLASHES: Array[String] = [
+    '"Because fuck Tabletop Simulator"!',
+    'You have UNO, you fucking dick!',
+    'Since your ass wanna act onions!'
 ]
 
 const LICENSE_FILE: String = "res://src/resources/licenses.txt"
