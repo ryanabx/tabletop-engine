@@ -4,7 +4,7 @@ extends RefCounted
 static var has_setup: bool = false
 
 const SPLASHES: Array[String] = [
-    '"Because fuck Tabletop Simulator"!',
+    '"Because **** Tabletop Simulator"!',
     'Vegan, if you so choose!',
     'You have UNO, you fucking dick!',
     'Fruit salad, yummy yummy!',
