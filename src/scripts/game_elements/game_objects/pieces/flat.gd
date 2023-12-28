@@ -37,30 +37,22 @@ func _refresh_image() -> void:
     
     var ovr: bool = false
     # print("Selected: %d, Queued: %d, ViewOverrideType: %d" % [selected, queued, view_override])
-    if view_override == ViewOverrideType.ALL:
+    if view_override == ViewOverrideType.ALL or not get_attribute("selectable"):
         ovr = true
     elif view_override == ViewOverrideType.IF_SELECTED:
-        ovr = selectable.selected == multiplayer.get_unique_id() or selectable.queued == multiplayer.get_unique_id()
+        ovr = get_attribute("selectable").selected == multiplayer.get_unique_id() or get_attribute("selectable").queued == multiplayer.get_unique_id()
     elif view_override == ViewOverrideType.IF_NOT_SELECTED:
-        ovr = selectable.selected != multiplayer.get_unique_id() or selectable.queued == multiplayer.get_unique_id()
+        ovr = get_attribute("selectable").selected != multiplayer.get_unique_id() or get_attribute("selectable").queued == multiplayer.get_unique_id()
     
-    _sprite.texture = board._get_image(image_up) if not flippable or flippable.face_up or ovr else board._get_image(image_down)
-    _sprite.scale = size / _sprite.texture.get_size()
-
-func _serialize() -> Dictionary:
-    var _dict: Dictionary = super._serialize()
-    _dict.image_up = image_up
-    _dict.image_down = image_down
-    _dict["flippable.face_up"] = flippable.face_up
-    _dict.view_override = view_override
-    return _dict
+    _sprite.texture = board._get_image(image_up) if not get_attribute("flippable") or get_attribute("flippable").face_up or ovr else board._get_image(image_down)
+    _sprite.scale = get_attribute("has_shape").size / _sprite.texture.get_size()
 
 func _process(_delta: float) -> void:
     _refresh_image()
 
 func _ready() -> void:
     # Traits
-    flippable = Flippable.new(self)
+    add_attribute(Flippable.new(self))
     # Sprite stuff
     _sprite = Sprite2D.new()
     add_child(_sprite)

@@ -272,8 +272,8 @@ func stack_on_piece(item: Piece) -> void:
         if item.flippable:
             is_face_up = item.flippable.face_up
         var collection: Collection = board.new_game_object(
-            Board.GameObjectType.DECK,
             {
+                "type": "deck",
                 "position": item.position,
                 "rotation": item.rotation,
                 "face_up": is_face_up
@@ -285,8 +285,8 @@ func stack_on_piece(item: Piece) -> void:
 func _select_collection(collection: Collection) -> void:
     if collection is Hand or (collection as Deck).permanent:
         var new_collection: Collection = collection.board.new_game_object(
-            Board.GameObjectType.DECK,
             {
+                "type": "deck",
                 "position": collection.position,
                 "rotation": collection.rotation,
                 "face_up": collection.flippable.face_up

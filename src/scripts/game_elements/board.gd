@@ -10,14 +10,10 @@ var game: TabletopGame = null
 ## The size of the board.
 var size: Vector2 = Vector2.ONE
 
-## Enumeration of the types that a GameObject can be.
-## [member GameObjectType.MAX] defines the end of the enum, and can't be used
-## to instantiate a GameObject.
-enum GameObjectType {
-    FLAT,
-    DECK,
-    HAND,
-    MAX
+var type_db: Dictionary = {
+    "flat": Flat,
+    "deck": Deck,
+    "hand": Hand
 }
 
 ## Companion constant to [enum GameObjectType] that defines strings for each type.
@@ -74,6 +70,10 @@ signal _create_context_menu(obj: Selectable)
 
 var _counter: int = 0
 
+## Add a custom game object type to the database
+func add_type(idntfr: String, value: GDScript) -> void:
+    type_db[idntfr] = value
+
 ## Returns the player for this board instance.
 func get_player() -> BoardPlayer:
     return _board_player
@@ -121,19 +121,18 @@ func get_object_by_index(index: int) -> GameObject:
 ## Creates a new object on the board, and returns a pointer to that object.
 ## Takes a [param type] from [enum Board.GameObjectType], to define the type of object to be created.
 ## A list of modifiable GameObject properties can be found in each GameObject's reference.
-func new_game_object(type: Board.GameObjectType, properties: Dictionary) -> GameObject:
+func new_game_object(properties: Dictionary) -> GameObject:
     var c: GameObject
     if not "name" in properties:
-        properties.name = "%d_%s_%d" % [multiplayer.get_unique_id(),Board.GAME_OBJECT_TYPE_STRING[type],_counter]
+        properties.name = "%d_%s_%d" % [multiplayer.get_unique_id(),Board.GAME_OBJECT_TYPE_STRING[properties.type],_counter]
         _counter += 1
-    c = _instantiate_by_type(type).new()
+    c = type_db[properties.type].new()
     c.board = self
-    c.object_type = type
     for prop: String in properties:
         c.set(prop, properties[prop])
     _board_objects.add_child(c)
     # RPC
-    _new_game_object_rpc.rpc(type, properties)
+    _new_game_object_rpc.rpc(properties)
     c.set_multiplayer_authority(multiplayer.get_unique_id())
     return c
 
@@ -167,23 +166,11 @@ func _get_image(path: String) -> Texture2D:
 
 var _ready_players: Array = []
 
-func _instantiate_by_type(type: Board.GameObjectType) -> GDScript:
-    match type:
-        Board.GameObjectType.FLAT:
-            return Flat
-        Board.GameObjectType.DECK:
-            return Deck
-        Board.GameObjectType.HAND:
-            return Hand
-    print("WARNING: None of the above types specified")
-    return GameObject
-
 @rpc("any_peer", "call_remote", "reliable")
-func _new_game_object_rpc(type: Board.GameObjectType, properties: Dictionary) -> void:
+func _new_game_object_rpc(properties: Dictionary) -> void:
     var c: GameObject
-    c = _instantiate_by_type(type).new()
+    c = type_db[properties.type].new()
     c.board = self
-    c.object_type = type
     for prop: String in properties:
         c.set(prop, properties[prop])
     _board_objects.add_child(c)

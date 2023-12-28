@@ -7,21 +7,17 @@ extends Node2D
 
 # Shareable properties
 
-## Represents the shape of an object, given a set of points.
-var shape: PackedVector2Array = PackedVector2Array([Vector2(-0.5,-0.5), Vector2(-0.5,0.5), Vector2(0.5,0.5), Vector2(0.5,-0.5)])
-## Represents the size of an object. Works with [param shape] to make the shape's boundaries on the board.
-var size: Vector2 = Vector2.ONE
 ## Represents the type of the object. It is preferred to use this method of finding out the object type.
-## See [enum Board.GameObjectType]
-var object_type: Board.GameObjectType
+var type: String
+## Tags for this Game Object
+var tags: Array[String]
 
-# TRAITS
-var selectable: Selectable = null
-var flippable: Flippable = null
+# ATTRIBUTES
+var attributes: Dictionary = {}
 
 # Private Variables
 
-var _shareable_properties: Array[String] = ["shape", "size", "position", "rotation"]
+var _shareable_properties: Array[String] = ["position", "rotation", "tags", "type"]
 var _property_changes: Dictionary = {}
 var board: Board # TODO: Make private with _
 
@@ -71,32 +67,11 @@ func move_self_to_top() -> void:
 func move_self_to_back() -> void:
     index = 0
 
-func get_extents() -> PackedVector2Array:
-    return get_main_transform() * shape
-
-func get_polyline_extents() -> PackedVector2Array:
-    var arr: PackedVector2Array = get_extents()
-    return arr + PackedVector2Array([arr[0]])
-
-func get_main_transform() -> Transform2D:
-    return Transform2D(rotation, size, 0.0, position)
-
-func get_rect_extents() -> Rect2:
-    return Rect2(position - size / 2, size)
-
-func get_rect() -> Rect2:
-    return Rect2(-size / 2, size)
-
-func get_gobject_transform() -> Transform2D:
-    return Transform2D().scaled(size)
-
 func _ready() -> void:
     board.property_sync.connect(_sync_properties)
-    # Trait properties
-    if selectable:
-        _shareable_properties.append_array(selectable.get_trait_shareable_properties())
-    if flippable:
-        _shareable_properties.append_array(flippable.get_trait_shareable_properties())
+    # Attributes
+    for trt: Attribute in attributes.values():
+        _shareable_properties.append_array(trt.shareable_properties())
 
 func _sync_properties() -> void:
     if is_multiplayer_authority() and not _property_changes.is_empty():
@@ -113,3 +88,31 @@ func erase(recursive: bool = false) -> void:
 @rpc("authority","call_local","reliable")
 func _erase_rpc(_recursive: bool) -> void:
     queue_free()
+
+func get_attribute(attr: String) -> Variant:
+    return attributes[attr] if attr in attributes else null
+
+func add_attribute(attr: Attribute) -> void:
+    attributes[attr.name()] = attr
+
+func remove_attribute(idntfr: String) -> void:
+    # TODO: Remove changeable properties as well
+    attributes.erase(idntfr)
+
+func get_prop(prop: StringName) -> Variant:
+    if "::" in prop:
+        var prop_split: Array = prop.split("::")
+        if get_attribute(prop_split[0]):
+            return get_attribute(prop_split[0]).get(prop_split[1])
+        else:
+            return null
+    return get(prop)
+
+func serialize_object() -> Dictionary:
+    var _dict: Dictionary = {}
+    for prop: String in _shareable_properties:
+        _dict[prop] = get_prop(prop)
+    return _dict
+
+func deserialize_object(dict: Dictionary) -> GameObject:
+    return board.new_game_object(dict)
