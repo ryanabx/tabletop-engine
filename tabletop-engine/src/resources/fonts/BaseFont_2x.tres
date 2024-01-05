@@ -1,8 +1,0 @@
-[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://sl7hnoh1pjdu"]
-
-[ext_resource type="FontVariation" uid="uid://evcy34s8o261" path="res://src/resources/fonts/BaseFont_Normal.tres" id="1_clvew"]
-
-[resource]
-base_font = ExtResource("1_clvew")
-variation_embolden = 2.0
-variation_transform = Transform2D(2, 0, 0, 2, 0, 0)

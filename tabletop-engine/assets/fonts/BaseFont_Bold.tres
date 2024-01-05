@@ -1,0 +1,7 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://dwgt12jyh3edd"]
+
+[ext_resource type="FontVariation" uid="uid://evcy34s8o261" path="res://assets/fonts/BaseFont_Normal.tres" id="1_qirat"]
+
+[resource]
+base_font = ExtResource("1_qirat")
+variation_embolden = 1.0

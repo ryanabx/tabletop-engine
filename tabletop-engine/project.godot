@@ -13,7 +13,7 @@ config_version=5
 config/name="Tabletop Engine"
 config/description="A 2-dimensional virtual tabletop for all! Create board game configurations which can be loaded in and played with friends online or in person!"
 config/version="0.0.1"
-run/main_scene="res://src/scenes/ui/pages/main_menu.tscn"
+run/main_scene="res://scenes/ui/pages/main_menu.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 boot_splash/bg_color=Color(0.184314, 0.219608, 0.301961, 1)
 boot_splash/image="res://assets/banner.png"
@@ -23,7 +23,7 @@ boot_splash/minimum_display_time=100
 
 [autoload]
 
-AudioManager="*res://src/scenes/autoload/audio_manager.tscn"
+AudioManager="*res://scenes/autoload/audio_manager.tscn"
 
 [debug]
 
@@ -46,7 +46,7 @@ import/blender/enabled=false
 
 [gui]
 
-theme/custom="res://src/resources/themes/default_theme.tres"
+theme/custom="res://assets/themes/default_theme.tres"
 
 [input]
 
