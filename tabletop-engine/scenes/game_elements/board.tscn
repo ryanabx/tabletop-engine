@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://d37u56uqnt2x5"]
+
+[ext_resource type="Script" path="res://src/game_elements/board.gd" id="1_jpdbj"]
+[ext_resource type="Script" path="res://src/game_elements/game_ui/highlights.gd" id="2_ax2hd"]
+[ext_resource type="Script" path="res://src/game_elements/board_player.gd" id="3_33r4j"]
+
+[node name="Board" type="Node2D"]
+script = ExtResource("1_jpdbj")
+
+[node name="Highlights" type="Node2D" parent="."]
+z_index = 10
+script = ExtResource("2_ax2hd")
+
+[node name="BoardObjects" type="Node2D" parent="."]
+
+[node name="BoardPlayer" type="Node2D" parent="."]
+script = ExtResource("3_33r4j")
+
+[node name="SyncTimer" type="Timer" parent="."]
+wait_time = 0.05
+autostart = true
+
+[connection signal="timeout" from="SyncTimer" to="." method="_on_sync_timer_timeout"]

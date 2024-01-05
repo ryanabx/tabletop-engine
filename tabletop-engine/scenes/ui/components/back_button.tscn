@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://blgj8gsmcd1ad"]
+
+[ext_resource type="Texture2D" uid="uid://pgsxe1dk7qmx" path="res://assets/assets/ui/arrow-to-left.svg" id="1_6qb45"]
+[ext_resource type="Script" path="res://src/ui/components/back_button.gd" id="2_njpoi"]
+
+[node name="BackButton" type="Button"]
+custom_minimum_size = Vector2(64, 64)
+size_flags_horizontal = 0
+size_flags_vertical = 8
+icon = ExtResource("1_6qb45")
+expand_icon = true
+script = ExtResource("2_njpoi")
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]

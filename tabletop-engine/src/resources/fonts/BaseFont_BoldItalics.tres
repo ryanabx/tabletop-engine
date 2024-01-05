@@ -1,7 +1,0 @@
-[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://dvbg8g4a8x0g0"]
-
-[ext_resource type="FontVariation" uid="uid://dcuiosqi3qm2" path="res://src/resources/fonts/BaseFont_Italics.tres" id="1_akt8h"]
-
-[resource]
-base_font = ExtResource("1_akt8h")
-variation_embolden = 1.0

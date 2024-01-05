@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://chycn8r6thjep"]
+
+[ext_resource type="CodeHighlighter" uid="uid://cf45343koir7" path="res://assets/codeedit/config_editor._highlightingtres.tres" id="1_nxt4c"]
+
+[node name="ConfigCode" type="CodeEdit"]
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 24
+highlight_all_occurrences = true
+highlight_current_line = true
+draw_tabs = true
+draw_spaces = true
+syntax_highlighter = ExtResource("1_nxt4c")
+scroll_past_end_of_file = true
+minimap_draw = true
+minimap_width = 120
+caret_blink = true
+caret_blink_interval = 0.5
+symbol_lookup_on_click = true
+line_folding = true
+gutters_draw_bookmarks = true
+gutters_draw_executing_lines = true
+gutters_draw_line_numbers = true
+gutters_draw_fold_gutter = true
+code_completion_enabled = true
+indent_use_spaces = true
+indent_automatic = true
+auto_brace_completion_enabled = true
+auto_brace_completion_highlight_matching = true
+
+[connection signal="code_completion_requested" from="." to="." method="_on_code_completion_requested"]
+[connection signal="symbol_lookup" from="." to="." method="_on_symbol_lookup"]
