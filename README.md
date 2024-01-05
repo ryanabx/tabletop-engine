@@ -1,4 +1,4 @@
-> Note: This project is in early alpha and a lot is subject to change!
+> Note: This project is in pre-alpha and a lot is subject to change!
 
 # Tabletop Engine
 
