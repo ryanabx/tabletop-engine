@@ -4,5 +4,5 @@ namespace TabletopEngine.Tabletop.Objects.Standard;
 
 public partial class GmCard : GmPiece, IFlippable
 {
-    
+	
 }
