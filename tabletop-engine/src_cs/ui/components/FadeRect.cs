@@ -1,4 +1,3 @@
-// Copyright ryanabx 2024
 using Godot;
 namespace TabletopEngine.UI.Components;
 
