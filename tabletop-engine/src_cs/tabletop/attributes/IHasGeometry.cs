@@ -6,5 +6,6 @@ public interface IHasGeometry
 	public Vector2[] Shape
 	{
 		get;
+		set;
 	}
 }
