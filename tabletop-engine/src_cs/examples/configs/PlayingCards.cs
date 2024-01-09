@@ -1,6 +1,6 @@
 using Godot;
 using TabletopEngine.Tabletop.Session;
-namespace TabletopEngine.Examples;
+namespace TabletopEngine.Examples.Configs;
 
 public partial class PlayingCards : RefCounted, ITabletopConfig
 {
