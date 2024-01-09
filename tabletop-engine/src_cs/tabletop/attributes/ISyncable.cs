@@ -6,6 +6,7 @@ namespace TabletopEngine.Tabletop.Attributes;
 
 public interface ISyncable
 {
-	public abstract Dictionary<string, Variant> SendStateDeltas();
-	public abstract void ProcessStateDeltas(Dictionary<string, Variant> deltas);
+	public abstract Dictionary<string, Variant> DeltasToDict();
+	public abstract Dictionary<string, Variant> DataToDict();
+	public abstract void PopulateFromDict(Dictionary<string, Variant> data);
 }

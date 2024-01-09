@@ -1,5 +1,3 @@
-using Godot;
-using TabletopEngine.Tabletop.Objects;
 using TabletopEngine.Tabletop.Objects.Standard;
 namespace TabletopEngine.Examples.Objects;
 

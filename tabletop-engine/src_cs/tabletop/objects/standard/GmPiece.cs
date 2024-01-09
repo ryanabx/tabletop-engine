@@ -17,12 +17,15 @@ public partial class GmPiece : GmObject, ISelectable, ISyncable
 		get { return _selected; }
 		set { _selected = value; } // TODO: Add extra nuance to object being selected
 	}
-
-	public Dictionary<string, Variant> SendStateDeltas()
+	public Dictionary<string, Variant> DeltasToDict()
 	{
 		return []; // TODO: Send state deltas!
 	}
-	public void ProcessStateDeltas(Dictionary<string, Variant> deltas)
+	public Dictionary<string, Variant> DataToDict()
+	{
+		return []; // TODO: Send entire state dictionary!
+	}
+	public void PopulateFromDict(Dictionary<string, Variant> deltas)
 	{
 		// TODO: Implement this!
 	}
