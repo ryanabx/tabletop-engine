@@ -10,8 +10,8 @@ public partial class GmPiece : GmObject, ISelectable, ISyncable
 		get { return _shape; }
 		set { _shape = value; }
 	}
-	private bool _selected;
-	public bool Selected
+	private ISelectable.SelectState _selected;
+	public ISelectable.SelectState Selected
 	{
 		get { return _selected; }
 		set { _selected = value; } // TODO: Add extra nuance to object being selected

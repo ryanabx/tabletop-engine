@@ -1,5 +1,6 @@
 using Godot;
 using Godot.Collections;
+using TabletopEngine.Tabletop.Objects;
 
 namespace TabletopEngine.Tabletop.Attributes;
 
