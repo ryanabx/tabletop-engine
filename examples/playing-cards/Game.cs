@@ -1,8 +1,7 @@
 using Godot;
 using TabletopEngine.Tabletop.Session;
-namespace TabletopEngine.Examples.Configs;
 
-public partial class PlayingCards : RefCounted, ITabletopConfig
+public partial class Game : RefCounted, ITabletopConfig
 {
 	private Board _board;
 	public Board GameBoard
