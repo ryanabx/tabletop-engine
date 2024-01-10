@@ -1,6 +1,4 @@
-using TabletopEngine.Tabletop.Objects;
-
-namespace TabletopEngine.Tabletop.Attributes;
+namespace Tabletop.Attributes;
 
 public interface ISelectable : IHasGeometry
 {

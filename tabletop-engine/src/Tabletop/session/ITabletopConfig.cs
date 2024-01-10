@@ -1,4 +1,4 @@
-namespace TabletopEngine.Tabletop.Session;
+namespace Tabletop.Session;
 
 public interface ITabletopConfig
 {

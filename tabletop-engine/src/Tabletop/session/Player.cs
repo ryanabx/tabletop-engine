@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using Godot;
-using TabletopEngine.Tabletop.Attributes;
-namespace TabletopEngine.Tabletop.Session;
+using Tabletop.Attributes;
+namespace Tabletop.Session;
 
 public partial class Player : Node2D
 {

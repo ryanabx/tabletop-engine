@@ -1,6 +1,6 @@
 using Godot;
-using TabletopEngine.Tabletop.Objects;
-namespace TabletopEngine.Tabletop.Session;
+using Tabletop.Objects;
+namespace Tabletop.Session;
 
 public partial class Board : Node2D
 {
