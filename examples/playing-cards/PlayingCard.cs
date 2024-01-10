@@ -36,7 +36,12 @@ public partial class PlayingCard : GmCard
 	public Suit CardSuit
 	{
 		get { return _suit; }
-		set { _suit = value; }
+		set
+		{
+			_suit = value;
+			_imageString = $"{value.ToString()}";
+		}
 	}
+	private string _imageString = "";
 	
 }
