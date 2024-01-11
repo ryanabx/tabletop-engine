@@ -1,7 +1,7 @@
 using Godot;
 using Godot.Collections;
 
-namespace Tabletop.Attributes;
+namespace Tabletop.Attributes.Properties;
 
 public interface ISyncable
 {

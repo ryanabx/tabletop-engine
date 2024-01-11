@@ -1,5 +1,5 @@
 using Godot;
-using Tabletop.Attributes;
+using Tabletop.Attributes.Properties;
 namespace Tabletop.Objects.Standard;
 
 public partial class GmCard : GmPiece, IFlippable
@@ -7,7 +7,7 @@ public partial class GmCard : GmPiece, IFlippable
 	private bool _orientation;
 	public bool Orientation
 	{
-		get 
+		get
 		{
 			return _orientation;
 		}

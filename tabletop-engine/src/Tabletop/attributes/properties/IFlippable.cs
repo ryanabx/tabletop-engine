@@ -1,4 +1,4 @@
-namespace Tabletop.Attributes;
+namespace Tabletop.Attributes.Properties;
 
 public interface IFlippable
 {

@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
-using Tabletop.Attributes;
+using Tabletop.Attributes.Properties;
+using Tabletop.Attributes.Actions;
 namespace Tabletop.Objects.Standard;
 
 public partial class GmPiece : GmObject, ISelectable, ISyncable
