@@ -11,5 +11,11 @@ public partial class Player : Node2D
 		Controller,
 		Touch
 	}
-	List<ISelectable> _selected;
+	private List<ISelectable> _selected;
+	private BaseBoard _board;
+	public BaseBoard Board
+	{
+		get { return _board; }
+		set { _board = value; }
+	}
 }
