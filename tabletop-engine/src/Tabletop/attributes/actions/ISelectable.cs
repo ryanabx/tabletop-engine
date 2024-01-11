@@ -1,7 +1,7 @@
 using Tabletop.Attributes.Properties;
 namespace Tabletop.Attributes.Actions;
 
-public interface ISelectable : IHasGeometry
+public interface ISelectable : IGeometry
 {
 	public enum SelectState
 	{

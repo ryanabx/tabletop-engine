@@ -18,4 +18,10 @@ public partial class Player : Node2D
 		get { return _board; }
 		set { _board = value; }
 	}
+	public override void _Process(double delta)
+	{
+		// TODO: Implement this
+		base._Process(delta);
+		
+	}
 }

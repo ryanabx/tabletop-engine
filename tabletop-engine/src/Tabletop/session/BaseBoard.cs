@@ -5,6 +5,7 @@ namespace Tabletop.Session;
 
 public abstract partial class BaseBoard : Node2D
 {
+	private Node2D _objs;
 	public abstract Vector2 Size
 	{
 		get;
@@ -19,18 +20,27 @@ public abstract partial class BaseBoard : Node2D
 	public void AddGmObject(GmObject obj, string name)
 	{
 		obj.Name = name;
-		AddChild(obj);
+		_objs.AddChild(obj);
 	}
 	public void RemoveGmObject(string name)
 	{
-		if (GetNodeOrNull(name) != null)
+		if (_objs.GetNodeOrNull(name) != default)
 		{
-			RemoveChild(GetNode(name));
+			_objs.RemoveChild(_objs.GetNode(name));
 		}
+	}
+	public GmObject GetGmObject(string name)
+	{
+		return _objs.GetNodeOrNull<GmObject>(name);
 	}
 	public override void _Ready()
 	{
 		base._Ready();
+		_objs = new()
+		{
+			Name = "GmObjects"
+		};
+		AddChild(_objs);
 		if (Multiplayer.IsServer())
 		{
 			InitServer();
